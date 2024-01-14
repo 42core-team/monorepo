@@ -4,6 +4,8 @@ int	ft_init_socket(struct sockaddr_in addr)
 {
 	int	socket_fd, status_con;
 
+	write(1, "Connecting to server", 21);
+
 	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (socket_fd < 0)
 	{
@@ -25,54 +27,25 @@ int	ft_init_socket(struct sockaddr_in addr)
 		exit(1);
 	}
 
-	status_con = connect(socket_fd, (struct sockaddr *) &addr, sizeof(addr));
-	if (status_con < 0)
-	{
-		if (errno != EINPROGRESS)
-		{
-			perror("Socket connection failed");
-			exit(1);
+	do {
+		write(1, ".", 1);
+		status_con = connect(socket_fd, (struct sockaddr *) &addr, sizeof(addr));
+		if (status_con < 0) {
+			fd_set waitset;
+			FD_ZERO(&waitset);
+			FD_SET(socket_fd, &waitset);
+
+			struct timeval timeout;
+			timeout.tv_sec = 5;
+			timeout.tv_usec = 0;
+
+			status_con = select(socket_fd + 1, NULL, &waitset, NULL, &timeout);
 		}
-	}
-	fd_set write_fds;
-        struct timeval tv;
+		if (status_con != 0)
+			sleep(1);
+	} while (status_con != 0);
 
-        // Initialize the file descriptor set.
-        FD_ZERO(&write_fds);
-        FD_SET(socket_fd, &write_fds);
-
-        // Set timeout to 5 seconds.
-        tv.tv_sec = 5;
-        tv.tv_usec = 0;
-
-        int select_status;
-        do {
-            select_status = select(socket_fd + 1, NULL, &write_fds, NULL, &tv);
-        } while (select_status == -1 && errno == EINTR);
-
-        if (select_status > 0)
-        {
-            int so_error;
-            socklen_t len = sizeof(so_error);
-
-            // Check if there was an error with the socket.
-            getsockopt(socket_fd, SOL_SOCKET, SO_ERROR, &so_error, &len);
-
-            if (so_error == 0)
-            {
-                printf("Socket connected.\n");
-            }
-            else
-            {
-                perror("Socket connection failed");
-                exit(1);
-            }
-        }
-        else
-        {
-            printf("Socket connection timeout.\n");
-            exit(1);
-        }
+	write(1, "Connected!\n", 12);
 	return (socket_fd);
 }
 
@@ -107,7 +80,7 @@ char	*ft_read_socket(const int socket_fd)
 	return (last_buffer);
 }
 
-struct sockaddr_in	ft_init_addr(const char ip[16], const int port)
+struct sockaddr_in	ft_init_addr(const char ip[10], const int port)
 {
 	struct sockaddr_in	addr;
 

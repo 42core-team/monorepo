@@ -1,6 +1,9 @@
 #ifndef CON_LIB_H
 # define CON_LIB_H
 
+# include <stdlib.h>
+# include <unistd.h>
+
 typedef enum e_status
 {
 	STATUS_OK = 0,
@@ -103,7 +106,7 @@ typedef struct s_game
 	t_actions	actions;
 } t_game;
 
-t_game	game;
+extern t_game	game;
 
 void	ft_init_con(int *argc, char **argv);
 void	ft_close_con();

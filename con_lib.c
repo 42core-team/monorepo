@@ -4,13 +4,14 @@
 
 int		socket_fd = -1;
 bool	debug = false;
+t_game	game;
 
-void	ft_recieve_config()
+void	ft_receive_config()
 {
 	char	*msg = ft_read_socket(socket_fd);
 
 	if (debug)
-		printf("Recieved: %s\n", msg);
+		printf("Received: %s\n", msg);
 	ft_parse_json_config(msg);
 	if (debug)
 		ft_print_game_config(&game.config);
@@ -19,12 +20,18 @@ void	ft_recieve_config()
 
 void	ft_init_con(int *argc, char **argv)
 {
-	char	*msg;
+	char	*msg, *env_id;
 
 	socket_fd = ft_init_socket(ft_init_addr("127.0.0.1", 4242));
-	if (*argc == 2)
+	env_id = getenv("CORE_ID");
+	if (env_id != NULL)
 	{
-		msg = malloc(sizeof(char) * (strlen(argv[1]) + 20));
+		msg = malloc(sizeof(char) * (strlen(env_id) + 12));
+		sprintf(msg, "{\"id\": %s}\n", env_id);
+	}
+	else if (*argc == 2)
+	{
+		msg = malloc(sizeof(char) * (strlen(argv[1]) + 12));
 		sprintf(msg, "{\"id\": %s}\n", argv[1]);
 	}
 	else
@@ -32,7 +39,7 @@ void	ft_init_con(int *argc, char **argv)
 	ft_send_socket(socket_fd, msg);
 	free(msg);
 
-	ft_recieve_config();
+	ft_receive_config();
 	ft_reset_actions();
 }
 
@@ -61,7 +68,7 @@ void	ft_loop(void (*ft_user_loop)())
 
 		msg = ft_read_socket(socket_fd);
 		if (debug)
-			printf("Recieved: %s\n", msg);
+			printf("Received: %s\n", msg);
 		ft_parse_json_state(msg);
 		free(msg);
 		ft_user_loop();

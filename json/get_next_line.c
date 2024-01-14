@@ -88,7 +88,7 @@ char	*get_next_line(int fd)
 	retstr = malloc(sizeof(char) * (i + 2));
 	if (!retstr || !temp)
 		return (ft_returnfree(&temp));
-	strlcpy(retstr, temp, i + 2);
-	strlcpy(temp, temp + i + 1, strlen(temp + i + 1) + 1);
+	strncpy(retstr, temp, i + 2);
+	strncpy(temp, temp + i + 1, strlen(temp + i + 1) + 1);
 	return (retstr);
 }

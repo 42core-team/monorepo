@@ -38,7 +38,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	if (!ptr)
 		return (0);
 	if (len > 0)
-		strlcpy(ptr, &s[start], len + 1);
+		strncpy(ptr, &s[start], len + 1);
 	else
 		ptr[0] = 0;
 	return (ptr);
