@@ -99,11 +99,17 @@ void	ft_print_game_config(t_config *config)
 
 	printf("Team Configs:\n");
 	unsigned int ind = 0;
-	while (config->team_configs[ind].id != 0)
-		print_team_config(&config->team_configs[ind++]);
+	if (config->team_configs != NULL)
+	{
+		while (config->team_configs[ind].id != 0)
+			print_team_config(&config->team_configs[ind++]);
+	}
 
 	printf("Unit Configs:\n");
 	ind = 0;
-	while (config->unit_configs[ind].type_id != 0)
-		print_unit_config(&config->unit_configs[ind++]);
+	if (config->unit_configs != NULL)
+	{
+		while (config->unit_configs[ind].type_id != 0)
+			print_unit_config(&config->unit_configs[ind++]);
+	}
 }

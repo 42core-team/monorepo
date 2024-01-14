@@ -42,7 +42,7 @@ int	ft_init_socket(struct sockaddr_in addr)
 			status_con = select(socket_fd + 1, NULL, &waitset, NULL, &timeout);
 		}
 		if (status_con != 0)
-			sleep(1);
+			usleep(50000);
 	} while (status_con != 0);
 
 	write(1, "Connected!\n", 12);
@@ -78,6 +78,15 @@ char	*ft_read_socket(const int socket_fd)
 		buffer = get_next_line(socket_fd);
 	}
 	return (last_buffer);
+}
+
+char	*ft_read_socket_once(const int socket_fd)
+{
+	char	*buffer = NULL;
+
+	while ((buffer = get_next_line(socket_fd)) == NULL);
+
+	return (buffer);
 }
 
 struct sockaddr_in	ft_init_addr(const char ip[10], const int port)

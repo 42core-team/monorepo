@@ -8,7 +8,7 @@ t_game	game;
 
 void	ft_receive_config()
 {
-	char	*msg = ft_read_socket(socket_fd);
+	char	*msg = ft_read_socket_once(socket_fd);
 
 	if (debug)
 		printf("Received: %s\n", msg);
