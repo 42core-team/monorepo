@@ -3,14 +3,18 @@
 t_core	*ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
 	t_core	*cores;
+	int		last_json_index;
 
 	token_ind = ft_find_token_one("cores", token_ind, token_len, tokens, json);
+	if (token_ind == -1)
+		return (NULL);
+	last_json_index = tokens[token_ind].end;
 
 	cores = malloc(sizeof(t_core));
 	cores[0].id = 0;
 
 	int index = 0;
-	while (token_ind != -1)
+	while (token_ind != -1 && tokens[ft_find_token_one("id", token_ind, token_len, tokens, json)].end <= last_json_index)
 	{
 		cores = realloc(cores, sizeof(t_core) * (index + 2));
 		cores[index + 1].id = 0;
@@ -30,14 +34,18 @@ t_core	*ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *js
 t_team	*ft_parse_teams(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
 	t_team	*teams;
+	int		last_json_index;
 
 	token_ind = ft_find_token_one("teams", token_ind, token_len, tokens, json);
+	if (token_ind == -1)
+		return (NULL);
+	last_json_index = tokens[token_ind].end;
 
 	teams = malloc(sizeof(t_team));
 	teams[0].id = 0;
 
 	int index = 0;
-	while (token_ind != -1)
+	while (token_ind != -1 && tokens[ft_find_token_one("id", token_ind, token_len, tokens, json)].end <= last_json_index)
 	{
 		teams = realloc(teams, sizeof(t_team) * (index + 2));
 		teams[index + 1].id = 0;
@@ -54,14 +62,18 @@ t_team	*ft_parse_teams(int token_ind, int token_len, jsmntok_t *tokens, char *js
 t_resource	*ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
 	t_resource	*resources;
+	int			last_json_index;
 
 	token_ind = ft_find_token_one("resources", token_ind, token_len, tokens, json);
+	if (token_ind == -1)
+		return (NULL);
+	last_json_index = tokens[token_ind].end;
 
 	resources = malloc(sizeof(t_resource));
 	resources[0].id = 0;
 
 	int index = 0;
-	while (token_ind != -1)
+	while (token_ind != -1 && tokens[ft_find_token_one("id", token_ind, token_len, tokens, json)].end <= last_json_index)
 	{
 		resources = realloc(resources, sizeof(t_resource) * (index + 2));
 		resources[index + 1].id = 0;
@@ -81,14 +93,18 @@ t_resource	*ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, 
 t_unit	*ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
 	t_unit	*units;
+	int		last_json_index;
 
 	token_ind = ft_find_token_one("units", token_ind, token_len, tokens, json);
+	if (token_ind == -1)
+		return (NULL);
+	last_json_index = tokens[token_ind].end;
 
 	units = malloc(sizeof(t_unit));
 	units[0].id = 0;
 
 	int index = 0;
-	while (token_ind != -1)
+	while (token_ind != -1 && tokens[ft_find_token_one("id", token_ind, token_len, tokens, json)].end <= last_json_index)
 	{
 		units = realloc(units, sizeof(t_unit) * (index + 2));
 		units[index + 1].id = 0;
@@ -109,14 +125,18 @@ t_unit	*ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *js
 t_team_config	*ft_parse_team_config(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
 	t_team_config	*team_configs;
+	// int				last_json_index;
 
 	token_ind = ft_find_token_one("teams", token_ind, token_len, tokens, json);
+	if (token_ind == -1)
+		return (NULL);
+	// last_json_index = tokens[token_ind].end;
 
 	team_configs = malloc(sizeof(t_team_config));
 	team_configs[0].id = 0;
 
 	int index = 0;
-	while (token_ind != -1)
+	while (token_ind != -1) //&& tokens[ft_find_token_one("id", token_ind, token_len, tokens, json)].end <= last_json_index
 	{
 		team_configs = realloc(team_configs, sizeof(t_team_config) * (index + 2));
 		team_configs[index + 1].id = 0;
@@ -133,14 +153,18 @@ t_team_config	*ft_parse_team_config(int token_ind, int token_len, jsmntok_t *tok
 t_unit_config	*ft_parse_unit_config(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
 	t_unit_config	*unit_configs;
+	// int				last_json_index;
 
 	token_ind = ft_find_token_one("units", token_ind, token_len, tokens, json);
+	if (token_ind == -1)
+		return (NULL);
+	// last_json_index = tokens[token_ind].end;
 
 	unit_configs = malloc(sizeof(t_unit_config));
 	unit_configs[0].type_id = 0;
 
 	int index = 0;
-	while (token_ind != -1)
+	while (token_ind != -1) //&& tokens[ft_find_token_one("name", token_ind, token_len, tokens, json)].end <= last_json_index)
 	{
 		unit_configs = realloc(unit_configs, sizeof(t_unit_config) * (index + 2));
 		unit_configs[index + 1].type_id = 0;

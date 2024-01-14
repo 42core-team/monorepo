@@ -18,6 +18,8 @@ void	ft_print_status(t_status status)
 void	ft_print_teams(t_team *teams)
 {
 	printf("Teams:\n");
+	if (teams == NULL)
+		return;
 	int index = 0;
 	while (teams[index].id != 0)
 	{
@@ -29,6 +31,8 @@ void	ft_print_teams(t_team *teams)
 void	ft_print_cores(t_core *cores)
 {
 	printf("Cores:\n");
+	if (cores == NULL)
+		return;
 	int index = 0;
 	while (cores[index].id != 0)
 	{
@@ -40,6 +44,8 @@ void	ft_print_cores(t_core *cores)
 void	ft_print_resources(t_resource *resources)
 {
 	printf("Resources:\n");
+	if (resources == NULL)
+		return;
 	int index = 0;
 	while (resources[index].id != 0)
 	{
@@ -51,6 +57,8 @@ void	ft_print_resources(t_resource *resources)
 void	ft_print_units(t_unit *units)
 {
 	printf("Units:\n");
+	if (units == NULL)
+		return;
 	int index = 0;
 	while (units[index].id != 0)
 	{
@@ -60,11 +68,15 @@ void	ft_print_units(t_unit *units)
 }
 
 void print_team_config(const t_team_config *team_config) {
+	if (team_config == NULL || team_config->id == 0)
+		return;
 	printf("- ID: %lu\n", team_config->id);
 	printf("	Name: %s\n", team_config->name);
 }
 
 void print_unit_config(const t_unit_config *unit_config) {
+	if (unit_config == NULL || unit_config->type_id == 0)
+		return;
 	printf("- Name: %s\n", unit_config->name);
 	printf("	Type ID: %lu\n", unit_config->type_id);
 	printf("	Cost: %lu\n", unit_config->cost);
@@ -78,6 +90,8 @@ void print_unit_config(const t_unit_config *unit_config) {
 
 void	ft_print_game_config(t_config *config)
 {
+	if (config == NULL)
+		return;
 	printf("Config Height: %lu\n", config->height);
 	printf("Config Width: %lu\n", config->width);
 	printf("Config Idle Income: %lu\n", config->idle_income);

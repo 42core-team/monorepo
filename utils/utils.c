@@ -62,10 +62,26 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 
 void	ft_free_game()
 {
-	free(game.teams);
-	free(game.cores);
-	free(game.resources);
-	free(game.units);
+	if (game.teams != NULL)
+	{
+		free(game.teams);
+		game.teams = NULL;
+	}
+	if (game.cores != NULL)
+	{
+		free(game.cores);
+		game.cores = NULL;
+	}
+	if (game.resources != NULL)
+	{
+		free(game.resources);
+		game.resources = NULL;
+	}
+	if (game.units != NULL)
+	{
+		free(game.units);
+		game.units = NULL;
+	}
 }
 
 void	ft_free_config()
