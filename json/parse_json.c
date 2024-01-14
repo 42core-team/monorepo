@@ -42,6 +42,8 @@ void	ft_parse_json_config(char *json)
 
 	game.config.unit_configs = ft_parse_unit_config(token_ind, json_data.token_len, json_data.tokens, json);
 	game.config.team_configs = ft_parse_team_config(token_ind, json_data.token_len, json_data.tokens, json);
+
+	free(json_data.tokens);
 }
 
 void	ft_parse_json_state(char *json)
@@ -62,4 +64,6 @@ void	ft_parse_json_state(char *json)
 
 	free(game.units);
 	game.units = ft_parse_units(token_ind, json_data.token_len, json_data.tokens, json);
+
+	free(json_data.tokens);
 }

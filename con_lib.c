@@ -46,9 +46,10 @@ void	ft_init_con(int *argc, char **argv)
 void	ft_close_con()
 {
 	close(socket_fd);
+	ft_free_all();
 }
 
-void	ft_enabled_debug()
+void	ft_enable_debug()
 {
 	debug = true;
 }

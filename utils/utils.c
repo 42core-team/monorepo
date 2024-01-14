@@ -59,3 +59,44 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 		i++;
 	return (sc1[i] - sc2[i]);
 }
+
+void	ft_free_game()
+{
+	free(game.teams);
+	free(game.cores);
+	free(game.resources);
+	free(game.units);
+}
+
+void	ft_free_config()
+{
+	int	ind;
+
+	ind = 0;
+	if (game.config.team_configs != NULL)
+	{
+		while (game.config.team_configs[ind].id != 0)
+		{
+			free(game.config.team_configs[ind].name);
+			ind++;
+		}
+		free(game.config.team_configs);
+	}
+
+	ind = 0;
+	if (game.config.unit_configs != NULL)
+	{
+		while (game.config.unit_configs[ind].type_id != 0)
+		{
+			free(game.config.unit_configs[ind].name);
+			ind++;
+		}
+		free(game.config.unit_configs);
+	}
+}
+
+void	ft_free_all()
+{
+	ft_free_game();
+	ft_free_config();
+}

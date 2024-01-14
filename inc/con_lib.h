@@ -110,8 +110,8 @@ extern t_game	game;
 
 void	ft_init_con(int *argc, char **argv);
 void	ft_close_con();
-void	ft_enabled_debug();
-void	ft_loop();
+void	ft_enable_debug();
+void	ft_loop(void (*ft_user_loop)());
 
 //actions.c
 void	ft_travel_id(unsigned long id, unsigned long x, unsigned long y);
