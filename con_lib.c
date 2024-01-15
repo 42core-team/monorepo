@@ -36,7 +36,7 @@ void	ft_init_con(int *argc, char **argv)
 	}
 	else
 		msg = strdup("{\"id\": 1}\n");
-	// ft_send_socket(socket_fd, msg);
+	ft_send_socket(socket_fd, msg);
 	free(msg);
 
 	ft_receive_config();
@@ -62,6 +62,7 @@ void	ft_loop(void (*ft_user_loop)())
 	while (game.status != STATUS_END)
 	{
 		actions = ft_all_action_json();
+		ft_reset_actions();
 		if (debug)
 			printf("Actions: %s\n", actions);
 		ft_send_socket(socket_fd, actions);

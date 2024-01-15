@@ -113,3 +113,13 @@ void	ft_print_game_config(t_config *config)
 			print_unit_config(&config->unit_configs[ind++]);
 	}
 }
+
+void	ft_print_all()
+{
+	ft_print_game_config(&game.config);
+	ft_print_status(game.status);
+	ft_print_teams(game.teams);
+	ft_print_cores(game.cores);
+	ft_print_resources(game.resources);
+	ft_print_units(game.units);
+}

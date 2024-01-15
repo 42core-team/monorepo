@@ -59,17 +59,17 @@ char	*ft_attack_json()
 
 void	ft_reset_actions()
 {
-	if (!game.actions.creates)
+	if (game.actions.creates != NULL)
 		free(game.actions.creates);
 	game.actions.creates = NULL;
 	game.actions.creates_count = 0;
 
-	if (!game.actions.travels)
+	if (game.actions.travels != NULL)
 		free(game.actions.travels);
 	game.actions.travels = NULL;
 	game.actions.travels_count = 0;
 
-	if (!game.actions.attacks)
+	if (game.actions.attacks != NULL)
 		free(game.actions.attacks);
 	game.actions.attacks = NULL;
 	game.actions.attacks_count = 0;
@@ -90,6 +90,5 @@ char	*ft_all_action_json()
 
 	json = ft_strjoin_free_1(json, "]}\n");
 
-	ft_reset_actions();
 	return (json);
 }

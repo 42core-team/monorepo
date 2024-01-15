@@ -127,5 +127,6 @@ void	ft_print_cores(t_core *cores);
 void	ft_print_resources(t_resource *resources);
 void	ft_print_units(t_unit *units);
 void	ft_print_game_config(t_config *config);
+void	ft_print_all();
 
 #endif

@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "parse_json.h"
 
 char	**ft_create_array(const int count, ...)
 {
@@ -115,4 +116,5 @@ void	ft_free_all()
 {
 	ft_free_game();
 	ft_free_config();
+	ft_reset_actions();
 }
