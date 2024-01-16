@@ -1,22 +1,26 @@
 #include "utils.h"
 
-void	ft_print_status(t_status status)
+void	ft_print_status()
 {
+	const t_status	*status = &game.status;
+
 	printf("Status: ");
-	if (status == STATUS_OK)
+	if (*status == STATUS_OK)
 		printf("STATUS_OK\n");
-	else if (status == STATUS_PAUSED)
+	else if (*status == STATUS_PAUSED)
 		printf("STATUS_PAUSED\n");
-	else if (status == STATUS_END)
+	else if (*status == STATUS_END)
 		printf("STATUS_END\n");
-	else if (status == STATUS_WAIT_FOR_CLIENTS)
+	else if (*status == STATUS_WAIT_FOR_CLIENTS)
 		printf("STATUS_WAIT_FOR_CLIENTS\n");
 	else
 		printf("UNKNOWN\n");
 }
 
-void	ft_print_teams(t_team *teams)
+void	ft_print_teams()
 {
+	const t_team	*teams = game.teams;
+
 	printf("Teams:\n");
 	if (teams == NULL)
 		return;
@@ -28,8 +32,10 @@ void	ft_print_teams(t_team *teams)
 	}
 }
 
-void	ft_print_cores(t_core *cores)
+void	ft_print_cores()
 {
+	const t_core	*cores = game.cores;
+
 	printf("Cores:\n");
 	if (cores == NULL)
 		return;
@@ -41,8 +47,10 @@ void	ft_print_cores(t_core *cores)
 	}
 }
 
-void	ft_print_resources(t_resource *resources)
+void	ft_print_resources()
 {
+	const t_resource	*resources = game.resources;
+
 	printf("Resources:\n");
 	if (resources == NULL)
 		return;
@@ -54,8 +62,10 @@ void	ft_print_resources(t_resource *resources)
 	}
 }
 
-void	ft_print_units(t_unit *units)
+void	ft_print_units()
 {
+	const t_unit	*units = game.units;
+
 	printf("Units:\n");
 	if (units == NULL)
 		return;
@@ -71,25 +81,27 @@ void print_team_config(const t_team_config *team_config) {
 	if (team_config == NULL || team_config->id == 0)
 		return;
 	printf("- ID: %lu\n", team_config->id);
-	printf("	Name: %s\n", team_config->name);
+	printf("  Name: %s\n", team_config->name);
 }
 
 void print_unit_config(const t_unit_config *unit_config) {
 	if (unit_config == NULL || unit_config->type_id == 0)
 		return;
 	printf("- Name: %s\n", unit_config->name);
-	printf("	Type ID: %lu\n", unit_config->type_id);
-	printf("	Cost: %lu\n", unit_config->cost);
-	printf("	HP: %lu\n", unit_config->hp);
-	printf("	Damage Core: %lu\n", unit_config->dmg_core);
-	printf("	Damage Unit: %lu\n", unit_config->dmg_unit);
-	printf("	Max Range: %lu\n", unit_config->max_range);
-	printf("	Min Range: %lu\n", unit_config->min_range);
-	printf("	Speed: %lu\n", unit_config->speed);
+	printf("  Type ID: %lu\n", unit_config->type_id);
+	printf("  Cost: %lu\n", unit_config->cost);
+	printf("  HP: %lu\n", unit_config->hp);
+	printf("  Damage Core: %lu\n", unit_config->dmg_core);
+	printf("  Damage Unit: %lu\n", unit_config->dmg_unit);
+	printf("  Max Range: %lu\n", unit_config->max_range);
+	printf("  Min Range: %lu\n", unit_config->min_range);
+	printf("  Speed: %lu\n", unit_config->speed);
 }
 
-void	ft_print_game_config(t_config *config)
+void	ft_print_game_config()
 {
+	const t_config	*config = &game.config;
+
 	if (config == NULL)
 		return;
 	printf("Config Height: %lu\n", config->height);
