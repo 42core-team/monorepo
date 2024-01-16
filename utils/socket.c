@@ -42,7 +42,7 @@ int	ft_init_socket(struct sockaddr_in addr)
 			status_con = select(socket_fd + 1, NULL, &waitset, NULL, &timeout);
 		}
 		if (status_con != 0)
-			usleep(50000);
+			usleep(350000);
 	} while (status_con != 0);
 
 	write(1, "Connected!\n", 12);
