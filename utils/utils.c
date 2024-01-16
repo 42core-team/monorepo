@@ -39,7 +39,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	if (!ptr)
 		return (0);
 	if (len > 0)
-		strncpy(ptr, &s[start], len + 1);
+		ft_strlcpy(ptr, &s[start], len + 1);
 	else
 		ptr[0] = 0;
 	return (ptr);
@@ -59,6 +59,24 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 	while (s1[i] && s2[i] && s1[i] == s2[i] && i < n - 1)
 		i++;
 	return (sc1[i] - sc2[i]);
+}
+
+size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
+{
+	size_t	len_src;
+	size_t	i;
+
+	len_src = strlen(src);
+	if (dstsize == 0)
+		return (len_src);
+	i = 0;
+	while (i < dstsize - 1 && i < len_src)
+	{
+		dst[i] = src[i];
+		i++;
+	}
+	dst[i] = 0;
+	return (len_src);
 }
 
 void	ft_free_game()
