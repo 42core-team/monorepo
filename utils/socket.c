@@ -89,15 +89,12 @@ char	*ft_read_socket_once(const int socket_fd)
 	return (buffer);
 }
 
-struct sockaddr_in	ft_init_addr(const char ip[10], const int port)
+struct sockaddr_in	ft_init_addr(const int port)
 {
 	struct sockaddr_in	addr;
 
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(port);
-	if (inet_pton(AF_INET, ip, &addr.sin_addr) <= 0) {
-		perror("IP address invalid");
-		exit(1);
-	}
+	addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	return (addr);
 }

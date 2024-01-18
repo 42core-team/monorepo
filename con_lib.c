@@ -22,7 +22,7 @@ void	ft_init_con(int *argc, char **argv)
 {
 	char	*msg, *env_id;
 
-	socket_fd = ft_init_socket(ft_init_addr("127.0.0.1", 4242));
+	socket_fd = ft_init_socket(ft_init_addr(4242));
 	env_id = getenv("CORE_ID");
 	if (env_id != NULL)
 	{
