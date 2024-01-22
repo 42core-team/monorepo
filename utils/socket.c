@@ -1,4 +1,5 @@
 #include "socket.h"
+#include "utils.h"
 
 int	ft_init_socket(struct sockaddr_in addr)
 {
@@ -8,24 +9,16 @@ int	ft_init_socket(struct sockaddr_in addr)
 
 	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (socket_fd < 0)
-	{
-		perror("Socket creation failed");
-		exit(1);
-	}
+		ft_perror_exit("Socket creation failed");
 
 	// Set socket to non-blocking mode
 	int flags = fcntl(socket_fd, F_GETFL, 0);
 	if (flags < 0)
-	{
-		perror("Get socket flags failed");
-		exit(1);
-	}
+		ft_perror_exit("Get socket flags failed");
+
 	flags |= O_NONBLOCK;
 	if (fcntl(socket_fd, F_SETFL, flags) < 0)
-	{
-		perror("Set socket to non-blocking mode failed");
-		exit(1);
-	}
+		ft_perror_exit("Set socket to non-blocking mode failed");
 
 	do {
 		write(1, ".", 1);
@@ -56,10 +49,8 @@ int	ft_send_socket(const int socket_fd, const char *msg)
 
 	int status_send = send(socket_fd, msg, strlen(msg), 0);
 	if (status_send < 0)
-	{
-		perror("Socket send failed");
-		exit(1);
-	}
+		ft_perror_exit("Socket send failed");
+
 	return (status_send);
 }
 
