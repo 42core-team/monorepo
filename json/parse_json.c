@@ -10,20 +10,14 @@ t_json	ft_parse_json(char *json)
 	num_tokens = 64;
 	json_data.tokens = malloc(sizeof(jsmntok_t) * num_tokens);
 	if (!json_data.tokens)
-	{
-		perror("Failed to allocate memory for tokens\n");
-		exit(1);
-	}
+		ft_perror_exit("Failed to allocate memory for tokens\n");
 	json_data.token_len = jsmn_parse(&parser, json, strlen(json), json_data.tokens, num_tokens);
 	while (json_data.token_len == JSMN_ERROR_NOMEM)
 	{
 		num_tokens *= 2;
 		json_data.tokens = realloc(json_data.tokens, sizeof(jsmntok_t) * num_tokens);
 		if (!json_data.tokens)
-		{
-			perror("Failed to reallocate memory for tokens\n");
-			exit(1);
-		}
+			ft_perror_exit("Failed to reallocate memory for tokens\n");
 		json_data.token_len = jsmn_parse(&parser, json, strlen(json), json_data.tokens, num_tokens);
 	}
 

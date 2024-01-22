@@ -18,5 +18,6 @@ int		ft_strncmp(const char *s1, const char *s2, size_t n);
 size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
 void	ft_free_all();
 void	ft_free_game();
+void	ft_perror_exit(char *msg);
 
 #endif

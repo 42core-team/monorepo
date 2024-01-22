@@ -136,3 +136,10 @@ void	ft_free_all()
 	ft_free_config();
 	ft_reset_actions();
 }
+
+void	ft_perror_exit(char *msg)
+{
+	perror(msg);
+	ft_free_all();
+	exit(EXIT_FAILURE);
+}
