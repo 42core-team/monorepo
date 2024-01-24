@@ -89,8 +89,10 @@ typedef struct s_actions
 {
 	t_action_create *creates;
 	unsigned int creates_count;
-	t_action_travel *travels;
-	unsigned int travels_count;
+	t_action_travel *travel_tos;
+	unsigned int travel_tos_count;
+	t_action_travel *travel_dirs;
+	unsigned int travel_dirs_count;
 	t_action_attack *attacks;
 	unsigned int attacks_count;
 } t_actions;
