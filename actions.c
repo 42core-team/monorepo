@@ -50,7 +50,7 @@ void	ft_travel_dir(t_unit *unit, unsigned long x, unsigned long y)
 	ft_travel_dir_id(unit->id, x, y);
 }
 
-void	ft_create(unsigned long type_id)
+void	ft_create_type_id(unsigned long type_id)
 {
 	t_action_create	**actions = &game.actions.creates;
 	unsigned int	*count = &game.actions.creates_count;
@@ -66,6 +66,11 @@ void	ft_create(unsigned long type_id)
 
 	(*actions)[*count].type_id = type_id;
 	(*count)++;
+}
+
+void	ft_create(t_unit_config *unit_config)
+{
+	ft_create_type_id(unit_config->type_id);
 }
 
 void	ft_attack_id(unsigned long attacker_id, unsigned long target_id)
