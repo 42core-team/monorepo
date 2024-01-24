@@ -124,9 +124,9 @@ t_unit	*ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *js
 		units[index].id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
 		units[index].type_id = ft_find_parse_ulong("type_id", &token_ind, token_len, tokens, json);
 		units[index].team_id = ft_find_parse_ulong("team_id", &token_ind, token_len, tokens, json);
+		units[index].hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
 		units[index].x = ft_find_parse_ulong("x", &token_ind, token_len, tokens, json);
 		units[index].y = ft_find_parse_ulong("y", &token_ind, token_len, tokens, json);
-		units[index].hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
 
 		index++;
 	}
