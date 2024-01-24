@@ -89,8 +89,10 @@ typedef struct s_actions
 {
 	t_action_create *creates;
 	unsigned int creates_count;
-	t_action_travel *travels;
-	unsigned int travels_count;
+	t_action_travel *travel_tos;
+	unsigned int travel_tos_count;
+	t_action_travel *travel_dirs;
+	unsigned int travel_dirs_count;
 	t_action_attack *attacks;
 	unsigned int attacks_count;
 } t_actions;
@@ -114,8 +116,10 @@ void ft_enable_debug();
 void ft_loop(void (*ft_user_loop)());
 
 // actions.c
-void ft_travel_id(unsigned long id, unsigned long x, unsigned long y);
-void ft_travel(t_unit *unit, unsigned long x, unsigned long y);
+void ft_travel_to_id(unsigned long id, unsigned long x, unsigned long y);
+void ft_travel_to(t_unit *unit, unsigned long x, unsigned long y);
+void ft_travel_dir_id(unsigned long id, unsigned long x, unsigned long y);
+void ft_travel_dir(t_unit *unit, unsigned long x, unsigned long y);
 void ft_create(unsigned long type_id);
 void ft_attack_id(unsigned long attacker_id, unsigned long target_id);
 void ft_attack(t_unit *attacker, t_unit *target);

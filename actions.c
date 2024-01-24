@@ -1,9 +1,9 @@
 #include "parse_json.h"
 
-void	ft_travel_id(unsigned long id, unsigned long x, unsigned long y)
+void	ft_travel_to_id(unsigned long id, unsigned long x, unsigned long y)
 {
-	t_action_travel	**actions = &game.actions.travels;
-	unsigned int	*count = &game.actions.travels_count;
+	t_action_travel	**actions = &game.actions.travel_tos;
+	unsigned int	*count = &game.actions.travel_tos_count;
 
 	if (!*actions)
 	{
@@ -20,9 +20,34 @@ void	ft_travel_id(unsigned long id, unsigned long x, unsigned long y)
 	(*count)++;
 }
 
-void	ft_travel(t_unit *unit, unsigned long x, unsigned long y)
+void	ft_travel_to(t_unit *unit, unsigned long x, unsigned long y)
 {
-	ft_travel_id(unit->id, x, y);
+	ft_travel_to_id(unit->id, x, y);
+}
+
+void	ft_travel_dir_id(unsigned long id, unsigned long x, unsigned long y)
+{
+	t_action_travel	**actions = &game.actions.travel_dirs;
+	unsigned int	*count = &game.actions.travel_dirs_count;
+
+	if (!*actions)
+	{
+		*actions = malloc(sizeof(t_action_travel) * 2);
+		*count = 0;
+	}
+	else
+		*actions = realloc(*actions, sizeof(t_action_travel) * (*count + 2));
+	(*actions)[*count + 1].id = 0;
+
+	(*actions)[*count].id = id;
+	(*actions)[*count].x = x;
+	(*actions)[*count].y = y;
+	(*count)++;
+}
+
+void	ft_travel_dir(t_unit *unit, unsigned long x, unsigned long y)
+{
+	ft_travel_dir_id(unit->id, x, y);
 }
 
 void	ft_create(unsigned long type_id)
