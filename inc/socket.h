@@ -17,6 +17,6 @@ int					ft_init_socket(struct sockaddr_in addr);
 int					ft_send_socket(const int socket_fd, const char *msg);
 char				*ft_read_socket(const int socket_fd);
 char				*ft_read_socket_once(const int socket_fd);
-struct sockaddr_in	ft_init_addr(const int port);
+struct sockaddr_in	ft_init_addr(const char *ip_address, const int port);
 
 #endif
