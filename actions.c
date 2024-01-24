@@ -1,5 +1,12 @@
 #include "parse_json.h"
 
+/**
+ * @brief Let a unit travel to a specific coordinate.
+ *
+ * @param id Which unit should travel.
+ * @param x To which x coordinate should the unit travel.
+ * @param y To which y coordinate should the unit travel.
+ */
 void	ft_travel_to_id(unsigned long id, unsigned long x, unsigned long y)
 {
 	t_action_travel	**actions = &game.actions.travel_tos;
