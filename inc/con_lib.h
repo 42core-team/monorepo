@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 typedef enum e_status
 {
@@ -77,6 +78,7 @@ typedef struct s_action_create
 typedef struct s_action_travel
 {
 	unsigned long id;
+	bool is_vector;
 	unsigned long x;
 	unsigned long y;
 } t_action_travel;
@@ -89,10 +91,8 @@ typedef struct s_actions
 {
 	t_action_create *creates;
 	unsigned int creates_count;
-	t_action_travel *travel_tos;
-	unsigned int travel_tos_count;
-	t_action_travel *travel_dirs;
-	unsigned int travel_dirs_count;
+	t_action_travel *travels;
+	unsigned int travels_count;
 	t_action_attack *attacks;
 	unsigned int attacks_count;
 } t_actions;

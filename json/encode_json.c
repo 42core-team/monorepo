@@ -17,43 +17,36 @@ char	*ft_create_json()
 	return (json);
 }
 
-char	*ft_travel_to_json()
+char	*ft_travel_json()
 {
 	char	*json = calloc(1, sizeof(char));
-	t_action_travel	*travels = game.actions.travel_tos;
+	t_action_travel	*travels = game.actions.travels;
 
 	unsigned int ind = 0;
-	while (game.actions.travel_tos_count > ind && travels)
+	while (game.actions.travels_count > ind && travels)
 	{
-		json = ft_strjoin_free_1(json, "{\"TravelTo\":{");
+		json = ft_strjoin_free_1(json, "{\"Travel\":{");
 		json = ft_strjoin_free_1(json, "\"id\":");
 		json = ft_strjoin_free_1_2(json, ft_ul_string(travels[ind].id));
-		json = ft_strjoin_free_1(json, ",\"x\":");
-		json = ft_strjoin_free_1_2(json, ft_ul_string(travels[ind].x));
-		json = ft_strjoin_free_1(json, ",\"y\":");
-		json = ft_strjoin_free_1_2(json, ft_ul_string(travels[ind].y));
-		json = ft_strjoin_free_1(json, "}},");
-		ind++;
-	}
-	return (json);
-}
 
-char	*ft_travel_dir_json()
-{
-	char	*json = calloc(1, sizeof(char));
-	t_action_travel	*travels = game.actions.travel_dirs;
-
-	unsigned int ind = 0;
-	while (game.actions.travel_dirs_count > ind && travels)
-	{
-		json = ft_strjoin_free_1(json, "{\"TravelDir\":{");
-		json = ft_strjoin_free_1(json, "\"id\":");
-		json = ft_strjoin_free_1_2(json, ft_ul_string(travels[ind].id));
-		json = ft_strjoin_free_1(json, ",\"x\":");
-		json = ft_strjoin_free_1_2(json, ft_ul_string(travels[ind].x));
-		json = ft_strjoin_free_1(json, ",\"y\":");
-		json = ft_strjoin_free_1_2(json, ft_ul_string(travels[ind].y));
-		json = ft_strjoin_free_1(json, "}},");
+		json = ft_strjoin_free_1(json, ",\"travel_type\":");
+		if (travels[ind].is_vector)
+		{
+			json = ft_strjoin_free_1(json, "{\"Vector\":{");
+			json = ft_strjoin_free_1(json, "\"x\":");
+			json = ft_strjoin_free_1_2(json, ft_ul_string(travels[ind].x));
+			json = ft_strjoin_free_1(json, ",\"y\":");
+			json = ft_strjoin_free_1_2(json, ft_ul_string(travels[ind].y));
+		}
+		else
+		{
+			json = ft_strjoin_free_1(json, "{\"Position\":{");
+			json = ft_strjoin_free_1(json, "\"x\":");
+			json = ft_strjoin_free_1_2(json, ft_ul_string(travels[ind].x));
+			json = ft_strjoin_free_1(json, ",\"y\":");
+			json = ft_strjoin_free_1_2(json, ft_ul_string(travels[ind].y));
+		}
+		json = ft_strjoin_free_1(json, "}}}},");
 		ind++;
 	}
 	return (json);
@@ -85,15 +78,10 @@ void	ft_reset_actions()
 	game.actions.creates = NULL;
 	game.actions.creates_count = 0;
 
-	if (game.actions.travel_tos != NULL)
-		free(game.actions.travel_tos);
-	game.actions.travel_tos = NULL;
-	game.actions.travel_tos_count = 0;
-
-	if (game.actions.travel_dirs != NULL)
-		free(game.actions.travel_dirs);
-	game.actions.travel_dirs = NULL;
-	game.actions.travel_dirs_count = 0;
+	if (game.actions.travels != NULL)
+		free(game.actions.travels);
+	game.actions.travels = NULL;
+	game.actions.travels_count = 0;
 
 	if (game.actions.attacks != NULL)
 		free(game.actions.attacks);
@@ -108,8 +96,7 @@ char	*ft_all_action_json()
 	json = ft_strjoin_free_1(json, "{\"actions\":[");
 
 	json = ft_strjoin_free_1_2(json, ft_create_json());
-	json = ft_strjoin_free_1_2(json, ft_travel_to_json());
-	json = ft_strjoin_free_1_2(json, ft_travel_dir_json());
+	json = ft_strjoin_free_1_2(json, ft_travel_json());
 	json = ft_strjoin_free_1_2(json, ft_attack_json());
 
 	if (json[strlen(json) - 1] == ',')
