@@ -118,8 +118,8 @@ void ft_loop(void (*ft_user_loop)());
 // actions.c
 void ft_travel_to_id(unsigned long id, unsigned long x, unsigned long y);
 void ft_travel_to(t_unit *unit, unsigned long x, unsigned long y);
-void ft_travel_dir_id(unsigned long id, unsigned long x, unsigned long y);
-void ft_travel_dir(t_unit *unit, unsigned long x, unsigned long y);
+void ft_travel_dir_id(unsigned long id, long x, long y);
+void ft_travel_dir(t_unit *unit, long x, long y);
 void ft_create_type_id(unsigned long type_id);
 void ft_create(t_unit_config *unit_config);
 void ft_attack_id(unsigned long attacker_id, unsigned long target_id);

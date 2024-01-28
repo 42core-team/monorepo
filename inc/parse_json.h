@@ -30,6 +30,7 @@ char			*ft_find_parse_str(const char *search, int *token_ind, int token_len, jsm
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strjoin_free_1(char *s1, char *s2);
 char	*ft_strjoin_free_1_2(char *s1, char *s2);
+char	*ft_l_string(long num);
 char	*ft_ul_string(unsigned long num);
 char	*ft_all_action_json();
 void	ft_reset_actions();
