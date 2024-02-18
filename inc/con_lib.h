@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 typedef enum e_status
 {
@@ -116,6 +117,7 @@ typedef struct s_action_create
 typedef struct s_action_travel
 {
 	unsigned long id;
+	bool is_vector;
 	unsigned long x;
 	unsigned long y;
 } t_action_travel;
@@ -128,10 +130,8 @@ typedef struct s_actions
 {
 	t_action_create *creates;
 	unsigned int creates_count;
-	t_action_travel *travel_tos;
-	unsigned int travel_tos_count;
-	t_action_travel *travel_dirs;
-	unsigned int travel_dirs_count;
+	t_action_travel *travels;
+	unsigned int travels_count;
 	t_action_attack *attacks;
 	unsigned int attacks_count;
 } t_actions;
@@ -182,8 +182,8 @@ void ft_loop(void (*ft_user_loop)());
 // actions.c
 void ft_travel_to_id(unsigned long id, unsigned long x, unsigned long y);
 void ft_travel_to(t_unit *unit, unsigned long x, unsigned long y);
-void ft_travel_dir_id(unsigned long id, unsigned long x, unsigned long y);
-void ft_travel_dir(t_unit *unit, unsigned long x, unsigned long y);
+void ft_travel_dir_id(unsigned long id, long x, long y);
+void ft_travel_dir(t_unit *unit, long x, long y);
 void ft_create_type_id(unsigned long type_id);
 void ft_create(t_unit_config *unit_config);
 void ft_attack_id(unsigned long attacker_id, unsigned long target_id);

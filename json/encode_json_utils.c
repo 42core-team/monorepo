@@ -37,6 +37,15 @@ char	*ft_strjoin_free_1_2(char *s1, char *s2)
 	return (result);
 }
 
+char*	ft_l_string(long num)
+{
+	char	*buffer = malloc(21);
+
+	if (buffer)
+		snprintf(buffer, 21, "%ld", num);
+	return (buffer);
+}
+
 char*	ft_ul_string(unsigned long num)
 {
 	char	*buffer = malloc(21);

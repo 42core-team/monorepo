@@ -9,8 +9,8 @@
  */
 void	ft_travel_to_id(unsigned long id, unsigned long x, unsigned long y)
 {
-	t_action_travel	**actions = &game.actions.travel_tos;
-	unsigned int	*count = &game.actions.travel_tos_count;
+	t_action_travel	**actions = &game.actions.travels;
+	unsigned int	*count = &game.actions.travels_count;
 
 	if (!*actions)
 	{
@@ -22,6 +22,7 @@ void	ft_travel_to_id(unsigned long id, unsigned long x, unsigned long y)
 	(*actions)[*count + 1].id = 0;
 
 	(*actions)[*count].id = id;
+	(*actions)[*count].is_vector = false;
 	(*actions)[*count].x = x;
 	(*actions)[*count].y = y;
 	(*count)++;
@@ -46,10 +47,10 @@ void	ft_travel_to(t_unit *unit, unsigned long x, unsigned long y)
  * @param x x vector of the direction the unit should travel.
  * @param y y vector of the direction the unit should travel.
  */
-void	ft_travel_dir_id(unsigned long id, unsigned long x, unsigned long y)
+void	ft_travel_dir_id(unsigned long id, long x, long y)
 {
-	t_action_travel	**actions = &game.actions.travel_dirs;
-	unsigned int	*count = &game.actions.travel_dirs_count;
+	t_action_travel	**actions = &game.actions.travels;
+	unsigned int	*count = &game.actions.travels_count;
 
 	if (!*actions)
 	{
@@ -61,6 +62,7 @@ void	ft_travel_dir_id(unsigned long id, unsigned long x, unsigned long y)
 	(*actions)[*count + 1].id = 0;
 
 	(*actions)[*count].id = id;
+	(*actions)[*count].is_vector = true;
 	(*actions)[*count].x = x;
 	(*actions)[*count].y = y;
 	(*count)++;
@@ -73,7 +75,7 @@ void	ft_travel_dir_id(unsigned long id, unsigned long x, unsigned long y)
  * @param x x vector of the direction the unit should travel.
  * @param y y vector of the direction the unit should travel.
  */
-void	ft_travel_dir(t_unit *unit, unsigned long x, unsigned long y)
+void	ft_travel_dir(t_unit *unit, long x, long y)
 {
 	ft_travel_dir_id(unit->id, x, y);
 }
