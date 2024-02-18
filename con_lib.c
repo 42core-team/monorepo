@@ -18,6 +18,12 @@ void	ft_receive_config()
 	free(msg);
 }
 
+/**
+ * @brief Starts the connection to the server. This function should be called before any other function from this library.
+ *
+ * @param argc The argc from the main function.
+ * @param argv The argv from the main function.
+ */
 void	ft_init_con(int *argc, char **argv)
 {
 	char	*msg, *env_id;
@@ -43,17 +49,24 @@ void	ft_init_con(int *argc, char **argv)
 	ft_reset_actions();
 }
 
+/// @brief Closes the connection to the server and frees all allocated memory.
 void	ft_close_con()
 {
 	close(socket_fd);
 	ft_free_all();
 }
 
+/// @brief Enables debug mode, which prints all sent and received messages.
 void	ft_enable_debug()
 {
 	debug = true;
 }
 
+/**
+ * @brief Starts the main loop that sends and receives messages from the server. This function should be called after ft_init_con.
+ *
+ * @param ft_user_loop Your own function that is called every time new data is received.
+ */
 void	ft_loop(void (*ft_user_loop)())
 {
 	char	*msg;
