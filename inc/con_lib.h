@@ -143,6 +143,10 @@ typedef struct s_game
 	 */
 	t_config config;
 	/**
+	 * @brief The id of the team that you are playing for.
+	 */
+	unsigned long team_id;
+	/**
 	 * @brief The status of the game. Can be OK, PAUSED, END or WAIT_FOR_CLIENTS.
 	 */
 	t_status status;

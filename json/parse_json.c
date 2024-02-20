@@ -29,6 +29,7 @@ void	ft_parse_json_config(char *json)
 	t_json	json_data = ft_parse_json(json);
 	int	token_ind = 1;
 
+	game.team_id = ft_find_parse_ulong("id", &token_ind, json_data.token_len, json_data.tokens, json);
 	game.config.width = ft_find_parse_ulong("height", &token_ind, json_data.token_len, json_data.tokens, json);
 	game.config.height = ft_find_parse_ulong("width", &token_ind, json_data.token_len, json_data.tokens, json);
 	game.config.idle_income = ft_find_parse_ulong("idle_income", &token_ind, json_data.token_len, json_data.tokens, json);
