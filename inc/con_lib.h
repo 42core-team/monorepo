@@ -191,7 +191,9 @@ void ft_travel_dir(t_unit *unit, long x, long y);
 void ft_create_type_id(unsigned long type_id);
 void ft_create(t_unit_config *unit_config);
 void ft_attack_id(unsigned long attacker_id, unsigned long target_id);
-void ft_attack(t_unit *attacker, t_unit *target);
+void ft_attack_unit(t_unit *attacker, t_unit *target);
+void ft_attack_resource(t_unit *attacker, t_resource *target);
+void ft_attack_core(t_unit *attacker, t_core *target);
 
 // print_utils.c
 void ft_print_status();

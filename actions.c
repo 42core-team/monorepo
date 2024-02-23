@@ -144,7 +144,29 @@ void	ft_attack_id(unsigned long attacker_id, unsigned long target_id)
  * @param attacker Pointer to the unit that should be used to attack.
  * @param target Pointer to the unit that should be attacked.
  */
-void	ft_attack(t_unit *attacker, t_unit *target)
+void	ft_attack_unit(t_unit *attacker, t_unit *target)
+{
+	ft_attack_id(attacker->id, target->id);
+}
+
+/**
+ * @brief Lets a unit attack another unit. Same as ft_attack_id, besides that this function takes a pointer to a unit instead of an id.
+ *
+ * @param attacker Pointer to the unit that should be used to attack.
+ * @param target Pointer to the resource that should be attacked.
+ */
+void	ft_attack_resource(t_unit *attacker, t_resource *target)
+{
+	ft_attack_id(attacker->id, target->id);
+}
+
+/**
+ * @brief Lets a unit attack another unit. Same as ft_attack_id, besides that this function takes a pointer to a unit instead of an id.
+ *
+ * @param attacker Pointer to the unit that should be used to attack.
+ * @param target Pointer to the core that should be attacked.
+ */
+void	ft_attack_core(t_unit *attacker, t_core *target)
 {
 	ft_attack_id(attacker->id, target->id);
 }

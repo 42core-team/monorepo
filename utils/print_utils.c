@@ -29,7 +29,7 @@ void	ft_print_teams()
 {
 	const t_team	*teams = game.teams;
 
-	printf("Your team id: %lu\n", game.team_id);
+	printf("Your team id: %lu\n", game.my_team_id);
 	printf("Teams:\n");
 	if (teams == NULL)
 		return;
