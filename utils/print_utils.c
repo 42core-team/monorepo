@@ -74,7 +74,7 @@ void	ft_print_resources()
 	int index = 0;
 	while (resources[index].id != 0)
 	{
-		printf("- id: %lu value: %lu x: %lu y: %lu hp: %lu\n", resources[index].id, resources[index].value, resources[index].x, resources[index].y, resources[index].hp);
+		printf("- id: %lu x: %lu y: %lu hp: %lu\n", resources[index].id, resources[index].x, resources[index].y, resources[index].hp);
 		index++;
 	}
 }
@@ -130,7 +130,19 @@ void print_unit_config(const t_unit_config *unit_config) {
 }
 
 /**
- * @brief Prints the current game config with inforamtion about their height, width, idle_income, core_hp, team_configs and unit_configs into stdout
+ * @brief Prints a resource config with inforamtion about their type_id and hp into stdout
+ *
+ * @param unit_config Pointer to the resource config
+ */
+void print_resource_config(const t_resource_config *resource_config) {
+	if (resource_config == NULL || resource_config->type_id == 0)
+		return;
+	printf("  Type ID: %lu\n", resource_config->type_id);
+	printf("  HP: %lu\n", resource_config->hp);
+}
+
+/**
+ * @brief Prints the current game config with inforamtion about their height, width, idle_income, core_hp, teams and units into stdout
  *
  */
 void	ft_print_game_config()
@@ -146,18 +158,26 @@ void	ft_print_game_config()
 
 	printf("Team Configs:\n");
 	unsigned int ind = 0;
-	if (config->team_configs != NULL)
+	if (config->teams != NULL)
 	{
-		while (config->team_configs[ind].id != 0)
-			print_team_config(&config->team_configs[ind++]);
+		while (config->teams[ind].id != 0)
+			print_team_config(&config->teams[ind++]);
 	}
 
 	printf("Unit Configs:\n");
 	ind = 0;
-	if (config->unit_configs != NULL)
+	if (config->units != NULL)
 	{
-		while (config->unit_configs[ind].type_id != 0)
-			print_unit_config(&config->unit_configs[ind++]);
+		while (config->units[ind].type_id != 0)
+			print_unit_config(&config->units[ind++]);
+	}
+
+	printf("Resource Configs:\n");
+	ind = 0;
+	if (config->resources != NULL)
+	{
+		while (config->resources[ind].type_id != 0)
+			print_resource_config(&config->resources[ind++]);
 	}
 }
 

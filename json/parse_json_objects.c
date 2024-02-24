@@ -91,7 +91,6 @@ t_resource	*ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, 
 		resources[index + 1].id = 0;
 
 		resources[index].id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
-		resources[index].value = ft_find_parse_ulong("value", &token_ind, token_len, tokens, json);
 		resources[index].x = ft_find_parse_ulong("x", &token_ind, token_len, tokens, json);
 		resources[index].y = ft_find_parse_ulong("y", &token_ind, token_len, tokens, json);
 		resources[index].hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
@@ -136,7 +135,7 @@ t_unit	*ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *js
 
 t_team_config	*ft_parse_team_config(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
-	t_team_config	*team_configs;
+	t_team_config	*teams;
 	int				last_json_index, next_token_ind;
 
 	token_ind = ft_find_token_one("teams", token_ind, token_len, tokens, json);
@@ -144,8 +143,8 @@ t_team_config	*ft_parse_team_config(int token_ind, int token_len, jsmntok_t *tok
 		return (NULL);
 	last_json_index = tokens[token_ind].end;
 
-	team_configs = malloc(sizeof(t_team_config));
-	team_configs[0].id = 0;
+	teams = malloc(sizeof(t_team_config));
+	teams[0].id = 0;
 
 	int index = 0;
 	while (token_ind != -1)
@@ -154,21 +153,21 @@ t_team_config	*ft_parse_team_config(int token_ind, int token_len, jsmntok_t *tok
 		if (next_token_ind == -1 || tokens[next_token_ind].end > last_json_index)
 			break;
 
-		team_configs = realloc(team_configs, sizeof(t_team_config) * (index + 2));
-		team_configs[index + 1].id = 0;
+		teams = realloc(teams, sizeof(t_team_config) * (index + 2));
+		teams[index + 1].id = 0;
 
-		team_configs[index].id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
-		team_configs[index].name = ft_find_parse_str("name", &token_ind, token_len, tokens, json);
+		teams[index].id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
+		teams[index].name = ft_find_parse_str("name", &token_ind, token_len, tokens, json);
 
 		index++;
 	}
 
-	return (team_configs);
+	return (teams);
 }
 
 t_unit_config	*ft_parse_unit_config(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
-	t_unit_config	*unit_configs;
+	t_unit_config	*units;
 	int				last_json_index, next_token_ind;
 
 	token_ind = ft_find_token_one("units", token_ind, token_len, tokens, json);
@@ -176,8 +175,8 @@ t_unit_config	*ft_parse_unit_config(int token_ind, int token_len, jsmntok_t *tok
 		return (NULL);
 	last_json_index = tokens[token_ind].end;
 
-	unit_configs = malloc(sizeof(t_unit_config));
-	unit_configs[0].type_id = 0;
+	units = malloc(sizeof(t_unit_config));
+	units[0].type_id = 0;
 
 	int index = 0;
 	while (token_ind != -1)
@@ -186,24 +185,24 @@ t_unit_config	*ft_parse_unit_config(int token_ind, int token_len, jsmntok_t *tok
 		if (next_token_ind == -1 || tokens[next_token_ind].end > last_json_index)
 			break;
 
-		unit_configs = realloc(unit_configs, sizeof(t_unit_config) * (index + 2));
-		unit_configs[index + 1].type_id = 0;
+		units = realloc(units, sizeof(t_unit_config) * (index + 2));
+		units[index + 1].type_id = 0;
 
-		unit_configs[index].name = ft_find_parse_str("name", &token_ind, token_len, tokens, json);
-		unit_configs[index].type_id = ft_find_parse_ulong("type_id", &token_ind, token_len, tokens, json);
-		unit_configs[index].cost = ft_find_parse_ulong("cost", &token_ind, token_len, tokens, json);
-		unit_configs[index].hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
-		unit_configs[index].dmg_core = ft_find_parse_ulong("dmg_core", &token_ind, token_len, tokens, json);
-		unit_configs[index].dmg_unit = ft_find_parse_ulong("dmg_unit", &token_ind, token_len, tokens, json);
-		unit_configs[index].dmg_resource = ft_find_parse_ulong("dmg_resource", &token_ind, token_len, tokens, json);
-		unit_configs[index].max_range = ft_find_parse_ulong("max_range", &token_ind, token_len, tokens, json);
-		unit_configs[index].min_range = ft_find_parse_ulong("min_range", &token_ind, token_len, tokens, json);
-		unit_configs[index].speed = ft_find_parse_ulong("speed", &token_ind, token_len, tokens, json);
+		units[index].name = ft_find_parse_str("name", &token_ind, token_len, tokens, json);
+		units[index].type_id = ft_find_parse_ulong("type_id", &token_ind, token_len, tokens, json);
+		units[index].cost = ft_find_parse_ulong("cost", &token_ind, token_len, tokens, json);
+		units[index].hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
+		units[index].dmg_core = ft_find_parse_ulong("dmg_core", &token_ind, token_len, tokens, json);
+		units[index].dmg_unit = ft_find_parse_ulong("dmg_unit", &token_ind, token_len, tokens, json);
+		units[index].dmg_resource = ft_find_parse_ulong("dmg_resource", &token_ind, token_len, tokens, json);
+		units[index].max_range = ft_find_parse_ulong("max_range", &token_ind, token_len, tokens, json);
+		units[index].min_range = ft_find_parse_ulong("min_range", &token_ind, token_len, tokens, json);
+		units[index].speed = ft_find_parse_ulong("speed", &token_ind, token_len, tokens, json);
 
 		index++;
 	}
 
-	return (unit_configs);
+	return (units);
 }
 
 t_resource_config	*ft_parse_resource_config(int token_ind, int token_len, jsmntok_t *tokens, char *json)
