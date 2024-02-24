@@ -108,25 +108,25 @@ void	ft_free_config()
 	int	ind;
 
 	ind = 0;
-	if (game.config.team_configs != NULL)
+	if (game.config.teams != NULL)
 	{
-		while (game.config.team_configs[ind].id != 0)
+		while (game.config.teams[ind].id != 0)
 		{
-			free(game.config.team_configs[ind].name);
+			free(game.config.teams[ind].name);
 			ind++;
 		}
-		free(game.config.team_configs);
+		free(game.config.teams);
 	}
 
 	ind = 0;
-	if (game.config.unit_configs != NULL)
+	if (game.config.units != NULL)
 	{
-		while (game.config.unit_configs[ind].type_id != 0)
+		while (game.config.units[ind].type_id != 0)
 		{
-			free(game.config.unit_configs[ind].name);
+			free(game.config.units[ind].name);
 			ind++;
 		}
-		free(game.config.unit_configs);
+		free(game.config.units);
 	}
 }
 

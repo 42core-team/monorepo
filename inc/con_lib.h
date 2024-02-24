@@ -40,7 +40,6 @@ typedef struct s_resource
 {
 	/// @brief The id of the resource.
 	unsigned long id;
-	unsigned long value;
 	/// @brief The x coordinate of the resource.
 	unsigned long x;
 	/// @brief The y coordinate of the resource.
@@ -94,6 +93,13 @@ typedef struct s_team_config
 	/// @brief The name of the team.
 	char *name;
 } t_team_config;
+typedef struct s_resource_config
+{
+	/// @brief What type of resource this is.
+	unsigned long type_id;
+	/// @brief Initial healthpoints of the resource.
+	unsigned long hp;
+} t_resource_config;
 typedef struct s_config
 {
 	/// @brief The height of the map.
@@ -105,9 +111,11 @@ typedef struct s_config
 	/// @brief How much healthpoints a core has at the start of the game.
 	unsigned long core_hp;
 	/// @brief List of all teams with their id and name. The array is terminated by an element with id 0.
-	t_team_config *team_configs;
+	t_team_config *teams;
 	/// @brief List of all unit types that are available in the game. The array is terminated by an element with type_id 0.
-	t_unit_config *unit_configs;
+	t_unit_config *units;
+	/// @brief List of all resource types that are available in the game. The array is terminated by an element with type_id 0.
+	t_resource_config *resources;
 } t_config;
 
 typedef struct s_action_create
