@@ -99,6 +99,8 @@ typedef struct s_resource_config
 	unsigned long type_id;
 	/// @brief Initial healthpoints of the resource.
 	unsigned long hp;
+	/// @brief How much balance you would get if you destroy the whole resource.
+	unsigned long balance_value;
 } t_resource_config;
 typedef struct s_config
 {

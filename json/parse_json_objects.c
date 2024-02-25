@@ -230,6 +230,7 @@ t_resource_config	*ft_parse_resource_config(int token_ind, int token_len, jsmnto
 
 		resource_configs[index].type_id = ft_find_parse_ulong("type_id", &token_ind, token_len, tokens, json);
 		resource_configs[index].hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
+		resource_configs[index].balance_value = ft_find_parse_ulong("balance_value", &token_ind, token_len, tokens, json);
 
 		index++;
 	}
