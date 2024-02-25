@@ -139,6 +139,7 @@ void print_resource_config(const t_resource_config *resource_config) {
 		return;
 	printf("  Type ID: %lu\n", resource_config->type_id);
 	printf("  HP: %lu\n", resource_config->hp);
+	printf("  Balance_Value: %lu\n", resource_config->balance_value);
 }
 
 /**
