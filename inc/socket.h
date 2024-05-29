@@ -2,6 +2,7 @@
 # define SOCKET_H
 
 # include <sys/socket.h>
+# include <sys/select.h>
 # include <netinet/in.h>
 # include <stdlib.h>
 # include <stdio.h>
