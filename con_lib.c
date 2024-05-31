@@ -47,7 +47,7 @@ void	ft_init_con(int *argc, char **argv)
 
 	ft_receive_config();
 	ft_reset_actions();
-	printf("Game started! Your id: %d\n", game.my_team_id);
+	printf("Game started! Your id: %ld\n", game.my_team_id);
 }
 
 /// @brief Closes the connection to the server and frees all allocated memory.
