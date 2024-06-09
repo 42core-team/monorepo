@@ -23,45 +23,42 @@ typedef struct s_team
 	/// @brief Current balance of the team.
 	unsigned long balance;
 } t_team;
-typedef struct s_core
+
+typedef enum e_obj_type
 {
-	/// @brief The id of the core.
-	unsigned long id;
-	/// @brief The id of the team that owns the core.
-	unsigned long team_id;
-	/// @brief The x coordinate of the core.
-	unsigned long x;
-	/// @brief The y coordinate of the core.
-	unsigned long y;
-	/// @brief The current healthpoints of the core.
-	unsigned long hp;
-} t_core;
-typedef struct s_resource
+	OBJ_UNIT,
+	OBJ_CORE,
+	OBJ_RESOURCE
+} t_obj_type;
+
+typedef struct s_obj
 {
-	/// @brief The id of the resource.
+	/// @brief Type of the obj
+	t_obj_type	type;
+
+	/// @brief The id of the obj
 	unsigned long id;
-	/// @brief The x coordinate of the resource.
+	/// @brief The x coordinate of the obj
 	unsigned long x;
-	/// @brief The y coordinate of the resource.
+	/// @brief The y coordinate of the obj
 	unsigned long y;
-	/// @brief The current healthpoints of the resource.
+	/// @brief The current healthpoints of the obj
 	unsigned long hp;
-} t_resource;
-typedef struct s_unit
-{
-	/// @brief The id of the unit.
-	unsigned long id;
-	/// @brief Which type of unit this is.
-	unsigned long type_id;
-	/// @brief The id of the team that owns the unit.
-	unsigned long team_id;
-	/// @brief The x coordinate of the unit.
-	unsigned long x;
-	/// @brief The y coordinate of the unit.
-	unsigned long y;
-	/// @brief The current healthpoints of the unit.
-	unsigned long hp;
-} t_unit;
+	union {
+		struct
+		{
+			/// @brief The id of the team that owns the core.
+			unsigned long team_id;
+		}	s_core;
+		struct
+		{
+			/// @brief Which type of unit this is.
+			unsigned long type_id;
+			/// @brief The id of the team that owns the unit.
+			unsigned long team_id;
+		}	s_unit;
+	};
+} t_obj;
 
 typedef struct s_unit_config
 {
@@ -167,15 +164,15 @@ typedef struct s_game
 	/**
 	 * @brief List of all cores and their informations. The array is terminated by an element with id 0.
 	 */
-	t_core *cores;
+	t_obj *cores;
 	/**
 	 * @brief List of all resources and their informations. The array is terminated by an element with id 0.
 	 */
-	t_resource *resources;
+	t_obj *resources;
 	/**
 	 * @brief List of all units and their informations. The array is terminated by an element with id 0.
 	 */
-	t_unit *units;
+	t_obj *units;
 	/**
 	 * @brief List of all actions that will be send to the server when your function ends.
 	 */
@@ -195,15 +192,13 @@ void ft_loop(void (*ft_user_loop)());
 
 // actions.c
 void ft_travel_to_id(unsigned long id, unsigned long x, unsigned long y);
-void ft_travel_to(t_unit *unit, unsigned long x, unsigned long y);
+void ft_travel_to(t_obj *unit, unsigned long x, unsigned long y);
 void ft_travel_dir_id(unsigned long id, long x, long y);
-void ft_travel_dir(t_unit *unit, long x, long y);
+void ft_travel_dir(t_obj *unit, long x, long y);
 void ft_create_type_id(unsigned long type_id);
 void ft_create(t_unit_config *unit_config);
 void ft_attack_id(unsigned long attacker_id, unsigned long target_id);
-void ft_attack_unit(t_unit *attacker, t_unit *target);
-void ft_attack_resource(t_unit *attacker, t_resource *target);
-void ft_attack_core(t_unit *attacker, t_core *target);
+void ft_attack(t_obj *attacker, t_obj *target);
 
 // print_utils.c
 void ft_print_status();
