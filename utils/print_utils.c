@@ -47,7 +47,7 @@ void	ft_print_teams()
  */
 void	ft_print_cores()
 {
-	const t_core	*cores = game.cores;
+	const t_obj	*cores = game.cores;
 
 	printf("Cores:\n");
 	if (cores == NULL)
@@ -55,7 +55,7 @@ void	ft_print_cores()
 	int index = 0;
 	while (cores[index].id != 0)
 	{
-		printf("- id: %lu team_id: %lu x: %lu y: %lu hp: %lu\n", cores[index].id, cores[index].team_id, cores[index].x, cores[index].y, cores[index].hp);
+		printf("- id: %lu team_id: %lu x: %lu y: %lu hp: %lu\n", cores[index].id, cores[index].s_core.team_id, cores[index].x, cores[index].y, cores[index].hp);
 		index++;
 	}
 }
@@ -66,7 +66,7 @@ void	ft_print_cores()
  */
 void	ft_print_resources()
 {
-	const t_resource	*resources = game.resources;
+	const t_obj	*resources = game.resources;
 
 	printf("Resources:\n");
 	if (resources == NULL)
@@ -85,7 +85,7 @@ void	ft_print_resources()
  */
 void	ft_print_units()
 {
-	const t_unit	*units = game.units;
+	const t_obj	*units = game.units;
 
 	printf("Units:\n");
 	if (units == NULL)
@@ -93,7 +93,7 @@ void	ft_print_units()
 	int index = 0;
 	while (units[index].id != 0)
 	{
-		printf("- id: %lu type_id: %lu team_id: %lu x: %lu y: %lu hp: %lu\n", units[index].id, units[index].type_id, units[index].team_id, units[index].x, units[index].y, units[index].hp);
+		printf("- id: %lu type_id: %lu team_id: %lu x: %lu y: %lu hp: %lu\n", units[index].id, units[index].s_unit.type_id, units[index].s_unit.team_id, units[index].x, units[index].y, units[index].hp);
 		index++;
 	}
 }

@@ -35,8 +35,13 @@ void	ft_travel_to_id(unsigned long id, unsigned long x, unsigned long y)
  * @param x To which x coordinate the unit should travel.
  * @param y To which y coordinate the unit should travel.
  */
-void	ft_travel_to(t_unit *unit, unsigned long x, unsigned long y)
+void	ft_travel_to(t_obj *unit, unsigned long x, unsigned long y)
 {
+	if (unit->type != OBJ_UNIT)
+	{
+		ft_print_error("OBJ is not type of UNIT", __func__);
+		return;
+	}
 	ft_travel_to_id(unit->id, x, y);
 }
 
@@ -75,8 +80,13 @@ void	ft_travel_dir_id(unsigned long id, long x, long y)
  * @param x x vector of the direction the unit should travel.
  * @param y y vector of the direction the unit should travel.
  */
-void	ft_travel_dir(t_unit *unit, long x, long y)
+void	ft_travel_dir(t_obj *unit, long x, long y)
 {
+	if (unit->type != OBJ_UNIT)
+	{
+		ft_print_error("OBJ is not type of UNIT", __func__);
+		return;
+	}
 	ft_travel_dir_id(unit->id, x, y);
 }
 
@@ -141,32 +151,25 @@ void	ft_attack_id(unsigned long attacker_id, unsigned long target_id)
 /**
  * @brief Lets a unit attack another unit. Same as ft_attack_id, besides that this function takes a pointer to a unit instead of an id.
  *
- * @param attacker Pointer to the unit that should be used to attack.
- * @param target Pointer to the unit that should be attacked.
+ * @param attacker_unit Pointer to the unit that should be used to attack.
+ * @param target_obj Pointer to the obj that should be attacked.
  */
-void	ft_attack_unit(t_unit *attacker, t_unit *target)
+void	ft_attack_unit(t_obj *attacker_unit, t_obj *target_obj)
 {
-	ft_attack_id(attacker->id, target->id);
-}
-
-/**
- * @brief Lets a unit attack another unit. Same as ft_attack_id, besides that this function takes a pointer to a unit instead of an id.
- *
- * @param attacker Pointer to the unit that should be used to attack.
- * @param target Pointer to the resource that should be attacked.
- */
-void	ft_attack_resource(t_unit *attacker, t_resource *target)
-{
-	ft_attack_id(attacker->id, target->id);
-}
-
-/**
- * @brief Lets a unit attack another unit. Same as ft_attack_id, besides that this function takes a pointer to a unit instead of an id.
- *
- * @param attacker Pointer to the unit that should be used to attack.
- * @param target Pointer to the core that should be attacked.
- */
-void	ft_attack_core(t_unit *attacker, t_core *target)
-{
-	ft_attack_id(attacker->id, target->id);
+	if (attacker_unit->type != OBJ_UNIT)
+		return ft_print_error("Attacker OBJ is not type of UNIT", __func__);
+	switch (target_obj->type)
+	{
+	case OBJ_RESOURCE:
+		break;
+	case OBJ_CORE:
+		if (attacker_unit->s_unit.team_id == target_obj->s_core.team_id)
+			return ft_print_error("You are trying to attack yourself", __func__);
+		break;
+	case OBJ_UNIT:
+		if (attacker_unit->s_unit.team_id == target_obj->s_unit.team_id)
+			return ft_print_error("You are trying to attack yourself", __func__);
+		break;
+	}
+	ft_attack_id(attacker_unit->id, target_obj->id);
 }

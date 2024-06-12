@@ -19,5 +19,6 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
 void	ft_free_all();
 void	ft_free_game();
 void	ft_perror_exit(char *msg);
+void	ft_print_error(char *str, const char *func_name);
 
 #endif

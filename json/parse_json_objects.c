@@ -1,8 +1,8 @@
 #include "parse_json.h"
 
-t_core	*ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
+t_obj	*ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
-	t_core	*cores;
+	t_obj	*cores;
 	int		last_json_index, next_token_ind;
 
 	token_ind = ft_find_token_one("cores", token_ind, token_len, tokens, json);
@@ -10,7 +10,7 @@ t_core	*ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *js
 		return (NULL);
 	last_json_index = tokens[token_ind].end;
 
-	cores = malloc(sizeof(t_core));
+	cores = malloc(sizeof(t_obj));
 	cores[0].id = 0;
 
 	int index = 0;
@@ -20,11 +20,11 @@ t_core	*ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *js
 		if (next_token_ind == -1 || tokens[next_token_ind].end > last_json_index)
 			break;
 
-		cores = realloc(cores, sizeof(t_core) * (index + 2));
+		cores = realloc(cores, sizeof(t_obj) * (index + 2));
 		cores[index + 1].id = 0;
 
 		cores[index].id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
-		cores[index].team_id = ft_find_parse_ulong("team_id", &token_ind, token_len, tokens, json);
+		cores[index].s_core.team_id = ft_find_parse_ulong("team_id", &token_ind, token_len, tokens, json);
 		cores[index].x = ft_find_parse_ulong("x", &token_ind, token_len, tokens, json);
 		cores[index].y = ft_find_parse_ulong("y", &token_ind, token_len, tokens, json);
 		cores[index].hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
@@ -67,9 +67,9 @@ t_team	*ft_parse_teams(int token_ind, int token_len, jsmntok_t *tokens, char *js
 	return (teams);
 }
 
-t_resource	*ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, char *json)
+t_obj	*ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
-	t_resource	*resources;
+	t_obj	*resources;
 	int			last_json_index, next_token_ind;
 
 	token_ind = ft_find_token_one("resources", token_ind, token_len, tokens, json);
@@ -77,7 +77,7 @@ t_resource	*ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, 
 		return (NULL);
 	last_json_index = tokens[token_ind].end;
 
-	resources = malloc(sizeof(t_resource));
+	resources = malloc(sizeof(t_obj));
 	resources[0].id = 0;
 
 	int index = 0;
@@ -87,7 +87,7 @@ t_resource	*ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, 
 		if (next_token_ind == -1 || tokens[next_token_ind].end > last_json_index)
 			break;
 
-		resources = realloc(resources, sizeof(t_resource) * (index + 2));
+		resources = realloc(resources, sizeof(t_obj) * (index + 2));
 		resources[index + 1].id = 0;
 
 		resources[index].id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
@@ -101,9 +101,9 @@ t_resource	*ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, 
 	return (resources);
 }
 
-t_unit	*ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
+t_obj	*ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
-	t_unit	*units;
+	t_obj	*units;
 	int		last_json_index;
 
 	token_ind = ft_find_token_one("units", token_ind, token_len, tokens, json);
@@ -111,18 +111,18 @@ t_unit	*ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *js
 		return (NULL);
 	last_json_index = tokens[token_ind].end;
 
-	units = malloc(sizeof(t_unit));
+	units = malloc(sizeof(t_obj));
 	units[0].id = 0;
 
 	int index = 0;
 	while (token_ind != -1 && tokens[ft_find_token_one("id", token_ind, token_len, tokens, json)].end <= last_json_index)
 	{
-		units = realloc(units, sizeof(t_unit) * (index + 2));
+		units = realloc(units, sizeof(t_obj) * (index + 2));
 		units[index + 1].id = 0;
 
 		units[index].id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
-		units[index].type_id = ft_find_parse_ulong("type_id", &token_ind, token_len, tokens, json);
-		units[index].team_id = ft_find_parse_ulong("team_id", &token_ind, token_len, tokens, json);
+		units[index].s_unit.type_id = ft_find_parse_ulong("type_id", &token_ind, token_len, tokens, json);
+		units[index].s_unit.team_id = ft_find_parse_ulong("team_id", &token_ind, token_len, tokens, json);
 		units[index].hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
 		units[index].x = ft_find_parse_ulong("x", &token_ind, token_len, tokens, json);
 		units[index].y = ft_find_parse_ulong("y", &token_ind, token_len, tokens, json);
