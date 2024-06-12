@@ -3,7 +3,22 @@ CFLAGS = -Wall -Wextra -Werror #-ggdb -fsanitize=address -fsanitize=undefined -f
 LIBRARY = con_lib.a
 INC = inc/
 OBJDIR = build
-SRCS = json/encode_json_utils.c json/encode_json.c json/get_next_line.c json/jsmn.c json/parse_json_objects.c json/parse_json_utils.c json/parse_json.c utils/print_utils.c utils/socket.c utils/utils.c actions.c con_lib.c
+VPATH = json utils
+SRCS = \
+encode_json_utils.c \
+encode_json.c \
+get_next_line.c \
+jsmn.c \
+parse_json_objects.c \
+parse_json_utils.c \
+parse_json.c \
+print_utils.c \
+error.c \
+socket.c \
+utils.c \
+actions.c \
+con_lib.c \
+
 OBJS = $(patsubst %.c,$(OBJDIR)/%.o,$(SRCS))
 
 all: build $(LIBRARY)
