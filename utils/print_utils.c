@@ -119,7 +119,7 @@ void print_unit_config(const t_unit_config *unit_config) {
 	if (unit_config == NULL || unit_config->type_id == 0)
 		return;
 	printf("- Name: %s\n", unit_config->name);
-	printf("  Type ID: %lu\n", unit_config->type_id);
+	printf("  Type ID: %u\n", unit_config->type_id);
 	printf("  Cost: %lu\n", unit_config->cost);
 	printf("  HP: %lu\n", unit_config->hp);
 	printf("  Damage Core: %lu\n", unit_config->dmg_core);

@@ -60,12 +60,18 @@ typedef struct s_obj
 	};
 } t_obj;
 
+typedef enum e_unit_type
+{
+	UNIT_WARRIOR = 1,
+	UNIT_WORKER = 2
+} t_unit_type;
+
 typedef struct s_unit_config
 {
 	/// @brief The name of the unit.
 	char *name;
 	/// @brief The type id of the unit.
-	unsigned long type_id;
+	t_unit_type type_id;
 	/// @brief What the unit costs to create.
 	unsigned long cost;
 	/// @brief How much healthpoints the unit has.
@@ -195,7 +201,7 @@ void ft_travel_to_id(unsigned long id, unsigned long x, unsigned long y);
 void ft_travel_to(t_obj *unit, unsigned long x, unsigned long y);
 void ft_travel_dir_id(unsigned long id, long x, long y);
 void ft_travel_dir(t_obj *unit, long x, long y);
-void ft_create_type_id(unsigned long type_id);
+void ft_create_type_id(t_unit_type type_id);
 void ft_create(t_unit_config *unit_config);
 void ft_attack_id(unsigned long attacker_id, unsigned long target_id);
 void ft_attack(t_obj *attacker, t_obj *target);
