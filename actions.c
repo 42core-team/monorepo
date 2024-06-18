@@ -154,7 +154,7 @@ void	ft_attack_id(unsigned long attacker_id, unsigned long target_id)
  * @param attacker_unit Pointer to the unit that should be used to attack.
  * @param target_obj Pointer to the obj that should be attacked.
  */
-void	ft_attack_unit(t_obj *attacker_unit, t_obj *target_obj)
+void	ft_attack(t_obj *attacker_unit, t_obj *target_obj)
 {
 	if (attacker_unit->type != OBJ_UNIT)
 		return ft_print_error("Attacker OBJ is not type of UNIT", __func__);
