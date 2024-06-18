@@ -95,7 +95,7 @@ void	ft_travel_dir(t_obj *unit, long x, long y)
  *
  * @param type_id Which type of unit should be created.
  */
-void	ft_create_type_id(unsigned long type_id)
+void	ft_create_type_id(t_unit_type type_id)
 {
 	t_action_create	**actions = &game.actions.creates;
 	unsigned int	*count = &game.actions.creates_count;
