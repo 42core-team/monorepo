@@ -216,11 +216,11 @@ t_obj	*ft_get_my_core(void);
 t_obj	*ft_get_first_opponent_core(void);
 // --------------- unit getter ---------------
 /**
- * @brief Get the referance to all my units
+ * @brief Allocates a pointer array of all my units
  */
 t_obj	**ft_get_my_units(void);
 /**
- * @brief Get the referance to all opponent units
+ * @brief Allocates a pointer array of all opponent units
  */
 t_obj	**ft_get_opponent_units(void);
 
