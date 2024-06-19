@@ -10,6 +10,8 @@ t_obj	*ft_get_my_core(void)
 			return (&game.cores[ind]);
 		ind++;
 	}
+
+	return (NULL);
 }
 
 t_obj	*ft_get_first_opponent_core(void)
@@ -22,4 +24,6 @@ t_obj	*ft_get_first_opponent_core(void)
 			return (&game.cores[ind]);
 		ind++;
 	}
+
+	return (NULL);
 }

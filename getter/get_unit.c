@@ -24,6 +24,8 @@ t_obj	**ft_get_my_units(void)
 		ind++;
 	}
 	units[count] = NULL;
+
+	return (units);
 }
 
 t_obj	**ft_get_opponent_units(void)
@@ -50,4 +52,6 @@ t_obj	**ft_get_opponent_units(void)
 		ind++;
 	}
 	units[count] = NULL;
+
+	return (units);
 }
