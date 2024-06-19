@@ -24,7 +24,8 @@ get_core.c \
 get_team.c \
 get_unit.c \
 get_unit_config.c \
-get_utils.c
+get_utils.c \
+get_resource.c
 
 OBJS = $(patsubst %.c,$(OBJDIR)/%.o,$(SRCS))
 

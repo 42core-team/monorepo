@@ -227,6 +227,11 @@ t_obj	**ft_get_opponent_units(void);
  * @brief Get the nearest opponent unit to the given unit
  */
 t_obj	*ft_get_nearest_unit(t_obj *unit);
+// --------------- resource getter ---------------
+/**
+ * @brief Get the nearest resource to the given unit
+ */
+t_obj	*ft_get_nearest_resource(t_obj *unit);
 // --------------- unit config getter ---------------
 /**
  * @brief Get the unit config by type_id
