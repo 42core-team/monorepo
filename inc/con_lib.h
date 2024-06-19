@@ -160,6 +160,10 @@ typedef struct s_game
 	 */
 	unsigned long my_team_id;
 	/**
+	 * @brief Pointer to your teams info.
+	 */
+	t_team	*my_team;
+	/**
 	 * @brief The status of the game. Can be OK, PAUSED, END or WAIT_FOR_CLIENTS.
 	 */
 	t_status status;
