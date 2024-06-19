@@ -66,9 +66,11 @@ void	ft_enable_debug()
 /**
  * @brief Starts the main loop that sends and receives messages from the server. This function should be called after ft_init_con.
  *
+ * @param ft_init_func Your own function that is called once at the start of the game.
  * @param ft_user_loop Your own function that is called every time new data is received.
+ * @param ptr A pointer that is passed to your functions.
  */
-void	ft_loop(void (*ft_user_loop)(void *ptr), void *ptr)
+void	ft_loop(void (*ft_init_func)(void *ptr), void (*ft_user_loop)(void *ptr), void *ptr)
 {
 	char	*msg;
 	char	*actions;
@@ -87,6 +89,7 @@ void	ft_loop(void (*ft_user_loop)(void *ptr), void *ptr)
 			printf("Received: %s\n", msg);
 		ft_parse_json_state(msg);
 		free(msg);
+		ft_init_func(ptr);
 		ft_user_loop(ptr);
 	}
 }
