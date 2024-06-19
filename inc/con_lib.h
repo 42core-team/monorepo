@@ -196,12 +196,33 @@ void ft_close_con();
 void ft_enable_debug();
 void ft_loop(void (*ft_user_loop)());
 
-// team getter
+// --------------- team getter ---------------
+/**
+ * @brief Get the referance to my team
+ */
 t_team	*ft_get_my_team(void);
+/**
+ * @brief Get the referance to the first opponent team
+ */
 t_team	*ft_get_first_opponent_team(void);
-// core getter
+// --------------- core getter ---------------
+/**
+ * @brief Get my core
+ */
 t_obj	*ft_get_my_core(void);
+/**
+ * @brief Get the first opponent core
+ */
 t_obj	*ft_get_first_opponent_core(void);
+// --------------- unit getter ---------------
+/**
+ * @brief Get the referance to all my units
+ */
+t_obj	**ft_get_my_units(void);
+/**
+ * @brief Get the referance to all opponent units
+ */
+t_obj	**ft_get_opponent_units(void);
 
 // actions.c
 void ft_travel_to_id(unsigned long id, unsigned long x, unsigned long y);
