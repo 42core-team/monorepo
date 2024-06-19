@@ -152,6 +152,10 @@ typedef struct s_actions
 typedef struct s_game
 {
 	/**
+	 * @brief The status of the game. Can be OK, PAUSED, END or WAIT_FOR_CLIENTS.
+	 */
+	t_status status;
+	/**
 	 * @brief The config contains base informations about the game that don't change like the map size and the unit types.
 	 */
 	t_config config;
@@ -159,14 +163,6 @@ typedef struct s_game
 	 * @brief The id of the team that you are playing for.
 	 */
 	unsigned long my_team_id;
-	/**
-	 * @brief Pointer to your teams info.
-	 */
-	t_team	*my_team;
-	/**
-	 * @brief The status of the game. Can be OK, PAUSED, END or WAIT_FOR_CLIENTS.
-	 */
-	t_status status;
 	/**
 	 * @brief List of all teams and their informations. The array is terminated by an element with id 0.
 	 */
@@ -199,6 +195,13 @@ void ft_init_con(int *argc, char **argv);
 void ft_close_con();
 void ft_enable_debug();
 void ft_loop(void (*ft_user_loop)());
+
+// team getter
+t_team	*ft_get_my_team(void);
+t_team	*ft_get_first_opponent_team(void);
+// core getter
+t_obj	*ft_get_my_core(void);
+t_obj	*ft_get_first_opponent_core(void);
 
 // actions.c
 void ft_travel_to_id(unsigned long id, unsigned long x, unsigned long y);

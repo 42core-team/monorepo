@@ -61,9 +61,6 @@ t_team	*ft_parse_teams(int token_ind, int token_len, jsmntok_t *tokens, char *js
 		teams[index].id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
 		teams[index].balance = ft_find_parse_ulong("balance", &token_ind, token_len, tokens, json);
 
-		if (teams[index].id == game.my_team_id)
-			game.my_team = &teams[index];
-
 		index++;
 	}
 
