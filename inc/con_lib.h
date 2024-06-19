@@ -238,7 +238,7 @@ t_obj	*ft_get_nearest_resource(t_obj *unit);
  */
 t_unit_config	*ft_get_unit_config(t_unit_type type);
 // ---------------- get utils ----------------
-int	ft_distance(t_obj *obj1, t_obj *obj2);
+double	ft_distance(t_obj *obj1, t_obj *obj2);
 
 // --------------- actions.c ---------------
 /**
