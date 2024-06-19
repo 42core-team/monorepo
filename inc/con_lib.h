@@ -152,6 +152,10 @@ typedef struct s_actions
 typedef struct s_game
 {
 	/**
+	 * @brief The status of the game. Can be OK, PAUSED, END or WAIT_FOR_CLIENTS.
+	 */
+	t_status status;
+	/**
 	 * @brief The config contains base informations about the game that don't change like the map size and the unit types.
 	 */
 	t_config config;
@@ -159,10 +163,6 @@ typedef struct s_game
 	 * @brief The id of the team that you are playing for.
 	 */
 	unsigned long my_team_id;
-	/**
-	 * @brief The status of the game. Can be OK, PAUSED, END or WAIT_FOR_CLIENTS.
-	 */
-	t_status status;
 	/**
 	 * @brief List of all teams and their informations. The array is terminated by an element with id 0.
 	 */
@@ -195,6 +195,50 @@ void ft_init_con(int *argc, char **argv);
 void ft_close_con();
 void ft_enable_debug();
 void ft_loop(void (*ft_user_loop)());
+
+// --------------- team getter ---------------
+/**
+ * @brief Get the referance to my team
+ */
+t_team	*ft_get_my_team(void);
+/**
+ * @brief Get the referance to the first opponent team
+ */
+t_team	*ft_get_first_opponent_team(void);
+// --------------- core getter ---------------
+/**
+ * @brief Get my core
+ */
+t_obj	*ft_get_my_core(void);
+/**
+ * @brief Get the first opponent core
+ */
+t_obj	*ft_get_first_opponent_core(void);
+// --------------- unit getter ---------------
+/**
+ * @brief Allocates a pointer array of all my units
+ */
+t_obj	**ft_get_my_units(void);
+/**
+ * @brief Allocates a pointer array of all opponent units
+ */
+t_obj	**ft_get_opponent_units(void);
+/**
+ * @brief Get the nearest opponent unit to the given unit
+ */
+t_obj	*ft_get_nearest_unit(t_obj *unit);
+// --------------- resource getter ---------------
+/**
+ * @brief Get the nearest resource to the given unit
+ */
+t_obj	*ft_get_nearest_resource(t_obj *unit);
+// --------------- unit config getter ---------------
+/**
+ * @brief Get the unit config by type_id
+ */
+t_unit_config	*ft_get_unit_config(t_unit_type type);
+// ---------------- get utils ----------------
+int	ft_distance(t_obj *obj1, t_obj *obj2);
 
 // actions.c
 void ft_travel_to_id(unsigned long id, unsigned long x, unsigned long y);
