@@ -89,7 +89,8 @@ void	ft_loop(void (*ft_init_func)(void *ptr), void (*ft_user_loop)(void *ptr), v
 			printf("Received: %s\n", msg);
 		ft_parse_json_state(msg);
 		free(msg);
-		ft_init_func(ptr);
+		if (ft_init_func != NULL)
+			ft_init_func(ptr);
 		ft_user_loop(ptr);
 	}
 }

@@ -1,4 +1,5 @@
 #include "con_lib.h"
+#include <limits.h>
 
 t_obj	**ft_get_my_units(void)
 {
@@ -60,14 +61,15 @@ t_obj	*ft_get_nearest_unit(t_obj *unit)
 {
 	t_obj	**units = ft_get_opponent_units();
 	t_obj	*nearest = NULL;
-	int	ind = 0;
-	int	dist = -1;
+	int		ind = 0;
+	double	min_dist = __DBL_MAX__;
+	double	dist;
 	while (units[ind] != NULL)
 	{
-		int tmp = ft_distance(unit, units[ind]);
-		if (tmp < dist)
+		dist = ft_distance(unit, units[ind]);
+		if (dist < min_dist)
 		{
-			dist = tmp;
+			min_dist = dist;
 			nearest = units[ind];
 		}
 		ind++;
