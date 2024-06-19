@@ -24,7 +24,7 @@ void	ft_travel_to_id(unsigned long id, unsigned long x, unsigned long y)
 void	ft_travel_to(t_obj *unit, unsigned long x, unsigned long y)
 {
 	if (unit == NULL)
-		return (ft_print_error("Unit is NULL", __func__));
+		return;
 	if (unit->type != OBJ_UNIT)
 		return (ft_print_error("OBJ is not type of UNIT", __func__));
 	ft_travel_to_id(unit->id, x, y);
@@ -38,7 +38,7 @@ void	ft_travel_to_id_obj(unsigned long id, t_obj *target)
 void	ft_travel_to_obj(t_obj *unit, t_obj *target)
 {
 	if (unit == NULL || target == NULL)
-		return (ft_print_error("Unit or target is NULL", __func__));
+		return;
 	if (unit->type != OBJ_UNIT)
 		return (ft_print_error("OBJ is not type of UNIT", __func__));
 	ft_travel_to(unit, target->x, target->y);
@@ -68,7 +68,7 @@ void	ft_travel_dir_id(unsigned long id, long x, long y)
 void	ft_travel_dir(t_obj *unit, long x, long y)
 {
 	if (unit == NULL)
-		return (ft_print_error("Unit is NULL", __func__));
+		return;
 	if (unit->type != OBJ_UNIT)
 		return (ft_print_error("OBJ is not type of UNIT", __func__));
 	ft_travel_dir_id(unit->id, x, y);
@@ -95,7 +95,7 @@ void	ft_create_type_id(t_unit_type type_id)
 void	ft_create(t_unit_config *unit_config)
 {
 	if (unit_config == NULL)
-		return ft_print_error("Unit config is NULL", __func__);
+		return;
 	ft_create_type_id(unit_config->type_id);
 }
 
@@ -121,7 +121,7 @@ void	ft_attack_id(unsigned long attacker_id, unsigned long target_id)
 void	ft_attack(t_obj *attacker_unit, t_obj *target_obj)
 {
 	if (attacker_unit == NULL || target_obj == NULL)
-		return ft_print_error("Attacker or target is NULL", __func__);
+		return;
 	if (attacker_unit->type != OBJ_UNIT)
 		return ft_print_error("Attacker OBJ is not type of UNIT", __func__);
 	switch (target_obj->type)
