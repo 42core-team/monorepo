@@ -1,9 +1,5 @@
 #include "utils.h"
 
-/**
- * @brief Prints the current game status into stdout
- *
- */
 void	ft_print_status()
 {
 	const t_status	*status = &game.status;
@@ -21,10 +17,6 @@ void	ft_print_status()
 		printf("UNKNOWN\n");
 }
 
-/**
- * @brief Prints the current game teams with inforamtion about their id and balance into stdout
- *
- */
 void	ft_print_teams()
 {
 	const t_team	*teams = game.teams;
@@ -41,10 +33,6 @@ void	ft_print_teams()
 	}
 }
 
-/**
- * @brief Prints the current game cores with inforamtion about their id, team_id, x, y and hp into stdout
- *
- */
 void	ft_print_cores()
 {
 	const t_obj	*cores = game.cores;
@@ -60,10 +48,6 @@ void	ft_print_cores()
 	}
 }
 
-/**
- * @brief Prints the current game resources with inforamtion about their id, value, x, y and hp into stdout
- *
- */
 void	ft_print_resources()
 {
 	const t_obj	*resources = game.resources;
@@ -79,10 +63,6 @@ void	ft_print_resources()
 	}
 }
 
-/**
- * @brief Prints the current game units with inforamtion about their id, type_id, team_id, x, y and hp into stdout
- *
- */
 void	ft_print_units()
 {
 	const t_obj	*units = game.units;
@@ -98,11 +78,6 @@ void	ft_print_units()
 	}
 }
 
-/**
- * @brief Prints a team config with inforamtion about their id and name into stdout
- *
- * @param team_config Pointer to the team config
- */
 void print_team_config(const t_team_config *team_config) {
 	if (team_config == NULL || team_config->id == 0)
 		return;
@@ -110,11 +85,6 @@ void print_team_config(const t_team_config *team_config) {
 	printf("  Name: %s\n", team_config->name);
 }
 
-/**
- * @brief Prints a unit config with inforamtion about their type_id, name, cost, hp, dmg_core, dmg_unit, max_range, min_range and speed into stdout
- *
- * @param unit_config Pointer to the unit config
- */
 void print_unit_config(const t_unit_config *unit_config) {
 	if (unit_config == NULL || unit_config->type_id == 0)
 		return;
@@ -129,11 +99,6 @@ void print_unit_config(const t_unit_config *unit_config) {
 	printf("  Speed: %lu\n", unit_config->speed);
 }
 
-/**
- * @brief Prints a resource config with inforamtion about their type_id and hp into stdout
- *
- * @param unit_config Pointer to the resource config
- */
 void print_resource_config(const t_resource_config *resource_config) {
 	if (resource_config == NULL || resource_config->type_id == 0)
 		return;
@@ -142,10 +107,6 @@ void print_resource_config(const t_resource_config *resource_config) {
 	printf("  Balance_Value: %lu\n", resource_config->balance_value);
 }
 
-/**
- * @brief Prints the current game config with inforamtion about their height, width, idle_income, core_hp, teams and units into stdout
- *
- */
 void	ft_print_game_config()
 {
 	const t_config	*config = &game.config;
@@ -182,10 +143,6 @@ void	ft_print_game_config()
 	}
 }
 
-/**
- * @brief Prints every info about the gameconfig, status, teams, cores, resources and units into stdout.
- *
- */
 void	ft_print_all()
 {
 	ft_print_game_config(&game.config);

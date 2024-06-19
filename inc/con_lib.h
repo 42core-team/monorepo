@@ -240,25 +240,132 @@ t_unit_config	*ft_get_unit_config(t_unit_type type);
 // ---------------- get utils ----------------
 int	ft_distance(t_obj *obj1, t_obj *obj2);
 
-// actions.c
+// --------------- actions.c ---------------
+/**
+ * @brief Lets a unit travel to a specific coordinate. Same as ft_travel_to, besides that this function takes an id instead of a pointer to a unit.
+ *
+ * @param id Which unit should travel.
+ * @param x To which x coordinate the unit should travel.
+ * @param y To which y coordinate the unit should travel.
+ */
 void ft_travel_to_id(unsigned long id, unsigned long x, unsigned long y);
+/**
+ * @brief Lets a unit travel to a specific coordinate. Same as ft_travel_to_id, besides that this function takes a pointer to a unit instead of an id.
+ *
+ * @param unit Pointer to the unit that should travel.
+ * @param x To which x coordinate the unit should travel.
+ * @param y To which y coordinate the unit should travel.
+ */
 void ft_travel_to(t_obj *unit, unsigned long x, unsigned long y);
+/**
+ * @brief Lets a unit start to travel into a specific direction. Same as ft_travel_dir, besides that this function takes an id instead of a pointer to a unit. When x and y are both 0, the unit will stop traveling.
+ *
+ * @param id Which unit should travel.
+ * @param x x vector of the direction the unit should travel.
+ * @param y y vector of the direction the unit should travel.
+ */
 void ft_travel_dir_id(unsigned long id, long x, long y);
+/**
+ * @brief Lets a unit start to travel into a specific direction. Same as ft_travel_dir_id, besides that this function takes a pointer to a unit instead of an id. When x and y are both 0, the unit will stop traveling.
+ *
+ * @param id Which unit should travel.
+ * @param x x vector of the direction the unit should travel.
+ * @param y y vector of the direction the unit should travel.
+ */
 void ft_travel_dir(t_obj *unit, long x, long y);
+/**
+ * @brief Lets a unit travel to another obj. Same as ft_travel_to_id, besides that this function takes an id instead of a pointer to a unit.
+ *
+ * @param id Which unit should travel.
+ * @param target To which obj the unit should travel.
+ */
 void ft_travel_to_id_obj(unsigned long id, t_obj *target);
+/**
+ * @brief Lets a unit travel to another obj. Same as ft_travel_to_id_obj, besides that this function takes a pointer to a unit instead of an id.
+ *
+ * @param unit Pointer to the unit that should travel.
+ * @param target Pointer to the obj that the unit should travel to.
+ */
 void ft_travel_to_obj(t_obj *unit, t_obj *target);
+/**
+ * @brief Creates a unit of a specific type. Same as ft_create, besides that this function takes an id instead of a pointer to a unit.
+ *
+ * @param type_id Which type of unit should be created.
+ */
 void ft_create_type_id(t_unit_type type_id);
+/**
+ * @brief Creates a unit of a specific type. Same as ft_create_type_id, besides that this function takes a pointer to a unit instead of an id.
+ *
+ * @param unit_config Pointer to the unit config that should be created.
+ */
 void ft_create(t_unit_config *unit_config);
+/**
+ * @brief Lets a unit attack another unit. Same as ft_attack, besides that this function takes an id instead of a pointer to a unit.
+ *
+ * @param attacker_id Which unit should be used to attack.
+ * @param target_id Which unit should be attacked.
+ */
 void ft_attack_id(unsigned long attacker_id, unsigned long target_id);
+/**
+ * @brief Lets a unit attack another unit. Same as ft_attack_id, besides that this function takes a pointer to a unit instead of an id.
+ *
+ * @param attacker_unit Pointer to the unit that should be used to attack.
+ * @param target_obj Pointer to the obj that should be attacked.
+ */
 void ft_attack(t_obj *attacker, t_obj *target);
 
-// print_utils.c
+// -------------- print_utils.c --------------
+/**
+ * @brief Prints the current game status into stdout
+ */
 void ft_print_status();
+/**
+ * @brief Prints the current game teams with inforamtion about their id and balance into stdout
+ *
+ */
 void ft_print_teams();
+/**
+ * @brief Prints the current game cores with inforamtion about their id, team_id, x, y and hp into stdout
+ *
+ */
 void ft_print_cores();
+/**
+ * @brief Prints the current game resources with inforamtion about their id, value, x, y and hp into stdout
+ *
+ */
 void ft_print_resources();
+/**
+ * @brief Prints the current game units with inforamtion about their id, type_id, team_id, x, y and hp into stdout
+ */
+
 void ft_print_units();
+/**
+ * @brief Prints a team config with inforamtion about their id and name into stdout
+ *
+ * @param team_config Pointer to the team config
+ */
+void print_team_config(const t_team_config *team_config);
+/**
+ * @brief Prints a unit config with inforamtion about their type_id, name, cost, hp, dmg_core, dmg_unit, max_range, min_range and speed into stdout
+ *
+ * @param unit_config Pointer to the unit config
+ */
+void print_unit_config(const t_unit_config *unit_config);
+/**
+ * @brief Prints a resource config with inforamtion about their type_id and hp into stdout
+ *
+ * @param unit_config Pointer to the resource config
+ */
+void print_resource_config(const t_resource_config *resource_config);
+/**
+ * @brief Prints the current game config with inforamtion about their height, width, idle_income, core_hp, teams and units into stdout
+ *
+ */
 void ft_print_game_config();
+/**
+ * @brief Prints every info about the gameconfig, status, teams, cores, resources and units into stdout.
+ *
+ */
 void ft_print_all();
 
 #endif
