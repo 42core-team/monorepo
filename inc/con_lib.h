@@ -223,6 +223,17 @@ t_obj	**ft_get_my_units(void);
  * @brief Allocates a pointer array of all opponent units
  */
 t_obj	**ft_get_opponent_units(void);
+/**
+ * @brief Get the nearest opponent unit to the given unit
+ */
+t_obj	*ft_get_nearest_unit(t_obj *unit);
+// --------------- unit config getter ---------------
+/**
+ * @brief Get the unit config by type_id
+ */
+t_unit_config	*ft_get_unit_config(t_unit_type type);
+// ---------------- get utils ----------------
+int	ft_distance(t_obj *obj1, t_obj *obj2);
 
 // actions.c
 void ft_travel_to_id(unsigned long id, unsigned long x, unsigned long y);
