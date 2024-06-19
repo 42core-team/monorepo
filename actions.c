@@ -46,6 +46,33 @@ void	ft_travel_to(t_obj *unit, unsigned long x, unsigned long y)
 }
 
 /**
+ * @brief Lets a unit travel to another obj. Same as ft_travel_to_id, besides that this function takes an id instead of a pointer to a unit.
+ *
+ * @param id Which unit should travel.
+ * @param target To which obj the unit should travel.
+ */
+void	ft_travel_to_id_obj(unsigned long id, t_obj *target)
+{
+	ft_travel_to_id(id, target->x, target->y);
+}
+
+/**
+ * @brief Lets a unit travel to another obj. Same as ft_travel_to_id_obj, besides that this function takes a pointer to a unit instead of an id.
+ *
+ * @param unit Pointer to the unit that should travel.
+ * @param target Pointer to the obj that the unit should travel to.
+ */
+void	ft_travel_to_obj(t_obj *unit, t_obj *target)
+{
+	if (unit->type != OBJ_UNIT)
+	{
+		ft_print_error("OBJ is not type of UNIT", __func__);
+		return;
+	}
+	ft_travel_to(unit, target->x, target->y);
+}
+
+/**
  * @brief Lets a unit start to travel into a specific direction. Same as ft_travel_dir, besides that this function takes an id instead of a pointer to a unit. When x and y are both 0, the unit will stop traveling.
  *
  * @param id Which unit should travel.
