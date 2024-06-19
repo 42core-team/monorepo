@@ -214,6 +214,10 @@ t_obj	*ft_get_my_core(void);
  * @brief Get the first opponent core
  */
 t_obj	*ft_get_first_opponent_core(void);
+/**
+ * @brief Get the nearest core to the given obj
+ */
+t_obj	*ft_get_nearest_core(t_obj *obj);
 // --------------- unit getter ---------------
 /**
  * @brief Allocates a pointer array of all my units
