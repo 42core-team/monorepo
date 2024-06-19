@@ -313,6 +313,13 @@ void ft_attack_id(unsigned long attacker_id, unsigned long target_id);
  * @param target_obj Pointer to the obj that should be attacked.
  */
 void ft_attack(t_obj *attacker, t_obj *target);
+/**
+ * @brief Travel and attack a target. The unit will travel to the target and attack it. Same as calling ft_travel_to_obj and ft_attack.
+ *
+ * @param attacker_unit Pointer to the unit that should be used to attack.
+ * @param attack_obj Pointer to the unit that should be attacked.
+ */
+void ft_travel_attack(t_obj *attacker_unit, t_obj *attack_obj);
 
 // -------------- print_utils.c --------------
 /**
