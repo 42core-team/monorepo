@@ -138,3 +138,9 @@ void	ft_attack(t_obj *attacker_unit, t_obj *target_obj)
 	}
 	ft_attack_id(attacker_unit->id, target_obj->id);
 }
+
+void	ft_travel_attack(t_obj *attacker_unit, t_obj *attack_obj)
+{
+	ft_travel_to_obj(attacker_unit, attack_obj);
+	ft_attack(attacker_unit, attack_obj);
+}
