@@ -1,12 +1,5 @@
 #include "parse_json.h"
 
-/**
- * @brief Lets a unit travel to a specific coordinate. Same as ft_travel_to, besides that this function takes an id instead of a pointer to a unit.
- *
- * @param id Which unit should travel.
- * @param x To which x coordinate the unit should travel.
- * @param y To which y coordinate the unit should travel.
- */
 void	ft_travel_to_id(unsigned long id, unsigned long x, unsigned long y)
 {
 	t_action_travel	**actions = &game.actions.travels;
@@ -28,13 +21,6 @@ void	ft_travel_to_id(unsigned long id, unsigned long x, unsigned long y)
 	(*count)++;
 }
 
-/**
- * @brief Lets a unit travel to a specific coordinate. Same as ft_travel_to_id, besides that this function takes a pointer to a unit instead of an id.
- *
- * @param unit Pointer to the unit that should travel.
- * @param x To which x coordinate the unit should travel.
- * @param y To which y coordinate the unit should travel.
- */
 void	ft_travel_to(t_obj *unit, unsigned long x, unsigned long y)
 {
 	if (unit->type != OBJ_UNIT)
@@ -45,23 +31,11 @@ void	ft_travel_to(t_obj *unit, unsigned long x, unsigned long y)
 	ft_travel_to_id(unit->id, x, y);
 }
 
-/**
- * @brief Lets a unit travel to another obj. Same as ft_travel_to_id, besides that this function takes an id instead of a pointer to a unit.
- *
- * @param id Which unit should travel.
- * @param target To which obj the unit should travel.
- */
 void	ft_travel_to_id_obj(unsigned long id, t_obj *target)
 {
 	ft_travel_to_id(id, target->x, target->y);
 }
 
-/**
- * @brief Lets a unit travel to another obj. Same as ft_travel_to_id_obj, besides that this function takes a pointer to a unit instead of an id.
- *
- * @param unit Pointer to the unit that should travel.
- * @param target Pointer to the obj that the unit should travel to.
- */
 void	ft_travel_to_obj(t_obj *unit, t_obj *target)
 {
 	if (unit->type != OBJ_UNIT)
@@ -72,13 +46,6 @@ void	ft_travel_to_obj(t_obj *unit, t_obj *target)
 	ft_travel_to(unit, target->x, target->y);
 }
 
-/**
- * @brief Lets a unit start to travel into a specific direction. Same as ft_travel_dir, besides that this function takes an id instead of a pointer to a unit. When x and y are both 0, the unit will stop traveling.
- *
- * @param id Which unit should travel.
- * @param x x vector of the direction the unit should travel.
- * @param y y vector of the direction the unit should travel.
- */
 void	ft_travel_dir_id(unsigned long id, long x, long y)
 {
 	t_action_travel	**actions = &game.actions.travels;
@@ -100,13 +67,6 @@ void	ft_travel_dir_id(unsigned long id, long x, long y)
 	(*count)++;
 }
 
-/**
- * @brief Lets a unit start to travel into a specific direction. Same as ft_travel_dir_id, besides that this function takes a pointer to a unit instead of an id. When x and y are both 0, the unit will stop traveling.
- *
- * @param id Which unit should travel.
- * @param x x vector of the direction the unit should travel.
- * @param y y vector of the direction the unit should travel.
- */
 void	ft_travel_dir(t_obj *unit, long x, long y)
 {
 	if (unit->type != OBJ_UNIT)
@@ -117,11 +77,6 @@ void	ft_travel_dir(t_obj *unit, long x, long y)
 	ft_travel_dir_id(unit->id, x, y);
 }
 
-/**
- * @brief Creates a unit of a specific type. Same as ft_create, besides that this function takes an id instead of a pointer to a unit.
- *
- * @param type_id Which type of unit should be created.
- */
 void	ft_create_type_id(t_unit_type type_id)
 {
 	t_action_create	**actions = &game.actions.creates;
@@ -140,22 +95,11 @@ void	ft_create_type_id(t_unit_type type_id)
 	(*count)++;
 }
 
-/**
- * @brief Creates a unit of a specific type. Same as ft_create_type_id, besides that this function takes a pointer to a unit instead of an id.
- *
- * @param unit_config Pointer to the unit config that should be created.
- */
 void	ft_create(t_unit_config *unit_config)
 {
 	ft_create_type_id(unit_config->type_id);
 }
 
-/**
- * @brief Lets a unit attack another unit. Same as ft_attack, besides that this function takes an id instead of a pointer to a unit.
- *
- * @param attacker_id Which unit should be used to attack.
- * @param target_id Which unit should be attacked.
- */
 void	ft_attack_id(unsigned long attacker_id, unsigned long target_id)
 {
 	t_action_attack	**actions = &game.actions.attacks;
@@ -175,12 +119,6 @@ void	ft_attack_id(unsigned long attacker_id, unsigned long target_id)
 	(*count)++;
 }
 
-/**
- * @brief Lets a unit attack another unit. Same as ft_attack_id, besides that this function takes a pointer to a unit instead of an id.
- *
- * @param attacker_unit Pointer to the unit that should be used to attack.
- * @param target_obj Pointer to the obj that should be attacked.
- */
 void	ft_attack(t_obj *attacker_unit, t_obj *target_obj)
 {
 	if (attacker_unit->type != OBJ_UNIT)
