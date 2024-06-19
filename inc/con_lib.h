@@ -194,7 +194,7 @@ extern t_game game;
 void ft_init_con(int *argc, char **argv);
 void ft_close_con();
 void ft_enable_debug();
-void ft_loop(void (*ft_user_loop)());
+void ft_loop(void (*ft_user_loop)(void *ptr), void *ptr);
 
 // --------------- team getter ---------------
 /**

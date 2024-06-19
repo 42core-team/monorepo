@@ -68,7 +68,7 @@ void	ft_enable_debug()
  *
  * @param ft_user_loop Your own function that is called every time new data is received.
  */
-void	ft_loop(void (*ft_user_loop)())
+void	ft_loop(void (*ft_user_loop)(void *ptr), void *ptr)
 {
 	char	*msg;
 	char	*actions;
@@ -87,6 +87,6 @@ void	ft_loop(void (*ft_user_loop)())
 			printf("Received: %s\n", msg);
 		ft_parse_json_state(msg);
 		free(msg);
-		ft_user_loop();
+		ft_user_loop(ptr);
 	}
 }
