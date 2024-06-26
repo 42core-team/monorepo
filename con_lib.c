@@ -21,29 +21,17 @@ void	ft_receive_config()
 /**
  * @brief Starts the connection to the server. This function should be called before any other function from this library.
  *
+ * @param team_name The name of your team.
  * @param argc The argc from the main function.
  * @param argv The argv from the main function.
  */
-void	ft_init_con(int *argc, char **argv)
+void	ft_init_con(char *team_name, int *argc, char **argv)
 {
-	char	*msg, *env_id;
-
 	socket_fd = ft_init_socket(ft_init_addr("127.0.0.1", 4242));
-	env_id = getenv("CORE_ID");
-	if (env_id != NULL)
-	{
-		msg = malloc(sizeof(char) * (strlen(env_id) + 12));
-		sprintf(msg, "{\"id\": %s}\n", env_id);
-	}
-	else if (*argc == 2)
-	{
-		msg = malloc(sizeof(char) * (strlen(argv[1]) + 12));
-		sprintf(msg, "{\"id\": %s}\n", argv[1]);
-	}
-	else
-		msg = strdup("{\"id\": 1}\n");
-	ft_send_socket(socket_fd, msg);
-	free(msg);
+
+	char *login_msg = ft_create_login_msg(team_name, argc, argv);
+	ft_send_socket(socket_fd, login_msg);
+	free(login_msg);
 
 	ft_receive_config();
 	ft_reset_actions();
