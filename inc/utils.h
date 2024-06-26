@@ -20,5 +20,6 @@ void	ft_free_all();
 void	ft_free_game();
 void	ft_perror_exit(char *msg);
 void	ft_print_error(char *str, const char *func_name);
+char	*ft_create_login_msg(char *team_name, int *argc, char **argv);
 
 #endif
