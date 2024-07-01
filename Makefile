@@ -1,7 +1,7 @@
 LIBRARY = con_lib.a
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror #-fsanitize=address #-fsanitize=undefined -fno-sanitize-recover=all -fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow -fno-sanitize=null -fno-sanitize=alignment -ggdb
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -fsanitize=undefined -fno-sanitize-recover=all -fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow -fno-sanitize=null -fno-sanitize=alignment
 
 INC = inc/
 OBJDIR = build
