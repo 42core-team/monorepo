@@ -228,9 +228,13 @@ t_obj	**ft_get_my_units(void);
  */
 t_obj	**ft_get_opponent_units(void);
 /**
- * @brief Get the nearest opponent unit to the given unit
+ * @brief Get the nearest unit to the given unit
  */
 t_obj	*ft_get_nearest_unit(t_obj *unit);
+/**
+ * @brief Get the nearest opponent unit to the given unit
+ */
+t_obj	*ft_get_nearest_opponent_unit(t_obj *unit);
 // --------------- resource getter ---------------
 /**
  * @brief Get the nearest resource to the given unit
