@@ -81,4 +81,9 @@ void	ft_loop(void (*ft_init_func)(void *ptr), void (*ft_user_loop)(void *ptr), v
 		free(msg);
 		ft_user_loop(ptr);
 	}
+
+	if (ft_get_my_core())
+		printf("Game over! You won!\n");
+	else
+		printf("Game over! You lost!\n");
 }
