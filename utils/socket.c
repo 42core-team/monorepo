@@ -1,6 +1,9 @@
 #include "socket.h"
 #include "utils.h"
 
+#include <netdb.h>
+#include <arpa/inet.h>
+
 int	ft_init_socket(struct sockaddr_in addr)
 {
 	int	socket_fd, status_con;
@@ -80,15 +83,38 @@ char	*ft_read_socket_once(const int socket_fd)
 	return (buffer);
 }
 
-struct sockaddr_in	ft_init_addr(const char *ip_address, const int port)
+struct sockaddr_in	ft_init_addr(const char *hostname, const int port)
 {
-    struct sockaddr_in	addr;
+	struct addrinfo hints, *res, *p;
+    int status;
+    struct sockaddr_in addr;
 
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(port);
-    if (inet_pton(AF_INET, ip_address, &(addr.sin_addr)) <= 0) {
-        perror("Invalid IP address");
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_INET; // AF_INET for IPv4, AF_INET6 for IPv6
+    hints.ai_socktype = SOCK_STREAM;
+
+    if ((status = getaddrinfo(hostname, NULL, &hints, &res)) != 0) {
+        fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
         exit(EXIT_FAILURE);
     }
-    return (addr);
+
+    // Loop through all the results and use the first one we can
+    for(p = res; p != NULL; p = p->ai_next) {
+        // Cast the sockaddr to sockaddr_in to access the sin_addr field
+        struct sockaddr_in *ipv4 = (struct sockaddr_in *)p->ai_addr;
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(port);
+        addr.sin_addr = ipv4->sin_addr; // Copy the address
+        break; // If we get here, we have our address
+    }
+
+    freeaddrinfo(res); // Free the linked list
+
+    if (p == NULL) {
+        // We didn't find any address
+        fprintf(stderr, "Failed to resolve hostname\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return addr;
 }
