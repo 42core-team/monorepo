@@ -33,7 +33,7 @@ OBJS = $(patsubst %.c,$(OBJDIR)/%.o,$(SRCS))
 all: build $(LIBRARY)
 
 release:
-	make CFLAGS="-Wall -Wextra -Werror -O3" re
+	make CFLAGS="-Wall -Wextra -Werror -lm -O3" re
 
 $(LIBRARY): $(OBJS)
 	ar rcs $(LIBRARY) $(OBJS)
