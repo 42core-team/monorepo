@@ -27,7 +27,11 @@ void	ft_receive_config()
  */
 void	ft_init_con(char *team_name, int *argc, char **argv)
 {
-	socket_fd = ft_init_socket(ft_init_addr("127.0.0.1", 4242));
+	const char *env_ip = getenv("SERVER_IP");
+	const char *env_port = getenv("SERVER_PORT");
+	const int port = env_port ? atoi(env_port) : 4242;
+
+	socket_fd = ft_init_socket(ft_init_addr(env_ip ? env_ip : "127.0.0.1", port));
 
 	char *login_msg = ft_create_login_msg(team_name, argc, argv);
 	ft_send_socket(socket_fd, login_msg);
