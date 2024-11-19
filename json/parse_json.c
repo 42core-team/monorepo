@@ -47,10 +47,10 @@ void	ft_parse_json_state(char *json)
 	t_json	json_data = ft_parse_json(json);
 	int	token_ind = 1;
 
-	ft_free_game();
+	// ft_free_game(); // Risky business is afoot
 
 	game.status = ft_find_parse_ulong("status", &token_ind, json_data.token_len, json_data.tokens, json);
-	game.cores = ft_parse_cores(token_ind, json_data.token_len, json_data.tokens, json);
+	ft_parse_cores(token_ind, json_data.token_len, json_data.tokens, json);
 	game.resources = ft_parse_resources(token_ind, json_data.token_len, json_data.tokens, json);
 	game.units = ft_parse_units(token_ind, json_data.token_len, json_data.tokens, json);
 	game.teams = ft_parse_teams(token_ind, json_data.token_len, json_data.tokens, json);

@@ -1,39 +1,40 @@
 #include "parse_json.h"
 
-t_obj	*ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
+// Cores dont need to be freed mid-game ever, when they're gone the game is over
+void ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
-	t_obj	*cores;
-	int		last_json_index, next_token_ind;
+	int	index = 0;
 
 	token_ind = ft_find_token_one("cores", token_ind, token_len, tokens, json);
 	if (token_ind == -1)
-		return (NULL);
-	last_json_index = tokens[token_ind].end;
+		return ;
 
-	cores = malloc(sizeof(t_obj));
-	cores[0].id = 0;
-
-	int index = 0;
-	while (token_ind != -1)
+	if (game.cores == NULL)
 	{
-		next_token_ind = ft_find_token_one("id", token_ind, token_len, tokens, json);
-		if (next_token_ind == -1 || tokens[next_token_ind].end > last_json_index)
-			break;
+		game.cores = malloc(sizeof(t_obj) * 3);
+		game.cores[2].id = 0;
+	}
 
-		cores = realloc(cores, sizeof(t_obj) * (index + 2));
-		cores[index + 1].id = 0;
+	token_ind++;
+	while (index < 2 && token_ind < token_len)
+	{
+		if (tokens[token_ind].type != JSMN_OBJECT)
+		{
+			token_ind++;
+			continue;
+		}
 
-		cores[index].type = OBJ_CORE;
-		cores[index].id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
-		cores[index].s_core.team_id = ft_find_parse_ulong("team_id", &token_ind, token_len, tokens, json);
-		cores[index].x = ft_find_parse_ulong("x", &token_ind, token_len, tokens, json);
-		cores[index].y = ft_find_parse_ulong("y", &token_ind, token_len, tokens, json);
-		cores[index].hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
+		game.cores[index].type = OBJ_CORE;
+
+		game.cores[index].type = OBJ_CORE;
+		game.cores[index].id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
+		game.cores[index].s_core.team_id = ft_find_parse_ulong("team_id", &token_ind, token_len, tokens, json);
+		game.cores[index].x = ft_find_parse_ulong("x", &token_ind, token_len, tokens, json);
+		game.cores[index].y = ft_find_parse_ulong("y", &token_ind, token_len, tokens, json);
+		game.cores[index].hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
 
 		index++;
 	}
-
-	return (cores);
 }
 
 t_team	*ft_parse_teams(int token_ind, int token_len, jsmntok_t *tokens, char *json)
