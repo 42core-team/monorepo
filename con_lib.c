@@ -83,6 +83,9 @@ void	ft_loop(void (*ft_init_func)(void *ptr), void (*ft_user_loop)(void *ptr), v
 			printf("Received: %s\n", msg);
 		ft_parse_json_state(msg);
 		free(msg);
+		if (game.status == STATUS_END)
+			break;
+
 		ft_user_loop(ptr);
 	}
 
