@@ -19,61 +19,61 @@ void	ft_print_status()
 
 void	ft_print_teams()
 {
-	const t_team	*teams = game.teams;
+	const t_team	**teams = game.teams;
 
 	printf("Your team id: %lu\n", game.my_team_id);
 	printf("Teams:\n");
 	if (teams == NULL)
 		return;
 	int index = 0;
-	while (teams[index].id != 0)
+	while (teams[index]->id != 0)
 	{
-		printf("- id: %lu balance: %lu\n", teams[index].id, teams[index].balance);
+		printf("- id: %lu balance: %lu\n", teams[index]->id, teams[index]->balance);
 		index++;
 	}
 }
 
 void	ft_print_cores()
 {
-	const t_obj	*cores = game.cores;
+	const t_obj	**cores = game.cores;
 
 	printf("Cores:\n");
 	if (cores == NULL)
 		return;
 	int index = 0;
-	while (cores[index].id != 0)
+	while (cores[index] != NULL)
 	{
-		printf("- id: %lu team_id: %lu x: %lu y: %lu hp: %lu\n", cores[index].id, cores[index].s_core.team_id, cores[index].x, cores[index].y, cores[index].hp);
+		printf("- id: %lu team_id: %lu x: %lu y: %lu hp: %lu\n", cores[index]->id, cores[index]->s_core.team_id, cores[index]->x, cores[index]->y, cores[index]->hp);
 		index++;
 	}
 }
 
 void	ft_print_resources()
 {
-	const t_obj	*resources = game.resources;
+	const t_obj	**resources = game.resources;
 
 	printf("Resources:\n");
 	if (resources == NULL)
 		return;
 	int index = 0;
-	while (resources[index].id != 0)
+	while (resources[index] != NULL)
 	{
-		printf("- id: %lu x: %lu y: %lu hp: %lu\n", resources[index].id, resources[index].x, resources[index].y, resources[index].hp);
+		printf("- id: %lu x: %lu y: %lu hp: %lu\n", resources[index]->id, resources[index]->x, resources[index]->y, resources[index]->hp);
 		index++;
 	}
 }
 
 void	ft_print_units()
 {
-	const t_obj	*units = game.units;
+	const t_obj	**units = game.units;
 
 	printf("Units:\n");
 	if (units == NULL)
 		return;
 	int index = 0;
-	while (units[index].id != 0)
+	while (units[index] != NULL)
 	{
-		printf("- id: %lu type_id: %lu team_id: %lu x: %lu y: %lu hp: %lu\n", units[index].id, units[index].s_unit.type_id, units[index].s_unit.team_id, units[index].x, units[index].y, units[index].hp);
+		printf("- id: %lu type_id: %lu team_id: %lu x: %lu y: %lu hp: %lu\n", units[index]->id, units[index]->s_unit.type_id, units[index]->s_unit.team_id, units[index]->x, units[index]->y, units[index]->hp);
 		index++;
 	}
 }

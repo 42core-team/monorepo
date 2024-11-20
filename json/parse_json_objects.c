@@ -1,6 +1,5 @@
 #include "parse_json.h"
 
-// Cores dont need to be freed mid-game ever, when they're gone the game is over
 void ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
 	int	index = 0;
@@ -12,7 +11,7 @@ void ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 	if (game.cores == NULL)
 	{
 		game.cores = malloc(sizeof(t_obj) * 3);
-		game.cores[2].id = 0;
+		game.cores[2] = NULL;
 	}
 
 	token_ind++;

@@ -165,21 +165,21 @@ typedef struct s_game
 	 */
 	unsigned long my_team_id;
 	/**
-	 * @brief List of all teams and their informations. The array is terminated by an element with id 0.
+	 * @brief List of all teams and their informations. NULL-terminated.
 	 */
-	t_team *teams;
+	t_team **teams;
 	/**
-	 * @brief List of all cores and their informations. The array is terminated by an element with id 0.
+	 * @brief List of all cores and their informations. NULL-terminated.
 	 */
-	t_obj *cores;
+	t_obj **cores;
 	/**
-	 * @brief List of all resources and their informations. The array is terminated by an element with id 0.
+	 * @brief List of all resources and their informations. NULL-terminated.
 	 */
-	t_obj *resources;
+	t_obj **resources;
 	/**
-	 * @brief List of all units and their informations. The array is terminated by an element with id 0.
+	 * @brief List of all units and their informations. NULL-terminated.
 	 */
-	t_obj *units;
+	t_obj **units;
 	/**
 	 * @brief List of all actions that will be send to the server when your function ends.
 	 */
@@ -218,7 +218,7 @@ t_obj	*ft_get_first_opponent_core(void);
 /**
  * @brief Get the nearest core to the given obj
  */
-t_obj	*ft_get_nearest_core(t_obj *obj);
+t_obj	**ft_get_nearest_core(t_obj *obj);
 // --------------- unit getter ---------------
 /**
  * @brief Allocates a pointer array of all my units
