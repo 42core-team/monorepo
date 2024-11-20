@@ -199,6 +199,11 @@ void ft_close_con();
 void ft_enable_debug();
 void ft_loop(void (*ft_init_func)(void *ptr), void (*ft_user_loop)(void *ptr), void *ptr);
 
+// ------------------ getter -----------------
+/*
+ * @brief Get any object based on its id
+ */
+t_obj	*ft_get_obj_from_id(unsigned long id);
 // --------------- team getter ---------------
 /**
  * @brief Get the referance to my team
