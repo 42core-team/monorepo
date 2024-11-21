@@ -78,14 +78,14 @@ void	ft_print_units()
 	}
 }
 
-void print_team_config(const t_team_config *team_config) {
+void ft_print_team_config(const t_team_config *team_config) {
 	if (team_config == NULL || team_config->id == 0)
 		return;
 	printf("- ID: %lu\n", team_config->id);
 	printf("  Name: %s\n", team_config->name);
 }
 
-void print_unit_config(const t_unit_config *unit_config) {
+void ft_print_unit_config(const t_unit_config *unit_config) {
 	if (unit_config == NULL || unit_config->type_id == 0)
 		return;
 	printf("- Name: %s\n", unit_config->name);
@@ -100,7 +100,7 @@ void print_unit_config(const t_unit_config *unit_config) {
 	printf("  Speed: %lu\n", unit_config->speed);
 }
 
-void print_resource_config(const t_resource_config *resource_config) {
+void ft_print_resource_config(const t_resource_config *resource_config) {
 	if (resource_config == NULL || resource_config->type_id == 0)
 		return;
 	printf("  Type ID: %lu\n", resource_config->type_id);
@@ -124,7 +124,7 @@ void	ft_print_game_config()
 	if (config->teams != NULL)
 	{
 		while (config->teams[ind].id != 0)
-			print_team_config(&config->teams[ind++]);
+			ft_print_team_config(&config->teams[ind++]);
 	}
 
 	printf("Unit Configs:\n");
@@ -132,7 +132,7 @@ void	ft_print_game_config()
 	if (config->units != NULL)
 	{
 		while (config->units[ind].type_id != 0)
-			print_unit_config(&config->units[ind++]);
+			ft_print_unit_config(&config->units[ind++]);
 	}
 
 	printf("Resource Configs:\n");
@@ -140,7 +140,7 @@ void	ft_print_game_config()
 	if (config->resources != NULL)
 	{
 		while (config->resources[ind].type_id != 0)
-			print_resource_config(&config->resources[ind++]);
+			ft_print_resource_config(&config->resources[ind++]);
 	}
 }
 

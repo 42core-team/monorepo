@@ -367,19 +367,19 @@ void ft_print_units();
  *
  * @param team_config Pointer to the team config
  */
-void print_team_config(const t_team_config *team_config);
+void ft_print_team_config(const t_team_config *team_config);
 /**
  * @brief Prints a unit config with inforamtion about their type_id, name, cost, hp, dmg_core, dmg_unit, max_range, min_range and speed into stdout
  *
  * @param unit_config Pointer to the unit config
  */
-void print_unit_config(const t_unit_config *unit_config);
+void ft_print_unit_config(const t_unit_config *unit_config);
 /**
  * @brief Prints a resource config with inforamtion about their type_id and hp into stdout
  *
  * @param unit_config Pointer to the resource config
  */
-void print_resource_config(const t_resource_config *resource_config);
+void ft_print_resource_config(const t_resource_config *resource_config);
 /**
  * @brief Prints the current game config with inforamtion about their height, width, idle_income, core_hp, teams and units into stdout
  *
