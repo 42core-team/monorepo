@@ -284,7 +284,7 @@ void ft_travel_dir_id(unsigned long id, long x, long y);
 /**
  * @brief Lets a unit start to travel into a specific direction. Same as ft_travel_dir_id, besides that this function takes a pointer to a unit instead of an id. When x and y are both 0, the unit will stop traveling.
  *
- * @param id Which unit should travel.
+ * @param unit Which unit should travel.
  * @param x x vector of the direction the unit should travel.
  * @param y y vector of the direction the unit should travel.
  */
