@@ -94,6 +94,7 @@ void print_unit_config(const t_unit_config *unit_config) {
 	printf("  HP: %lu\n", unit_config->hp);
 	printf("  Damage Core: %lu\n", unit_config->dmg_core);
 	printf("  Damage Unit: %lu\n", unit_config->dmg_unit);
+	printf("  Damage Resource: %lu\n", unit_config->dmg_resource);
 	printf("  Max Range: %lu\n", unit_config->max_range);
 	printf("  Min Range: %lu\n", unit_config->min_range);
 	printf("  Speed: %lu\n", unit_config->speed);
