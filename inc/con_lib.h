@@ -73,7 +73,9 @@ typedef struct s_obj
 typedef enum e_unit_type
 {
 	UNIT_WARRIOR = 1,
-	UNIT_WORKER = 2
+	UNIT_WORKER = 2,
+	UNIT_TANK = 3,
+	UNIT_ARCHER = 4
 } t_unit_type;
 
 typedef struct s_unit_config
@@ -206,6 +208,11 @@ void ft_close_con();
 void ft_enable_debug();
 void ft_loop(void (*ft_init_func)(void *ptr), void (*ft_user_loop)(void *ptr), void *ptr);
 
+// ------------------ getter -----------------
+/*
+ * @brief Get any object based on its id
+ */
+t_obj	*ft_get_obj_from_id(unsigned long id);
 // --------------- team getter ---------------
 /**
  * @brief Get the referance to my team
@@ -286,7 +293,7 @@ void ft_travel_dir_id(unsigned long id, long x, long y);
 /**
  * @brief Lets a unit start to travel into a specific direction. Same as ft_travel_dir_id, besides that this function takes a pointer to a unit instead of an id. When x and y are both 0, the unit will stop traveling.
  *
- * @param id Which unit should travel.
+ * @param unit Which unit should travel.
  * @param x x vector of the direction the unit should travel.
  * @param y y vector of the direction the unit should travel.
  */
@@ -310,13 +317,7 @@ void ft_travel_to_obj(t_obj *unit, t_obj *target);
  *
  * @param type_id Which type of unit should be created.
  */
-void ft_create_type_id(t_unit_type type_id);
-/**
- * @brief Creates a unit of a specific type. Same as ft_create_type_id, besides that this function takes a pointer to a unit instead of an id.
- *
- * @param unit_config Pointer to the unit config that should be created.
- */
-void ft_create(t_unit_config *unit_config);
+void ft_create_unit(t_unit_type type_id);
 /**
  * @brief Lets a unit attack another unit. Same as ft_attack, besides that this function takes an id instead of a pointer to a unit.
  *
@@ -369,19 +370,19 @@ void ft_print_units();
  *
  * @param team_config Pointer to the team config
  */
-void print_team_config(const t_team_config *team_config);
+void ft_print_team_config(const t_team_config *team_config);
 /**
  * @brief Prints a unit config with inforamtion about their type_id, name, cost, hp, dmg_core, dmg_unit, max_range, min_range and speed into stdout
  *
  * @param unit_config Pointer to the unit config
  */
-void print_unit_config(const t_unit_config *unit_config);
+void ft_print_unit_config(const t_unit_config *unit_config);
 /**
  * @brief Prints a resource config with inforamtion about their type_id and hp into stdout
  *
  * @param unit_config Pointer to the resource config
  */
-void print_resource_config(const t_resource_config *resource_config);
+void ft_print_resource_config(const t_resource_config *resource_config);
 /**
  * @brief Prints the current game config with inforamtion about their height, width, idle_income, core_hp, teams and units into stdout
  *

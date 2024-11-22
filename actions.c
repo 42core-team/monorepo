@@ -74,7 +74,7 @@ void	ft_travel_dir(t_obj *unit, long x, long y)
 	ft_travel_dir_id(unit->id, x, y);
 }
 
-void	ft_create_type_id(t_unit_type type_id)
+void	ft_create_unit(t_unit_type type_id)
 {
 	t_action_create	**actions = &game.actions.creates;
 	unsigned int	*count = &game.actions.creates_count;
@@ -90,13 +90,6 @@ void	ft_create_type_id(t_unit_type type_id)
 
 	(*actions)[*count].type_id = type_id;
 	(*count)++;
-}
-
-void	ft_create(t_unit_config *unit_config)
-{
-	if (unit_config == NULL)
-		return;
-	ft_create_type_id(unit_config->type_id);
 }
 
 void	ft_attack_id(unsigned long attacker_id, unsigned long target_id)
@@ -142,6 +135,15 @@ void	ft_attack(t_obj *attacker_unit, t_obj *target_obj)
 
 void	ft_travel_attack(t_obj *attacker_unit, t_obj *attack_obj)
 {
-	ft_travel_to_obj(attacker_unit, attack_obj);
+	double dist = ft_distance(attacker_unit, attack_obj);
+	t_unit_config *attacker_config = ft_get_unit_config(attacker_unit->s_unit.type_id);
+
+	if (dist > attacker_config->max_range)
+		ft_travel_to_obj(attacker_unit, attack_obj);
+	else if (dist < attacker_config->min_range)
+		ft_travel_to_obj(attacker_unit, ft_get_my_core());
+	else
+		ft_travel_to_obj(attacker_unit, attacker_unit);
+
 	ft_attack(attacker_unit, attack_obj);
 }

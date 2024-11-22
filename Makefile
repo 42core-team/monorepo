@@ -22,6 +22,7 @@ socket.c \
 utils.c \
 actions.c \
 con_lib.c \
+get.c \
 get_core.c \
 get_team.c \
 get_unit.c \
