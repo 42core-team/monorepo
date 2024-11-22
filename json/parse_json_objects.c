@@ -1,5 +1,56 @@
 #include "parse_json.h"
 
+static void apply_obj_to_arr(t_obj obj, t_obj **arr)
+{
+	bool objInserted = false;
+
+	// 1. LOOP: Id Matching
+	int index = 0;
+	while (arr[index] != NULL)
+	{
+		if (arr[index]->id == obj.id)
+		{
+			*(arr[index]) = obj;
+			objInserted = true;
+			break;
+		}
+		index++;
+	}
+	if (objInserted)
+	{
+		index++;
+		continue;
+	}
+
+	// 2. LOOP: Placeholder matching
+	index = 0;
+	while (arr[index] != NULL)
+	{
+		if (arr[index]->id == 0)
+		{
+			*(arr[index]) = obj;
+			objInserted = true;
+			break;
+		}
+		index++;
+	}
+	if (objInserted)
+	{
+		index++;
+		continue;
+	}
+
+	// 3. Add to the back
+	int arrLen = 0;
+	while (arr[arrLen] != NULL)
+		arrLen++;
+	arr = realloc(arr, sizeof(t_obj *) * (arrLen + 2));
+	arr[arrLen] = malloc(sizeof(t_obj));
+	arr[arrLen + 1] = NULL;
+	*(arr[arrLen]) = readCore;
+	arr[arrLen]->state = STATE_ALIVE;
+}
+
 void ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
 	int	index = 0;
@@ -44,53 +95,7 @@ void ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 		}
 		readCore.hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
 
-		bool readCoreInserted = false;
-
-		// 1. LOOP: Id Matching
-		int core_index = 0;
-		while (game.cores[core_index] != NULL)
-		{
-			if (game.cores[core_index]->id == readCore.id)
-			{
-				*(game.cores[core_index]) = readCore
-				readCoreInserted = true;
-				break;
-			}
-			core_index++;
-		}
-		if (readCoreInserted)
-		{
-			index++;
-			continue;
-		}
-
-		// 2. LOOP: Placeholder matching
-		core_index = 0;
-		while (game.cores[core_index] != NULL)
-		{
-			if (game.cores[core_index]->id == 0)
-			{
-				*(game.cores[core_index]) = readCore
-				readCoreInserted = true;
-				break;
-			}
-			core_index++;
-		}
-		if (readCoreInserted)
-		{
-			index++;
-			continue;
-		}
-
-		// 3. New core
-		int coreArrLen = 0;
-		while (game.cores[coreArrLen] != NULL)
-			coreArrLen++;
-		game.cores = realloc(game.cores, sizeof(t_obj *) * (coreArrLen + 2));
-		game.cores[coreArrLen] = malloc(sizeof(t_obj));
-		game.cores[coreArrLen + 1] = NULL;
-		*(game.cores[coreArrLen]) = readCore;
-		game.cores[coreArrLen]->state = STATE_ALIVE;
+		apply_obj_to_arr(readCore, game.cores);
 
 		index++;
 	}
@@ -172,76 +177,10 @@ void	ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, char *j
 		readResource.y = ft_find_parse_ulong("y", &token_ind, token_len, tokens, json);
 		readResource.hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
 
-		bool readResInserted = false;
-
-		// 1. LOOP: Id Matching
-		int resource_index = 0;
-		while (game.resources[resource_index] != NULL)
-		{
-			if (game.resources[resource_index]->id == readCore.id)
-			{
-				*(game.resources[resource_index]) = readCore
-				readResInserted = true;
-				break;
-			}
-			resource_index++;
-		}
-		if (readResInserted)
-		{
-			index++;
-			continue;
-		}
-
-		// 2. LOOP: Placeholder matching
-		resource_index = 0;
-		while (game.resources[resource_index] != NULL)
-		{
-			if (game.resources[resource_index]->id == 0)
-			{
-				*(game.resources[resource_index]) = readCore
-				readResInserted = true;
-				break;
-			}
-			resource_index++;
-		}
-		if (readResInserted)
-		{
-			index++;
-			continue;
-		}
-
-		// 3. New core
-		int coreArrLen = 0;
-		while (game.resources[coreArrLen] != NULL)
-			coreArrLen++;
-		game.resources = realloc(game.resources, sizeof(t_obj *) * (coreArrLen + 2));
-		game.resources[coreArrLen] = malloc(sizeof(t_obj));
-		game.resources[coreArrLen + 1] = NULL;
-		*(game.resources[coreArrLen]) = readCore;
-		game.resources[coreArrLen]->state = STATE_ALIVE;
+		apply_obj_to_arr(readResource, game.resources);
 
 		index++;
 	}
-
-	while (token_ind != -1)
-	{
-		next_token_ind = ft_find_token_one("id", token_ind, token_len, tokens, json);
-		if (next_token_ind == -1 || tokens[next_token_ind].end > last_json_index)
-			break;
-
-		resources = realloc(resources, sizeof(t_obj) * (index + 2));
-		resources[index + 1].id = 0;
-
-		resources[index].type = OBJ_RESOURCE;
-		resources[index].id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
-		resources[index].x = ft_find_parse_ulong("x", &token_ind, token_len, tokens, json);
-		resources[index].y = ft_find_parse_ulong("y", &token_ind, token_len, tokens, json);
-		resources[index].hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
-
-		index++;
-	}
-
-	return (resources);
 }
 
 void	ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
@@ -289,53 +228,7 @@ void	ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 		}
 		readUnit.hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
 
-		bool readUnitInserted = false;
-
-		// 1. LOOP: Id Matching
-		int unit_index = 0;
-		while (game.units[unit_index] != NULL)
-		{
-			if (game.units[unit_index]->id == readCore.id)
-			{
-				*(game.units[unit_index]) = readCore
-				readUnitInserted = true;
-				break;
-			}
-			unit_index++;
-		}
-		if (readUnitInserted)
-		{
-			index++;
-			continue;
-		}
-
-		// 2. LOOP: Placeholder matching
-		unit_index = 0;
-		while (game.units[unit_index] != NULL)
-		{
-			if (game.units[unit_index]->id == 0)
-			{
-				*(game.units[unit_index]) = readCore
-				readUnitInserted = true;
-				break;
-			}
-			unit_index++;
-		}
-		if (readUnitInserted)
-		{
-			index++;
-			continue;
-		}
-
-		// 3. New core
-		int coreArrLen = 0;
-		while (game.units[coreArrLen] != NULL)
-			coreArrLen++;
-		game.units = realloc(game.units, sizeof(t_obj *) * (coreArrLen + 2));
-		game.units[coreArrLen] = malloc(sizeof(t_obj));
-		game.units[coreArrLen + 1] = NULL;
-		*(game.units[coreArrLen]) = readCore;
-		game.units[coreArrLen]->state = STATE_ALIVE;
+		apply_obj_to_arr(readUnit, game.units);
 
 		index++;
 	}
