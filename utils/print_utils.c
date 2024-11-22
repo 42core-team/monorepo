@@ -26,7 +26,7 @@ void	ft_print_teams()
 	if (teams == NULL)
 		return;
 	int index = 0;
-	while (teams[index]->id != 0)
+	while (teams[index] != NULL)
 	{
 		printf("- id: %lu balance: %lu\n", teams[index]->id, teams[index]->balance);
 		index++;

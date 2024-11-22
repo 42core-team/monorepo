@@ -135,8 +135,13 @@ void	ft_attack(t_obj *attacker_unit, t_obj *target_obj)
 
 void	ft_travel_attack(t_obj *attacker_unit, t_obj *attack_obj)
 {
+	if (attacker_unit->state == STATE_UNINITIALIZED && attack_obj->state == STATE_UNINITIALIZED)
+		return ;
+
 	double dist = ft_distance(attacker_unit, attack_obj);
 	t_unit_config *attacker_config = ft_get_unit_config(attacker_unit->s_unit.type_id);
+	if (!attacker_config)
+		return ;
 
 	if (dist > attacker_config->max_range)
 		ft_travel_to_obj(attacker_unit, attack_obj);
