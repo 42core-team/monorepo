@@ -7,7 +7,7 @@ t_obj	*ft_get_my_core(void)
 	while (game.cores[ind]->id != 0)
 	{
 		if (game.cores[ind]->s_core.team_id == game.my_team_id)
-			return (&game.cores[ind]);
+			return (game.cores[ind]);
 		ind++;
 	}
 
@@ -21,7 +21,7 @@ t_obj	*ft_get_first_opponent_core(void)
 	while (game.cores[ind]->id != 0)
 	{
 		if (game.cores[ind]->s_core.team_id != game.my_team_id)
-			return (&game.cores[ind]);
+			return (game.cores[ind]);
 		ind++;
 	}
 
@@ -37,10 +37,10 @@ t_obj	*ft_get_nearest_core(t_obj *obj)
 
 	while (game.cores[ind]->id != 0)
 	{
-		dist = ft_distance(obj, &game.cores[ind]);
+		dist = ft_distance(obj, game.cores[ind]);
 		if (dist < min_dist)
 		{
-			nearest = &game.cores[ind];
+			nearest = game.cores[ind];
 			min_dist = dist;
 		}
 		ind++;

@@ -19,7 +19,7 @@ t_obj	**ft_get_my_units(void)
 	{
 		if (game.units[ind]->s_unit.team_id == game.my_team_id)
 		{
-			units[count] = &game.units[ind];
+			units[count] = game.units[ind];
 			count++;
 		}
 		ind++;
@@ -47,7 +47,7 @@ t_obj	**ft_get_opponent_units(void)
 	{
 		if (game.units[ind]->s_unit.team_id != game.my_team_id)
 		{
-			units[count] = &game.units[ind];
+			units[count] = game.units[ind];
 			count++;
 		}
 		ind++;
@@ -66,11 +66,11 @@ t_obj	*ft_get_nearest_unit(t_obj *unit)
 
 	while (game.units[ind]->id != 0)
 	{
-		dist = ft_distance(unit, &game.units[ind]);
+		dist = ft_distance(unit, game.units[ind]);
 		if (dist < min_dist)
 		{
 			min_dist = dist;
-			nearest = &game.units[ind];
+			nearest = game.units[ind];
 		}
 		ind++;
 	}

@@ -19,7 +19,7 @@ void	ft_print_status()
 
 void	ft_print_teams()
 {
-	const t_team	**teams = game.teams;
+	t_team	**teams = game.teams;
 
 	printf("Your team id: %lu\n", game.my_team_id);
 	printf("Teams:\n");
@@ -35,7 +35,7 @@ void	ft_print_teams()
 
 void	ft_print_cores()
 {
-	const t_obj	**cores = game.cores;
+	t_obj	**cores = game.cores;
 
 	printf("Cores:\n");
 	if (cores == NULL)
@@ -50,7 +50,7 @@ void	ft_print_cores()
 
 void	ft_print_resources()
 {
-	const t_obj	**resources = game.resources;
+	t_obj	**resources = game.resources;
 
 	printf("Resources:\n");
 	if (resources == NULL)
@@ -65,7 +65,7 @@ void	ft_print_resources()
 
 void	ft_print_units()
 {
-	const t_obj	**units = game.units;
+	t_obj	**units = game.units;
 
 	printf("Units:\n");
 	if (units == NULL)

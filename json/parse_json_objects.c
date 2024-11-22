@@ -17,10 +17,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj **arr)
 		index++;
 	}
 	if (objInserted)
-	{
-		index++;
-		continue;
-	}
+		return ;
 
 	// 2. LOOP: Placeholder matching
 	index = 0;
@@ -35,10 +32,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj **arr)
 		index++;
 	}
 	if (objInserted)
-	{
-		index++;
-		continue;
-	}
+		return ;
 
 	// 3. Add to the back
 	int arrLen = 0;
@@ -47,7 +41,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj **arr)
 	arr = realloc(arr, sizeof(t_obj *) * (arrLen + 2));
 	arr[arrLen] = malloc(sizeof(t_obj));
 	arr[arrLen + 1] = NULL;
-	*(arr[arrLen]) = readCore;
+	*(arr[arrLen]) = obj;
 	arr[arrLen]->state = STATE_ALIVE;
 }
 
@@ -108,7 +102,7 @@ void ft_parse_teams(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 
 	token_ind = ft_find_token_one("teams", token_ind, token_len, tokens, json);
 	if (token_ind == -1)
-		return (NULL);
+		return ;
 	last_json_index = tokens[token_ind].end;
 
 	if (game.teams == NULL)
@@ -131,8 +125,8 @@ void ft_parse_teams(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 		if (next_token_ind == -1 || tokens[next_token_ind].end > last_json_index)
 			break;
 
-		teams[index].id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
-		teams[index].balance = ft_find_parse_ulong("balance", &token_ind, token_len, tokens, json);
+		game.teams[index]->id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
+		game.teams[index]->balance = ft_find_parse_ulong("balance", &token_ind, token_len, tokens, json);
 
 		index++;
 	}

@@ -9,11 +9,11 @@ t_obj	*ft_get_nearest_resource(t_obj *unit)
 
 	while (game.resources[ind]->id != 0)
 	{
-		dist = ft_distance(unit, &game.resources[ind]);
+		dist = ft_distance(unit, game.resources[ind]);
 
 		if (dist < min_dist)
 		{
-			nearest = &game.resources[ind];
+			nearest = game.resources[ind];
 			min_dist = dist;
 		}
 		ind++;

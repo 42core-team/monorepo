@@ -7,7 +7,7 @@ t_team	*ft_get_my_team(void)
 	while (game.teams[ind]->id != 0)
 	{
 		if (game.teams[ind]->id == game.my_team_id)
-			return (&game.teams[ind]);
+			return (game.teams[ind]);
 		ind++;
 	}
 
@@ -21,7 +21,7 @@ t_team	*ft_get_first_opponent_team(void)
 	while (game.teams[ind]->id != 0)
 	{
 		if (game.teams[ind]->id != game.my_team_id)
-			return (&game.teams[ind]);
+			return (game.teams[ind]);
 		ind++;
 	}
 
