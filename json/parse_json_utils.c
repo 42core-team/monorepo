@@ -34,6 +34,11 @@ unsigned long	ft_find_parse_ulong(const char *search, int *token_ind, int token_
 	*token_ind = ft_find_token_one(search, *token_ind, token_len, tokens, json);
 	if (*token_ind == -1)
 		return (0);
+	if (*token_ind >= token_len)
+	{
+		fprintf(stderr, "Token index out of bounds for key: %s\n", search);
+		return (0);
+	}
 	return (strtoul(json + tokens[*token_ind].start, NULL, 10));
 }
 
