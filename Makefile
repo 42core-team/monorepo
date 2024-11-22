@@ -12,6 +12,7 @@ encode_json.c \
 get_next_line.c \
 jsmn.c \
 parse_json_objects.c \
+parse_json_configs.c \
 parse_json_utils.c \
 parse_json.c \
 print_utils.c \

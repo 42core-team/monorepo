@@ -51,9 +51,9 @@ void	ft_parse_json_state(char *json)
 
 	game.status = ft_find_parse_ulong("status", &token_ind, json_data.token_len, json_data.tokens, json);
 	ft_parse_cores(token_ind, json_data.token_len, json_data.tokens, json);
-	game.resources = ft_parse_resources(token_ind, json_data.token_len, json_data.tokens, json);
-	game.units = ft_parse_units(token_ind, json_data.token_len, json_data.tokens, json);
-	game.teams = ft_parse_teams(token_ind, json_data.token_len, json_data.tokens, json);
+	ft_parse_resources(token_ind, json_data.token_len, json_data.tokens, json);
+	ft_parse_units(token_ind, json_data.token_len, json_data.tokens, json);
+	ft_parse_teams(token_ind, json_data.token_len, json_data.tokens, json);
 
 	free(json_data.tokens);
 }

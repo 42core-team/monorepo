@@ -17,6 +17,7 @@ typedef enum e_status
 	/// @brief The game is waiting for clients to connect.
 	STATUS_WAIT_FOR_CLIENTS = 3
 } t_status;
+
 typedef struct s_team
 {
 	/// @brief The id of the team.
@@ -31,11 +32,19 @@ typedef enum e_obj_type
 	OBJ_CORE,
 	OBJ_RESOURCE
 } t_obj_type;
+typedef enum e_obj_state
+{
+	STATE_UNINITIALIZED = 1,
+	STATE_ALIVE = 2,
+	STATE_DEAD = 3
+}	t_obj_state;
 
 typedef struct s_obj
 {
 	/// @brief Type of the obj
 	t_obj_type	type;
+	/// @brief State of the obj
+	t_obj_state	state;
 
 	/// @brief The id of the obj
 	unsigned long id;
