@@ -18,6 +18,17 @@ void	ft_receive_config()
 	free(msg);
 }
 
+void	ft_init_game()
+{
+	game.teams = NULL;
+	game.cores = NULL;
+	game.resources = NULL;
+	game.units = NULL;
+	game.config.teams = NULL;
+	game.config.units = NULL;
+	game.config.resources = NULL;
+}
+
 /**
  * @brief Starts the connection to the server. This function should be called before any other function from this library.
  *
@@ -37,8 +48,10 @@ void	ft_init_con(char *team_name, int *argc, char **argv)
 	ft_send_socket(socket_fd, login_msg);
 	free(login_msg);
 
+	ft_init_game();
 	ft_receive_config();
 	ft_reset_actions();
+
 	printf("Game started! Your id: %ld\n", game.my_team_id);
 }
 

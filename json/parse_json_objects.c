@@ -33,7 +33,12 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	index = 0;
 	while ((*arr)[index] != NULL)
 	{
-		if ((*arr)[index]->id == 0)
+		bool matches = false;
+		matches = (*arr)[index]->id == 0;
+		if (arr == game.units && (*arr)[index]->s_unit.type_id != obj.s_unit.type_id)
+			matches = false;
+
+		if (matches)
 		{
 			*((*arr)[index]) = obj;
 			objInserted = true;
