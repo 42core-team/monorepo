@@ -93,6 +93,7 @@ t_obj	*ft_create_unit(t_unit_type type_id)
 
 	t_obj *newUnit = malloc(sizeof(t_obj));
 	newUnit->s_unit.type_id = type_id;
+	newUnit->s_unit.team_id = game.my_team_id;
 	newUnit->type = OBJ_UNIT;
 	newUnit->id = 0;
 	newUnit->state = STATE_UNINITIALIZED;

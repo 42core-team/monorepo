@@ -73,7 +73,12 @@ void	ft_print_units()
 	int index = 0;
 	while (units[index] != NULL)
 	{
-		printf("- id: %lu type_id: %lu team_id: %lu x: %lu y: %lu hp: %lu\n", units[index]->id, units[index]->s_unit.type_id, units[index]->s_unit.team_id, units[index]->x, units[index]->y, units[index]->hp);
+		char *state = "ALIVE";
+		if (units[index]->state == STATE_DEAD)
+			state = "DEAD";
+		else if (units[index]->state == STATE_UNINITIALIZED)
+			state = "UNINITIALIZED";
+		printf("- id: %lu type_id: %lu team_id: %lu x: %lu y: %lu hp: %lu state: %s\n", units[index]->id, units[index]->s_unit.type_id, units[index]->s_unit.team_id, units[index]->x, units[index]->y, units[index]->hp, state);
 		index++;
 	}
 }

@@ -4,27 +4,12 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 {
 	bool objInserted = false;
 
-	printf("Entering apply_obj_to_arr with obj.id=%lu, type=%d\n", obj.id, obj.type);
-	fflush(stdout);
-
-	printf("Marking existing objects as STATE_DEAD where STATE_ALIVE\n");
-	for (size_t i = 0; (*arr)[i] != NULL; i++)
-		if ((*arr)[i]->state == STATE_ALIVE)
-			(*arr)[i]->state = STATE_DEAD;
-
-	printf("Starting ID matching loop\n");
-	fflush(stdout);
-
 	// 1. LOOP: Id Matching
 	size_t index = 0;
 	while ((*arr)[index] != NULL)
 	{
-		printf("Checking object at index %zu with id=%lu against obj.id=%lu\n", index, (*arr)[index]->id, obj.id);
-		fflush(stdout);
 		if ((*arr)[index]->id == obj.id)
 		{
-			printf("ID match found at index %zu. Replacing object.\n", index);
-			fflush(stdout);
 			*((*arr)[index]) = obj;
 			objInserted = true;
 			break;
@@ -37,22 +22,16 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	printf("c\n"); fflush(stdout);
 
 	// 2. LOOP: Placeholder matching
-	printf("Starting placeholder matching loop\n");
-	fflush(stdout);
 	index = 0;
 	while ((*arr)[index] != NULL)
 	{
 		bool matches = false;
-		printf("Checking placeholder at index %zu with id=%lu\n", index, (*arr)[index]->id);
-		fflush(stdout);
 		matches = (*arr)[index]->id == 0;
 		if (*arr == game.units && (*arr)[index]->s_unit.type_id != obj.s_unit.type_id)
 			matches = false;
 
 		if (matches)
 		{
-			printf("Placeholder match found at index %zu. Replacing object.\n", index);
-			fflush(stdout);
 			*((*arr)[index]) = obj;
 			objInserted = true;
 			break;
@@ -61,9 +40,6 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	}
 	if (objInserted)
 		return ;
-
-	printf("No matching object found. Adding new object to the array.\n");
-	fflush(stdout);
 
 	// 3. Add to the back
 	size_t arrLen = 0;
@@ -74,9 +50,6 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	(*arr)[arrLen] = malloc(sizeof(t_obj));
 	*((*arr)[arrLen]) = obj;
 	(*arr)[arrLen]->state = STATE_ALIVE;
-
-	printf("New object added at index %zu with id=%lu.\n", arrLen, (*arr)[arrLen]->id);
-	fflush(stdout);
 }
 
 void ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
@@ -116,6 +89,9 @@ void ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 		}
 		readCore.hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
 
+		for (size_t i = 0; game.cores[i] != NULL; i++)
+			if (game.cores[i]->state == STATE_ALIVE)
+				game.cores[i]->state = STATE_DEAD;
 		apply_obj_to_arr(readCore, &game.cores);
 
 		index++;
@@ -158,6 +134,9 @@ void	ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, char *j
 		}
 		readResource.hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
 
+		for (size_t i = 0; game.resources[i] != NULL; i++)
+			if (game.resources[i]->state == STATE_ALIVE)
+				game.resources[i]->state = STATE_DEAD;
 		apply_obj_to_arr(readResource, &game.resources);
 
 		index++;
@@ -168,14 +147,9 @@ void	ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
 	int	index = 0;
 
-	printf("Entering ft_parse_units with token_ind=%d, token_len=%d\n", token_ind, token_len);
-	fflush(stdout);
-
 	token_ind = ft_find_token_one("units", token_ind, token_len, tokens, json);
 	if (token_ind == -1)
 		return ;
-	printf("'units' key found at token index %d with size=%d\n", token_ind, tokens[token_ind].size);
-	fflush(stdout);
 	int unit_count = tokens[token_ind].size;
 
 	if (game.units == NULL)
@@ -184,14 +158,9 @@ void	ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 		game.units[0] = NULL;
 	}
 
-	printf("hi\n"); fflush(stdout);
-
 	token_ind++;
 	while (index < unit_count && token_ind < token_len)
 	{
-		printf("Processing unit index %d at token index %d\n", index, token_ind);
-		fflush(stdout);
-
 		if (!tokens)
 			return ;
 		if (tokens[token_ind].type != JSMN_OBJECT)
@@ -215,11 +184,10 @@ void	ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 		}
 		readUnit.hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
 
-		printf("applying obj\n"); fflush(stdout);
-
+		for (size_t i = 0; game.units[i] != NULL; i++)
+			if (game.units[i]->state == STATE_ALIVE)
+				game.units[i]->state = STATE_DEAD;
 		apply_obj_to_arr(readUnit, &game.units);
-
-		printf("applyed obj\n"); fflush(stdout);
 
 		index++;
 	}
