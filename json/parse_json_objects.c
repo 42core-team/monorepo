@@ -19,16 +19,14 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	if (objInserted)
 		return ;
 
-	printf("c\n"); fflush(stdout);
-
 	// 2. LOOP: Placeholder matching
 	index = 0;
 	while ((*arr)[index] != NULL)
 	{
 		bool matches = false;
 		matches = (*arr)[index]->id == 0;
-		if (*arr == game.units && (*arr)[index]->s_unit.type_id != obj.s_unit.type_id)
-			matches = false;
+		// if (*arr == game.units && (*arr)[index]->s_unit.type_id != obj.s_unit.type_id)
+		// 	matches = false;
 
 		if (matches)
 		{
@@ -67,6 +65,10 @@ void ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 		game.cores[0] = NULL;
 	}
 
+	for (size_t i = 0; game.cores[i] != NULL; i++)
+		if (game.cores[i]->state == STATE_ALIVE)
+			game.cores[i]->state = STATE_DEAD;
+
 	token_ind++;
 	while (index < cores_count && token_ind < token_len)
 	{
@@ -89,9 +91,6 @@ void ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 		}
 		readCore.hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
 
-		for (size_t i = 0; game.cores[i] != NULL; i++)
-			if (game.cores[i]->state == STATE_ALIVE)
-				game.cores[i]->state = STATE_DEAD;
 		apply_obj_to_arr(readCore, &game.cores);
 
 		index++;
@@ -112,6 +111,10 @@ void	ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, char *j
 		game.resources = malloc(sizeof(t_obj *) * 1);
 		game.resources[0] = NULL;
 	}
+
+	for (size_t i = 0; game.resources[i] != NULL; i++)
+		if (game.resources[i]->state == STATE_ALIVE)
+			game.resources[i]->state = STATE_DEAD;
 
 	token_ind++;
 	while (index < resource_count && token_ind < token_len)
@@ -134,9 +137,6 @@ void	ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, char *j
 		}
 		readResource.hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
 
-		for (size_t i = 0; game.resources[i] != NULL; i++)
-			if (game.resources[i]->state == STATE_ALIVE)
-				game.resources[i]->state = STATE_DEAD;
 		apply_obj_to_arr(readResource, &game.resources);
 
 		index++;
@@ -157,6 +157,10 @@ void	ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 		game.units = malloc(sizeof(t_obj *) * 1);
 		game.units[0] = NULL;
 	}
+
+	for (size_t i = 0; game.units[i] != NULL; i++)
+		if (game.units[i]->state == STATE_ALIVE)
+			game.units[i]->state = STATE_DEAD;
 
 	token_ind++;
 	while (index < unit_count && token_ind < token_len)
@@ -184,9 +188,6 @@ void	ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 		}
 		readUnit.hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
 
-		for (size_t i = 0; game.units[i] != NULL; i++)
-			if (game.units[i]->state == STATE_ALIVE)
-				game.units[i]->state = STATE_DEAD;
 		apply_obj_to_arr(readUnit, &game.units);
 
 		index++;
