@@ -46,6 +46,9 @@ typedef struct s_obj
 	/// @brief State of the obj
 	t_obj_state	state;
 
+	/// @brief Custom data, save whatever you want here.
+	void	*data;
+
 	/// @brief The id of the obj
 	unsigned long id;
 	/// @brief The x coordinate of the obj
@@ -72,10 +75,10 @@ typedef struct s_obj
 
 typedef enum e_unit_type
 {
-	UNIT_WARRIOR = 1,
-	UNIT_WORKER = 2,
-	UNIT_TANK = 3,
-	UNIT_ARCHER = 4
+	UNIT_WARRIOR = 0,
+	UNIT_WORKER = 1,
+	UNIT_TANK = 2,
+	UNIT_ARCHER = 3
 } t_unit_type;
 
 typedef struct s_unit_config
