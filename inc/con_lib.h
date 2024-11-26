@@ -320,7 +320,7 @@ void ft_travel_to_obj(t_obj *unit, t_obj *target);
  *
  * @param type_id Which type of unit should be created.
  */
-t_obj	*ft_create_unit(t_unit_type type_id);
+void	ft_create_unit(t_unit_type type_id);
 /**
  * @brief Lets a unit attack another unit. Same as ft_attack, besides that this function takes an id instead of a pointer to a unit.
  *

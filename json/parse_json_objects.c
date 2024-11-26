@@ -4,6 +4,8 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 {
 	bool objInserted = false;
 
+	obj.state = STATE_ALIVE;
+
 	// 1. LOOP: Id Matching
 	size_t index = 0;
 	while ((*arr)[index] != NULL)
@@ -20,29 +22,29 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 		return ;
 
 	// 2. LOOP: Placeholder matching
-	index = 0;
-	while ((*arr)[index] != NULL)
-	{
-		bool matches = false;
-		matches = (*arr)[index]->id == 0;
-		// if ((*arr) == game.units && (*arr)[index]->s_unit.type_id != obj.s_unit.type_id)
-		// 	matches = false;
+	// index = 0;
+	// while ((*arr)[index] != NULL)
+	// {
+	// 	bool matches = false;
+	// 	matches = (*arr)[index]->id == 0;
+	// 	// if ((*arr) == game.units && (*arr)[index]->s_unit.type_id != obj.s_unit.type_id)
+	// 	// 	matches = false;
 
-		if (matches)
-		{
-			*((*arr)[index]) = obj;
-			objInserted = true;
-			break;
-		}
-		index++;
-	}
-	if (objInserted)
-		return ;
+	// 	if (matches)
+	// 	{
+	// 		*((*arr)[index]) = obj;
+	// 		objInserted = true;
+	// 		break;
+	// 	}
+	// 	index++;
+	// }
+	// if (objInserted)
+	// 	return ;
 
-	if ((*arr) == game.units)
-	{
-		printf("Error matching units. Troublemaker: %lu, %lu\n", obj.id, obj.s_unit.type_id);
-	}
+	// if ((*arr) == game.units)
+	// {
+	// 	printf("Error matching units. Troublemaker: %lu, %lu\n", obj.id, obj.s_unit.type_id);
+	// }
 
 	// 3. Add to the back
 	size_t arrLen = 0;
@@ -52,7 +54,6 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	(*arr)[arrLen + 1] = NULL;
 	(*arr)[arrLen] = malloc(sizeof(t_obj));
 	*((*arr)[arrLen]) = obj;
-	(*arr)[arrLen]->state = STATE_ALIVE;
 }
 
 void ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
@@ -83,7 +84,6 @@ void ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 
 		t_obj readCore;
 		readCore.type = OBJ_CORE;
-		readCore.state = STATE_ALIVE;
 		readCore.id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
 		readCore.s_core.team_id = ft_find_parse_ulong("team_id", &token_ind, token_len, tokens, json);
 		readCore.x = ft_find_parse_ulong("x", &token_ind, token_len, tokens, json);
@@ -124,7 +124,6 @@ void	ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, char *j
 
 		t_obj readResource;
 		readResource.type = OBJ_RESOURCE;
-		readResource.state = STATE_ALIVE;
 		readResource.id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
 		readResource.x = ft_find_parse_ulong("x", &token_ind, token_len, tokens, json);
 		readResource.y = ft_find_parse_ulong("y", &token_ind, token_len, tokens, json);
@@ -166,7 +165,6 @@ void	ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 
 		t_obj readUnit;
 		readUnit.type = OBJ_UNIT;
-		readUnit.state = STATE_ALIVE;
 		readUnit.id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
 		readUnit.s_unit.team_id = ft_find_parse_ulong("team_id", &token_ind, token_len, tokens, json);
 		readUnit.s_unit.type_id = ft_find_parse_ulong("type_id", &token_ind, token_len, tokens, json);

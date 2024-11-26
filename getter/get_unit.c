@@ -21,7 +21,7 @@ t_obj	**ft_get_my_units(void)
 		ind++;
 	}
 
-	printf("There are %d units\n", count);
+	printf("There are %d units, and %d total\n", count, ind);
 
 	t_obj	**units = malloc((count + 1) * sizeof(t_obj *));
 	ind = 0;
