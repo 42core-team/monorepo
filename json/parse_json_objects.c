@@ -39,6 +39,11 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	if (objInserted)
 		return ;
 
+	if ((*arr) == game.units)
+	{
+		printf("Error matching units. Troublemaker: %lu, %lu\n", obj.id, obj.s_unit.type_id);
+	}
+
 	// 3. Add to the back
 	size_t arrLen = 0;
 	while ((*arr)[arrLen] != NULL)
@@ -52,12 +57,12 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 
 void ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
-	int	index = 0;
+	int	index, last_json_index, next_token_ind;
 
 	token_ind = ft_find_token_one("cores", token_ind, token_len, tokens, json);
 	if (token_ind == -1)
 		return ;
-	int cores_count = tokens[token_ind].size;
+	last_json_index = tokens[token_ind].end;
 
 	if (game.cores == NULL)
 	{
@@ -69,26 +74,20 @@ void ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 		if (game.cores[i]->state == STATE_ALIVE)
 			game.cores[i]->state = STATE_DEAD;
 
-	token_ind++;
-	while (index < cores_count && token_ind < token_len)
+	index = 0;
+	while (token_ind != -1)
 	{
-		if (tokens[token_ind].type != JSMN_OBJECT)
-		{
-			token_ind++;
-			continue;
-		}
+		next_token_ind = ft_find_token_one("id", token_ind, token_len, tokens, json);
+		if (next_token_ind == -1 || tokens[next_token_ind].end > last_json_index)
+			break;
 
 		t_obj readCore;
 		readCore.type = OBJ_CORE;
 		readCore.state = STATE_ALIVE;
 		readCore.id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
 		readCore.s_core.team_id = ft_find_parse_ulong("team_id", &token_ind, token_len, tokens, json);
-		int pos_token_ind = ft_find_token_one("pos", token_ind, token_len, tokens, json);
-		if (pos_token_ind != -1)
-		{
-			readCore.x = ft_find_parse_ulong("x", &pos_token_ind, token_len, tokens, json);
-			readCore.y = ft_find_parse_ulong("y", &pos_token_ind, token_len, tokens, json);
-		}
+		readCore.x = ft_find_parse_ulong("x", &token_ind, token_len, tokens, json);
+		readCore.y = ft_find_parse_ulong("y", &token_ind, token_len, tokens, json);
 		readCore.hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
 
 		apply_obj_to_arr(readCore, &game.cores);
@@ -99,12 +98,12 @@ void ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 
 void	ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
-	int	index = 0;
+	int	index, last_json_index, next_token_ind;
 
 	token_ind = ft_find_token_one("resources", token_ind, token_len, tokens, json);
 	if (token_ind == -1)
 		return ;
-	int resource_count = tokens[token_ind].size;
+	last_json_index = tokens[token_ind].end;
 
 	if (game.resources == NULL)
 	{
@@ -116,25 +115,19 @@ void	ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, char *j
 		if (game.resources[i]->state == STATE_ALIVE)
 			game.resources[i]->state = STATE_DEAD;
 
-	token_ind++;
-	while (index < resource_count && token_ind < token_len)
+	index = 0;
+	while (token_ind != -1)
 	{
-		if (tokens[token_ind].type != JSMN_OBJECT)
-		{
-			token_ind++;
-			continue;
-		}
+		next_token_ind = ft_find_token_one("id", token_ind, token_len, tokens, json);
+		if (next_token_ind == -1 || tokens[next_token_ind].end > last_json_index)
+			break;
 
 		t_obj readResource;
 		readResource.type = OBJ_RESOURCE;
 		readResource.state = STATE_ALIVE;
 		readResource.id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
-		int pos_token_ind = ft_find_token_one("pos", token_ind, token_len, tokens, json);
-		if (pos_token_ind != -1)
-		{
-			readResource.x = ft_find_parse_ulong("x", &pos_token_ind, token_len, tokens, json);
-			readResource.y = ft_find_parse_ulong("y", &pos_token_ind, token_len, tokens, json);
-		}
+		readResource.x = ft_find_parse_ulong("x", &token_ind, token_len, tokens, json);
+		readResource.y = ft_find_parse_ulong("y", &token_ind, token_len, tokens, json);
 		readResource.hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
 
 		apply_obj_to_arr(readResource, &game.resources);
@@ -145,12 +138,14 @@ void	ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, char *j
 
 void	ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
-	int	index = 0;
+	int	index, last_json_index, next_token_ind;
 
 	token_ind = ft_find_token_one("units", token_ind, token_len, tokens, json);
 	if (token_ind == -1)
 		return ;
-	int unit_count = tokens[token_ind].size;
+	last_json_index = tokens[token_ind].end;
+	int unitslen = tokens[token_ind].size;
+	printf("Units len: %d\n", unitslen);
 
 	if (game.units == NULL)
 	{
@@ -162,16 +157,12 @@ void	ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 		if (game.units[i]->state == STATE_ALIVE)
 			game.units[i]->state = STATE_DEAD;
 
-	token_ind++;
-	while (index < unit_count && token_ind < token_len)
+	index = 0;
+	while (token_ind != -1)
 	{
-		if (!tokens)
-			return ;
-		if (tokens[token_ind].type != JSMN_OBJECT)
-		{
-			token_ind++;
-			continue;
-		}
+		next_token_ind = ft_find_token_one("id", token_ind, token_len, tokens, json);
+		if (next_token_ind == -1 || tokens[next_token_ind].end > last_json_index)
+			break;
 
 		t_obj readUnit;
 		readUnit.type = OBJ_UNIT;
@@ -179,13 +170,8 @@ void	ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 		readUnit.id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
 		readUnit.s_unit.team_id = ft_find_parse_ulong("team_id", &token_ind, token_len, tokens, json);
 		readUnit.s_unit.type_id = ft_find_parse_ulong("type_id", &token_ind, token_len, tokens, json);
-		int pos_token_ind = ft_find_token_one("pos", token_ind, token_len, tokens, json);
-		if (pos_token_ind != -1)
-		{
-			int temp_pos = pos_token_ind;
-			readUnit.x = ft_find_parse_ulong("x", &temp_pos, token_len, tokens, json);
-			readUnit.y = ft_find_parse_ulong("y", &temp_pos, token_len, tokens, json);
-		}
+		readUnit.x = ft_find_parse_ulong("x", &token_ind, token_len, tokens, json);
+		readUnit.y = ft_find_parse_ulong("y", &token_ind, token_len, tokens, json);
 		readUnit.hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
 
 		apply_obj_to_arr(readUnit, &game.units);
