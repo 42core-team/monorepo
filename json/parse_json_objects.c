@@ -25,7 +25,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	{
 		bool matches = false;
 		matches = (*arr)[index]->id == 0;
-		// if (*arr == game.units && (*arr)[index]->s_unit.type_id != obj.s_unit.type_id)
+		// if ((*arr) == game.units && (*arr)[index]->s_unit.type_id != obj.s_unit.type_id)
 		// 	matches = false;
 
 		if (matches)

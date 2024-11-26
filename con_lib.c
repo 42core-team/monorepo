@@ -94,6 +94,11 @@ void	ft_loop(void (*ft_init_func)(void *ptr), void (*ft_user_loop)(void *ptr), v
 		msg = ft_read_socket(socket_fd);
 		if (debug)
 			printf("Received: %s\n", msg);
+
+		FILE *fp = fopen("data.json", "w");
+		fprintf(fp, "%s", msg);
+		fclose(fp);
+
 		ft_parse_json_state(msg);
 		free(msg);
 		if (game.status == STATUS_END)

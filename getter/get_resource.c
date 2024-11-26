@@ -12,6 +12,12 @@ t_obj	*ft_get_nearest_resource(t_obj *unit)
 
 	while (game.resources[ind] != NULL)
 	{
+		if (game.resources[ind]->state != STATE_ALIVE)
+		{
+			ind++;
+			continue;
+		}
+
 		dist = ft_distance(unit, game.resources[ind]);
 
 		if (dist < min_dist)
