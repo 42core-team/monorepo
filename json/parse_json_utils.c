@@ -29,32 +29,18 @@ int	ft_find_token_one(const char *search, int token_ind, int token_len, jsmntok_
 	return (token_ind);
 }
 
-unsigned long ft_find_parse_ulong(const char *search, int *token_ind, int token_len, jsmntok_t *tokens, char *json)
+unsigned long	ft_find_parse_ulong(const char *search, int *token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
-	int temp_token_ind = *token_ind;
-	temp_token_ind = ft_find_token_one(search, temp_token_ind, token_len, tokens, json);
-	if (temp_token_ind == -1)
-		return 0;
-	if (temp_token_ind >= token_len)
-	{
-		fprintf(stderr, "Token index out of bounds for key: %s\n", search);
-		return 0;
-	}
-	*token_ind = temp_token_ind;
-	return strtoul(json + tokens[temp_token_ind].start, NULL, 10);
+	*token_ind = ft_find_token_one(search, *token_ind, token_len, tokens, json);
+	if (*token_ind == -1)
+		return (0);
+	return (strtoul(json + tokens[*token_ind].start, NULL, 10));
 }
 
-char *ft_find_parse_str(const char *search, int *token_ind, int token_len, jsmntok_t *tokens, char *json)
+char	*ft_find_parse_str(const char *search, int *token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
-	int temp_token_ind = *token_ind;
-	temp_token_ind = ft_find_token_one(search, temp_token_ind, token_len, tokens, json);
-	if (temp_token_ind == -1)
-		return NULL;
-	if (temp_token_ind >= token_len)
-	{
-		fprintf(stderr, "Token index out of bounds for key: %s\n", search);
-		return NULL;
-	}
-	*token_ind = temp_token_ind;
-	return strndup(json + tokens[temp_token_ind].start, tokens[temp_token_ind].end - tokens[temp_token_ind].start);
+	*token_ind = ft_find_token_one(search, *token_ind, token_len, tokens, json);
+	if (*token_ind == -1)
+		return (0);
+	return (strndup(json + tokens[*token_ind].start, tokens[*token_ind].end - tokens[*token_ind].start));
 }

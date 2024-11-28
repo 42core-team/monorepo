@@ -19,7 +19,11 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 		index++;
 	}
 	if (objInserted)
+	{
+		if (obj.type == OBJ_UNIT)
+			printf("Successfully added obj %lu based on id!\n", obj.id);
 		return ;
+	}
 
 	// 2. LOOP: Placeholder matching
 	// index = 0;
@@ -54,6 +58,9 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	(*arr)[arrLen + 1] = NULL;
 	(*arr)[arrLen] = malloc(sizeof(t_obj));
 	*((*arr)[arrLen]) = obj;
+
+	if (obj.type == OBJ_UNIT)
+		printf("Successfully added obj %lu to the back!\n", obj.id);
 }
 
 void ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
@@ -137,14 +144,18 @@ void	ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, char *j
 
 void	ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
-	int	index, last_json_index, next_token_ind;
+	int	index, last_json_index;
 
 	token_ind = ft_find_token_one("units", token_ind, token_len, tokens, json);
 	if (token_ind == -1)
 		return ;
 	last_json_index = tokens[token_ind].end;
+
 	int unitslen = tokens[token_ind].size;
-	printf("Units len: %d\n", unitslen);
+	int j = 0;
+	while (game.units && game.units[j])
+		j++;
+	printf("Json Units len: %d, game.units len: %d\n", unitslen, j);
 
 	if (game.units == NULL)
 	{
@@ -157,12 +168,8 @@ void	ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 			game.units[i]->state = STATE_DEAD;
 
 	index = 0;
-	while (token_ind != -1)
+	while (token_ind != -1 && tokens[ft_find_token_one("id", token_ind, token_len, tokens, json)].end <= last_json_index)
 	{
-		next_token_ind = ft_find_token_one("id", token_ind, token_len, tokens, json);
-		if (next_token_ind == -1 || tokens[next_token_ind].end > last_json_index)
-			break;
-
 		t_obj readUnit;
 		readUnit.type = OBJ_UNIT;
 		readUnit.id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
@@ -172,6 +179,7 @@ void	ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 		readUnit.y = ft_find_parse_ulong("y", &token_ind, token_len, tokens, json);
 		readUnit.hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
 
+		printf("Attempting to add obj %lu\n", readUnit.id);
 		apply_obj_to_arr(readUnit, &game.units);
 
 		index++;

@@ -11,17 +11,10 @@ t_obj	**ft_get_my_units(void)
 	int	count = 0;
 	while (game.units[ind] != NULL)
 	{
-		printf("Unit %lu, team %ld, type %ld, state %d ", game.units[ind]->id, game.units[ind]->s_unit.team_id, game.units[ind]->s_unit.type_id, game.units[ind]->state);
 		if (game.units[ind]->s_unit.team_id == game.my_team_id && game.units[ind]->state == STATE_ALIVE)
-		{
 			count++;
-			printf("is mine");
-		}
-		printf("\n");
 		ind++;
 	}
-
-	printf("There are %d units, and %d total\n", count, ind);
 
 	t_obj	**units = malloc((count + 1) * sizeof(t_obj *));
 	ind = 0;
