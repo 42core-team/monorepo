@@ -36,4 +36,7 @@ char	*ft_ul_string(unsigned long num);
 char	*ft_all_action_json();
 void	ft_reset_actions();
 
+//formatter.c
+char	*json_formatter(const char* json_input);
+
 #endif
