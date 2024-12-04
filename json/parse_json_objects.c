@@ -22,29 +22,29 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 		return ;
 
 	// 2. LOOP: Placeholder matching
-	// index = 0;
-	// while ((*arr)[index] != NULL)
-	// {
-	// 	bool matches = false;
-	// 	matches = (*arr)[index]->id == 0;
-	// 	// if ((*arr) == game.units && (*arr)[index]->s_unit.type_id != obj.s_unit.type_id)
-	// 	// 	matches = false;
+	index = 0;
+	while ((*arr)[index] != NULL)
+	{
+		bool matches = false;
+		matches = (*arr)[index]->id == 0;
+		if ((*arr) == game.units && (*arr)[index]->s_unit.type_id != obj.s_unit.type_id)
+			matches = false;
 
-	// 	if (matches)
-	// 	{
-	// 		*((*arr)[index]) = obj;
-	// 		objInserted = true;
-	// 		break;
-	// 	}
-	// 	index++;
-	// }
-	// if (objInserted)
-	// 	return ;
+		if (matches)
+		{
+			*((*arr)[index]) = obj;
+			objInserted = true;
+			break;
+		}
+		index++;
+	}
+	if (objInserted)
+		return ;
 
-	// if ((*arr) == game.units)
-	// {
-	// 	printf("Error matching units. Troublemaker: %lu, %lu\n", obj.id, obj.s_unit.type_id);
-	// }
+	if ((*arr) == game.units)
+	{
+		printf("Error matching units. Troublemaker: %lu, %lu\n", obj.id, obj.s_unit.type_id);
+	}
 
 	// 3. Add to the back
 	size_t arrLen = 0;
