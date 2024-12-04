@@ -139,11 +139,17 @@ void	ft_attack(t_obj *attacker_unit, t_obj *target_obj)
 		break;
 	case OBJ_CORE:
 		if (attacker_unit->s_unit.team_id == target_obj->s_core.team_id)
+		{
+			printf("Problem with unit %lu and core\n", attacker_unit->id);
 			return ft_print_error("You are trying to attack yourself", __func__);
+		}
 		break;
 	case OBJ_UNIT:
 		if (attacker_unit->s_unit.team_id == target_obj->s_unit.team_id)
+		{
+			printf("Problem with unit %lu\n", attacker_unit->id);
 			return ft_print_error("You are trying to attack yourself", __func__);
+		}
 		break;
 	}
 	ft_attack_id(attacker_unit->id, target_obj->id);
@@ -151,20 +157,15 @@ void	ft_attack(t_obj *attacker_unit, t_obj *target_obj)
 
 void	ft_travel_attack(t_obj *attacker_unit, t_obj *attack_obj)
 {
-	if (attacker_unit->state != STATE_ALIVE || attack_obj->state != STATE_ALIVE)
-		return ;
-
 	double dist = ft_distance(attacker_unit, attack_obj);
 	t_unit_config *attacker_config = ft_get_unit_config(attacker_unit->s_unit.type_id);
-	if (attacker_config)
-	{
-		if (dist > attacker_config->max_range)
-			ft_travel_to_obj(attacker_unit, attack_obj);
-		else if (dist < attacker_config->min_range)
-			ft_travel_to_obj(attacker_unit, ft_get_my_core());
-		else
-			ft_travel_to_obj(attacker_unit, attacker_unit);
-	}
-	
+
+	if (dist > attacker_config->max_range)
+		ft_travel_to_obj(attacker_unit, attack_obj);
+	else if (dist < attacker_config->min_range)
+		ft_travel_to_obj(attacker_unit, ft_get_my_core());
+	else
+		ft_travel_to_obj(attacker_unit, attacker_unit);
+
 	ft_attack(attacker_unit, attack_obj);
 }
