@@ -2,7 +2,7 @@
 
 t_obj	*ft_get_obj_from_id(unsigned long id)
 {
-	t_obj	*objs;
+	t_obj	**objs;
 	int		i;
 
 	for (int obj_type = 0; obj_type < 3; obj_type++)
@@ -21,10 +21,10 @@ t_obj	*ft_get_obj_from_id(unsigned long id)
 		}
 
 		i = 0;
-		while (objs[i].id != 0)
+		while (objs[i] != NULL)
 		{
-			if (objs[i].id == id)
-				return (&objs[i]);
+			if (objs[i]->id == id)
+				return (objs[i]);
 			i++;
 		}
 	}

@@ -83,21 +83,29 @@ void	ft_free_game()
 {
 	if (game.teams != NULL)
 	{
+		for (int i = 0; game.teams[i] != NULL; i++)
+			free(game.teams[i]);
 		free(game.teams);
 		game.teams = NULL;
 	}
 	if (game.cores != NULL)
 	{
+		for (int i = 0; game.cores[i] != NULL; i++)
+			free(game.cores[i]);
 		free(game.cores);
 		game.cores = NULL;
 	}
 	if (game.resources != NULL)
 	{
+		for (int i = 0; game.resources[i] != NULL; i++)
+			free(game.resources[i]);
 		free(game.resources);
 		game.resources = NULL;
 	}
 	if (game.units != NULL)
 	{
+		for (int i = 0; game.units[i] != NULL; i++)
+			free(game.units[i]);
 		free(game.units);
 		game.units = NULL;
 	}

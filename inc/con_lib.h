@@ -17,6 +17,7 @@ typedef enum e_status
 	/// @brief The game is waiting for clients to connect.
 	STATUS_WAIT_FOR_CLIENTS = 3
 } t_status;
+
 typedef struct s_team
 {
 	/// @brief The id of the team.
@@ -31,11 +32,22 @@ typedef enum e_obj_type
 	OBJ_CORE,
 	OBJ_RESOURCE
 } t_obj_type;
+typedef enum e_obj_state
+{
+	STATE_UNINITIALIZED = 1,
+	STATE_ALIVE = 2,
+	STATE_DEAD = 3
+}	t_obj_state;
 
 typedef struct s_obj
 {
 	/// @brief Type of the obj
 	t_obj_type	type;
+	/// @brief State of the obj
+	t_obj_state	state;
+
+	/// @brief Custom data, save whatever you want here.
+	void	*data;
 
 	/// @brief The id of the obj
 	unsigned long id;
@@ -167,21 +179,21 @@ typedef struct s_game
 	 */
 	unsigned long my_team_id;
 	/**
-	 * @brief List of all teams and their informations. The array is terminated by an element with id 0.
+	 * @brief List of all teams and their informations. NULL-terminated.
 	 */
-	t_team *teams;
+	t_team **teams;
 	/**
-	 * @brief List of all cores and their informations. The array is terminated by an element with id 0.
+	 * @brief List of all cores and their informations. NULL-terminated.
 	 */
-	t_obj *cores;
+	t_obj **cores;
 	/**
-	 * @brief List of all resources and their informations. The array is terminated by an element with id 0.
+	 * @brief List of all resources and their informations. NULL-terminated.
 	 */
-	t_obj *resources;
+	t_obj **resources;
 	/**
-	 * @brief List of all units and their informations. The array is terminated by an element with id 0.
+	 * @brief List of all units and their informations. NULL-terminated.
 	 */
-	t_obj *units;
+	t_obj **units;
 	/**
 	 * @brief List of all actions that will be send to the server when your function ends.
 	 */
@@ -308,7 +320,7 @@ void ft_travel_to_obj(t_obj *unit, t_obj *target);
  *
  * @param type_id Which type of unit should be created.
  */
-void ft_create_unit(t_unit_type type_id);
+t_obj	*ft_create_unit(t_unit_type type_id);
 /**
  * @brief Lets a unit attack another unit. Same as ft_attack, besides that this function takes an id instead of a pointer to a unit.
  *

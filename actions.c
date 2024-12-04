@@ -74,7 +74,7 @@ void	ft_travel_dir(t_obj *unit, long x, long y)
 	ft_travel_dir_id(unit->id, x, y);
 }
 
-void	ft_create_unit(t_unit_type type_id)
+t_obj	*ft_create_unit(t_unit_type type_id)
 {
 	t_action_create	**actions = &game.actions.creates;
 	unsigned int	*count = &game.actions.creates_count;
@@ -90,6 +90,22 @@ void	ft_create_unit(t_unit_type type_id)
 
 	(*actions)[*count].type_id = type_id;
 	(*count)++;
+
+	t_obj *newUnit = malloc(sizeof(t_obj));
+	newUnit->s_unit.type_id = type_id;
+	newUnit->s_unit.team_id = game.my_team_id;
+	newUnit->type = OBJ_UNIT;
+	newUnit->id = 0;
+	newUnit->state = STATE_UNINITIALIZED;
+
+	int unitsLen = 0;
+	while (game.units[unitsLen])
+		unitsLen++;
+	game.units = realloc(game.units, sizeof(t_obj *) * (unitsLen + 2));
+	game.units[unitsLen] = newUnit;
+	game.units[unitsLen + 1] = NULL;
+
+	return newUnit;
 }
 
 void	ft_attack_id(unsigned long attacker_id, unsigned long target_id)
@@ -123,11 +139,17 @@ void	ft_attack(t_obj *attacker_unit, t_obj *target_obj)
 		break;
 	case OBJ_CORE:
 		if (attacker_unit->s_unit.team_id == target_obj->s_core.team_id)
+		{
+			printf("Problem with unit %lu and core\n", attacker_unit->id);
 			return ft_print_error("You are trying to attack yourself", __func__);
+		}
 		break;
 	case OBJ_UNIT:
 		if (attacker_unit->s_unit.team_id == target_obj->s_unit.team_id)
+		{
+			printf("Problem with unit %lu\n", attacker_unit->id);
 			return ft_print_error("You are trying to attack yourself", __func__);
+		}
 		break;
 	}
 	ft_attack_id(attacker_unit->id, target_obj->id);
@@ -135,8 +157,13 @@ void	ft_attack(t_obj *attacker_unit, t_obj *target_obj)
 
 void	ft_travel_attack(t_obj *attacker_unit, t_obj *attack_obj)
 {
+	if (!attacker_unit || !attack_obj || attacker_unit->state != STATE_ALIVE || attack_obj->state != STATE_ALIVE)
+		return ;
+
 	double dist = ft_distance(attacker_unit, attack_obj);
 	t_unit_config *attacker_config = ft_get_unit_config(attacker_unit->s_unit.type_id);
+	if (!attacker_config)
+		ft_attack(attacker_unit, attack_obj);
 
 	if (dist > attacker_config->max_range)
 		ft_travel_to_obj(attacker_unit, attack_obj);
