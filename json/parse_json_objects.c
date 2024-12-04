@@ -173,11 +173,11 @@ void	ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 		t_obj readUnit;
 		readUnit.type = OBJ_UNIT;
 		readUnit.id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
-		readUnit.s_unit.team_id = ft_find_parse_ulong("team_id", &token_ind, token_len, tokens, json);
 		readUnit.s_unit.type_id = ft_find_parse_ulong("type_id", &token_ind, token_len, tokens, json);
+		readUnit.s_unit.team_id = ft_find_parse_ulong("team_id", &token_ind, token_len, tokens, json);
+		readUnit.hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
 		readUnit.x = ft_find_parse_ulong("x", &token_ind, token_len, tokens, json);
 		readUnit.y = ft_find_parse_ulong("y", &token_ind, token_len, tokens, json);
-		readUnit.hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
 
 		printf("Attempting to add obj %lu\n", readUnit.id);
 		apply_obj_to_arr(readUnit, &game.units);
