@@ -43,7 +43,12 @@ void	ft_print_cores()
 	int index = 0;
 	while (cores[index] != NULL)
 	{
-		printf("- id: %lu team_id: %lu x: %lu y: %lu hp: %lu\n", cores[index]->id, cores[index]->s_core.team_id, cores[index]->x, cores[index]->y, cores[index]->hp);
+		char *state = "ALIVE";
+		if (cores[index]->state == STATE_DEAD)
+			state = "DEAD";
+		else if (cores[index]->state == STATE_UNINITIALIZED)
+			state = "UNINITIALIZED";
+		printf("- id: %lu team_id: %lu x: %lu y: %lu hp: %lu state: %s\n", cores[index]->id, cores[index]->s_core.team_id, cores[index]->x, cores[index]->y, cores[index]->hp, state);
 		index++;
 	}
 }
@@ -58,7 +63,12 @@ void	ft_print_resources()
 	int index = 0;
 	while (resources[index] != NULL)
 	{
-		printf("- id: %lu x: %lu y: %lu hp: %lu\n", resources[index]->id, resources[index]->x, resources[index]->y, resources[index]->hp);
+		char *state = "ALIVE";
+		if (resources[index]->state == STATE_DEAD)
+			state = "DEAD";
+		else if (resources[index]->state == STATE_UNINITIALIZED)
+			state = "UNINITIALIZED";
+		printf("- id: %lu x: %lu y: %lu hp: %lu state: %s\n", resources[index]->id, resources[index]->x, resources[index]->y, resources[index]->hp, state);
 		index++;
 	}
 }
