@@ -57,12 +57,37 @@ int	ft_send_socket(const int socket_fd, const char *msg)
 	return (status_send);
 }
 
+bool ft_wait_for_data(int fd) {
+    fd_set readfds;
+    struct timeval tv;
+    int retval;
+
+    FD_ZERO(&readfds);
+    FD_SET(fd, &readfds);
+
+    tv.tv_sec = 10;
+    tv.tv_usec = 0;
+
+    retval = select(fd + 1, &readfds, NULL, NULL, &tv);
+
+    if (retval == -1) {
+        ft_print_error(strerror(errno), __func__);
+        return false;
+    } else if (retval) {
+        return true;
+    } else {
+		ft_print_error("Did not recieve any data from socket fd", __func__);
+        return false;
+    }
+}
+
 char	*ft_read_socket(const int socket_fd)
 {
 	char	*buffer = NULL;
 	char	*last_buffer = NULL;
 
-	while ((buffer = get_next_line(socket_fd)) == NULL);
+	ft_wait_for_data(socket_fd);
+	buffer = get_next_line(socket_fd);
 
 	while (buffer != NULL)
 	{
@@ -78,7 +103,8 @@ char	*ft_read_socket_once(const int socket_fd)
 {
 	char	*buffer = NULL;
 
-	while ((buffer = get_next_line(socket_fd)) == NULL);
+	ft_wait_for_data(socket_fd);
+	buffer = get_next_line(socket_fd);
 
 	return (buffer);
 }
