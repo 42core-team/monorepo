@@ -133,25 +133,7 @@ void	ft_attack(t_obj *attacker_unit, t_obj *target_obj)
 		return;
 	if (attacker_unit->type != OBJ_UNIT)
 		return ft_print_error("Attacker OBJ is not type of UNIT", __func__);
-	switch (target_obj->type)
-	{
-	case OBJ_RESOURCE:
-		break;
-	case OBJ_CORE:
-		if (attacker_unit->s_unit.team_id == target_obj->s_core.team_id)
-		{
-			printf("Problem with unit %lu and core\n", attacker_unit->id);
-			return ft_print_error("You are trying to attack yourself", __func__);
-		}
-		break;
-	case OBJ_UNIT:
-		if (attacker_unit->s_unit.team_id == target_obj->s_unit.team_id)
-		{
-			printf("Problem with unit %lu\n", attacker_unit->id);
-			return ft_print_error("You are trying to attack yourself", __func__);
-		}
-		break;
-	}
+
 	ft_attack_id(attacker_unit->id, target_obj->id);
 }
 
