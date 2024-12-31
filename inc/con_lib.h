@@ -171,6 +171,10 @@ typedef struct s_game
 	 */
 	t_status status;
 	/**
+	 * @brief The elapsed ticks since the game started.
+	 */
+	unsigned long elapsed_ticks;
+	/**
 	 * @brief The config contains base informations about the game that don't change like the map size and the unit types.
 	 */
 	t_config config;
