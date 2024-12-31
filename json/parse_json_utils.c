@@ -29,6 +29,14 @@ int	ft_find_token_one(const char *search, int token_ind, int token_len, jsmntok_
 	return (token_ind);
 }
 
+long	ft_find_parse_long(const char *search, int *token_ind, int token_len, jsmntok_t *tokens, char *json)
+{
+	*token_ind = ft_find_token_one(search, *token_ind, token_len, tokens, json);
+	if (*token_ind == -1)
+		return (0);
+	return (strtol(json + tokens[*token_ind].start, NULL, 10));
+}
+
 unsigned long	ft_find_parse_ulong(const char *search, int *token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
 	*token_ind = ft_find_token_one(search, *token_ind, token_len, tokens, json);

@@ -59,9 +59,9 @@ t_unit_config	*ft_parse_unit_config(int token_ind, int token_len, jsmntok_t *tok
 		units[index].type_id = ft_find_parse_ulong("type_id", &token_ind, token_len, tokens, json);
 		units[index].cost = ft_find_parse_ulong("cost", &token_ind, token_len, tokens, json);
 		units[index].hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
-		units[index].dmg_core = ft_find_parse_ulong("dmg_core", &token_ind, token_len, tokens, json);
-		units[index].dmg_unit = ft_find_parse_ulong("dmg_unit", &token_ind, token_len, tokens, json);
-		units[index].dmg_resource = ft_find_parse_ulong("dmg_resource", &token_ind, token_len, tokens, json);
+		units[index].dmg_core = ft_find_parse_long("dmg_core", &token_ind, token_len, tokens, json);
+		units[index].dmg_unit = ft_find_parse_long("dmg_unit", &token_ind, token_len, tokens, json);
+		units[index].dmg_resource = ft_find_parse_long("dmg_resource", &token_ind, token_len, tokens, json);
 		units[index].max_range = ft_find_parse_ulong("max_range", &token_ind, token_len, tokens, json);
 		units[index].min_range = ft_find_parse_ulong("min_range", &token_ind, token_len, tokens, json);
 		units[index].speed = ft_find_parse_ulong("speed", &token_ind, token_len, tokens, json);

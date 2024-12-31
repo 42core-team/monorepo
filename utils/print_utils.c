@@ -107,9 +107,9 @@ void ft_print_unit_config(const t_unit_config *unit_config) {
 	printf("  Type ID: %u\n", unit_config->type_id);
 	printf("  Cost: %lu\n", unit_config->cost);
 	printf("  HP: %lu\n", unit_config->hp);
-	printf("  Damage Core: %lu\n", unit_config->dmg_core);
-	printf("  Damage Unit: %lu\n", unit_config->dmg_unit);
-	printf("  Damage Resource: %lu\n", unit_config->dmg_resource);
+	printf("  Damage Core: %ld\n", unit_config->dmg_core);
+	printf("  Damage Unit: %ld\n", unit_config->dmg_unit);
+	printf("  Damage Resource: %ld\n", unit_config->dmg_resource);
 	printf("  Max Range: %lu\n", unit_config->max_range);
 	printf("  Min Range: %lu\n", unit_config->min_range);
 	printf("  Speed: %lu\n", unit_config->speed);
@@ -132,6 +132,7 @@ void	ft_print_game_config()
 	printf("Config Height: %lu\n", config->height);
 	printf("Config Width: %lu\n", config->width);
 	printf("Config Idle Income: %lu\n", config->idle_income);
+	printf("Config Idle Income Timeout: %lu\n", config->idle_income_timeout);
 	printf("Config Core HP: %lu\n", config->core_hp);
 
 	printf("Team Configs:\n");
@@ -157,6 +158,7 @@ void	ft_print_game_config()
 		while (config->resources[ind].type_id != 0)
 			ft_print_resource_config(&config->resources[ind++]);
 	}
+	printf("Config Resource Spawn Timeout: %lu\n", config->resource_spawn_timeout);
 }
 
 void	ft_print_all()
