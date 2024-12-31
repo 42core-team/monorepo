@@ -92,11 +92,11 @@ typedef struct s_unit_config
 	/// @brief How much healthpoints the unit has.
 	unsigned long hp;
 	/// @brief How much damage the unit deals to cores.
-	unsigned long dmg_core;
+	long dmg_core;
 	/// @brief How much damage the unit deals to units.
-	unsigned long dmg_unit;
+	long dmg_unit;
 	/// @brief How much damage the unit deals to resources.
-	unsigned long dmg_resource;
+	long dmg_resource;
 	/// @brief How far away the unit can maximally attack.
 	unsigned long max_range;
 	/// @brief How far away the unit can minimally attack.

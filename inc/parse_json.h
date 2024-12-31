@@ -24,6 +24,7 @@ t_resource_config	*ft_parse_resource_config(int token_ind, int token_len, jsmnto
 //parse_json_utils.c
 int				ft_find_token(jsmntok_t *tokens, unsigned int token_len, unsigned int iter, char **search_str, char *json);
 int				ft_find_token_one(const char *search, int token_ind, int token_len, jsmntok_t *tokens, char *json);
+long			ft_find_parse_long(const char *search, int *token_ind, int token_len, jsmntok_t *tokens, char *json);
 unsigned long	ft_find_parse_ulong(const char *search, int *token_ind, int token_len, jsmntok_t *tokens, char *json);
 char			*ft_find_parse_str(const char *search, int *token_ind, int token_len, jsmntok_t *tokens, char *json);
 
