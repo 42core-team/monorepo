@@ -128,8 +128,12 @@ typedef struct s_config
 	unsigned long width;
 	/// @brief How much idle income you get every second.
 	unsigned long idle_income;
+	/// @brief How many ticks you get idle income.
+	unsigned long idle_income_timeout;
 	/// @brief How much healthpoints a core has at the start of the game.
 	unsigned long core_hp;
+	/// @brief How many ticks new resources spawn.
+	unsigned long resource_spawn_timeout;
 	/// @brief List of all teams with their id and name. The array is terminated by an element with id 0.
 	t_team_config *teams;
 	/// @brief List of all unit types that are available in the game. The array is terminated by an element with type_id 0.
