@@ -33,11 +33,13 @@ void	ft_parse_json_config(char *json)
 	game.config.width = ft_find_parse_ulong("height", &token_ind, json_data.token_len, json_data.tokens, json);
 	game.config.height = ft_find_parse_ulong("width", &token_ind, json_data.token_len, json_data.tokens, json);
 	game.config.idle_income = ft_find_parse_ulong("idle_income", &token_ind, json_data.token_len, json_data.tokens, json);
+	game.config.idle_income_timeout = ft_find_parse_ulong("idle_income_timeout", &token_ind, json_data.token_len, json_data.tokens, json);
 	game.config.core_hp = ft_find_parse_ulong("core_hp", &token_ind, json_data.token_len, json_data.tokens, json);
 
 	game.config.units = ft_parse_unit_config(token_ind, json_data.token_len, json_data.tokens, json);
 	game.config.teams = ft_parse_team_config(token_ind, json_data.token_len, json_data.tokens, json);
 	game.config.resources = ft_parse_resource_config(token_ind, json_data.token_len, json_data.tokens, json);
+	game.config.resource_spawn_timeout = ft_find_parse_ulong("resource_spawn_timeout", &token_ind, json_data.token_len, json_data.tokens, json);
 
 	free(json_data.tokens);
 }
