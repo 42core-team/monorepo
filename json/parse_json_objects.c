@@ -172,7 +172,6 @@ void	ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 	}
 }
 
-#define TEAM_COUNT 2
 void ft_parse_teams(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
 	int		last_json_index, next_token_ind;
@@ -182,12 +181,23 @@ void ft_parse_teams(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 		return ;
 	last_json_index = tokens[token_ind].end;
 
+	size_t teamCount = 0;
+	int countTokenInd = token_ind;
+	while (1)
+	{
+		int maybeID = ft_find_token_one("id", countTokenInd, token_len, tokens, json);
+		if (maybeID == -1 || tokens[maybeID].end > last_json_index)
+			break;
+		teamCount++;
+		countTokenInd = maybeID + 1;
+	}
+
 	if (game.teams == NULL)
 	{
-		game.teams = malloc(sizeof(t_team *) * (TEAM_COUNT + 1));
-		game.teams[TEAM_COUNT] = NULL;
+		game.teams = malloc(sizeof(t_team *) * (teamCount + 1));
+		game.teams[teamCount] = NULL;
 
-		for (size_t i = 0; i < TEAM_COUNT; i++)
+		for (size_t i = 0; i < teamCount; i++)
 		{
 			game.teams[i] = malloc(sizeof(t_team));
 			game.teams[i]->id = 0;
