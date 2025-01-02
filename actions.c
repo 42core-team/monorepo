@@ -76,6 +76,14 @@ void	ft_travel_dir(t_obj *unit, long x, long y)
 
 t_obj	*ft_create_unit(t_unit_type type_id)
 {
+	int unit_count = 0;
+	while ((int)game.config.units[unit_count].type_id != 0)
+		unit_count++;
+	if ((int)type_id < 1 || (int)type_id > unit_count)
+		return NULL;
+	if (game.config.units[type_id - 1].cost > ft_get_my_team()->balance)
+		return NULL;
+
 	t_action_create	**actions = &game.actions.creates;
 	unsigned int	*count = &game.actions.creates_count;
 

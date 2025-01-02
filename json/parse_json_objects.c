@@ -43,7 +43,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 
 	if ((*arr) == game.units)
 	{
-		printf("Error matching units. Troublemaker: %lu, %lu\n", obj.id, obj.s_unit.type_id);
+		printf("Error matching units. This is never supposed to happen. Troublemaker: %lu, %lu\n", obj.id, obj.s_unit.type_id);
 	}
 
 	// 3. Add to the back

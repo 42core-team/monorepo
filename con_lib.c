@@ -92,6 +92,11 @@ void	ft_loop(void (*ft_init_func)(void *ptr), void (*ft_user_loop)(void *ptr), v
 		free(actions);
 
 		msg = ft_read_socket(socket_fd);
+		if (!msg)
+		{
+			printf("Something went very awry and there was no json received.\n");
+			continue;
+		}
 		if (debug)
 		{
 			char *formatted = json_formatter(msg);

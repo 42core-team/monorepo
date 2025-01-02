@@ -78,7 +78,8 @@ typedef enum e_unit_type
 	UNIT_WARRIOR = 1,
 	UNIT_WORKER = 2,
 	UNIT_TANK = 3,
-	UNIT_ARCHER = 4
+	UNIT_ARCHER = 4,
+	UNIT_HEALER = 5
 } t_unit_type;
 
 typedef struct s_unit_config
@@ -263,6 +264,10 @@ t_obj	*ft_get_nearest_unit(t_obj *unit);
  * @brief Get the nearest opponent unit to the given unit
  */
 t_obj	*ft_get_nearest_opponent_unit(t_obj *unit);
+/**
+ * @brief Get the nearest team unit to the given unit
+ */
+t_obj	*ft_get_nearest_team_unit(t_obj *unit);
 // --------------- resource getter ---------------
 /**
  * @brief Get the nearest resource to the given unit
