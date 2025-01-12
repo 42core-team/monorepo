@@ -27,7 +27,7 @@ char	*ft_travel_json()
 	{
 		json = ft_strjoin_free_1(json, "{\"Travel\":{");
 		json = ft_strjoin_free_1(json, "\"id\":");
-		json = ft_strjoin_free_1_2(json, ft_l_string(travels[ind].id));
+		json = ft_strjoin_free_1_2(json, ft_ul_string(travels[ind].id));
 
 		json = ft_strjoin_free_1(json, ",\"travel_type\":");
 		if (travels[ind].is_vector)

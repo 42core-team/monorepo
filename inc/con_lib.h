@@ -151,8 +151,8 @@ typedef struct s_action_travel
 {
 	unsigned long id;
 	bool is_vector;
-	unsigned long x;
-	unsigned long y;
+	long x;
+	long y;
 } t_action_travel;
 typedef struct s_action_attack
 {
