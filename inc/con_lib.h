@@ -151,8 +151,8 @@ typedef struct s_action_travel
 {
 	unsigned long id;
 	bool is_vector;
-	unsigned long x;
-	unsigned long y;
+	long x;
+	long y;
 } t_action_travel;
 typedef struct s_action_attack
 {
@@ -305,7 +305,7 @@ void ft_travel_to(t_obj *unit, unsigned long x, unsigned long y);
  * @param x x vector of the direction the unit should travel.
  * @param y y vector of the direction the unit should travel.
  */
-void ft_travel_dir_id(unsigned long id, long x, long y);
+void ft_travel_dir_id(unsigned long id, double x, double y);
 /**
  * @brief Lets a unit start to travel into a specific direction. Same as ft_travel_dir_id, besides that this function takes a pointer to a unit instead of an id. When x and y are both 0, the unit will stop traveling.
  *
@@ -313,7 +313,7 @@ void ft_travel_dir_id(unsigned long id, long x, long y);
  * @param x x vector of the direction the unit should travel.
  * @param y y vector of the direction the unit should travel.
  */
-void ft_travel_dir(t_obj *unit, long x, long y);
+void ft_travel_dir(t_obj *unit, double x, double y);
 /**
  * @brief Lets a unit travel to another obj. Same as ft_travel_to_id, besides that this function takes an id instead of a pointer to a unit.
  *

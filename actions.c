@@ -44,10 +44,17 @@ void	ft_travel_to_obj(t_obj *unit, t_obj *target)
 	ft_travel_to(unit, target->x, target->y);
 }
 
-void	ft_travel_dir_id(unsigned long id, long x, long y)
+void	ft_travel_dir_id(unsigned long id, double x, double y)
 {
 	t_action_travel	**actions = &game.actions.travels;
 	unsigned int	*count = &game.actions.travels_count;
+
+	long x_long = x;
+	if (x < 0)
+		x_long = 1000 * x;
+	long y_long = y;
+	if (y < 0)
+		y_long = 1000 * y;
 
 	if (!*actions)
 	{
@@ -60,12 +67,12 @@ void	ft_travel_dir_id(unsigned long id, long x, long y)
 
 	(*actions)[*count].id = id;
 	(*actions)[*count].is_vector = true;
-	(*actions)[*count].x = x;
-	(*actions)[*count].y = y;
+	(*actions)[*count].x = x_long;
+	(*actions)[*count].y = y_long;
 	(*count)++;
 }
 
-void	ft_travel_dir(t_obj *unit, long x, long y)
+void	ft_travel_dir(t_obj *unit, double x, double y)
 {
 	if (unit == NULL)
 		return;
