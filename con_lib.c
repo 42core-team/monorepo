@@ -80,8 +80,6 @@ void	ft_loop(void (*ft_init_func)(void *ptr), void (*ft_user_loop)(void *ptr), v
 	char	*msg;
 	char	*actions;
 
-	if (ft_init_func != NULL)
-		ft_init_func(ptr);
 	while (game.status != STATUS_END)
 	{
 		actions = ft_all_action_json();
@@ -108,6 +106,12 @@ void	ft_loop(void (*ft_init_func)(void *ptr), void (*ft_user_loop)(void *ptr), v
 		free(msg);
 		if (game.status == STATUS_END)
 			break;
+
+		if (ft_init_func != NULL) {
+			ft_init_func(ptr);
+			ft_init_func = NULL;
+			continue;
+		}
 
 		ft_user_loop(ptr);
 	}
