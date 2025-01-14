@@ -25,9 +25,10 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	index = 0;
 	while ((*arr)[index] != NULL)
 	{
-		bool matches = false;
-		matches = (*arr)[index]->id == 0;
-		if ((*arr) == game.units && (*arr)[index]->s_unit.type_id != obj.s_unit.type_id)
+		bool matches = (*arr)[index]->id == 0;
+		if ((*arr) == game.units && (((*arr)[index]->s_unit.type_id != obj.s_unit.type_id) || ((*arr)[index]->s_unit.team_id != obj.s_unit.team_id)))
+			matches = false;
+		if ((*arr) == game.cores && (*arr)[index]->s_core.team_id != obj.s_core.team_id)
 			matches = false;
 
 		if (matches)
@@ -41,9 +42,9 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	if (objInserted)
 		return ;
 
-	if ((*arr) == game.units)
+	if ((*arr) == game.units && obj.s_unit.team_id == game.my_team_id)
 	{
-		printf("Error matching units. This is never supposed to happen. Troublemaker: %lu, %lu\n", obj.id, obj.s_unit.type_id);
+		printf("Error matching team units. This is never supposed to happen. Troublemaker: [id %lu, type %lu]\n", obj.id, obj.s_unit.type_id);
 	}
 
 	// 3. Add to the back
