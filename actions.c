@@ -112,6 +112,7 @@ t_obj	*ft_create_unit(t_unit_type type_id)
 	newUnit->type = OBJ_UNIT;
 	newUnit->id = 0;
 	newUnit->state = STATE_UNINITIALIZED;
+	newUnit->data = NULL;
 
 	int unitsLen = 0;
 	while (game.units[unitsLen])
