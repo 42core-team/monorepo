@@ -87,6 +87,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	existingObj->x = obj.x;
 	existingObj->y = obj.y;
 	existingObj->hp = obj.hp;
+	existingObj->data = NULL;
 	if ((*arr) == game.units)
 	{
 		existingObj->s_unit.type_id = obj.s_unit.type_id;
