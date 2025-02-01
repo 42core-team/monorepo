@@ -127,7 +127,7 @@ t_obj	*ft_get_nearest_team_unit(t_obj *unit)
 	while (units[ind] != NULL)
 	{
 		dist = ft_distance(unit, units[ind]);
-		if (dist < min_dist && game.units[ind]->state == STATE_ALIVE && units[ind] != unit)
+		if (dist < min_dist && units[ind]->state == STATE_ALIVE && units[ind] != unit)
 		{
 			min_dist = dist;
 			nearest = units[ind];
