@@ -12,7 +12,20 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	{
 		if ((*arr)[index]->id == obj.id)
 		{
-			*((*arr)[index]) = obj;
+			t_obj * existingObj = (*arr)[index];
+			existingObj->type = obj.type;
+			existingObj->state = STATE_ALIVE;
+			existingObj->id = obj.id;
+			existingObj->x = obj.x;
+			existingObj->y = obj.y;
+			existingObj->hp = obj.hp;
+			if ((*arr) == game.units)
+			{
+				existingObj->s_unit.type_id = obj.s_unit.type_id;
+				existingObj->s_unit.team_id = obj.s_unit.team_id;
+			}
+			if ((*arr) == game.cores)
+				existingObj->s_core.team_id = obj.s_core.team_id;
 			objInserted = true;
 			break;
 		}
@@ -33,7 +46,20 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 
 		if (matches)
 		{
-			*((*arr)[index]) = obj;
+			t_obj * existingObj = (*arr)[index];
+			existingObj->type = obj.type;
+			existingObj->state = STATE_ALIVE;
+			existingObj->id = obj.id;
+			existingObj->x = obj.x;
+			existingObj->y = obj.y;
+			existingObj->hp = obj.hp;
+			if ((*arr) == game.units)
+			{
+				existingObj->s_unit.type_id = obj.s_unit.type_id;
+				existingObj->s_unit.team_id = obj.s_unit.team_id;
+			}
+			if ((*arr) == game.cores)
+				existingObj->s_core.team_id = obj.s_core.team_id;
 			objInserted = true;
 			break;
 		}
