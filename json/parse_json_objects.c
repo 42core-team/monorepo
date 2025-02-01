@@ -80,7 +80,20 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	(*arr) = realloc((*arr), sizeof(t_obj *) * (arrLen + 2));
 	(*arr)[arrLen + 1] = NULL;
 	(*arr)[arrLen] = malloc(sizeof(t_obj));
-	*((*arr)[arrLen]) = obj;
+	t_obj * existingObj = (*arr)[arrLen];
+	existingObj->type = obj.type;
+	existingObj->state = STATE_ALIVE;
+	existingObj->id = obj.id;
+	existingObj->x = obj.x;
+	existingObj->y = obj.y;
+	existingObj->hp = obj.hp;
+	if ((*arr) == game.units)
+	{
+		existingObj->s_unit.type_id = obj.s_unit.type_id;
+		existingObj->s_unit.team_id = obj.s_unit.team_id;
+	}
+	if ((*arr) == game.cores)
+		existingObj->s_core.team_id = obj.s_core.team_id;
 }
 
 void ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
