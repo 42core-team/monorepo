@@ -138,3 +138,8 @@ t_obj	*ft_get_nearest_team_unit(t_obj *unit)
 	free(units);
 	return (nearest);
 }
+
+t_obj **ft_get_all_units()
+{
+	return game.units;
+}
