@@ -75,7 +75,7 @@ void	ft_enable_debug()
  * @param ft_user_loop Your own function that is called every time new data is received.
  * @param ptr A pointer that is passed to your functions.
  */
-void	ft_loop(void (*ft_init_func)(void *ptr), void (*ft_user_loop)(void *ptr), void *ptr)
+void	ft_loop(void (*ft_init_func)(void *ptr), void (*ft_user_loop)(void *ptr), void (*ft_on_exit)(void *ptr), void *ptr)
 {
 	char	*msg;
 	char	*actions;
@@ -98,8 +98,11 @@ void	ft_loop(void (*ft_init_func)(void *ptr), void (*ft_user_loop)(void *ptr), v
 		if (debug)
 		{
 			char *formatted = json_formatter(msg);
-			printf("%s", formatted);
-			free(formatted);
+			if (formatted)
+			{
+				printf("%s", formatted);
+				free(formatted);
+			}
 		}
 
 		ft_parse_json_state(msg);
@@ -113,8 +116,13 @@ void	ft_loop(void (*ft_init_func)(void *ptr), void (*ft_user_loop)(void *ptr), v
 			continue;
 		}
 
-		ft_user_loop(ptr);
+		if (ft_user_loop)
+			ft_user_loop(ptr);
+		else printf("No user loop function provided!\n");
 	}
+
+	if (ft_on_exit)
+		ft_on_exit(ptr);
 
 	if (ft_get_my_core())
 		printf("Game over! You won!\n");
