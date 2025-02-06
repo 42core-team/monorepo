@@ -1,23 +1,36 @@
 #include "Bridge.h"
+#include <sys/socket.h>  // For shutdown()
+#include <unistd.h>      // For close(), read() and write()
+#include <cstring>       // For strerror()
 #include <iostream>
+#include <stdexcept>
+#include <errno.h>
 
-Bridge::Bridge(boost::asio::io_context& io_context, tcp::socket socket)
-    : socket_(std::move(socket)), disconnected_(false)
+Bridge::Bridge(int socket_fd)
+    : socket_fd_(socket_fd), disconnected_(false)
 {
+    // Nothing further required here.
 }
 
 Bridge::~Bridge() {
+    // Mark the connection as severed.
     disconnected_ = true;
+    // A graceful shutdown of the socket for both reading and writing.
+    shutdown(socket_fd_, SHUT_RDWR);
+    // Ensure threads are properly joined.
     if (readThread_.joinable()) readThread_.join();
     if (writeThread_.joinable()) writeThread_.join();
+    close(socket_fd_);
 }
 
 void Bridge::start() {
+    // Spawn the read and write threads.
     readThread_ = std::thread(&Bridge::readLoop, this);
     writeThread_ = std::thread(&Bridge::writeLoop, this);
 }
 
 void Bridge::sendMessage(const json& message) {
+    // Append a newline as a delimiter to the JSON string.
     std::string msg = message.dump() + "\n";
     {
         std::lock_guard<std::mutex> lock(writeMutex_);
@@ -28,6 +41,7 @@ void Bridge::sendMessage(const json& message) {
 
 bool Bridge::receiveMessage(json& message) {
     std::unique_lock<std::mutex> lock(readMutex_);
+    // Block until a message is available or the connection is severed.
     if (readQueue_.empty()) {
         readCv_.wait(lock, [this]{ return !readQueue_.empty() || disconnected_; });
     }
@@ -43,22 +57,38 @@ bool Bridge::isDisconnected() {
 
 void Bridge::readLoop() {
     try {
-        boost::asio::streambuf buffer;
+        constexpr size_t buffer_size = 1024;
+        char buffer[buffer_size];
+        std::string data;  // This string accumulates partial data.
         while (!disconnected_) {
-            boost::asio::read_until(socket_, buffer, "\n");
-            std::istream is(&buffer);
-            std::string line;
-            std::getline(is, line);
-            if (!line.empty()) {
-                json j = json::parse(line);
-                {
-                    std::lock_guard<std::mutex> lock(readMutex_);
-                    readQueue_.push(j);
+            ssize_t n = ::read(socket_fd_, buffer, buffer_size);
+            if (n <= 0) {
+                // Either the connection has been closed or an error occurred.
+                disconnected_ = true;
+                break;
+            }
+            data.append(buffer, n);
+            // Process complete lines separated by newline characters.
+            size_t pos;
+            while ((pos = data.find('\n')) != std::string::npos) {
+                std::string line = data.substr(0, pos);
+                data.erase(0, pos + 1);
+                if (!line.empty()) {
+                    try {
+                        json j = json::parse(line);
+                        {
+                            std::lock_guard<std::mutex> lock(readMutex_);
+                            readQueue_.push(j);
+                        }
+                        readCv_.notify_one();
+                    } catch (json::parse_error& e) {
+                        std::cerr << "[Bridge::readLoop] JSON parse error: " << e.what() << "\n";
+                    }
                 }
-                readCv_.notify_one();
             }
         }
     } catch (std::exception& e) {
+        std::cerr << "[Bridge::readLoop] Exception: " << e.what() << "\n";
         disconnected_ = true;
     }
 }
@@ -67,16 +97,30 @@ void Bridge::writeLoop() {
     try {
         while (!disconnected_) {
             std::unique_lock<std::mutex> lock(writeMutex_);
+            // Wait until there is a message to send or disconnection occurs.
             writeCv_.wait(lock, [this] { return !writeQueue_.empty() || disconnected_; });
             while (!writeQueue_.empty()) {
                 std::string msg = writeQueue_.front();
                 writeQueue_.pop();
+                // Unlock while performing the potentially blocking I/O operation.
                 lock.unlock();
-                boost::asio::write(socket_, boost::asio::buffer(msg));
+                const char* data = msg.c_str();
+                size_t remaining = msg.size();
+                while (remaining > 0) {
+                    ssize_t n = ::write(socket_fd_, data, remaining);
+                    if (n < 0) {
+                        std::cerr << "[Bridge::writeLoop] Write error: " << strerror(errno) << "\n";
+                        disconnected_ = true;
+                        break;
+                    }
+                    remaining -= n;
+                    data += n;
+                }
                 lock.lock();
             }
         }
     } catch (std::exception& e) {
+        std::cerr << "[Bridge::writeLoop] Exception: " << e.what() << "\n";
         disconnected_ = true;
     }
 }

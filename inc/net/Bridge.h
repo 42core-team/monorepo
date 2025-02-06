@@ -1,7 +1,6 @@
 #ifndef BRIDGE_H
 #define BRIDGE_H
 
-#include <boost/asio.hpp>
 #include <thread>
 #include <queue>
 #include <mutex>
@@ -11,28 +10,27 @@
 #include "json.hpp"  // nlohmann/json
 
 using json = nlohmann::json;
-using boost::asio::ip::tcp;
 
 class Bridge {
 public:
-    Bridge(boost::asio::io_context& io_context, tcp::socket socket);
+    explicit Bridge(int socket_fd);
     ~Bridge();
 
-    // Send a JSON message over the socket.
+    // Transmit a JSON message over the socket.
     void sendMessage(const json& message);
-    // Blocking call: receive a JSON message (returns false if disconnected).
+    // Blocking call to receive a JSON message (returns false if disconnected).
     bool receiveMessage(json& message);
-    // Check if the connection is disconnected.
+    // Returns the disconnection status.
     bool isDisconnected();
 
-    // Start the asynchronous read and write threads.
+    // Begin the asynchronous read and write threads.
     void start();
 
 private:
     void readLoop();
     void writeLoop();
 
-    tcp::socket socket_;
+    int socket_fd_;
     std::thread readThread_;
     std::thread writeThread_;
 

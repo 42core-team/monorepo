@@ -2,9 +2,10 @@ CXX := g++
 
 CXXFLAGS := -std=c++17 -Wall -Wextra -Werror -pthread
 
-LDFLAGS := -lboost_system -pthread
+LDFLAGS := -pthread
 
-INCLUDEDIRS := -I./src -Isubmodules/json/single_include/nlohmann/ -Isubmodules/boost/libs/asio/include/
+INCLUDEDIRS := $(shell find inc -type d -print | sed 's/^/-I/')
+DEPENDDIRS := -Isubmodules/json/single_include/nlohmann/
 
 SOURCES := $(shell find ./src -name "*.cpp")
 
@@ -20,7 +21,7 @@ $(TARGET): $(OBJECTS)
 
 %.o: %.cpp
 	@echo "✂️  Compiling $<..."
-	$(CXX) $(CXXFLAGS) $(INCLUDEDIRS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(INCLUDEDIRS) $(DEPENDDIRS) -c $< -o $@
 
 re: fclean all
 
