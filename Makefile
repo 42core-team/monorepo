@@ -1,15 +1,17 @@
 CXX := g++
 
-CXXFLAGS := -std=c++17 -Wall -Wextra -Werror -pthread
+CXXFLAGS := -std=c++17 -Wall -Wextra -Werror -pthread -MMD -MP
 
 LDFLAGS := -pthread
 
-INCLUDEDIRS := $(shell find inc -type d -print | sed 's/^/-I/')
+INCLUDEDIRS := $(addprefix -I, $(shell find inc -type d))
 DEPENDDIRS := -Isubmodules/json/single_include/nlohmann/
 
-SOURCES := $(shell find ./src -name "*.cpp")
+SRCDIR := src
+OBJDIR := obj
 
-OBJECTS := $(SOURCES:.cpp=.o)
+SOURCES := $(shell find $(SRCDIR) -name "*.cpp")
+OBJECTS   := $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SOURCES))
 
 TARGET := core
 
@@ -19,7 +21,8 @@ $(TARGET): $(OBJECTS)
 	@echo "🔗 Linking $(TARGET)..."
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJECTS) $(LDFLAGS)
 
-%.o: %.cpp
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+	@mkdir -p $(@D)
 	@echo "✂️  Compiling $<..."
 	$(CXX) $(CXXFLAGS) $(INCLUDEDIRS) $(DEPENDDIRS) -c $< -o $@
 
@@ -39,5 +42,7 @@ clean:
 fclean: clean
 	@echo "🗑️ Removing $(TARGET)..."
 	rm -f $(TARGET)
+
+-include $(OBJECTS:.o=.d)
 
 .PHONY: all clean fclean re run ren start
