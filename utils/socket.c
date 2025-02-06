@@ -76,7 +76,7 @@ bool ft_wait_for_data(int fd) {
     } else if (retval) {
         return true;
     } else {
-		ft_print_error("Did not recieve any data from socket fd", __func__);
+		ft_print_error("Did not receive any data from socket fd", __func__);
         return false;
     }
 }
