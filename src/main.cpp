@@ -5,80 +5,144 @@
 #include <iostream>
 #include <thread>
 #include <cstring>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+
 #include "Bridge.h"
-#include "game/Game.h"
-#include "game/Config.h"
+#include "Game.h"
+#include "Config.h"
 
-int main() {
-    // Create a TCP socket.
-    int server_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_fd < 0) {
-        std::cerr << "[Main] Error: Could not create socket.\n";
-        return 1;
-    }
+#include "json.hpp"
+using json = nlohmann::json;
 
-    // Allow immediate reuse of the port after program termination.
-    int opt = 1;
-    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
-        std::cerr << "[Main] Error: setsockopt failed.\n";
-        close(server_fd);
-        return 1;
-    }
+int main(int argc, char *argv[])
+{
+	if (argc < 3)
+	{
+		std::cerr << "Usage: " << argv[0] << " <teamId1> <teamId2>\n";
+		return 1;
+	}
 
-    // Define the server address.
-    struct sockaddr_in address;
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;  // Listen on all available interfaces.
-    address.sin_port = htons(4242);
+	std::vector<unsigned int> expectedTeamIds;
+	for (int i = 1; i < argc; i++)
+		expectedTeamIds.push_back(std::stoi(argv[i]));
+	std::cout << "[Main] Expected team IDs: ";
+	for (unsigned int teamId : expectedTeamIds)
+		std::cout << teamId << " ";
+	std::cout << std::endl;
 
-    // Bind the socket to the specified port.
-    if (bind(server_fd, (struct sockaddr*)&address, sizeof(address)) < 0) {
-        std::cerr << "[Main] Error: bind failed.\n";
-        close(server_fd);
-        return 1;
-    }
+	int server_fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (server_fd < 0)
+	{
+		std::cerr << "[Main] Error: Could not create socket.\n";
+		return 1;
+	}
+	int opt = 1;
+	if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+	{
+		std::cerr << "[Main] Error: setsockopt failed.\n";
+		close(server_fd);
+		return 1;
+	}
 
-    // Start listening for incoming connections.
-    if (listen(server_fd, SOMAXCONN) < 0) {
-        std::cerr << "[Main] Error: listen failed.\n";
-        close(server_fd);
-        return 1;
-    }
+	struct sockaddr_in address;
+	address.sin_family = AF_INET;
+	address.sin_addr.s_addr = INADDR_ANY;
+	address.sin_port = htons(4242);
 
-    // Initialize your game.
-    GameConfig config = defaultConfig();
-    Game game(config);
+	if (bind(server_fd, reinterpret_cast<sockaddr*>(&address), sizeof(address)) < 0)
+	{
+		std::cerr << "[Main] Error: bind failed.\n";
+		close(server_fd);
+		return 1;
+	}
 
-    // Launch the game loop in a dedicated thread.
-    std::thread gameThread([&game]() {
-        game.run();
-    });
+	if (listen(server_fd, SOMAXCONN) < 0)
+	{
+		std::cerr << "[Main] Error: listen failed.\n";
+		close(server_fd);
+		return 1;
+	}
 
-    std::cout << "┌────────────────────────────────────┐\n";
-    std::cout << "│ Server listening on port 4242...   │\n";
-    std::cout << "└────────────────────────────────────┘\n";
+	// GameConfig config = defaultConfig();
+	// Game game(config);
 
-    // Accept connections indefinitely.
-    while (true) {
-        struct sockaddr_in clientAddress;
-        socklen_t clientLen = sizeof(clientAddress);
-        int client_fd = accept(server_fd, (struct sockaddr*)&clientAddress, &clientLen);
-        if (client_fd < 0) {
-            std::cerr << "[Main] Error: accept failed.\n";
-            continue;
-        }
-        std::cout << "[Main] Accepted connection from "
-                  << inet_ntoa(clientAddress.sin_addr) << "\n";
+	// std::thread gameThread([&game]() {
+	// 	game.run();
+	// });
 
-        // Instantiate a new Bridge with the accepted socket.
-        Bridge* bridge = new Bridge(client_fd);
-        bridge->start();
-        // Incorporate the new Bridge into your game.
-        game.addBridge(bridge);
-    }
+	std::cout << "┌────────────────────────────────────┐\n";
+	std::cout << "│ Server listening on port 4242...   │\n";
+	std::cout << "└────────────────────────────────────┘\n";
 
-    // Clean up.
-    gameThread.join();
-    close(server_fd);
-    return 0;
+	std::unordered_map<unsigned int, Bridge*> bridges;
+
+	while (bridges.size() < expectedTeamIds.size())
+	{
+		sockaddr_in clientAddress;
+		socklen_t clientLen = sizeof(clientAddress);
+		int client_fd = accept(server_fd, reinterpret_cast<sockaddr*>(&clientAddress), &clientLen);
+		if (client_fd < 0)
+		{
+			std::cerr << "[Main] Error: accept failed." << std::endl;
+			continue;
+		}
+
+		std::cout << "[Main] Accepted connection from " << inet_ntoa(clientAddress.sin_addr) << std::endl;
+		
+		Bridge* bridge = new Bridge(client_fd);
+		bridge->start();
+
+		json loginMessage;
+		if (!bridge->receiveMessage(loginMessage))
+		{
+			std::cerr << "[Main] Error: did not receive a login message from the client." << std::endl;
+			delete bridge;
+			continue;
+		}
+		if (!loginMessage.contains("login"))
+		{
+			std::cerr << "[Main] Error: first message is not a login message." << std::endl;
+			delete bridge;
+			continue;
+		}
+		unsigned int teamId = loginMessage["login"];
+
+		if (std::find(expectedTeamIds.begin(), expectedTeamIds.end(), teamId) == expectedTeamIds.end())
+		{
+			std::cerr << "[Main] Error: received unexpected team id " << teamId << std::endl;
+			delete bridge;
+			continue;
+		}
+		if (bridges.find(teamId) != bridges.end())
+		{
+			std::cerr << "[Main] Error: duplicate connection for team id " << teamId << std::endl;
+			delete bridge;
+			continue;
+		}
+
+		bridges[teamId] = bridge;
+		std::cout << "[Main] Accepted team " << teamId << std::endl;
+	}
+
+	std::cout << "[Main] All expected teams have connected. Preparing to start the game..." << std::endl;
+
+	GameConfig config = defaultConfig();
+	Game game(config);
+	
+	for (auto& pair : bridges)
+	{
+		game.addBridge(pair.second);
+	}
+
+	std::thread gameThread([&game]()
+	{
+		game.run();
+	});
+
+	gameThread.join();
+	
+	close(server_fd);
+	return 0;
 }

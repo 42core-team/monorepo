@@ -1,6 +1,6 @@
 CXX := g++
 
-CXXFLAGS := -std=c++17 -Wall -Wextra -Werror -pthread -MMD -MP
+CXXFLAGS := -std=c++17 -Wall -Wextra -Werror -pthread -MMD -MP -fsanitize=address -g
 
 LDFLAGS := -pthread
 
@@ -15,6 +15,7 @@ OBJECTS   := $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SOURCES))
 
 TARGET := core
 
+build: all
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
@@ -27,13 +28,6 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDEDIRS) $(DEPENDDIRS) -c $< -o $@
 
 re: fclean all
-
-start: run
-
-run: all
-	./$(TARGET)
-
-ren: re run
 
 clean:
 	@echo "🧹 Cleaning up..."

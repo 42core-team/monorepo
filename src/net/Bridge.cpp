@@ -1,4 +1,5 @@
 #include "Bridge.h"
+
 #include <sys/socket.h>  // For shutdown()
 #include <unistd.h>      // For close(), read() and write()
 #include <cstring>       // For strerror()
@@ -48,6 +49,7 @@ bool Bridge::receiveMessage(json& message) {
     if (readQueue_.empty()) return false;
     message = readQueue_.front();
     readQueue_.pop();
+	std::cout << "Received message: " << message << std::endl;
     return true;
 }
 
