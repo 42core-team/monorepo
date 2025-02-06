@@ -2,14 +2,19 @@
 #define GAME_H
 
 #include <vector>
-#include "Config.h"
+#include <csignal>
+
 #include "json.hpp"
-#include "../entity/Core.h"
-#include "../entity/Unit.h"
-#include "../action/Action.h"
-#include "../net/Bridge.h"
+
+#include "Config.h"
+#include "Core.h"
+#include "Unit.h"
+#include "Action.h"
+#include "Bridge.h"
 
 using json = nlohmann::json;
+
+extern volatile sig_atomic_t stop_server;
 
 class Game {
 public:

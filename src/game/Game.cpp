@@ -18,7 +18,8 @@ void Game::run() {
 	using clock = std::chrono::steady_clock;
 	auto tickDuration = std::chrono::milliseconds(1000 / config_.tickRate);
 	
-	while (true) {
+	while (!stop_server)
+	{
 		auto start = clock::now();
 		
 		// Process incoming messages from all bridges.

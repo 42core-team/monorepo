@@ -10,12 +10,22 @@
 Bridge::Bridge(int socket_fd)
     : socket_fd_(socket_fd), disconnected_(false)
 {
-    // Nothing further required here.
+    // Set a timeout of 1 second on the socket read operations.
+    struct timeval tv;
+    tv.tv_sec = 1;  // one second
+    tv.tv_usec = 0;
+    if (setsockopt(socket_fd_, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
+        std::cerr << "[Bridge] Error setting socket timeout: " << strerror(errno) << "\n";
+    }
 }
 
 Bridge::~Bridge() {
     // Mark the connection as severed.
     disconnected_ = true;
+
+	// wake up threads waiting on condition variables
+	writeCv_.notify_all();
+    readCv_.notify_all();
     // A graceful shutdown of the socket for both reading and writing.
     shutdown(socket_fd_, SHUT_RDWR);
     // Ensure threads are properly joined.
@@ -44,7 +54,7 @@ bool Bridge::receiveMessage(json& message) {
     std::unique_lock<std::mutex> lock(readMutex_);
     // Block until a message is available or the connection is severed.
     if (readQueue_.empty()) {
-        readCv_.wait(lock, [this]{ return !readQueue_.empty() || disconnected_; });
+        readCv_.wait(lock, [this]{ return !readQueue_.empty() || disconnected_ || stop_server; });
     }
     if (readQueue_.empty()) return false;
     message = readQueue_.front();
@@ -65,9 +75,14 @@ void Bridge::readLoop() {
         while (!disconnected_) {
             ssize_t n = ::read(socket_fd_, buffer, buffer_size);
             if (n <= 0) {
-                // Either the connection has been closed or an error occurred.
-                disconnected_ = true;
-                break;
+                if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                    // Timeout reached; no data is available. Continue without flagging an error.
+                    continue;
+                } else {
+                    std::cerr << "[Bridge::readLoop] Read error: " << strerror(errno) << "\n";
+                    disconnected_ = true;
+                    break;
+                }
             }
             data.append(buffer, n);
             // Process complete lines separated by newline characters.

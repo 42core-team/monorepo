@@ -39,4 +39,18 @@ fclean: clean
 
 -include $(OBJECTS:.o=.d)
 
+.PHONY: logfiles
+logfiles:
+	@echo "📜 Logging all source and include files (excluding submodules)..."
+	@echo "🔍 Scanning source directory..."
+	@find src -type f -not -path "./submodules/*" | sort | while read -r file; do \
+		echo "Source file: $$file"; \
+		cat $$file; \
+	done
+	@echo "🔍 Scanning include directory..."
+	@find inc -type f -not -path "./submodules/*" | sort | while read -r file; do \
+		echo "Include file: $$file"; \
+		cat $$file; \
+	done
+
 .PHONY: all clean fclean re run ren start
