@@ -10,15 +10,15 @@ static char *ft_create_str(char *team_name, char *id)
 	if (id != NULL)
 		len += strlen(id);
 
-	msg = malloc(sizeof(char) * (len + 26));
+	msg = malloc(sizeof(char) * (len + 44));
 	if (team_name != NULL && id != NULL)
-		sprintf(msg, "{\"id\": %s, \"name\": \"%s\"}\n", id, team_name);
+		sprintf(msg, "{\"password\": \"42\", \"id\": %s, \"name\": \"%s\"}\n", id, team_name);
 	else if (id != NULL)
-		sprintf(msg, "{\"id\": %s}\n", id);
+		sprintf(msg, "{\"password\": \"42\", \"id\": %s}\n", id);
 	else if (team_name != NULL)
-		sprintf(msg, "{\"id\": 1, \"name\": \"%s\"}\n", team_name);
+		sprintf(msg, "{\"password\": \"42\", \"id\": -1, \"name\": \"%s\"}\n", team_name);
 	else
-		sprintf(msg, "{\"id\": 1}\n");
+		sprintf(msg, "{\"password\": \"42\", \"id\": -1}\n");
 	return (msg);
 }
 

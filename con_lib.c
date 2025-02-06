@@ -10,6 +10,11 @@ void	ft_receive_config()
 {
 	char	*msg = ft_read_socket_once(socket_fd);
 
+	if (!msg)
+	{
+		printf("Something went very awry and there was no json received.\n");
+		return;
+	}
 	if (debug)
 		printf("Received: %s\n", msg);
 	ft_parse_json_config(msg);
@@ -40,7 +45,7 @@ void	ft_init_con(char *team_name, int *argc, char **argv)
 {
 	const char *env_ip = getenv("SERVER_IP");
 	const char *env_port = getenv("SERVER_PORT");
-	const int port = env_port ? atoi(env_port) : 4242;
+	const int port = env_port ? atoi(env_port) : 4243;
 
 	socket_fd = ft_init_socket(ft_init_addr(env_ip ? env_ip : "127.0.0.1", port));
 
@@ -52,6 +57,11 @@ void	ft_init_con(char *team_name, int *argc, char **argv)
 	ft_receive_config();
 	ft_reset_actions();
 
+	if (game.config.teams == NULL)
+	{
+		printf("Unable to initialize server connection, shutting down.\n");
+		exit(1);
+	}
 	printf("Game started! Your id: %ld\n", game.my_team_id);
 }
 
