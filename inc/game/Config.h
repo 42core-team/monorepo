@@ -48,6 +48,7 @@ class Config
 		static GameConfig defaultConfig();
 		static GameConfig & getInstance();
 		static Position & getCorePosition(unsigned int teamId);
+		static UnitConfig & getUnitConfig(unsigned int typeId);
 };
 
 

@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
 
 	std::cout << "[Main] All expected teams have connected. Preparing to start the game..." << std::endl;
 
-	Game game(bridges.size());
+	Game game(expectedTeamIds);
 	
 	for (auto& pair : bridges)
 	{

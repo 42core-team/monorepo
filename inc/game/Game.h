@@ -14,7 +14,7 @@ using json = nlohmann::json;
 class Game
 {
 	public:
-		Game(unsigned int teamCount);
+		Game(std::vector<unsigned int> team_ids);
 		void addBridge(Bridge* bridge);
 		void run();
 

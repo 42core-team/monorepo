@@ -59,3 +59,8 @@ Position & Config::getCorePosition(unsigned int teamId)
 {
 	return getInstance().corePositions[teamId];
 }
+
+UnitConfig & Config::getUnitConfig(unsigned int typeId)
+{
+	return getInstance().units[typeId];
+}

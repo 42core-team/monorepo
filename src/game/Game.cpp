@@ -3,12 +3,12 @@
 #include <chrono>
 #include <iostream>
 
-Game::Game(unsigned int teamCount) : teamCount_(teamCount), nextObjectId_(1)
+Game::Game(std::vector<unsigned int> team_ids) : teamCount_(team_ids.size()), nextObjectId_(1)
 {
 	GameConfig config = Config::getInstance();
-	cores_.reserve(teamCount);
-	for (unsigned int i = 0; i < teamCount; ++i)
-		cores_.push_back(Core(nextObjectId_++, i, Config::getCorePosition(i)));
+	cores_.reserve(team_ids.size());
+	for (unsigned int i = 0; i < team_ids.size(); ++i)
+		cores_.push_back(Core(nextObjectId_++, team_ids[i], Config::getCorePosition(i)));
 }
 
 void Game::addBridge(Bridge* bridge)
@@ -45,7 +45,10 @@ void Game::run()
 
 		auto nextTickTime = startTime + (tickCount + 1) * tickInterval;
 		std::this_thread::sleep_until(nextTickTime);
+
 		tick();
+		sendState();
+
 		tickCount++;
 	}
 }
@@ -58,5 +61,40 @@ void Game::tick()
 
 void Game::sendState()
 {
-	// TODO
+	json state;
+
+	state["cores"] = json::array();
+	for (auto& core : cores_)
+	{
+		json c;
+
+		c["id"] = core.getId();
+		c["teamId"] = core.getTeamId();
+		Position pos = core.getPosition();
+		c["position"] = { {"x", pos.x}, {"y", pos.y} };
+		c["hp"] = core.getHP();
+		c["balance"] = core.getBalance();
+
+		state["cores"].push_back(c);
+	}
+
+	state["units"] = json::array();
+	for (auto& unit : units_)
+	{
+		json u;
+
+		u["id"] = unit.getId();
+		u["teamId"] = unit.getTeamId();
+		Position pos = unit.getPosition();
+		u["position"] = { {"x", pos.x}, {"y", pos.y} };
+		u["hp"] = unit.getHP();
+		u["type"] = unit.getTypeId();
+
+		state["units"].push_back(u);
+	}
+	
+	for (auto bridge : bridges_)
+	{
+		bridge->sendMessage(state);
+	}
 }

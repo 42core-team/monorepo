@@ -1,7 +1,10 @@
 #include "Unit.h"
 
-Unit::Unit(unsigned int id, unsigned int teamId, Position pos, int hp)
-	: Object(id, teamId, pos, hp) {}
+Unit::Unit(unsigned int id, unsigned int teamId, Position pos, int hp, unsigned int type_id)
+	: Object(id, teamId, pos, hp)
+{
+	type_id_ = type_id;
+}
 
 void Unit::travel(MovementDirection dir)
 {

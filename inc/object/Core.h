@@ -7,6 +7,13 @@ class Core : public Object
 {
 	public:
 		Core(unsigned int id, unsigned int teamId, Position pos);
+
+		unsigned int getBalance() const { return balance_; }
+		unsigned int getTeamId() const { return team_id_; }
+
+	private:
+		unsigned int balance_;
+		unsigned int team_id_;
 };
 
 #endif // CORE_H
