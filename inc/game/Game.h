@@ -3,33 +3,31 @@
 
 #include <vector>
 
-#include "json.hpp"
-
 #include "Config.h"
 #include "Core.h"
 #include "Unit.h"
 #include "Action.h"
 #include "Bridge.h"
 
+#include "json.hpp"
 using json = nlohmann::json;
 
-class Game {
-public:
-    Game(const GameConfig& config);
-    // Add a new connection (team or spectator)
-    void addBridge(Bridge* bridge);
-    // Run the main game loop (blocking call)
-    void run();
+class Game
+{
+	public:
+		Game(const GameConfig& config);
+		void addBridge(Bridge* bridge);
+		void run();
 
-private:
-    void update();       // Update game state (e.g. movement, collisions)
-    void sendState();    // Send the current game state over each bridge
+	private:
+		void update();
+		void sendState();
 
-    GameConfig config_;
-    unsigned int nextEntityId_;
-    std::vector<Core> cores_;
-    std::vector<Unit> units_;
-    std::vector<Bridge*> bridges_;
+		GameConfig config_;
+		unsigned int nextEntityId_;
+		std::vector<Core> cores_;
+		std::vector<Unit> units_;
+		std::vector<Bridge*> bridges_;
 };
 
 #endif // GAME_H

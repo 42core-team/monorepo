@@ -22,18 +22,15 @@ void Game::run() {
 	{
 		auto start = clock::now();
 		
-		// Process incoming messages from all bridges.
 		for (auto bridge : bridges_) {
 			json msg;
 			while (bridge->receiveMessage(msg)) {
-				// Assume the message has an "actions" array.
 				if (msg.contains("actions")) {
 					for (auto& actJson : msg["actions"]) {
 						Action action = Action::fromJson(actJson);
 						if (action.type == ActionType::Create) {
 							// Expect data: {"teamId": X}
 							unsigned int teamId = action.data["teamId"];
-							// Create a new unit at the core position for that team.
 							Position pos;
 							for (auto& core : cores_) {
 								if (core.getTeamId() == teamId) {
@@ -45,7 +42,6 @@ void Game::run() {
 						} else if (action.type == ActionType::Attack) {
 							// Expect data: {"attackerId": X, "targetId": Y}
 							unsigned int targetId = action.data["targetId"];
-							// For simplicity, deal fixed damage (e.g. 100) to the target.
 							for (auto& unit : units_) {
 								if (unit.getId() == targetId) {
 									unit.dealDamage(100);
@@ -115,8 +111,8 @@ void Game::sendState()
 	msg["type"] = "State";
 	msg["data"] = state;
 	
-	// Broadcast the state to every connected bridge.
-	for (auto bridge : bridges_) {
+	for (auto bridge : bridges_)
+	{
 		bridge->sendMessage(msg);
 	}
 }

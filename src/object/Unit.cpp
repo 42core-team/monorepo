@@ -1,7 +1,7 @@
 #include "Unit.h"
 
 Unit::Unit(unsigned int id, unsigned int teamId, Position pos, unsigned int hp)
-    : id_(id), teamId_(teamId), pos_(pos), hp_(hp) {}
+	: id_(id), teamId_(teamId), pos_(pos), hp_(hp) {}
 
 unsigned int Unit::getId() const
 { return id_; }

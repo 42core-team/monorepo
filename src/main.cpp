@@ -67,13 +67,6 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	// GameConfig config = defaultConfig();
-	// Game game(config);
-
-	// std::thread gameThread([&game]() {
-	// 	game.run();
-	// });
-
 	std::cout << "┌────────────────────────────────────┐\n";
 	std::cout << "│   Server listening on port 4242... │\n";
 	std::cout << "└────────────────────────────────────┘\n";
