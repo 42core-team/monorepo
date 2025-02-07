@@ -1,12 +1,15 @@
 #include "Game.h"
 
 #include <chrono>
-#include <thread>
+#include <cmath>
+#include <iostream>
 
-Game::Game(const GameConfig& config) : config_(config), nextEntityId_(1)
+Game::Game(unsigned int teamCount) : teamCount_(teamCount), nextObjectId_(1)
 {
-	cores_.push_back(Core(nextEntityId_++, 1, {1000, 1000}, config_.coreHP));
-	cores_.push_back(Core(nextEntityId_++, 2, {9000, 9000}, config_.coreHP));
+	GameConfig config = Config::getInstance();
+	cores_.reserve(teamCount);
+	for (unsigned int i = 0; i < teamCount; ++i)
+		cores_.push_back(Core(nextObjectId_++, i, Config::getCorePosition(i)));
 }
 
 void Game::addBridge(Bridge* bridge)
@@ -14,105 +17,17 @@ void Game::addBridge(Bridge* bridge)
 	bridges_.push_back(bridge);
 }
 
-void Game::run() {
-	using clock = std::chrono::steady_clock;
-	auto tickDuration = std::chrono::milliseconds(1000 / config_.tickRate);
-	
-	while (true)
-	{
-		auto start = clock::now();
-		
-		for (auto bridge : bridges_) {
-			json msg;
-			while (bridge->receiveMessage(msg)) {
-				if (msg.contains("actions")) {
-					for (auto& actJson : msg["actions"]) {
-						Action action = Action::fromJson(actJson);
-						if (action.type == ActionType::Create) {
-							// Expect data: {"teamId": X}
-							unsigned int teamId = action.data["teamId"];
-							Position pos;
-							for (auto& core : cores_) {
-								if (core.getTeamId() == teamId) {
-									pos = core.getPosition();
-									break;
-								}
-							}
-							units_.push_back(Unit(nextEntityId_++, teamId, pos, config_.unitHP));
-						} else if (action.type == ActionType::Attack) {
-							// Expect data: {"attackerId": X, "targetId": Y}
-							unsigned int targetId = action.data["targetId"];
-							for (auto& unit : units_) {
-								if (unit.getId() == targetId) {
-									unit.dealDamage(100);
-									break;
-								}
-							}
-							for (auto& core : cores_) {
-								if (core.getId() == targetId) {
-									core.dealDamage(100);
-									break;
-								}
-							}
-						} else if (action.type == ActionType::Travel) {
-							unsigned int unitId = action.data["unitId"];
-							int dx = action.data["dx"];
-							int dy = action.data["dy"];
-							for (auto& unit : units_) {
-								if (unit.getId() == unitId) {
-									unit.travel(dx, dy);
-									break;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		update();
-		sendState();
-		
-		auto end = clock::now();
-		std::this_thread::sleep_for(tickDuration - std::chrono::duration_cast<std::chrono::milliseconds>(end - start));
-	}
+void Game::run()
+{
+	// TODO
 }
 
 void Game::update()
 {
-	// In a complete game, update positions, resolve collisions, spawn resources, etc.
+	// TODO
 }
 
 void Game::sendState()
 {
-	json state;
-	state["cores"] = json::array();
-	for (auto& core : cores_) {
-		json c;
-		c["id"] = core.getId();
-		c["teamId"] = core.getTeamId();
-		Position pos = core.getPosition();
-		c["position"] = { {"x", pos.x}, {"y", pos.y} };
-		c["hp"] = core.getHP();
-		state["cores"].push_back(c);
-	}
-	state["units"] = json::array();
-	for (auto& unit : units_) {
-		json u;
-		u["id"] = unit.getId();
-		u["teamId"] = unit.getTeamId();
-		Position pos = unit.getPosition();
-		u["position"] = { {"x", pos.x}, {"y", pos.y} };
-		u["hp"] = unit.getHP();
-		state["units"].push_back(u);
-	}
-	
-	json msg;
-	msg["type"] = "State";
-	msg["data"] = state;
-	
-	for (auto bridge : bridges_)
-	{
-		bridge->sendMessage(msg);
-	}
+	// TODO
 }

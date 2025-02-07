@@ -26,6 +26,12 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	if (argc - 1 > Config::getInstance().corePositions.size())
+	{
+		std::cerr << "[Main] Error: too many team IDs specified.\n";
+		return 1;
+	}
+
 	std::vector<unsigned int> expectedTeamIds;
 	for (int i = 1; i < argc; i++)
 		expectedTeamIds.push_back(std::stoi(argv[i]));

@@ -1,33 +1,29 @@
 #include "Unit.h"
 
-Unit::Unit(unsigned int id, unsigned int teamId, Position pos, unsigned int hp)
-	: id_(id), teamId_(teamId), pos_(pos), hp_(hp) {}
+Unit::Unit(unsigned int id, unsigned int teamId, Position pos, int hp)
+	: Object(id, teamId, pos, hp) {}
 
-unsigned int Unit::getId() const
-{ return id_; }
-
-unsigned int Unit::getTeamId() const
-{ return teamId_; }
-
-Position Unit::getPosition() const
-{ return pos_; }
-
-unsigned int Unit::getHP() const
-{ return hp_; }
-
-bool Unit::dealDamage(int dmg)
+void Unit::travel(MovementDirection dir)
 {
-	if (dmg < 0) return false;
-	if (dmg >= (int)hp_) {
-		hp_ = 0;
-		return true;
+	GameConfig & config = Config::getInstance();
+
+	switch (dir)
+	{
+		case MovementDirection::UP:
+			if (position_.y > 0)
+				position_.y -= 1;
+			break;
+		case MovementDirection::DOWN:
+			if (position_.y < config.height - 1)
+				position_.y += 1;
+			break;
+		case MovementDirection::LEFT:
+			if (position_.x > 0)
+				position_.x -= 1;
+			break;
+		case MovementDirection::RIGHT:
+			if (position_.x < config.width - 1)
+				position_.x += 1;
+			break;
 	}
-	hp_ -= dmg;
-	return false;
-}
-
-void Unit::travel(int dx, int dy)
-{
-	pos_.x += dx;
-	pos_.y += dy;
 }

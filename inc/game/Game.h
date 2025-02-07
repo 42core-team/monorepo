@@ -6,7 +6,6 @@
 #include "Config.h"
 #include "Core.h"
 #include "Unit.h"
-#include "Action.h"
 #include "Bridge.h"
 
 #include "json.hpp"
@@ -15,7 +14,7 @@ using json = nlohmann::json;
 class Game
 {
 	public:
-		Game(const GameConfig& config);
+		Game(unsigned int teamCount);
 		void addBridge(Bridge* bridge);
 		void run();
 
@@ -23,8 +22,8 @@ class Game
 		void update();
 		void sendState();
 
-		GameConfig config_;
-		unsigned int nextEntityId_;
+		unsigned int teamCount_;
+		unsigned int nextObjectId_;
 		std::vector<Core> cores_;
 		std::vector<Unit> units_;
 		std::vector<Bridge*> bridges_;
