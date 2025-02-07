@@ -2,7 +2,6 @@
 #define GAME_H
 
 #include <vector>
-#include <csignal>
 
 #include "json.hpp"
 
@@ -13,8 +12,6 @@
 #include "Bridge.h"
 
 using json = nlohmann::json;
-
-extern volatile sig_atomic_t stop_server;
 
 class Game {
 public:

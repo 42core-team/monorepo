@@ -54,7 +54,7 @@ bool Bridge::receiveMessage(json& message) {
     std::unique_lock<std::mutex> lock(readMutex_);
     // Block until a message is available or the connection is severed.
     if (readQueue_.empty()) {
-        readCv_.wait(lock, [this]{ return !readQueue_.empty() || disconnected_ || stop_server; });
+        readCv_.wait(lock, [this]{ return !readQueue_.empty() || disconnected_; });
     }
     if (readQueue_.empty()) return false;
     message = readQueue_.front();

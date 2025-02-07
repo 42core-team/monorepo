@@ -7,11 +7,8 @@
 #include <condition_variable>
 #include <string>
 #include <atomic>
-#include <csignal>
 
 #include "json.hpp"  // nlohmann/json
-
-extern volatile sig_atomic_t stop_server;
 
 using json = nlohmann::json;
 
