@@ -7,7 +7,7 @@
 class Unit : public Object
 {
 	public:
-		Unit(unsigned int id, unsigned int teamId, Position pos, int hp, unsigned int type_id);
+		Unit(unsigned int id, unsigned int teamId, Position pos, unsigned int type_id);
 		
 		void travel(MovementDirection dir);
 		unsigned int getTypeId() const { return type_id_; }

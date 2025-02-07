@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
 
 		std::cout << "[Main] Accepted connection from " << inet_ntoa(clientAddress.sin_addr) << std::endl;
 		
-		Bridge* bridge = new Bridge(client_fd);
+		Bridge* bridge = new Bridge(client_fd, expectedTeamIds[bridges.size()]);
 		bridge->start();
 
 		json loginMessage;

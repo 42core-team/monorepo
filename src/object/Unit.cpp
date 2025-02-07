@@ -1,10 +1,7 @@
 #include "Unit.h"
 
-Unit::Unit(unsigned int id, unsigned int teamId, Position pos, int hp, unsigned int type_id)
-	: Object(id, teamId, pos, hp)
-{
-	type_id_ = type_id;
-}
+Unit::Unit(unsigned int id, unsigned int teamId, Position pos, unsigned int type_id)
+	: Object(id, teamId, pos, Config::getInstance().units[type_id].hp, ObjectType::Unit), type_id_(type_id) {}
 
 void Unit::travel(MovementDirection dir)
 {

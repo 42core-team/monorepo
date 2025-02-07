@@ -14,7 +14,7 @@ using json = nlohmann::json;
 class Bridge
 {
 	public:
-		explicit Bridge(int socket_fd);
+		explicit Bridge(int socket_fd, unsigned int teamId);
 		~Bridge();
 
 		void sendMessage(const json& message);
@@ -23,11 +23,14 @@ class Bridge
 
 		void start();
 
+		unsigned int getTeamId() const { return team_id_; }
+
 	private:
 		void readLoop();
 		void writeLoop();
 
 		int socket_fd_;
+		unsigned int team_id_;
 		std::thread readThread_;
 		std::thread writeThread_;
 

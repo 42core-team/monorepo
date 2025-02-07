@@ -7,7 +7,6 @@
 #include "Common.h"
 
 struct UnitConfig;
-struct CorePosition;
 
 struct GameConfig
 {
@@ -40,6 +39,7 @@ struct UnitConfig
 	unsigned int damageCore;
 	unsigned int damageUnit;
 	unsigned int damageResource;
+	unsigned int damageWall;
 };
 
 class Config

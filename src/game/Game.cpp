@@ -1,14 +1,16 @@
 #include "Game.h"
 
-#include <chrono>
-#include <iostream>
-
 Game::Game(std::vector<unsigned int> team_ids) : teamCount_(team_ids.size()), nextObjectId_(1)
 {
 	GameConfig config = Config::getInstance();
 	cores_.reserve(team_ids.size());
 	for (unsigned int i = 0; i < team_ids.size(); ++i)
 		cores_.push_back(Core(nextObjectId_++, team_ids[i], Config::getCorePosition(i)));
+}
+Game::~Game()
+{
+	for (auto bridge : bridges_)
+		delete bridge;
 }
 
 void Game::addBridge(Bridge* bridge)
@@ -25,7 +27,9 @@ void Game::run()
 	auto startTime = clock::now();
 	unsigned long long tickCount = 0;
 
-	while (true) // CORE GAMELOOP
+	int alivePlayers = teamCount_;
+
+	while (alivePlayers > 1) // CORE GAMELOOP
 	{
 		auto now = clock::now();
 		auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - startTime);
@@ -49,14 +53,100 @@ void Game::run()
 		tick();
 		sendState();
 
+		alivePlayers = 0;
+		for (Core & core : cores_)
+		{
+			if (core.getHP() > 0)
+				alivePlayers++;
+		}
+
 		tickCount++;
 	}
 }
 
 void Game::tick()
 {
-	// TODO
-	std::cout << "Tick" << std::endl;
+	for (auto bridge : bridges_)
+	{
+		json msg;
+		bridge->receiveMessage(msg);
+
+		Core * core = getCore(bridge->getTeamId());
+
+		if (!core)
+			continue;
+		if (core->getHP() <= 0)
+			continue;
+
+		std::vector<Action *> actions = Action::parseActions(msg);
+
+		for (Action * action : actions)
+		{
+			if (action->getActionType() == ActionType::CREATE)
+			{
+				CreateAction * createAction = (CreateAction *)action;
+
+				Position closestEmptyPos = findFirstEmptyGridCell(this, core->getPosition());
+				if (!closestEmptyPos.isValid(Config::getInstance().width, Config::getInstance().height))
+					continue;
+
+				unsigned int unitType = createAction->getUnitTypeId();
+				if (unitType >= Config::getInstance().units.size())
+					continue;
+
+				unsigned int unitCost = Config::getUnitConfig(unitType).cost;
+				if (core->getBalance() < unitCost)
+					continue;
+
+				units_.push_back(Unit(nextObjectId_++, bridge->getTeamId(), closestEmptyPos, unitType));
+				core->setBalance(core->getBalance() - unitCost);
+			}
+
+			else if (action->getActionType() == ActionType::MOVE)
+			{
+				MoveAction * moveAction = (MoveAction *)action;
+				Unit * unit = getUnit(moveAction->getUnitId());
+
+				if (!unit)
+					continue;
+				if (unit->getHP() <= 0)
+					continue;
+
+				Position newPos = unit->getPosition() + moveAction->getDirection();
+				if (!newPos.isValid(Config::getInstance().width, Config::getInstance().height))
+					continue;
+
+				Object * obj = getObjectAtPos(newPos);
+				if (obj)
+				{
+					if (obj->getType() == ObjectType::Unit)
+						obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageUnit);
+					else if (obj->getType() == ObjectType::Core)
+						obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageCore);
+				}
+				else
+				{
+					unit->setPosition(newPos);
+				}
+			}
+
+			delete action;
+		}
+	}
+}
+Object * Game::getObjectAtPos(Position pos)
+{
+	for (Core & core : cores_)
+	{
+		if (core.getPosition() == pos)
+			return &core;
+	}
+	for (Unit & unit : units_)
+	{
+		if (unit.getPosition() == pos)
+			return &unit;
+	}
+	return nullptr;
 }
 
 void Game::sendState()
@@ -97,4 +187,24 @@ void Game::sendState()
 	{
 		bridge->sendMessage(state);
 	}
+}
+
+Core * Game::getCore(unsigned int teamId)
+{
+	for (Core & core : cores_)
+	{
+		if (core.getTeamId() == teamId)
+			return &core;
+	}
+	return nullptr;
+}
+
+Unit * Game::getUnit(unsigned int unitId)
+{
+	for (Unit & unit : units_)
+	{
+		if (unit.getId() == unitId)
+			return &unit;
+	}
+	return nullptr;
 }

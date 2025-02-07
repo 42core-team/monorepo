@@ -25,6 +25,7 @@ GameConfig Config::defaultConfig()
 	warrior.damageCore = 10;
 	warrior.damageUnit = 6;
 	warrior.damageResource = 2;
+	warrior.damageWall = 3;
 	config.units.push_back(warrior);
 
 	UnitConfig miner;
@@ -35,6 +36,7 @@ GameConfig Config::defaultConfig()
 	miner.damageCore = 3;
 	miner.damageUnit = 2;
 	miner.damageResource = 10;
+	miner.damageWall = 5;
 	config.units.push_back(miner);
 
 	config.corePositions.push_back({ 0, 0 });   // top left

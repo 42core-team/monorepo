@@ -9,6 +9,7 @@ class Core : public Object
 		Core(unsigned int id, unsigned int teamId, Position pos);
 
 		unsigned int getBalance() const { return balance_; }
+		void setBalance(unsigned int balance) { balance_ = balance; }
 		unsigned int getTeamId() const { return team_id_; }
 
 	private:

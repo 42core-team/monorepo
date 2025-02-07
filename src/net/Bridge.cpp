@@ -7,8 +7,8 @@
 #include <stdexcept>
 #include <errno.h>
 
-Bridge::Bridge(int socket_fd)
-	: socket_fd_(socket_fd), disconnected_(false)
+Bridge::Bridge(int socket_fd, unsigned int teamId)
+	: socket_fd_(socket_fd), team_id_(teamId), disconnected_(false)
 {
 	// Set a timeout for the socket.
 	struct timeval tv;
