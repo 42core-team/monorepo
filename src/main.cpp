@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	if (argc - 1 > Config::getInstance().corePositions.size())
+	if (argc - 1 > (int)Config::getInstance().corePositions.size())
 	{
 		std::cerr << "[Main] Error: too many team IDs specified.\n";
 		return 1;
@@ -129,8 +129,7 @@ int main(int argc, char *argv[])
 
 	std::cout << "[Main] All expected teams have connected. Preparing to start the game..." << std::endl;
 
-	GameConfig config = defaultConfig();
-	Game game(config);
+	Game game(bridges.size());
 	
 	for (auto& pair : bridges)
 	{

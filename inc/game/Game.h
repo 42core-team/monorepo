@@ -19,7 +19,7 @@ class Game
 		void run();
 
 	private:
-		void update();
+		void tick();
 		void sendState();
 
 		unsigned int teamCount_;

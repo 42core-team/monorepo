@@ -1,7 +1,6 @@
 #include "Game.h"
 
 #include <chrono>
-#include <cmath>
 #include <iostream>
 
 Game::Game(unsigned int teamCount) : teamCount_(teamCount), nextObjectId_(1)
@@ -19,12 +18,42 @@ void Game::addBridge(Bridge* bridge)
 
 void Game::run()
 {
-	// TODO
+	using clock = std::chrono::steady_clock;
+	unsigned int ticksPerSecond = Config::getInstance().tickRate;
+	auto tickInterval = std::chrono::nanoseconds(1000000000 / ticksPerSecond);
+
+	auto startTime = clock::now();
+	unsigned long long tickCount = 0;
+
+	while (true) // CORE GAMELOOP
+	{
+		auto now = clock::now();
+		auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - startTime);
+		unsigned long long expectedTickCount = elapsed.count() / tickInterval.count();
+
+		if (expectedTickCount > tickCount)
+		{
+			// Over one tick passed, we're lagging.
+			if (expectedTickCount > tickCount + 1)
+			{
+				unsigned long skipped = expectedTickCount - tickCount - 1;
+				std::cerr << "[WARNING] Processing delay: skipping " 
+							<< skipped << " tick(s)." << std::endl;
+			}
+			tickCount = expectedTickCount;
+		}
+
+		auto nextTickTime = startTime + (tickCount + 1) * tickInterval;
+		std::this_thread::sleep_until(nextTickTime);
+		tick();
+		tickCount++;
+	}
 }
 
-void Game::update()
+void Game::tick()
 {
 	// TODO
+	std::cout << "Tick" << std::endl;
 }
 
 void Game::sendState()
