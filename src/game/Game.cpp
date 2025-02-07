@@ -6,6 +6,8 @@ Game::Game(std::vector<unsigned int> team_ids) : teamCount_(team_ids.size()), ne
 	cores_.reserve(team_ids.size());
 	for (unsigned int i = 0; i < team_ids.size(); ++i)
 		cores_.push_back(Core(nextObjectId_++, team_ids[i], Config::getCorePosition(i)));
+	sendConfig();
+	std::cout << "Game created with " << team_ids.size() << " teams." << std::endl;
 }
 Game::~Game()
 {
@@ -186,6 +188,48 @@ void Game::sendState()
 	for (auto bridge : bridges_)
 	{
 		bridge->sendMessage(state);
+	}
+}
+void Game::sendConfig()
+{
+	GameConfig config = Config::getInstance();
+
+	json configJson;
+
+	configJson["width"] = config.width;
+	configJson["height"] = config.height;
+	configJson["tickRate"] = config.tickRate;
+
+	configJson["idleIncome"] = config.idleIncome;
+	configJson["idleIncomeTimeOut"] = config.idleIncomeTimeOut;
+
+	configJson["resourceHp"] = config.resourceHp;
+	configJson["resourceIncome"] = config.resourceIncome;
+
+	configJson["coreHp"] = config.coreHp;
+	configJson["initialBalance"] = config.initialBalance;
+
+	configJson["units"] = json::array();
+	for (auto& unit : config.units)
+	{
+		json u;
+
+		u["name"] = unit.name;
+		u["cost"] = unit.cost;
+		u["hp"] = unit.hp;
+		u["speed"] = unit.speed;
+
+		u["damageCore"] = unit.damageCore;
+		u["damageUnit"] = unit.damageUnit;
+		u["damageResource"] = unit.damageResource;
+		u["damageWall"] = unit.damageWall;
+
+		configJson["units"].push_back(u);
+	}
+
+	for (auto bridge : bridges_)
+	{
+		bridge->sendMessage(configJson);
 	}
 }
 

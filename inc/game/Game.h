@@ -34,6 +34,7 @@ class Game
 	private:
 		void tick();
 		void sendState();
+		void sendConfig();
 
 		unsigned int teamCount_;
 		unsigned int nextObjectId_;
