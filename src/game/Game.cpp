@@ -6,7 +6,6 @@ Game::Game(std::vector<unsigned int> team_ids) : teamCount_(team_ids.size()), ne
 	cores_.reserve(team_ids.size());
 	for (unsigned int i = 0; i < team_ids.size(); ++i)
 		cores_.push_back(Core(nextObjectId_++, team_ids[i], Config::getCorePosition(i)));
-	sendConfig();
 	std::cout << "Game created with " << team_ids.size() << " teams." << std::endl;
 }
 Game::~Game()
@@ -22,6 +21,8 @@ void Game::addBridge(Bridge* bridge)
 
 void Game::run()
 {
+	sendConfig();
+
 	using clock = std::chrono::steady_clock;
 	unsigned int ticksPerSecond = Config::getInstance().tickRate;
 	auto tickInterval = std::chrono::nanoseconds(1000000000 / ticksPerSecond);

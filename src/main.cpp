@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 	struct sockaddr_in address;
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
-	address.sin_port = htons(4243);
+	address.sin_port = htons(4242);
 
 	if (bind(server_fd, reinterpret_cast<sockaddr*>(&address), sizeof(address)) < 0)
 	{
