@@ -3,11 +3,12 @@
 t_obj	*ft_create_unit(t_unit_type type_id)
 {
 	int unit_count = 0;
-	while (game.config.units[unit_count] != NULL)
+	while (game.config.units != NULL && game.config.units[unit_count] != NULL)
 		unit_count++;
-	if ((int)type_id < 1 || (int)type_id > unit_count)
+	if ((int)type_id < 0 || (int)type_id >= unit_count)
 		return NULL;
-	if (game.config.units[type_id - 1]->cost > ft_get_my_core()->s_core.balance)
+	if (!ft_get_my_core() || !game.config.units || !game.config.units[type_id] || \
+			game.config.units[type_id]->cost > ft_get_my_core()->s_core.balance)
 		return NULL;
 
 	t_action_create	**actions = &game.actions.creates;
@@ -34,7 +35,7 @@ t_obj	*ft_create_unit(t_unit_type type_id)
 	newUnit->data = NULL;
 
 	int unitsLen = 0;
-	while (game.units[unitsLen])
+	while (game.units && game.units[unitsLen])
 		unitsLen++;
 	game.units = realloc(game.units, sizeof(t_obj *) * (unitsLen + 2));
 	game.units[unitsLen] = newUnit;

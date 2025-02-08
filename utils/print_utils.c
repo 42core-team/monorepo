@@ -77,6 +77,26 @@ void	ft_print_units()
 	}
 }
 
+void	ft_print_walls()
+{
+	t_obj	**walls = game.walls;
+
+	printf("Walls:\n");
+	if (walls == NULL)
+		return;
+	int index = 0;
+	while (walls[index] != NULL)
+	{
+		char *state = "ALIVE";
+		if (walls[index]->state == STATE_DEAD)
+			state = "DEAD";
+		else if (walls[index]->state == STATE_UNINITIALIZED)
+			state = "UNINITIALIZED";
+		printf("- id: %lu x: %u y: %u hp: %lu state: %s\n", walls[index]->id, walls[index]->pos.x, walls[index]->pos.y, walls[index]->hp, state);
+		index++;
+	}
+}
+
 void ft_print_unit_config(const t_unit_config *unit_config)
 {
 	if (unit_config == NULL)
@@ -121,5 +141,6 @@ void	ft_print_all()
 	ft_print_status(game.status);
 	ft_print_cores(game.cores);
 	ft_print_resources(game.resources);
+	ft_print_walls(game.walls);
 	ft_print_units(game.units);
 }
