@@ -86,7 +86,6 @@ void	ft_parse_json_state(char *json)
 	ft_parse_cores(token_ind, json_data.token_len, json_data.tokens, json);
 	ft_parse_resources(token_ind, json_data.token_len, json_data.tokens, json);
 	ft_parse_units(token_ind, json_data.token_len, json_data.tokens, json);
-	ft_parse_teams(token_ind, json_data.token_len, json_data.tokens, json);
 	ft_parse_walls(token_ind, json_data.token_len, json_data.tokens, json);
 
 	free(json_data.tokens);

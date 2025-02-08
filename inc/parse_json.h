@@ -14,7 +14,6 @@ typedef struct s_json
 
 //parse_json_objects.c
 void				ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json);
-void				ft_parse_teams(int token_ind, int token_len, jsmntok_t *tokens, char *json);
 void				ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, char *json);
 void				ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json);
 void				ft_parse_walls(int token_ind, int token_len, jsmntok_t *tokens, char *json);
