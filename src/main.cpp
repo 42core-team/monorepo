@@ -16,7 +16,7 @@
 #include "Config.h"
 
 #include "json.hpp"
-using json = nlohmann::json;
+using json = nlohmann::ordered_json;
 
 int main(int argc, char *argv[])
 {

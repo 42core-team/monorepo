@@ -9,7 +9,7 @@ class CreateAction;
 class MoveAction;
 
 #include "json.hpp"
-using json = nlohmann::json;
+using json = nlohmann::ordered_json;
 
 enum class ActionType
 {

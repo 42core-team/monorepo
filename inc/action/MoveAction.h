@@ -7,7 +7,7 @@
 #include "Common.h"
 
 #include "json.hpp"
-using json = nlohmann::json;
+using json = nlohmann::ordered_json;
 
 class MoveAction : public Action
 {
