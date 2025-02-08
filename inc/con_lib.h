@@ -73,6 +73,8 @@ typedef struct s_obj
 			unsigned long type_id;
 			/// @brief The id of the team that owns the unit.
 			unsigned long team_id;
+			/// @brief The amount of money the unit is carrying.
+			unsigned long balance;
 		}	s_unit;
 	};
 } t_obj;
@@ -127,6 +129,8 @@ typedef struct s_config
 	unsigned long core_hp;
 	/// @brief How much money a team starts with.
 	unsigned long initial_balance;
+	/// @brief How much healthpoints a wall has at the start of the game.
+	unsigned long wall_hp;
 	/// @brief List of all unit types that are available in the game. The array is terminated by an element with type_id 0.
 	t_unit_config *units;
 } t_config;
@@ -174,6 +178,10 @@ typedef struct s_game
 	 * @brief List of all resources and their informations. NULL-terminated.
 	 */
 	t_obj **resources;
+	/**
+	 * @brief List of all walls and their informations. NULL-terminated.
+	 */
+	t_obj **walls;
 	/**
 	 * @brief List of all units and their informations. NULL-terminated.
 	 */

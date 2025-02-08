@@ -7,7 +7,7 @@ t_obj	*ft_create_unit(t_unit_type type_id)
 		unit_count++;
 	if ((int)type_id < 1 || (int)type_id > unit_count)
 		return NULL;
-	if (game.config.units[type_id - 1].cost > ft_get_my_core()->balance)
+	if (game.config.units[type_id - 1].cost > ft_get_my_core()->s_core.balance)
 		return NULL;
 
 	t_action_create	**actions = &game.actions.creates;

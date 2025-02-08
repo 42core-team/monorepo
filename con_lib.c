@@ -6,14 +6,14 @@ int		socket_fd = -1;
 bool	debug = false;
 t_game	game;
 
-void	ft_receive_config()
+bool	ft_receive_config()
 {
 	char	*msg = ft_read_socket_once(socket_fd);
 
 	if (!msg)
 	{
 		printf("Something went very awry and there was no json received.\n");
-		return;
+		return false;
 	}
 	if (debug)
 		printf("Received: %s\n", msg);
@@ -21,17 +21,16 @@ void	ft_receive_config()
 	if (debug)
 		ft_print_game_config(&game.config);
 	free(msg);
+	return true;
 }
 
 void	ft_init_game()
 {
-	game.teams = NULL;
 	game.cores = NULL;
 	game.resources = NULL;
 	game.units = NULL;
-	game.config.teams = NULL;
+	game.walls = NULL;
 	game.config.units = NULL;
-	game.config.resources = NULL;
 }
 
 /**
@@ -54,10 +53,10 @@ void	ft_init_con(char *team_name, int *argc, char **argv)
 	free(login_msg);
 
 	ft_init_game();
-	ft_receive_config();
 	ft_reset_actions();
+	bool validConf = ft_receive_config();
 
-	if (game.config.teams == NULL)
+	if (!validConf)
 	{
 		printf("Unable to initialize server connection, shutting down.\n");
 		exit(1);

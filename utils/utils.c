@@ -81,13 +81,6 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 
 void	ft_free_game()
 {
-	if (game.teams != NULL)
-	{
-		for (int i = 0; game.teams[i] != NULL; i++)
-			free(game.teams[i]);
-		free(game.teams);
-		game.teams = NULL;
-	}
 	if (game.cores != NULL)
 	{
 		for (int i = 0; game.cores[i] != NULL; i++)
@@ -109,22 +102,18 @@ void	ft_free_game()
 		free(game.units);
 		game.units = NULL;
 	}
+	if (game.walls != NULL)
+	{
+		for (int i = 0; game.walls[i] != NULL; i++)
+			free(game.walls[i]);
+		free(game.walls);
+		game.walls = NULL;
+	}
 }
 
 void	ft_free_config()
 {
 	int	ind;
-
-	ind = 0;
-	if (game.config.teams != NULL)
-	{
-		while (game.config.teams[ind].id != 0)
-		{
-			free(game.config.teams[ind].name);
-			ind++;
-		}
-		free(game.config.teams);
-	}
 
 	ind = 0;
 	if (game.config.units != NULL)

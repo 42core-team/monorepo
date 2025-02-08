@@ -12,7 +12,6 @@ encode_json.c \
 get_next_line.c \
 jsmn.c \
 parse_json_objects.c \
-parse_json_configs.c \
 parse_json_utils.c \
 parse_json.c \
 formatter.c \
@@ -25,7 +24,6 @@ actions.c \
 con_lib.c \
 get.c \
 get_core.c \
-get_team.c \
 get_unit.c \
 get_unit_config.c \
 get_utils.c \

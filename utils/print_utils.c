@@ -32,7 +32,7 @@ void	ft_print_cores()
 			state = "DEAD";
 		else if (cores[index]->state == STATE_UNINITIALIZED)
 			state = "UNINITIALIZED";
-		printf("- id: %lu team_id: %lu x: %lu y: %lu hp: %lu state: %s\n", cores[index]->id, cores[index]->s_core.team_id, cores[index]->x, cores[index]->y, cores[index]->hp, state);
+		printf("- id: %lu team_id: %lu x: %u y: %u hp: %lu state: %s\n", cores[index]->id, cores[index]->s_core.team_id, cores[index]->pos.x, cores[index]->pos.y, cores[index]->hp, state);
 		index++;
 	}
 }
@@ -52,7 +52,7 @@ void	ft_print_resources()
 			state = "DEAD";
 		else if (resources[index]->state == STATE_UNINITIALIZED)
 			state = "UNINITIALIZED";
-		printf("- id: %lu x: %lu y: %lu hp: %lu state: %s\n", resources[index]->id, resources[index]->x, resources[index]->y, resources[index]->hp, state);
+		printf("- id: %lu x: %u y: %u hp: %lu state: %s\n", resources[index]->id, resources[index]->pos.x, resources[index]->pos.y, resources[index]->hp, state);
 		index++;
 	}
 }
@@ -72,16 +72,9 @@ void	ft_print_units()
 			state = "DEAD";
 		else if (units[index]->state == STATE_UNINITIALIZED)
 			state = "UNINITIALIZED";
-		printf("- id: %lu type_id: %lu team_id: %lu x: %lu y: %lu hp: %lu state: %s\n", units[index]->id, units[index]->s_unit.type_id, units[index]->s_unit.team_id, units[index]->x, units[index]->y, units[index]->hp, state);
+		printf("- id: %lu type_id: %lu team_id: %lu x: %u y: %u hp: %lu state: %s\n", units[index]->id, units[index]->s_unit.type_id, units[index]->s_unit.team_id, units[index]->pos.x, units[index]->pos.y, units[index]->hp, state);
 		index++;
 	}
-}
-
-void ft_print_team_config(const t_team_config *team_config) {
-	if (team_config == NULL || team_config->id == 0)
-		return;
-	printf("- ID: %lu\n", team_config->id);
-	printf("  Name: %s\n", team_config->name);
 }
 
 void ft_print_unit_config(const t_unit_config *unit_config) {
@@ -95,17 +88,7 @@ void ft_print_unit_config(const t_unit_config *unit_config) {
 	printf("  Damage Unit: %ld\n", unit_config->dmg_unit);
 	printf("  Damage Resource: %ld\n", unit_config->dmg_resource);
 	printf("  Damage Wall: %ld\n", unit_config->dmg_wall);
-	printf("  Max Range: %lu\n", unit_config->max_range);
-	printf("  Min Range: %lu\n", unit_config->min_range);
 	printf("  Speed: %lu\n", unit_config->speed);
-}
-
-void ft_print_resource_config(const t_resource_config *resource_config) {
-	if (resource_config == NULL || resource_config->type_id == 0)
-		return;
-	printf("  Type ID: %lu\n", resource_config->type_id);
-	printf("  HP: %lu\n", resource_config->hp);
-	printf("  Balance_Value: %lu\n", resource_config->balance_value);
 }
 
 void	ft_print_game_config()
@@ -125,7 +108,7 @@ void	ft_print_game_config()
 	printf("Config Resource Income: %lu\n", config->resource_income);
 
 	printf("Unit Configs:\n");
-	ind = 0;
+	int ind = 0;
 	if (config->units != NULL)
 	{
 		while (config->units[ind].type_id != 0)
@@ -137,7 +120,6 @@ void	ft_print_all()
 {
 	ft_print_game_config(&game.config);
 	ft_print_status(game.status);
-	ft_print_teams(game.teams);
 	ft_print_cores(game.cores);
 	ft_print_resources(game.resources);
 	ft_print_units(game.units);

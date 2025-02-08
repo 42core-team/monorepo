@@ -17,6 +17,7 @@ void				ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *js
 void				ft_parse_teams(int token_ind, int token_len, jsmntok_t *tokens, char *json);
 void				ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, char *json);
 void				ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json);
+void				ft_parse_walls(int token_ind, int token_len, jsmntok_t *tokens, char *json);
 
 //parse_json_utils.c
 int				ft_find_token(jsmntok_t *tokens, unsigned int token_len, unsigned int iter, char **search_str, char *json);
