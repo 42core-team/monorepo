@@ -270,6 +270,13 @@ t_obj	*ft_create_unit(t_unit_type type_id);
  * @param direction The direction the unit should move.
  */
 void	ft_move(t_obj *unit, t_direction direction);
+/**
+ * @brief Determines next direction to move to reach goal, then calls ft_move().
+ * 
+ * @param unit The unit that should be moved.
+ * @param direction The target position.
+ */
+void	ft_travel_to_pos(t_obj *unit, t_pos pos);
 
 // -------------- print_utils.c --------------
 /**
