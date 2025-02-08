@@ -25,7 +25,6 @@ char *ft_create_json(void)
 		json = ft_strjoin_free_1(json, "{\"type\":\"create\",\"type_id\":");
 		char *type_id_str = ft_ul_string(creates[ind].type_id);
 		json = ft_strjoin_free_1_2(json, type_id_str);
-		free(type_id_str);
 		json = ft_strjoin_free_1(json, "},");
 		ind++;
 	}
@@ -45,7 +44,6 @@ char *ft_travel_json(void)
 		json = ft_strjoin_free_1(json, "{\"type\":\"move\",\"unit_id\":");
 		char *id_str = ft_ul_string(travels[ind].id);
 		json = ft_strjoin_free_1_2(json, id_str);
-		free(id_str);
 		json = ft_strjoin_free_1(json, ",\"dir\":\"");
 		json = ft_strjoin_free_1(json, ft_direction_to_str(travels[ind].direction));
 		json = ft_strjoin_free_1(json, "\"},");
@@ -79,8 +77,6 @@ char *ft_all_action_json(void)
 	char *travel_part = ft_travel_json();
 	json = ft_strjoin_free_1_2(json, create_part);
 	json = ft_strjoin_free_1_2(json, travel_part);
-	free(create_part);
-	free(travel_part);
 
 	size_t len = strlen(json);
 	if (len > 0 && json[len - 1] == ',')
