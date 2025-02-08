@@ -46,6 +46,8 @@ struct Position
 	{
 		return {x + other.x, y + other.y};
 	}
+
+	Position(unsigned int x, unsigned int y) : x(x), y(y) {}
 };
 
 #endif // COMMON_H

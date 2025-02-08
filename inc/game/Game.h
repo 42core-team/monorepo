@@ -45,6 +45,8 @@ class Game
 		std::vector<Resource> resources_;
 		std::vector<Wall> walls_;
 		std::vector<Bridge*> bridges_;
+
+		void visualizeGameState();
 };
 
 #endif // GAME_H

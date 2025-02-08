@@ -182,6 +182,8 @@ void Game::tick(unsigned long long tick)
 	if (tick < Config::getInstance().idleIncomeTimeOut)
 		for (Core & core : cores_)
 			core.setBalance(core.getBalance() + Config::getInstance().idleIncome);
+
+	visualizeGameState();
 }
 Object * Game::getObjectAtPos(Position pos)
 {
