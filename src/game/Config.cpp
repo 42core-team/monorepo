@@ -17,6 +17,8 @@ GameConfig Config::defaultConfig()
 	config.coreHp = 200;
 	config.initialBalance = 200;
 
+	config.wallHp = 100;
+
 	UnitConfig warrior;
 	warrior.name = "Warrior";
 	warrior.cost = 150;

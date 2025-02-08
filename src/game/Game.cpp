@@ -53,7 +53,7 @@ void Game::run()
 		auto nextTickTime = startTime + (tickCount + 1) * tickInterval;
 		std::this_thread::sleep_until(nextTickTime);
 
-		tick();
+		tick(tickCount);
 		sendState();
 
 		alivePlayers = 0;
@@ -67,8 +67,10 @@ void Game::run()
 	}
 }
 
-void Game::tick()
+void Game::tick(unsigned long long tick)
 {
+	// 1. COMPUTE ACTIONS
+
 	for (auto bridge : bridges_)
 	{
 		json msg;
@@ -126,6 +128,10 @@ void Game::tick()
 						obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageUnit);
 					else if (obj->getType() == ObjectType::Core)
 						obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageCore);
+					else if (obj->getType() == ObjectType::Resource)
+						((Resource *)obj)->getMined(unit);
+					else if (obj->getType() == ObjectType::Wall)
+						obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageWall);
 				}
 				else
 				{
@@ -136,6 +142,46 @@ void Game::tick()
 			delete action;
 		}
 	}
+
+	// 2. REMOVE DEAD OBJECTS
+
+	for (auto it = cores_.begin(); it != cores_.end();)
+	{
+		if (it->getHP() <= 0)
+		{
+			it = cores_.erase(it);
+			// TODO: handle game over (send message, disconnect bridge, decrease teamCount_)
+		}
+		else
+			++it;
+	}
+	for (auto it = units_.begin(); it != units_.end();)
+	{
+		if (it->getHP() <= 0)
+			it = units_.erase(it);
+		else
+			++it;
+	}
+	for (auto it = resources_.begin(); it != resources_.end();)
+	{
+		if (it->getHP() <= 0)
+			it = resources_.erase(it);
+		else
+			++it;
+	}
+	for (auto it = walls_.begin(); it != walls_.end();)
+	{
+		if (it->getHP() <= 0)
+			it = walls_.erase(it);
+		else
+			++it;
+	}
+
+	// 3. HAND OUT IDLE INCOME
+
+	if (tick < Config::getInstance().idleIncomeTimeOut)
+		for (Core & core : cores_)
+			core.setBalance(core.getBalance() + Config::getInstance().idleIncome);
 }
 Object * Game::getObjectAtPos(Position pos)
 {
@@ -182,8 +228,35 @@ void Game::sendState()
 		u["position"] = { {"x", pos.x}, {"y", pos.y} };
 		u["hp"] = unit.getHP();
 		u["type"] = unit.getTypeId();
+		u["balance"] = unit.getBalance();
 
 		state["units"].push_back(u);
+	}
+
+	state["resources"] = json::array();
+	for (auto& resource : resources_)
+	{
+		json r;
+
+		r["id"] = resource.getId();
+		Position pos = resource.getPosition();
+		r["position"] = { {"x", pos.x}, {"y", pos.y} };
+		r["hp"] = resource.getHP();
+
+		state["resources"].push_back(r);
+	}
+
+	state["walls"] = json::array();
+	for (auto& wall : walls_)
+	{
+		json w;
+
+		w["id"] = wall.getId();
+		Position pos = wall.getPosition();
+		w["position"] = { {"x", pos.x}, {"y", pos.y} };
+		w["hp"] = wall.getHP();
+
+		state["walls"].push_back(w);
 	}
 	
 	for (auto bridge : bridges_)
@@ -209,6 +282,8 @@ void Game::sendConfig()
 
 	configJson["coreHp"] = config.coreHp;
 	configJson["initialBalance"] = config.initialBalance;
+
+	configJson["wallHp"] = config.wallHp;
 
 	configJson["units"] = json::array();
 	for (auto& unit : config.units)

@@ -23,6 +23,8 @@ struct GameConfig
 	unsigned int coreHp;
 	unsigned int initialBalance;
 
+	unsigned int wallHp;
+
 	std::vector<UnitConfig> units;
 
 	// core positions. length defines max supported player count

@@ -8,6 +8,8 @@
 #include "Config.h"
 #include "Core.h"
 #include "Unit.h"
+#include "Resource.h"
+#include "Wall.h"
 #include "Bridge.h"
 #include "Action.h"
 #include "Utils.h"
@@ -32,7 +34,7 @@ class Game
 		Object * getObjectAtPos(Position pos);
 
 	private:
-		void tick();
+		void tick(unsigned long long tick);
 		void sendState();
 		void sendConfig();
 
@@ -40,6 +42,8 @@ class Game
 		unsigned int nextObjectId_;
 		std::vector<Core> cores_;
 		std::vector<Unit> units_;
+		std::vector<Resource> resources_;
+		std::vector<Wall> walls_;
 		std::vector<Bridge*> bridges_;
 };
 

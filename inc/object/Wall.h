@@ -1,0 +1,13 @@
+#ifndef WALL_H
+#define WALL_H
+
+#include "Object.h"
+#include "Common.h"
+
+class Wall : public Object
+{
+	public:
+		Wall(unsigned int id, Position pos);
+};
+
+#endif // WALL_H

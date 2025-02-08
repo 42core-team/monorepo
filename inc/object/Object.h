@@ -7,18 +7,19 @@
 enum class ObjectType
 {
 	Core,
-	Unit
+	Unit,
+	Resource,
+	Wall
 };
 
 class Object
 {
 	public:
-		Object(unsigned int id, unsigned int teamId, Position pos, int hp, ObjectType type)
-			: id_(id), teamId_(teamId), position_(pos), hp_(hp), type_(type) {}
+		Object(unsigned int id, Position pos, int hp, ObjectType type)
+			: id_(id), position_(pos), hp_(hp), type_(type) {}
 		virtual ~Object() {}
 
 		unsigned int getId() const { return id_; };
-		unsigned int getTeamId() const { return teamId_; };
 		Position getPosition() const { return position_; };
 		int getHP() const { return hp_; };
 		ObjectType getType() const { return type_; };
@@ -28,7 +29,6 @@ class Object
 
 	protected:
 		unsigned int id_;
-		unsigned int teamId_;
 		Position position_;
 		int hp_;
 

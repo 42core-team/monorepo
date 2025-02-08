@@ -11,9 +11,15 @@ class Unit : public Object
 		
 		void travel(MovementDirection dir);
 		unsigned int getTypeId() const { return type_id_; }
+		unsigned int getTeamId() const { return team_id_; }
+		unsigned int getBalance() const { return balance_; }
+
+		void addBalance(unsigned int amount) { balance_ += amount; }
 
 	private:
 		unsigned int type_id_;
+		unsigned int team_id_;
+		unsigned int balance_;
 };
 
 #endif // UNIT_H
