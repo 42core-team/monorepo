@@ -118,9 +118,10 @@ void	ft_free_config()
 	ind = 0;
 	if (game.config.units != NULL)
 	{
-		while (game.config.units[ind].type_id != 0)
+		while (game.config.units[ind] != NULL)
 		{
-			free(game.config.units[ind].name);
+			free(game.config.units[ind]->name);
+			free(game.config.units[ind]);
 			ind++;
 		}
 		free(game.config.units);

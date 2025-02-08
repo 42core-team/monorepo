@@ -24,14 +24,14 @@ static t_json	ft_parse_json(char *json)
 	return (json_data);
 }
 
-t_unit_config	*ft_parse_unit_config(int *token_ind, int token_len, jsmntok_t *tokens, char *json)
+t_unit_config	**ft_parse_unit_config(int *token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
 	int units_index = ft_find_token_one("units", *token_ind, token_len, tokens, json);
 	if (units_index == -1)
 		return NULL;
 	
 	int array_size = tokens[units_index].size;
-	t_unit_config *units = malloc(sizeof(t_unit_config) * (array_size + 1));
+	t_unit_config **units = malloc(sizeof(t_unit_config *) * (array_size + 1));
 	if (!units)
 		ft_perror_exit("Failed to allocate memory for unit configs\n");
 	
@@ -39,17 +39,22 @@ t_unit_config	*ft_parse_unit_config(int *token_ind, int token_len, jsmntok_t *to
 	int index = units_index + 1;
 	for (i = 0; i < array_size; i++)
 	{
-		units[i].name = ft_find_parse_str("name", &index, token_len, tokens, json);
-		units[i].cost = ft_find_parse_ulong("cost", &index, token_len, tokens, json);
-		units[i].hp = ft_find_parse_ulong("hp", &index, token_len, tokens, json);
-		units[i].speed = ft_find_parse_ulong("speed", &index, token_len, tokens, json);
-		units[i].dmg_core = ft_find_parse_long("damageCore", &index, token_len, tokens, json);
-		units[i].dmg_unit = ft_find_parse_long("damageUnit", &index, token_len, tokens, json);
-		units[i].dmg_resource = ft_find_parse_long("damageResource", &index, token_len, tokens, json);
-		units[i].dmg_wall = ft_find_parse_long("damageWall", &index, token_len, tokens, json);
+		units[i] = malloc(sizeof(t_unit_config));
+		if (!units[i])
+			ft_perror_exit("Failed to allocate memory for unit config\n");
+
+		units[i]->name = ft_find_parse_str("name", &index, token_len, tokens, json);
+		units[i]->type_id = i;
+		units[i]->cost = ft_find_parse_ulong("cost", &index, token_len, tokens, json);
+		units[i]->hp = ft_find_parse_ulong("hp", &index, token_len, tokens, json);
+		units[i]->speed = ft_find_parse_ulong("speed", &index, token_len, tokens, json);
+		units[i]->dmg_core = ft_find_parse_long("damageCore", &index, token_len, tokens, json);
+		units[i]->dmg_unit = ft_find_parse_long("damageUnit", &index, token_len, tokens, json);
+		units[i]->dmg_resource = ft_find_parse_long("damageResource", &index, token_len, tokens, json);
+		units[i]->dmg_wall = ft_find_parse_long("damageWall", &index, token_len, tokens, json);
 	}
-	units[array_size].name = NULL;
-	
+	units[array_size] = NULL;
+
 	return units;
 }
 

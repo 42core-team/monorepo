@@ -81,11 +81,8 @@ typedef struct s_obj
 
 typedef enum e_unit_type
 {
-	UNIT_WARRIOR = 1,
-	UNIT_MINER = 2,
-	UNIT_TANK = 3,
-	UNIT_ARCHER = 4,
-	UNIT_HEALER = 5
+	UNIT_WARRIOR = 0,
+	UNIT_MINER = 1
 } t_unit_type;
 
 typedef struct s_unit_config
@@ -131,8 +128,8 @@ typedef struct s_config
 	unsigned long initial_balance;
 	/// @brief How much healthpoints a wall has at the start of the game.
 	unsigned long wall_hp;
-	/// @brief List of all unit types that are available in the game. The array is terminated by an element with type_id 0.
-	t_unit_config *units;
+	/// @brief List of all unit types that are available in the game. NULL-terminated.
+	t_unit_config **units;
 } t_config;
 
 typedef struct s_action_create

@@ -77,8 +77,9 @@ void	ft_print_units()
 	}
 }
 
-void ft_print_unit_config(const t_unit_config *unit_config) {
-	if (unit_config == NULL || unit_config->type_id == 0)
+void ft_print_unit_config(const t_unit_config *unit_config)
+{
+	if (unit_config == NULL)
 		return;
 	printf("- Name: %s\n", unit_config->name);
 	printf("  Type ID: %u\n", unit_config->type_id);
@@ -110,10 +111,8 @@ void	ft_print_game_config()
 	printf("Unit Configs:\n");
 	int ind = 0;
 	if (config->units != NULL)
-	{
-		while (config->units[ind].type_id != 0)
-			ft_print_unit_config(&config->units[ind++]);
-	}
+		while (config->units[ind] != NULL)
+			ft_print_unit_config(config->units[ind++]);
 }
 
 void	ft_print_all()
