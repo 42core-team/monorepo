@@ -4,7 +4,7 @@
 
 void Game::visualizeGameState()
 {
-	std::cout << "Core: 🏛️; Units: W / w = Warrior; M / m = Miner; . = empty; 💎 = Resource; ⬛️ = Wall" << std::endl;
+	std::cout << "Core: C / c; Units: W / w = Warrior; M / m = Miner; . = empty; R = Resource; X = Wall" << std::endl;
 
 	for (int y = 0; y < (int)Config::getInstance().height; y++)
 	{
@@ -16,7 +16,8 @@ void Game::visualizeGameState()
 			{
 				if (obj->getType() == ObjectType::Core)
 				{
-					std::cout << "🏛️";
+					Core * core = dynamic_cast<Core*>(obj);
+					std::cout << "Cc"[core->getTeamId() % 2];
 				}
 				else if (obj->getType() == ObjectType::Unit)
 				{
@@ -30,11 +31,11 @@ void Game::visualizeGameState()
 				}
 				else if (obj->getType() == ObjectType::Resource)
 				{
-					std::cout << "💎";
+					std::cout << "R";
 				}
 				else if (obj->getType() == ObjectType::Wall)
 				{
-					std::cout << "⬛️";
+					std::cout << "X";
 				}
 			}
 			else

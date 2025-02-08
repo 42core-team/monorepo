@@ -6,7 +6,7 @@ Game::Game(std::vector<unsigned int> team_ids) : teamCount_(team_ids.size()), ne
 	cores_.reserve(team_ids.size());
 	for (unsigned int i = 0; i < team_ids.size(); ++i)
 		cores_.push_back(Core(nextObjectId_++, team_ids[i], Config::getCorePosition(i)));
-	std::cout << "Game created with " << team_ids.size() << " teams." << std::endl;
+	Logger::Log("Game created with " + std::to_string(team_ids.size()) + " teams.");
 }
 Game::~Game()
 {
@@ -44,8 +44,7 @@ void Game::run()
 			if (expectedTickCount > tickCount + 1)
 			{
 				unsigned long skipped = expectedTickCount - tickCount - 1;
-				std::cerr << "[WARNING] Processing delay: skipping " 
-							<< skipped << " tick(s)." << std::endl;
+				Logger::Log(LogLevel::WARNING, "Processing delay: skipping " + std::to_string(skipped) + " tick(s).");
 			}
 			tickCount = expectedTickCount;
 		}

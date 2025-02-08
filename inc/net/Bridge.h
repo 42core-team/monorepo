@@ -8,6 +8,8 @@
 #include <string>
 #include <atomic>
 
+#include "Logger.h"
+
 #include "json.hpp"
 using json = nlohmann::ordered_json;
 

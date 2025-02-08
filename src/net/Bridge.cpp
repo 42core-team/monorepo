@@ -14,8 +14,10 @@ Bridge::Bridge(int socket_fd, unsigned int teamId)
 	struct timeval tv;
 	tv.tv_sec = 1;
 	tv.tv_usec = 0;
-	if (setsockopt(socket_fd_, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
-		std::cerr << "[Bridge] Error setting socket timeout: " << strerror(errno) << "\n";
+	if (setsockopt(socket_fd_, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0)
+	{
+		Logger::Log(LogLevel::WARNING, "Error setting socket timeout: " + std::string(strerror(errno)) + ". Disconnecting " + std::to_string(team_id_) + ".");
+		disconnected_ = true;
 	}
 }
 
@@ -57,7 +59,7 @@ bool Bridge::receiveMessage(json& message)
 	if (readQueue_.empty()) return false;
 	message = readQueue_.front();
 	readQueue_.pop();
-	std::cout << "Received message: " << message << std::endl;
+	// std::cout << "Received message: " << message << std::endl;
 	return true;
 }
 
@@ -79,7 +81,7 @@ void Bridge::readLoop()
 				if (errno == EAGAIN || errno == EWOULDBLOCK) {
 					continue;
 				} else {
-					std::cerr << "[Bridge::readLoop] Read error: " << strerror(errno) << "\n";
+					Logger::Log(LogLevel::WARNING, "Read error: " + std::string(strerror(errno)) + ". Disconnecting " + std::to_string(team_id_) + ".");
 					disconnected_ = true;
 					break;
 				}
@@ -99,13 +101,13 @@ void Bridge::readLoop()
 						}
 						readCv_.notify_one();
 					} catch (json::parse_error& e) {
-						std::cerr << "[Bridge::readLoop] JSON parse error: " << e.what() << "\n";
+						Logger::Log(LogLevel::WARNING, "JSON parse error: " + std::string(e.what()) + ". Skipping message (team id: " + std::to_string(team_id_) + ").");
 					}
 				}
 			}
 		}
 	} catch (std::exception& e) {
-		std::cerr << "[Bridge::readLoop] Exception: " << e.what() << "\n";
+		Logger::Log(LogLevel::WARNING, "Exception: " + std::string(e.what()) + ". Disconnecting " + std::to_string(team_id_) + ".");
 		disconnected_ = true;
 	}
 }
@@ -124,7 +126,7 @@ void Bridge::writeLoop() {
 				while (remaining > 0) {
 					ssize_t n = ::write(socket_fd_, data, remaining);
 					if (n < 0) {
-						std::cerr << "[Bridge::writeLoop] Write error: " << strerror(errno) << "\n";
+						Logger::Log(LogLevel::WARNING, std::string("Write error: ") + std::string(strerror(errno)) + ". Disconnecting " + std::to_string(team_id_) + ".");
 						disconnected_ = true;
 						break;
 					}
@@ -135,7 +137,7 @@ void Bridge::writeLoop() {
 			}
 		}
 	} catch (std::exception& e) {
-		std::cerr << "[Bridge::writeLoop] Exception: " << e.what() << "\n";
+		Logger::Log(LogLevel::WARNING, "Exception: " + std::string(e.what()) + ". Disconnecting " + std::to_string(team_id_) + ".");
 		disconnected_ = true;
 	}
 }

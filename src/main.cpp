@@ -14,6 +14,7 @@
 #include "Bridge.h"
 #include "Game.h"
 #include "Config.h"
+#include "Logger.h"
 
 #include "json.hpp"
 using json = nlohmann::ordered_json;
@@ -22,34 +23,42 @@ int main(int argc, char *argv[])
 {
 	if (argc < 3)
 	{
-		std::cerr << "Usage: " << argv[0] << " <teamId1> <teamId2>\n";
+		Logger::Log(LogLevel::ERROR, std::string("Usage: ") + argv[0] + " <teamId1> <teamId2> ...");
 		return 1;
 	}
 
 	if (argc - 1 > (int)Config::getInstance().corePositions.size())
 	{
-		std::cerr << "[Main] Error: too many team IDs specified.\n";
+		Logger::Log(LogLevel::ERROR, "Too many team IDs specified.");
 		return 1;
 	}
 
 	std::vector<unsigned int> expectedTeamIds;
 	for (int i = 1; i < argc; i++)
 		expectedTeamIds.push_back(std::stoi(argv[i]));
-	std::cout << "[Main] Expected team IDs: ";
+
+	std::sort(expectedTeamIds.begin(), expectedTeamIds.end());
+	if (std::adjacent_find(expectedTeamIds.begin(), expectedTeamIds.end()) != expectedTeamIds.end())
+	{
+		Logger::Log(LogLevel::ERROR, "Duplicate team IDs specified.");
+		return 1;
+	}
+
+	std::string teamIdsStr = "Expected team IDs: ";
 	for (unsigned int teamId : expectedTeamIds)
-		std::cout << teamId << " ";
-	std::cout << std::endl;
+		teamIdsStr += std::to_string(teamId) + " ";
+	Logger::Log(teamIdsStr);
 
 	int server_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (server_fd < 0)
 	{
-		std::cerr << "[Main] Error: Could not create socket.\n";
+		Logger::Log(LogLevel::ERROR, "Could not create socket.");
 		return 1;
 	}
 	int opt = 1;
 	if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
 	{
-		std::cerr << "[Main] Error: setsockopt failed.\n";
+		Logger::Log(LogLevel::ERROR, "Could not set socket options.");
 		close(server_fd);
 		return 1;
 	}
@@ -61,14 +70,14 @@ int main(int argc, char *argv[])
 
 	if (bind(server_fd, reinterpret_cast<sockaddr*>(&address), sizeof(address)) < 0)
 	{
-		std::cerr << "[Main] Error: bind failed.\n";
+		Logger::Log(LogLevel::ERROR, "Could not bind socket.");
 		close(server_fd);
 		return 1;
 	}
 
 	if (listen(server_fd, SOMAXCONN) < 0)
 	{
-		std::cerr << "[Main] Error: listen failed.\n";
+		Logger::Log(LogLevel::ERROR, "Could not listen on socket.");
 		close(server_fd);
 		return 1;
 	}
@@ -86,11 +95,11 @@ int main(int argc, char *argv[])
 		int client_fd = accept(server_fd, reinterpret_cast<sockaddr*>(&clientAddress), &clientLen);
 		if (client_fd < 0)
 		{
-			std::cerr << "[Main] Error: accept failed." << std::endl;
+			Logger::Log(LogLevel::WARNING, "accept failed: " + std::string(strerror(errno)));
 			continue;
 		}
 
-		std::cout << "[Main] Accepted connection from " << inet_ntoa(clientAddress.sin_addr) << std::endl;
+		Logger::Log("Accepted connection from " + std::string(inet_ntoa(clientAddress.sin_addr)));
 		
 		Bridge* bridge = new Bridge(client_fd, expectedTeamIds[bridges.size()]);
 		bridge->start();
@@ -98,13 +107,13 @@ int main(int argc, char *argv[])
 		json loginMessage;
 		if (!bridge->receiveMessage(loginMessage))
 		{
-			std::cerr << "[Main] Error: did not receive a login message from the client." << std::endl;
+			Logger::Log(LogLevel::WARNING, "Did not receive a login message from the client.");
 			delete bridge;
 			continue;
 		}
 		if (!loginMessage.contains("password") || loginMessage["password"] != "42") // very important and secure authentication
 		{
-			std::cerr << "[Main] Error: incorrect password." << std::endl;
+			Logger::Log(LogLevel::WARNING, "Incorrect password.");
 			delete bridge;
 			continue;
 		}
@@ -112,22 +121,22 @@ int main(int argc, char *argv[])
 
 		if (std::find(expectedTeamIds.begin(), expectedTeamIds.end(), teamId) == expectedTeamIds.end())
 		{
-			std::cerr << "[Main] Error: received unexpected team id " << teamId << std::endl;
+			Logger::Log(LogLevel::WARNING, "Received unexpected team ID " + std::to_string(teamId));
 			delete bridge;
 			continue;
 		}
 		if (bridges.find(teamId) != bridges.end())
 		{
-			std::cerr << "[Main] Error: duplicate connection for team id " << teamId << std::endl;
+			Logger::Log(LogLevel::WARNING, "Duplicate connection for team ID " + std::to_string(teamId));
 			delete bridge;
 			continue;
 		}
 
 		bridges[teamId] = bridge;
-		std::cout << "[Main] Accepted team " << teamId << std::endl;
+		Logger::Log("Accepted team " + std::to_string(teamId));
 	}
 
-	std::cout << "[Main] All expected teams have connected. Preparing to start the game..." << std::endl;
+	Logger::Log("All expected teams have connected. Preparing to start the game...");
 
 	Game game(expectedTeamIds);
 	
