@@ -17,22 +17,6 @@ void	ft_print_status()
 		printf("UNKNOWN\n");
 }
 
-void	ft_print_teams()
-{
-	t_team	**teams = game.teams;
-
-	printf("Your team id: %lu\n", game.my_team_id);
-	printf("Teams:\n");
-	if (teams == NULL)
-		return;
-	int index = 0;
-	while (teams[index] != NULL)
-	{
-		printf("- id: %lu balance: %lu\n", teams[index]->id, teams[index]->balance);
-		index++;
-	}
-}
-
 void	ft_print_cores()
 {
 	t_obj	**cores = game.cores;
@@ -110,6 +94,7 @@ void ft_print_unit_config(const t_unit_config *unit_config) {
 	printf("  Damage Core: %ld\n", unit_config->dmg_core);
 	printf("  Damage Unit: %ld\n", unit_config->dmg_unit);
 	printf("  Damage Resource: %ld\n", unit_config->dmg_resource);
+	printf("  Damage Wall: %ld\n", unit_config->dmg_wall);
 	printf("  Max Range: %lu\n", unit_config->max_range);
 	printf("  Min Range: %lu\n", unit_config->min_range);
 	printf("  Speed: %lu\n", unit_config->speed);
@@ -131,17 +116,13 @@ void	ft_print_game_config()
 		return;
 	printf("Config Height: %lu\n", config->height);
 	printf("Config Width: %lu\n", config->width);
+	printf("Config Tick Rate: %lu\n", config->tick_rate);
 	printf("Config Idle Income: %lu\n", config->idle_income);
 	printf("Config Idle Income Timeout: %lu\n", config->idle_income_timeout);
 	printf("Config Core HP: %lu\n", config->core_hp);
-
-	printf("Team Configs:\n");
-	unsigned int ind = 0;
-	if (config->teams != NULL)
-	{
-		while (config->teams[ind].id != 0)
-			ft_print_team_config(&config->teams[ind++]);
-	}
+	printf("Config Initial Balance: %lu\n", config->initial_balance);
+	printf("Config Resource HP: %lu\n", config->resource_hp);
+	printf("Config Resource Income: %lu\n", config->resource_income);
 
 	printf("Unit Configs:\n");
 	ind = 0;
@@ -150,15 +131,6 @@ void	ft_print_game_config()
 		while (config->units[ind].type_id != 0)
 			ft_print_unit_config(&config->units[ind++]);
 	}
-
-	printf("Resource Configs:\n");
-	ind = 0;
-	if (config->resources != NULL)
-	{
-		while (config->resources[ind].type_id != 0)
-			ft_print_resource_config(&config->resources[ind++]);
-	}
-	printf("Config Resource Spawn Timeout: %lu\n", config->resource_spawn_timeout);
 }
 
 void	ft_print_all()

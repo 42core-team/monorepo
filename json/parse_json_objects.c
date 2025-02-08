@@ -16,8 +16,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 			existingObj->type = obj.type;
 			existingObj->state = STATE_ALIVE;
 			existingObj->id = obj.id;
-			existingObj->x = obj.x;
-			existingObj->y = obj.y;
+			existingObj->pos = obj.pos;
 			existingObj->hp = obj.hp;
 			if ((*arr) == game.units)
 			{
@@ -25,7 +24,10 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 				existingObj->s_unit.team_id = obj.s_unit.team_id;
 			}
 			if ((*arr) == game.cores)
+			{
 				existingObj->s_core.team_id = obj.s_core.team_id;
+				existingObj->s_core.balance = obj.s_core.balance;
+			}
 			objInserted = true;
 			break;
 		}
@@ -50,8 +52,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 			existingObj->type = obj.type;
 			existingObj->state = STATE_ALIVE;
 			existingObj->id = obj.id;
-			existingObj->x = obj.x;
-			existingObj->y = obj.y;
+			existingObj->pos = obj.pos;
 			existingObj->hp = obj.hp;
 			if ((*arr) == game.units)
 			{
@@ -59,7 +60,10 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 				existingObj->s_unit.team_id = obj.s_unit.team_id;
 			}
 			if ((*arr) == game.cores)
+			{
 				existingObj->s_core.team_id = obj.s_core.team_id;
+				existingObj->s_core.balance = obj.s_core.balance;
+			}
 			objInserted = true;
 			break;
 		}
@@ -84,8 +88,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	existingObj->type = obj.type;
 	existingObj->state = STATE_ALIVE;
 	existingObj->id = obj.id;
-	existingObj->x = obj.x;
-	existingObj->y = obj.y;
+	existingObj->pos = obj.pos;
 	existingObj->hp = obj.hp;
 	existingObj->data = NULL;
 	if ((*arr) == game.units)
@@ -94,16 +97,19 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 		existingObj->s_unit.team_id = obj.s_unit.team_id;
 	}
 	if ((*arr) == game.cores)
+	{
 		existingObj->s_core.team_id = obj.s_core.team_id;
+		existingObj->s_core.balance = obj.s_core.balance;
+	}
 }
 
 void ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
-	int	index, last_json_index, next_token_ind;
+	int index, last_json_index, next_token_ind;
 
 	token_ind = ft_find_token_one("cores", token_ind, token_len, tokens, json);
 	if (token_ind == -1)
-		return ;
+		return;
 	last_json_index = tokens[token_ind].end;
 
 	if (game.cores == NULL)
@@ -126,24 +132,35 @@ void ft_parse_cores(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 		t_obj readCore;
 		readCore.type = OBJ_CORE;
 		readCore.id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
-		readCore.s_core.team_id = ft_find_parse_ulong("team_id", &token_ind, token_len, tokens, json);
-		readCore.x = ft_find_parse_ulong("x", &token_ind, token_len, tokens, json);
-		readCore.y = ft_find_parse_ulong("y", &token_ind, token_len, tokens, json);
+		readCore.s_core.team_id = ft_find_parse_ulong("teamId", &token_ind, token_len, tokens, json);
+		
+		int pos_token = ft_find_token_one("position", token_ind, token_len, tokens, json);
+		if (pos_token != -1)
+		{
+			readCore.pos.x = (unsigned short) ft_find_parse_ulong("x", &pos_token, token_len, tokens, json);
+			readCore.pos.y = (unsigned short) ft_find_parse_ulong("y", &pos_token, token_len, tokens, json);
+		}
+		else
+		{
+			readCore.pos.x = ft_get_my_core()->pos.x;
+			readCore.pos.y = ft_get_my_core()->pos.y;
+		}
+		
 		readCore.hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
-
+		readCore.s_core.balance = ft_find_parse_ulong("balance", &token_ind, token_len, tokens, json);
+		
 		apply_obj_to_arr(readCore, &game.cores);
-
 		index++;
 	}
 }
 
-void	ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, char *json)
+void ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
-	int	index, last_json_index, next_token_ind;
+	int index, last_json_index, next_token_ind;
 
 	token_ind = ft_find_token_one("resources", token_ind, token_len, tokens, json);
 	if (token_ind == -1)
-		return ;
+		return;
 	last_json_index = tokens[token_ind].end;
 
 	if (game.resources == NULL)
@@ -166,23 +183,33 @@ void	ft_parse_resources(int token_ind, int token_len, jsmntok_t *tokens, char *j
 		t_obj readResource;
 		readResource.type = OBJ_RESOURCE;
 		readResource.id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
-		readResource.x = ft_find_parse_ulong("x", &token_ind, token_len, tokens, json);
-		readResource.y = ft_find_parse_ulong("y", &token_ind, token_len, tokens, json);
+
+		int pos_token = ft_find_token_one("position", token_ind, token_len, tokens, json);
+		if (pos_token != -1)
+		{
+			readResource.pos.x = (unsigned short) ft_find_parse_ulong("x", &pos_token, token_len, tokens, json);
+			readResource.pos.y = (unsigned short) ft_find_parse_ulong("y", &pos_token, token_len, tokens, json);
+		}
+		else
+		{
+			readResource.pos.x = game.config.width / 2;
+			readResource.pos.y = game.config.height / 2;
+		}
+		
 		readResource.hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
-
+		
 		apply_obj_to_arr(readResource, &game.resources);
-
 		index++;
 	}
 }
 
-void	ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
+void ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 {
-	int	index, last_json_index;
+	int index, last_json_index;
 
 	token_ind = ft_find_token_one("units", token_ind, token_len, tokens, json);
 	if (token_ind == -1)
-		return ;
+		return;
 	last_json_index = tokens[token_ind].end;
 
 	if (game.units == NULL)
@@ -201,61 +228,24 @@ void	ft_parse_units(int token_ind, int token_len, jsmntok_t *tokens, char *json)
 		t_obj readUnit;
 		readUnit.type = OBJ_UNIT;
 		readUnit.id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
-		readUnit.s_unit.type_id = ft_find_parse_ulong("type_id", &token_ind, token_len, tokens, json);
-		readUnit.s_unit.team_id = ft_find_parse_ulong("team_id", &token_ind, token_len, tokens, json);
+		readUnit.s_unit.type_id = ft_find_parse_ulong("type", &token_ind, token_len, tokens, json);
+		readUnit.s_unit.team_id = ft_find_parse_ulong("teamId", &token_ind, token_len, tokens, json);
+
+		int pos_token = ft_find_token_one("position", token_ind, token_len, tokens, json);
+		if (pos_token != -1)
+		{
+			readUnit.pos.x = (unsigned short) ft_find_parse_ulong("x", &pos_token, token_len, tokens, json);
+			readUnit.pos.y = (unsigned short) ft_find_parse_ulong("y", &pos_token, token_len, tokens, json);
+		}
+		else
+		{
+			readUnit.pos.x = 0;
+			readUnit.pos.y = 0;
+		}
+
 		readUnit.hp = ft_find_parse_ulong("hp", &token_ind, token_len, tokens, json);
-		readUnit.x = ft_find_parse_ulong("x", &token_ind, token_len, tokens, json);
-		readUnit.y = ft_find_parse_ulong("y", &token_ind, token_len, tokens, json);
 
 		apply_obj_to_arr(readUnit, &game.units);
-
-		index++;
-	}
-}
-
-void ft_parse_teams(int token_ind, int token_len, jsmntok_t *tokens, char *json)
-{
-	int		last_json_index, next_token_ind;
-
-	token_ind = ft_find_token_one("teams", token_ind, token_len, tokens, json);
-	if (token_ind == -1)
-		return ;
-	last_json_index = tokens[token_ind].end;
-
-	size_t teamCount = 0;
-	int countTokenInd = token_ind;
-	while (1)
-	{
-		int maybeID = ft_find_token_one("id", countTokenInd, token_len, tokens, json);
-		if (maybeID == -1 || tokens[maybeID].end > last_json_index)
-			break;
-		teamCount++;
-		countTokenInd = maybeID + 1;
-	}
-
-	if (game.teams == NULL)
-	{
-		game.teams = malloc(sizeof(t_team *) * (teamCount + 1));
-		game.teams[teamCount] = NULL;
-
-		for (size_t i = 0; i < teamCount; i++)
-		{
-			game.teams[i] = malloc(sizeof(t_team));
-			game.teams[i]->id = 0;
-			game.teams[i]->balance = 0;
-		}
-	}
-
-	int index = 0;
-	while (token_ind != -1)
-	{
-		next_token_ind = ft_find_token_one("id", token_ind, token_len, tokens, json);
-		if (next_token_ind == -1 || tokens[next_token_ind].end > last_json_index)
-			break;
-
-		game.teams[index]->id = ft_find_parse_ulong("id", &token_ind, token_len, tokens, json);
-		game.teams[index]->balance = ft_find_parse_ulong("balance", &token_ind, token_len, tokens, json);
-
 		index++;
 	}
 }

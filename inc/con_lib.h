@@ -18,14 +18,6 @@ typedef enum e_status
 	STATUS_WAIT_FOR_CLIENTS = 3
 } t_status;
 
-typedef struct s_team
-{
-	/// @brief The id of the team.
-	unsigned long id;
-	/// @brief Current balance of the team.
-	unsigned long balance;
-} t_team;
-
 typedef enum e_obj_type
 {
 	OBJ_UNIT,
@@ -39,22 +31,32 @@ typedef enum e_obj_state
 	STATE_DEAD = 3
 }	t_obj_state;
 
+typedef enum e_direction
+{
+	DIR_UP = 0,
+	DIR_RIGHT = 1,
+	DIR_DOWN = 2,
+	DIR_LEFT = 3
+}	t_direction;
+
+typedef struct s_pos
+{
+	unsigned short x;
+	unsigned short y;
+}	t_pos;
+
 typedef struct s_obj
 {
 	/// @brief Type of the obj
 	t_obj_type	type;
 	/// @brief State of the obj
 	t_obj_state	state;
-
 	/// @brief Custom data, save whatever you want here.
 	void	*data;
-
 	/// @brief The id of the obj
 	unsigned long id;
-	/// @brief The x coordinate of the obj
-	unsigned long x;
-	/// @brief The y coordinate of the obj
-	unsigned long y;
+	/// @brief The position of the obj
+	t_pos pos;
 	/// @brief The current healthpoints of the obj
 	unsigned long hp;
 	union {
@@ -62,6 +64,8 @@ typedef struct s_obj
 		{
 			/// @brief The id of the team that owns the core.
 			unsigned long team_id;
+			/// @brief The current balance of the core.
+			unsigned long balance;
 		}	s_core;
 		struct
 		{
@@ -76,7 +80,7 @@ typedef struct s_obj
 typedef enum e_unit_type
 {
 	UNIT_WARRIOR = 1,
-	UNIT_WORKER = 2,
+	UNIT_MINER = 2,
 	UNIT_TANK = 3,
 	UNIT_ARCHER = 4,
 	UNIT_HEALER = 5
@@ -98,49 +102,33 @@ typedef struct s_unit_config
 	long dmg_unit;
 	/// @brief How much damage the unit deals to resources.
 	long dmg_resource;
-	/// @brief How far away the unit can maximally attack.
-	unsigned long max_range;
-	/// @brief How far away the unit can minimally attack.
-	unsigned long min_range;
+	/// @brief How much damage the unit deals to walls.
+	long dmg_wall;
 	/// @brief How far the unit can travel in one second.
 	unsigned long speed;
 } t_unit_config;
-typedef struct s_team_config
-{
-	/// @brief The id of the team.
-	unsigned long id;
-	/// @brief The name of the team.
-	char *name;
-} t_team_config;
-typedef struct s_resource_config
-{
-	/// @brief What type of resource this is.
-	unsigned long type_id;
-	/// @brief Initial healthpoints of the resource.
-	unsigned long hp;
-	/// @brief How much balance you would get if you destroy the whole resource.
-	unsigned long balance_value;
-} t_resource_config;
 typedef struct s_config
 {
 	/// @brief The height of the map.
 	unsigned long height;
 	/// @brief The width of the map.
 	unsigned long width;
+	/// @brief How many ticks there are in one second.
+	unsigned long tick_rate;
 	/// @brief How much idle income you get every second.
 	unsigned long idle_income;
 	/// @brief How many ticks you get idle income.
 	unsigned long idle_income_timeout;
+	/// @brief How much healthpoints a resource has at the start of the game.
+	unsigned long resource_hp;
+	/// @brief How much income you get when you destroy a resource.
+	unsigned long resource_income;
 	/// @brief How much healthpoints a core has at the start of the game.
 	unsigned long core_hp;
-	/// @brief How many ticks new resources spawn.
-	unsigned long resource_spawn_timeout;
-	/// @brief List of all teams with their id and name. The array is terminated by an element with id 0.
-	t_team_config *teams;
+	/// @brief How much money a team starts with.
+	unsigned long initial_balance;
 	/// @brief List of all unit types that are available in the game. The array is terminated by an element with type_id 0.
 	t_unit_config *units;
-	/// @brief List of all resource types that are available in the game. The array is terminated by an element with type_id 0.
-	t_resource_config *resources;
 } t_config;
 
 typedef struct s_action_create
@@ -150,23 +138,14 @@ typedef struct s_action_create
 typedef struct s_action_travel
 {
 	unsigned long id;
-	bool is_vector;
-	long x;
-	long y;
+	t_direction direction;
 } t_action_travel;
-typedef struct s_action_attack
-{
-	unsigned long attacker_id;
-	unsigned long target_id;
-} t_action_attack;
 typedef struct s_actions
 {
 	t_action_create *creates;
 	unsigned int creates_count;
 	t_action_travel *travels;
 	unsigned int travels_count;
-	t_action_attack *attacks;
-	unsigned int attacks_count;
 } t_actions;
 
 typedef struct s_game
@@ -187,10 +166,6 @@ typedef struct s_game
 	 * @brief The id of the team that you are playing for.
 	 */
 	unsigned long my_team_id;
-	/**
-	 * @brief List of all teams and their informations. NULL-terminated.
-	 */
-	t_team **teams;
 	/**
 	 * @brief List of all cores and their informations. NULL-terminated.
 	 */
@@ -225,15 +200,6 @@ void ft_loop(void (*ft_init_func)(void *ptr), void (*ft_user_loop)(void *ptr), v
  * @brief Get any object based on its id
  */
 t_obj	*ft_get_obj_from_id(unsigned long id);
-// --------------- team getter ---------------
-/**
- * @brief Get the referance to my team
- */
-t_team	*ft_get_my_team(void);
-/**
- * @brief Get the referance to the first opponent team
- */
-t_team	*ft_get_first_opponent_team(void);
 // --------------- core getter ---------------
 /**
  * @brief Get my core
@@ -287,89 +253,24 @@ double	ft_distance(t_obj *obj1, t_obj *obj2);
 
 // --------------- actions.c ---------------
 /**
- * @brief Lets a unit travel to a specific coordinate. Same as ft_travel_to, besides that this function takes an id instead of a pointer to a unit.
- *
- * @param id Which unit should travel.
- * @param x To which x coordinate the unit should travel.
- * @param y To which y coordinate the unit should travel.
- */
-void ft_travel_to_id(unsigned long id, unsigned long x, unsigned long y);
-/**
- * @brief Lets a unit travel to a specific coordinate. Same as ft_travel_to_id, besides that this function takes a pointer to a unit instead of an id.
- *
- * @param unit Pointer to the unit that should travel.
- * @param x To which x coordinate the unit should travel.
- * @param y To which y coordinate the unit should travel.
- */
-void ft_travel_to(t_obj *unit, unsigned long x, unsigned long y);
-/**
- * @brief Lets a unit start to travel into a specific direction. Same as ft_travel_dir, besides that this function takes an id instead of a pointer to a unit. When x and y are both 0, the unit will stop traveling.
- *
- * @param id Which unit should travel.
- * @param x x vector of the direction the unit should travel.
- * @param y y vector of the direction the unit should travel.
- */
-void ft_travel_dir_id(unsigned long id, double x, double y);
-/**
- * @brief Lets a unit start to travel into a specific direction. Same as ft_travel_dir_id, besides that this function takes a pointer to a unit instead of an id. When x and y are both 0, the unit will stop traveling.
- *
- * @param unit Which unit should travel.
- * @param x x vector of the direction the unit should travel.
- * @param y y vector of the direction the unit should travel.
- */
-void ft_travel_dir(t_obj *unit, double x, double y);
-/**
- * @brief Lets a unit travel to another obj. Same as ft_travel_to_id, besides that this function takes an id instead of a pointer to a unit.
- *
- * @param id Which unit should travel.
- * @param target To which obj the unit should travel.
- */
-void ft_travel_to_id_obj(unsigned long id, t_obj *target);
-/**
- * @brief Lets a unit travel to another obj. Same as ft_travel_to_id_obj, besides that this function takes a pointer to a unit instead of an id.
- *
- * @param unit Pointer to the unit that should travel.
- * @param target Pointer to the obj that the unit should travel to.
- */
-void ft_travel_to_obj(t_obj *unit, t_obj *target);
-/**
  * @brief Creates a unit of a specific type. Same as ft_create, besides that this function takes an id instead of a pointer to a unit.
  *
  * @param type_id Which type of unit should be created.
  */
 t_obj	*ft_create_unit(t_unit_type type_id);
 /**
- * @brief Lets a unit attack another unit. Same as ft_attack, besides that this function takes an id instead of a pointer to a unit.
- *
- * @param attacker_id Which unit should be used to attack.
- * @param target_id Which unit should be attacked.
+ * @brief Moves a unit to a specific position.
+ * 
+ * @param unit The unit that should be moved.
+ * @param direction The direction the unit should move.
  */
-void ft_attack_id(unsigned long attacker_id, unsigned long target_id);
-/**
- * @brief Lets a unit attack another unit. Same as ft_attack_id, besides that this function takes a pointer to a unit instead of an id.
- *
- * @param attacker_unit Pointer to the unit that should be used to attack.
- * @param target_obj Pointer to the obj that should be attacked.
- */
-void ft_attack(t_obj *attacker, t_obj *target);
-/**
- * @brief Travel and attack a target. The unit will travel to the target and attack it. Same as calling ft_travel_to_obj and ft_attack.
- *
- * @param attacker_unit Pointer to the unit that should be used to attack.
- * @param attack_obj Pointer to the unit that should be attacked.
- */
-void ft_travel_attack(t_obj *attacker_unit, t_obj *attack_obj);
+void	ft_move(t_obj *unit, t_direction direction);
 
 // -------------- print_utils.c --------------
 /**
  * @brief Prints the current game status into stdout
  */
 void ft_print_status();
-/**
- * @brief Prints the current game teams with inforamtion about their id and balance into stdout
- *
- */
-void ft_print_teams();
 /**
  * @brief Prints the current game cores with inforamtion about their id, team_id, x, y and hp into stdout
  *
@@ -386,23 +287,11 @@ void ft_print_resources();
 
 void ft_print_units();
 /**
- * @brief Prints a team config with inforamtion about their id and name into stdout
- *
- * @param team_config Pointer to the team config
- */
-void ft_print_team_config(const t_team_config *team_config);
-/**
  * @brief Prints a unit config with inforamtion about their type_id, name, cost, hp, dmg_core, dmg_unit, max_range, min_range and speed into stdout
  *
  * @param unit_config Pointer to the unit config
  */
 void ft_print_unit_config(const t_unit_config *unit_config);
-/**
- * @brief Prints a resource config with inforamtion about their type_id and hp into stdout
- *
- * @param unit_config Pointer to the resource config
- */
-void ft_print_resource_config(const t_resource_config *resource_config);
 /**
  * @brief Prints the current game config with inforamtion about their height, width, idle_income, core_hp, teams and units into stdout
  *
