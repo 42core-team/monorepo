@@ -1,8 +1,13 @@
 #include "socket.h"
-#include "utils.h"
+#include "con_lib.h"
 
 #include <netdb.h>
 #include <arpa/inet.h>
+
+static void ft_print_error(char *str, const char *func_name)
+{
+	fprintf(stderr, "Error: %s: %s\n", func_name, str);
+}
 
 int	ft_init_socket(struct sockaddr_in addr)
 {
@@ -58,27 +63,27 @@ int	ft_send_socket(const int socket_fd, const char *msg)
 }
 
 bool ft_wait_for_data(int fd) {
-    fd_set readfds;
-    struct timeval tv;
-    int retval;
+	fd_set readfds;
+	struct timeval tv;
+	int retval;
 
-    FD_ZERO(&readfds);
-    FD_SET(fd, &readfds);
+	FD_ZERO(&readfds);
+	FD_SET(fd, &readfds);
 
-    tv.tv_sec = 10;
-    tv.tv_usec = 0;
+	tv.tv_sec = 10;
+	tv.tv_usec = 0;
 
-    retval = select(fd + 1, &readfds, NULL, NULL, &tv);
+	retval = select(fd + 1, &readfds, NULL, NULL, &tv);
 
-    if (retval == -1) {
-        ft_print_error(strerror(errno), __func__);
-        return false;
-    } else if (retval) {
-        return true;
-    } else {
+	if (retval == -1) {
+		ft_print_error(strerror(errno), __func__);
+		return false;
+	} else if (retval) {
+		return true;
+	} else {
 		ft_print_error("Did not receive any data from socket fd", __func__);
-        return false;
-    }
+		return false;
+	}
 }
 
 char	*ft_read_socket(const int socket_fd)
@@ -112,35 +117,35 @@ char	*ft_read_socket_once(const int socket_fd)
 struct sockaddr_in	ft_init_addr(const char *hostname, const int port)
 {
 	struct addrinfo hints, *res, *p;
-    int status;
-    struct sockaddr_in addr;
+	int status;
+	struct sockaddr_in addr;
 
-    memset(&hints, 0, sizeof hints);
-    hints.ai_family = AF_INET; // AF_INET for IPv4, AF_INET6 for IPv6
-    hints.ai_socktype = SOCK_STREAM;
+	memset(&hints, 0, sizeof hints);
+	hints.ai_family = AF_INET; // AF_INET for IPv4, AF_INET6 for IPv6
+	hints.ai_socktype = SOCK_STREAM;
 
-    if ((status = getaddrinfo(hostname, NULL, &hints, &res)) != 0) {
-        fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
-        exit(EXIT_FAILURE);
-    }
+	if ((status = getaddrinfo(hostname, NULL, &hints, &res)) != 0) {
+		fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
+		exit(EXIT_FAILURE);
+	}
 
-    // Loop through all the results and use the first one we can
-    for(p = res; p != NULL; p = p->ai_next) {
-        // Cast the sockaddr to sockaddr_in to access the sin_addr field
-        struct sockaddr_in *ipv4 = (struct sockaddr_in *)p->ai_addr;
-        addr.sin_family = AF_INET;
-        addr.sin_port = htons(port);
-        addr.sin_addr = ipv4->sin_addr; // Copy the address
-        break; // If we get here, we have our address
-    }
+	// Loop through all the results and use the first one we can
+	for(p = res; p != NULL; p = p->ai_next) {
+		// Cast the sockaddr to sockaddr_in to access the sin_addr field
+		struct sockaddr_in *ipv4 = (struct sockaddr_in *)p->ai_addr;
+		addr.sin_family = AF_INET;
+		addr.sin_port = htons(port);
+		addr.sin_addr = ipv4->sin_addr; // Copy the address
+		break; // If we get here, we have our address
+	}
 
-    freeaddrinfo(res); // Free the linked list
+	freeaddrinfo(res); // Free the linked list
 
-    if (p == NULL) {
-        // We didn't find any address
-        fprintf(stderr, "Failed to resolve hostname\n");
-        exit(EXIT_FAILURE);
-    }
+	if (p == NULL) {
+		// We didn't find any address
+		fprintf(stderr, "Failed to resolve hostname\n");
+		exit(EXIT_FAILURE);
+	}
 
-    return addr;
+	return addr;
 }

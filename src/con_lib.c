@@ -1,5 +1,4 @@
 #include "socket.h"
-#include "utils.h"
 #include "parse_json.h"
 
 int		socket_fd = -1;
@@ -107,12 +106,9 @@ void	ft_loop(void (*ft_init_func)(void *ptr), void (*ft_user_loop)(void *ptr), v
 		}
 		if (debug)
 		{
-			char *formatted = json_formatter(msg);
-			if (formatted)
-			{
-				printf("%s", formatted);
-				free(formatted);
-			}
+			json_node *node = string_to_json(msg);
+			printf("Received: %s\n", json_to_formatted_string(node));
+			free_json(node);
 		}
 
 		ft_parse_json_state(msg);

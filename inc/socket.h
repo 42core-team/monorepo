@@ -12,7 +12,12 @@
 # include <fcntl.h>
 # include <errno.h>
 # include <stdbool.h>
-# include "get_next_line.h"
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 2048
+# endif
+
+char	*get_next_line(int fd);
 
 int					ft_init_socket(struct sockaddr_in addr);
 int					ft_send_socket(const int socket_fd, const char *msg);

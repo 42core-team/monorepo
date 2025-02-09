@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <math.h>
+#include <stdio.h>
 
 typedef enum e_status
 {
@@ -22,7 +23,8 @@ typedef enum e_obj_type
 {
 	OBJ_UNIT,
 	OBJ_CORE,
-	OBJ_RESOURCE
+	OBJ_RESOURCE,
+	OBJ_WALL
 } t_obj_type;
 typedef enum e_obj_state
 {
@@ -314,5 +316,10 @@ void ft_print_game_config();
  *
  */
 void ft_print_all();
+
+void	ft_free_all();
+void	ft_free_game();
+void	ft_free_config();
+void	ft_perror_exit(char *msg);
 
 #endif

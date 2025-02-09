@@ -1,7 +1,42 @@
-#include "get_next_line.h"
-#include "parse_json.h"
+#include "socket.h"
 
-ssize_t	ft_endline(const char *s, ssize_t read_bytes)
+static size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
+{
+	size_t	len_src;
+	size_t	i;
+
+	len_src = strlen(src);
+	if (dstsize == 0)
+		return (len_src);
+	i = 0;
+	while (i < dstsize - 1 && i < len_src)
+	{
+		dst[i] = src[i];
+		i++;
+	}
+	dst[i] = 0;
+	return (len_src);
+}
+
+static char	*ft_strjoin(char const *s1, char const *s2)
+{
+	size_t	len_s1;
+	size_t	len_s2;
+	char	*dst;
+
+	if (!s1 || !s2)
+		return (0);
+	len_s1 = strlen(s1);
+	len_s2 = strlen(s2);
+	dst = malloc((len_s1 + len_s2 + 1) * sizeof(char));
+	if (!dst)
+		return (0);
+	ft_strlcpy(dst, s1, len_s1 + 1);
+	strncat(dst, s2, len_s1 + len_s2 + 1);
+	return (dst);
+}
+
+static ssize_t	ft_endline(const char *s, ssize_t read_bytes)
 {
 	ssize_t	i;
 	char	c;
@@ -19,7 +54,7 @@ ssize_t	ft_endline(const char *s, ssize_t read_bytes)
 	return (-1);
 }
 
-int	ft_append_buff(char **temp, char *buff)
+static int	ft_append_buff(char **temp, char *buff)
 {
 	char	*temp2;
 
@@ -40,7 +75,7 @@ int	ft_append_buff(char **temp, char *buff)
 	return (1);
 }
 
-ssize_t	ft_readnextline(ssize_t *i, int fd, char *buff, char **temp)
+static ssize_t	ft_readnextline(ssize_t *i, int fd, char *buff, char **temp)
 {
 	ssize_t	bytes_read;
 
@@ -64,7 +99,7 @@ ssize_t	ft_readnextline(ssize_t *i, int fd, char *buff, char **temp)
 	return (-1);
 }
 
-char	*ft_returnfree(char **temp)
+static char	*ft_returnfree(char **temp)
 {
 	free(*temp);
 	*temp = 0;
