@@ -210,8 +210,8 @@ void Game::sendState()
 
 		c["id"] = core.getId();
 		c["teamId"] = core.getTeamId();
-		Position pos = core.getPosition();
-		c["position"] = { {"x", pos.x}, {"y", pos.y} };
+		c["x"] = core.getPosition().x;
+		c["y"] = core.getPosition().y;
 		c["hp"] = core.getHP();
 		c["balance"] = core.getBalance();
 
@@ -225,8 +225,8 @@ void Game::sendState()
 
 		u["id"] = unit.getId();
 		u["teamId"] = unit.getTeamId();
-		Position pos = unit.getPosition();
-		u["position"] = { {"x", pos.x}, {"y", pos.y} };
+		u["x"] = unit.getPosition().x;
+		u["y"] = unit.getPosition().y;
 		u["hp"] = unit.getHP();
 		u["type"] = unit.getTypeId();
 		u["balance"] = unit.getBalance();
@@ -240,8 +240,8 @@ void Game::sendState()
 		json r;
 
 		r["id"] = resource.getId();
-		Position pos = resource.getPosition();
-		r["position"] = { {"x", pos.x}, {"y", pos.y} };
+		r["x"] = resource.getPosition().x;
+		r["y"] = resource.getPosition().y;
 		r["hp"] = resource.getHP();
 
 		state["resources"].push_back(r);
@@ -253,8 +253,8 @@ void Game::sendState()
 		json w;
 
 		w["id"] = wall.getId();
-		Position pos = wall.getPosition();
-		w["position"] = { {"x", pos.x}, {"y", pos.y} };
+		w["x"] = wall.getPosition().x;
+		w["y"] = wall.getPosition().y;
 		w["hp"] = wall.getHP();
 
 		state["walls"].push_back(w);
