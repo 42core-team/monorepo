@@ -19,15 +19,17 @@ static t_unit_config	**ft_parse_unit_config(json_node * root)
 		if (!units[i])
 			ft_perror_exit("Failed to allocate memory for unit config\n");
 
-		units[i]->name = strdup(json_find(json, "name")->string);
+		json_node *unit_node = json->array[i];
+
+		units[i]->name = strdup(json_find(unit_node, "name")->string);
 		units[i]->type_id = i;
-		units[i]->cost = (unsigned long)json_find(json, "cost")->number;
-		units[i]->hp = (unsigned long)json_find(json, "hp")->number;
-		units[i]->speed = (unsigned long)json_find(json, "speed")->number;
-		units[i]->dmg_core = (long)json_find(json, "damageCore")->number;
-		units[i]->dmg_unit = (long)json_find(json, "damageUnit")->number;
-		units[i]->dmg_resource = (long)json_find(json, "damageResource")->number;
-		units[i]->dmg_wall = (long)json_find(json, "damageWall")->number;
+		units[i]->cost = (unsigned long)json_find(unit_node, "cost")->number;
+		units[i]->hp = (unsigned long)json_find(unit_node, "hp")->number;
+		units[i]->speed = (unsigned long)json_find(unit_node, "speed")->number;
+		units[i]->dmg_core = (long)json_find(unit_node, "damageCore")->number;
+		units[i]->dmg_unit = (long)json_find(unit_node, "damageUnit")->number;
+		units[i]->dmg_resource = (long)json_find(unit_node, "damageResource")->number;
+		units[i]->dmg_wall = (long)json_find(unit_node, "damageWall")->number;
 	}
 	units[array_size] = NULL;
 

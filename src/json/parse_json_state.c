@@ -115,25 +115,25 @@ static void ft_parse_object(json_node * json, t_obj_type type, t_obj ** game_arr
 		if (game_arr[i]->state == STATE_ALIVE)
 			game_arr[i]->state = STATE_DEAD;
 
-	for (int i = 0; json->array[i] != NULL; i++)
+	for (int i = 0; json->array != NULL && json->array[i] != NULL; i++)
 	{
 		t_obj readObj;
 		readObj.type = type;
-		readObj.id = (unsigned long)json_find(json_find(json->array[i], "id"), "number")->number;
-		readObj.pos.x = (unsigned short)json_find(json_find(json->array[i], "x"), "number")->number;
-		readObj.pos.y = (unsigned short)json_find(json_find(json->array[i], "y"), "number")->number;
-		readObj.hp = (unsigned long)json_find(json_find(json->array[i], "hp"), "number")->number;
+		readObj.id = (unsigned long)json_find(json->array[i], "id")->number;
+		readObj.pos.x = (unsigned short)json_find(json->array[i], "x")->number;
+		readObj.pos.y = (unsigned short)json_find(json->array[i], "y")->number;
+		readObj.hp = (unsigned long)json_find(json->array[i], "hp")->number;
 
 		if (type == OBJ_UNIT)
 		{
-			readObj.s_unit.type_id = (unsigned long)json_find(json_find(json->array[i], "type"), "number")->number;
-			readObj.s_unit.team_id = (unsigned long)json_find(json_find(json->array[i], "teamId"), "number")->number;
-			readObj.s_unit.balance = (unsigned long)json_find(json_find(json->array[i], "balance"), "number")->number;
+			readObj.s_unit.type_id = (unsigned long)json_find(json->array[i], "type")->number;
+			readObj.s_unit.team_id = (unsigned long)json_find(json->array[i], "teamId")->number;
+			readObj.s_unit.balance = (unsigned long)json_find(json->array[i], "balance")->number;
 		}
 		if (type == OBJ_CORE)
 		{
-			readObj.s_core.team_id = (unsigned long)json_find(json_find(json->array[i], "teamId"), "number")->number;
-			readObj.s_core.balance = (unsigned long)json_find(json_find(json->array[i], "balance"), "number")->number;
+			readObj.s_core.team_id = (unsigned long)json_find(json->array[i], "teamId")->number;
+			readObj.s_core.balance = (unsigned long)json_find(json->array[i], "balance")->number;
 		}
 
 		apply_obj_to_arr(readObj, &game_arr);
