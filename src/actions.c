@@ -7,6 +7,7 @@ t_obj	*ft_create_unit(t_unit_type type_id)
 		unit_count++;
 	if ((int)type_id < 0 || (int)type_id >= unit_count)
 		return NULL;
+	ft_print_cores();
 	if (!ft_get_my_core() || !game.config.units || !game.config.units[type_id] || \
 			game.config.units[type_id]->cost > ft_get_my_core()->s_core.balance)
 		return NULL;
@@ -40,6 +41,8 @@ t_obj	*ft_create_unit(t_unit_type type_id)
 	game.units = realloc(game.units, sizeof(t_obj *) * (unitsLen + 2));
 	game.units[unitsLen] = newUnit;
 	game.units[unitsLen + 1] = NULL;
+
+	ft_get_my_core()->s_core.balance -= game.config.units[type_id]->cost;
 
 	return newUnit;
 }

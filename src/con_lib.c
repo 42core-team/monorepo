@@ -17,8 +17,6 @@ bool	ft_receive_config()
 	if (debug)
 		printf("Received: %s\n", msg);
 	ft_parse_json_config(msg);
-	if (debug)
-		ft_print_game_config(&game.config);
 	free(msg);
 	return true;
 }
