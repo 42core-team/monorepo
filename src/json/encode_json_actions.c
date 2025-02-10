@@ -81,5 +81,10 @@ char *ft_all_action_json(void)
 	char *json = json_to_string(actions);
 	free_json(actions);
 
+	int json_len = strlen(json);
+	json = realloc(json, json_len + 2);
+	json[json_len] = '\n';
+	json[json_len + 1] = '\0';
+
 	return json;
 }

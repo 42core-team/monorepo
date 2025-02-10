@@ -13,8 +13,8 @@ char	*ft_create_login_msg(char *team_name, int *argc, char **argv)
 	password->key = strdup("password");
 	root->array[0] = password;
 
-	json_node *id = create_node(JSON_TYPE_STRING);
-	id->string = argv[1] ? strdup(argv[1]) : strdup("-1");
+	json_node *id = create_node(JSON_TYPE_NUMBER);
+	id->number = argv[1] ? atoi(argv[1]) : -1;
 	id->key = strdup("id");
 	root->array[1] = id;
 
@@ -25,5 +25,11 @@ char	*ft_create_login_msg(char *team_name, int *argc, char **argv)
 
 	char * msg = json_to_string(root);
 	free_json(root);
+
+	int msg_len = strlen(msg);
+	msg = realloc(msg, msg_len + 2);
+	msg[msg_len] = '\n';
+	msg[msg_len + 1] = '\0';
+
 	return (msg);
 }
