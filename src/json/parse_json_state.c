@@ -22,6 +22,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 			{
 				existingObj->s_unit.type_id = obj.s_unit.type_id;
 				existingObj->s_unit.team_id = obj.s_unit.team_id;
+				existingObj->s_unit.balance = obj.s_unit.balance;
 			}
 			if ((*arr) == game.cores)
 			{
@@ -58,6 +59,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 			{
 				existingObj->s_unit.type_id = obj.s_unit.type_id;
 				existingObj->s_unit.team_id = obj.s_unit.team_id;
+				existingObj->s_unit.balance = obj.s_unit.balance;
 			}
 			if ((*arr) == game.cores)
 			{
@@ -95,6 +97,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	{
 		existingObj->s_unit.type_id = obj.s_unit.type_id;
 		existingObj->s_unit.team_id = obj.s_unit.team_id;
+		existingObj->s_unit.balance = obj.s_unit.balance;
 	}
 	if ((*arr) == game.cores)
 	{
@@ -103,17 +106,19 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	}
 }
 
-static void ft_parse_object(json_node * json, t_obj_type type, t_obj ** game_arr)
+static void ft_parse_object(json_node * json, t_obj_type type, t_obj *** game_arr)
 {
-	if (game_arr == NULL)
+	printf("parsing object type %d with json node %p\n", type, json);
+
+	if (*game_arr == NULL)
 	{
-		game_arr = malloc(sizeof(t_obj *) * 1);
-		game_arr[0] = NULL;
+		*game_arr = malloc(sizeof(t_obj *) * 1);
+		(*game_arr)[0] = NULL;
 	}
 
-	for (size_t i = 0; game_arr[i] != NULL; i++)
-		if (game_arr[i]->state == STATE_ALIVE)
-			game_arr[i]->state = STATE_DEAD;
+	for (size_t i = 0; (*game_arr)[i] != NULL; i++)
+		if ((*game_arr)[i]->state == STATE_ALIVE)
+			(*game_arr)[i]->state = STATE_DEAD;
 
 	for (int i = 0; json->array != NULL && json->array[i] != NULL; i++)
 	{
@@ -136,7 +141,7 @@ static void ft_parse_object(json_node * json, t_obj_type type, t_obj ** game_arr
 			readObj.s_core.balance = (unsigned long)json_find(json->array[i], "balance")->number;
 		}
 
-		apply_obj_to_arr(readObj, &game_arr);
+		apply_obj_to_arr(readObj, game_arr);
 	}
 }
 
@@ -144,10 +149,10 @@ void	ft_parse_json_state(char *json)
 {
 	json_node * root = string_to_json(json);
 	
-	ft_parse_object(json_find(root, "cores"), OBJ_CORE, game.cores);
-	ft_parse_object(json_find(root, "resources"), OBJ_RESOURCE, game.resources);
-	ft_parse_object(json_find(root, "units"), OBJ_UNIT, game.units);
-	ft_parse_object(json_find(root, "walls"), OBJ_WALL, game.walls);
+	ft_parse_object(json_find(root, "cores"), OBJ_CORE, &game.cores);
+	ft_parse_object(json_find(root, "resources"), OBJ_RESOURCE, &game.resources);
+	ft_parse_object(json_find(root, "units"), OBJ_UNIT, &game.units);
+	ft_parse_object(json_find(root, "walls"), OBJ_WALL, &game.walls);
 
 	free_json(root);
 }
