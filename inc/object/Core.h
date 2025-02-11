@@ -8,6 +8,8 @@ class Core : public Object
 	public:
 		Core(unsigned int id, unsigned int teamId, Position pos);
 
+		void tick(unsigned long long tickCount);
+
 		unsigned int getBalance() const { return balance_; }
 		void setBalance(unsigned int balance) { balance_ = balance; }
 		unsigned int getTeamId() const { return team_id_; }

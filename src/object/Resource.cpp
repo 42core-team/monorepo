@@ -11,3 +11,6 @@ void Resource::getMined(Unit * miner)
 		Config::getInstance().units[miner->getTypeId()].damageResource / \
 		Config::getInstance().resourceHp);
 }
+
+void Resource::tick(unsigned long long tickCount)
+{}

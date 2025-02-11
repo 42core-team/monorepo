@@ -8,6 +8,8 @@ class Wall : public Object
 {
 	public:
 		Wall(unsigned int id, Position pos);
+
+		void tick(unsigned long long tickCount);
 };
 
 #endif // WALL_H

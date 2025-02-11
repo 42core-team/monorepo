@@ -10,6 +10,7 @@ class Resource : public Object
 	public:
 		Resource(unsigned int id, Position pos);
 
+		void tick(unsigned long long tickCount);
 		void getMined(Unit * miner);
 };
 

@@ -72,6 +72,8 @@ void Game::tick(unsigned long long tick)
 {
 	// 1. COMPUTE ACTIONS
 
+	std::vector<std::pair<Action *, Core &>> actions; // action, team id
+
 	for (auto bridge : bridges_)
 	{
 		json msg;
@@ -84,64 +86,72 @@ void Game::tick(unsigned long long tick)
 		if (core->getHP() <= 0)
 			continue;
 
-		std::vector<Action *> actions = Action::parseActions(msg);
+		std::vector<Action *> clientActions = Action::parseActions(msg);
 
-		for (Action * action : actions)
+		for (Action * action : clientActions)
+			actions.emplace_back(action, core);
+	}
+
+	shuffle_vector(actions); // shuffle action execution order to ensure fairness
+
+	for (int i = 0; i < actions.size(); i++)
+	{
+		Action * action = actions[i].first;
+		Core & core = actions[i].second;
+
+		if (action->getActionType() == ActionType::CREATE)
 		{
-			if (action->getActionType() == ActionType::CREATE)
-			{
-				CreateAction * createAction = (CreateAction *)action;
+			CreateAction * createAction = (CreateAction *)action;
 
-				Position closestEmptyPos = findFirstEmptyGridCell(this, core->getPosition());
-				if (!closestEmptyPos.isValid(Config::getInstance().width, Config::getInstance().height))
-					continue;
+			Position closestEmptyPos = findFirstEmptyGridCell(this, core.getPosition());
+			if (!closestEmptyPos.isValid(Config::getInstance().width, Config::getInstance().height))
+				continue;
 
-				unsigned int unitType = createAction->getUnitTypeId();
-				if (unitType >= Config::getInstance().units.size())
-					continue;
+			unsigned int unitType = createAction->getUnitTypeId();
+			if (unitType >= Config::getInstance().units.size())
+				continue;
 
-				unsigned int unitCost = Config::getUnitConfig(unitType).cost;
-				if (core->getBalance() < unitCost)
-					continue;
+			unsigned int unitCost = Config::getUnitConfig(unitType).cost;
+			if (core.getBalance() < unitCost)
+				continue;
 
-				units_.push_back(Unit(nextObjectId_++, bridge->getTeamId(), closestEmptyPos, unitType));
-				core->setBalance(core->getBalance() - unitCost);
-			}
-
-			else if (action->getActionType() == ActionType::MOVE)
-			{
-				MoveAction * moveAction = (MoveAction *)action;
-				Unit * unit = getUnit(moveAction->getUnitId());
-
-				if (!unit)
-					continue;
-				if (unit->getHP() <= 0)
-					continue;
-
-				Position newPos = unit->getPosition() + moveAction->getDirection();
-				if (!newPos.isValid(Config::getInstance().width, Config::getInstance().height))
-					continue;
-
-				Object * obj = getObjectAtPos(newPos);
-				if (obj)
-				{
-					if (obj->getType() == ObjectType::Unit)
-						obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageUnit);
-					else if (obj->getType() == ObjectType::Core)
-						obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageCore);
-					else if (obj->getType() == ObjectType::Resource)
-						((Resource *)obj)->getMined(unit);
-					else if (obj->getType() == ObjectType::Wall)
-						obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageWall);
-				}
-				else
-				{
-					unit->setPosition(newPos);
-				}
-			}
-
-			delete action;
+			units_.push_back(Unit(nextObjectId_++, core.getTeamId(), closestEmptyPos, unitType));
+			core.setBalance(core.getBalance() - unitCost);
 		}
+
+		else if (action->getActionType() == ActionType::MOVE)
+		{
+			MoveAction * moveAction = (MoveAction *)action;
+			Unit * unit = getUnit(moveAction->getUnitId());
+
+			if (!unit)
+				continue;
+			if (unit->getHP() <= 0)
+				continue;
+
+			Position newPos = unit->getPosition() + moveAction->getDirection();
+			if (!newPos.isValid(Config::getInstance().width, Config::getInstance().height))
+				continue;
+
+			Object * obj = getObjectAtPos(newPos);
+			if (obj)
+			{
+				if (obj->getType() == ObjectType::Unit)
+					obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageUnit);
+				else if (obj->getType() == ObjectType::Core)
+					obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageCore);
+				else if (obj->getType() == ObjectType::Resource)
+					((Resource *)obj)->getMined(unit);
+				else if (obj->getType() == ObjectType::Wall)
+					obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageWall);
+			}
+			else
+			{
+				unit->setPosition(newPos);
+			}
+		}
+
+		delete action;
 	}
 
 	// 2. REMOVE DEAD OBJECTS
@@ -178,11 +188,16 @@ void Game::tick(unsigned long long tick)
 			++it;
 	}
 
-	// 3. HAND OUT IDLE INCOME
+	// 3. TICK OBJECTS
 
-	if (tick < Config::getInstance().idleIncomeTimeOut)
-		for (Core & core : cores_)
-			core.setBalance(core.getBalance() + Config::getInstance().idleIncome);
+	for (Core & core : cores_)
+		core.tick(tick);
+	for (Resource & resource : resources_)
+		resource.tick(tick);
+	for (Unit & unit : units_)
+		unit.tick(tick);
+	for (Wall & wall : walls_)
+		wall.tick(tick);
 
 	visualizeGameState();
 }

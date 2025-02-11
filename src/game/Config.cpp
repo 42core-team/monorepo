@@ -12,9 +12,9 @@ GameConfig Config::defaultConfig()
 	config.idleIncomeTimeOut = 600; // 2 minutes
 
 	config.resourceHp = 50;
-	config.resourceIncome = 5;
+	config.resourceIncome = 200;
 
-	config.coreHp = 200;
+	config.coreHp = 350;
 	config.initialBalance = 200;
 
 	config.wallHp = 100;

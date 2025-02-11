@@ -27,3 +27,17 @@ void Unit::travel(MovementDirection dir)
 			break;
 	}
 }
+
+void tick(unsigned long long tickCount)
+{}
+
+unsigned int Unit::calcNextMovementOpp()
+{
+	unsigned int baseSpeed = Config::getInstance().units[type_id_].speed;
+
+	float resourcePart = balance_ / (Config::getInstance().resourceIncome / 4);
+	if (resourcePart < 1)
+		resourcePart = 1; // up to 1/4 resource balance does not slow down
+	
+	return baseSpeed * resourcePart;
+}
