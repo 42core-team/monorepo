@@ -16,6 +16,7 @@ class Unit : public Object
 		unsigned int getTypeId() const { return type_id_; }
 		unsigned int getTeamId() const { return team_id_; }
 		unsigned int getBalance() const { return balance_; }
+		unsigned int getNextMoveOpp() const { return next_move_opp_; }
 
 		void addBalance(unsigned int amount) { balance_ += amount; }
 		void resetNextMoveOpp() { next_move_opp_ = calcNextMovementOpp(); }

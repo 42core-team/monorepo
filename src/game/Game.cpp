@@ -152,6 +152,7 @@ void Game::tick(unsigned long long tick)
 			else
 			{
 				unit->setPosition(newPos);
+				unit->resetNextMoveOpp();
 			}
 		}
 
@@ -175,7 +176,7 @@ void Game::tick(unsigned long long tick)
 		}
 	}
 
-	visualizeGameState();
+	visualizeGameState(tick);
 }
 Object * Game::getObjectAtPos(Position pos)
 {
@@ -230,6 +231,7 @@ void Game::sendState()
 		u["hp"] = unit.getHP();
 		u["type"] = unit.getTypeId();
 		u["balance"] = unit.getBalance();
+		u["nextMoveOpp"] = unit.getNextMoveOpp();
 
 		state["units"].push_back(u);
 	}

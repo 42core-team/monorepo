@@ -2,9 +2,9 @@
 
 #include <string>
 
-void Game::visualizeGameState()
+void Game::visualizeGameState(unsigned long long tick)
 {
-	std::cout << "Core: C / c; Units: W / w = Warrior; M / m = Miner; . = empty; R = Resource; X = Wall" << std::endl;
+	std::cout << "Tick: " << tick << "; Core: C / c; Units: W / w = Warrior; M / m = Miner; . = empty; R = Resource; X = Wall" << std::endl;
 
 	for (int y = 0; y < (int)Config::getInstance().height; y++)
 	{

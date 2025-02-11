@@ -4,8 +4,8 @@ GameConfig Config::defaultConfig()
 {
 	GameConfig config;
 
-	config.width = 50;
-	config.height = 50;
+	config.width = 25;
+	config.height = 25;
 	config.tickRate = 5;
 
 	config.idleIncome = 1;
@@ -44,13 +44,13 @@ GameConfig Config::defaultConfig()
 	config.units.push_back(miner);
 
 	config.corePositions.push_back({ 0, 0 });   // top left
-	config.corePositions.push_back({ 49, 49 }); // bottom right
-	config.corePositions.push_back({ 49, 0 });  // top right
-	config.corePositions.push_back({ 0, 49 });  // bottom left
-	config.corePositions.push_back({ 0, 24 });  // left
-	config.corePositions.push_back({ 49, 24 }); // right
-	config.corePositions.push_back({ 24, 0 });  // top
-	config.corePositions.push_back({ 24, 49 }); // bottom
+	config.corePositions.push_back({ 24, 24 }); // bottom right
+	config.corePositions.push_back({ 24, 0 });  // top right
+	config.corePositions.push_back({ 0, 24 });  // bottom left
+	config.corePositions.push_back({ 0, 12 });  // left
+	config.corePositions.push_back({ 24, 12 }); // right
+	config.corePositions.push_back({ 12, 0 });  // top
+	config.corePositions.push_back({ 12, 24 }); // bottom
 
 	return config;
 }

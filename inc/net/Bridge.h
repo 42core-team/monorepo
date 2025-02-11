@@ -26,6 +26,7 @@ class Bridge
 		void start();
 
 		unsigned int getTeamId() const { return team_id_; }
+		void setTeamId(unsigned int teamId) { team_id_ = teamId; }
 
 	private:
 		void readLoop();

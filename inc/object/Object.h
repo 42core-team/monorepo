@@ -19,7 +19,7 @@ class Object
 			: id_(id), position_(pos), hp_(hp), type_(type) {}
 		virtual ~Object() {}
 
-		virtual void tick(unsigned long long tickCount) { (void) tickCount; };
+		virtual void tick(unsigned long long tickCount) = 0;
 
 		unsigned int getId() const { return id_; };
 		Position getPosition() const { return position_; };

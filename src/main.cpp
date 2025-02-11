@@ -118,6 +118,7 @@ int main(int argc, char *argv[])
 			continue;
 		}
 		unsigned int teamId = loginMessage["id"];
+		bridge->setTeamId(teamId);
 
 		if (std::find(expectedTeamIds.begin(), expectedTeamIds.end(), teamId) == expectedTeamIds.end())
 		{

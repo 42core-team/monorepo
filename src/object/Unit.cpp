@@ -1,7 +1,10 @@
 #include "Unit.h"
 
 Unit::Unit(unsigned int id, unsigned int teamId, Position pos, unsigned int type_id)
-	: Object(id, pos, Config::getInstance().units[type_id].hp, ObjectType::Unit), type_id_(type_id), team_id_(teamId), balance_(0) {}
+	: Object(id, pos, Config::getInstance().units[type_id].hp, ObjectType::Unit), type_id_(type_id), team_id_(teamId), balance_(0)
+{
+	resetNextMoveOpp();
+}
 
 void Unit::travel(MovementDirection dir)
 {
@@ -31,6 +34,7 @@ void Unit::travel(MovementDirection dir)
 void Unit::tick(unsigned long long tickCount)
 {
 	(void) tickCount;
+	next_move_opp_--;
 }
 
 unsigned int Unit::calcNextMovementOpp()

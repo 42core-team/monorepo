@@ -41,7 +41,7 @@ class Game
 		std::vector<std::unique_ptr<Object>> objects_;
 		std::vector<Bridge*> bridges_;
 
-		void visualizeGameState();
+		void visualizeGameState(unsigned long long tick);
 };
 
 #endif // GAME_H
