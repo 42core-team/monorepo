@@ -19,6 +19,8 @@ GameConfig Config::defaultConfig()
 
 	config.wallHp = 100;
 
+	// unit order must match order of units in conn lib unit type enum
+
 	UnitConfig warrior;
 	warrior.name = "Warrior";
 	warrior.cost = 150;

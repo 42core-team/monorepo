@@ -13,4 +13,6 @@ void Resource::getMined(Unit * miner)
 }
 
 void Resource::tick(unsigned long long tickCount)
-{}
+{
+	(void) tickCount;
+}

@@ -3,11 +3,11 @@
 Game::Game(std::vector<unsigned int> team_ids) : teamCount_(team_ids.size()), nextObjectId_(1)
 {
 	GameConfig config = Config::getInstance();
-	cores_.reserve(team_ids.size());
+	objects_.reserve(team_ids.size());
 	std::vector<unsigned int> team_ids_double = team_ids;
 	shuffle_vector(team_ids_double); // randomly assign core positions to ensure fairness
 	for (unsigned int i = 0; i < team_ids.size(); ++i)
-		cores_.push_back(Core(nextObjectId_++, team_ids_double[i], Config::getCorePosition(i)));
+		objects_.push_back(std::make_unique<Core>(nextObjectId_++, team_ids_double[i], Config::getCorePosition(i)));
 	Logger::Log("Game created with " + std::to_string(team_ids.size()) + " teams.");
 }
 Game::~Game()
@@ -58,9 +58,12 @@ void Game::run()
 		sendState();
 
 		alivePlayers = 0;
-		for (Core & core : cores_)
+		for (const auto & objPtr : objects_)
 		{
-			if (core.getHP() > 0)
+			const Object & obj = *objPtr;
+			if (obj.getType() != ObjectType::Core)
+				continue;
+			if (obj.getHP() > 0)
 				alivePlayers++;
 		}
 
@@ -89,12 +92,12 @@ void Game::tick(unsigned long long tick)
 		std::vector<Action *> clientActions = Action::parseActions(msg);
 
 		for (Action * action : clientActions)
-			actions.emplace_back(action, core);
+			actions.emplace_back(action, *core);
 	}
 
 	shuffle_vector(actions); // shuffle action execution order to ensure fairness
 
-	for (int i = 0; i < actions.size(); i++)
+	for (int i = 0; i < (int)actions.size(); i++)
 	{
 		Action * action = actions[i].first;
 		Core & core = actions[i].second;
@@ -115,18 +118,19 @@ void Game::tick(unsigned long long tick)
 			if (core.getBalance() < unitCost)
 				continue;
 
-			units_.push_back(Unit(nextObjectId_++, core.getTeamId(), closestEmptyPos, unitType));
+			objects_.push_back(std::make_unique<Unit>(nextObjectId_++, core.getTeamId(), closestEmptyPos, unitType));
 			core.setBalance(core.getBalance() - unitCost);
 		}
 
 		else if (action->getActionType() == ActionType::MOVE)
 		{
 			MoveAction * moveAction = (MoveAction *)action;
-			Unit * unit = getUnit(moveAction->getUnitId());
+			Object * unitObj = getObject(moveAction->getUnitId());
 
-			if (!unit)
+			if (!unitObj || unitObj->getType() != ObjectType::Unit)
 				continue;
-			if (unit->getHP() <= 0)
+			Unit * unit = (Unit *)unitObj;
+			if (!unit->canTravel())
 				continue;
 
 			Position newPos = unit->getPosition() + moveAction->getDirection();
@@ -154,65 +158,34 @@ void Game::tick(unsigned long long tick)
 		delete action;
 	}
 
-	// 2. REMOVE DEAD OBJECTS
+	// 2. UPDATE OBJECTS
 
-	for (auto it = cores_.begin(); it != cores_.end();)
+	for (auto it = objects_.begin(); it != objects_.end(); )
 	{
-		if (it->getHP() <= 0)
+		Object & obj = **it;
+		if (obj.getHP() <= 0)
 		{
-			it = cores_.erase(it);
+			it = objects_.erase(it); 
 			// TODO: handle game over (send message, disconnect bridge, decrease teamCount_)
 		}
 		else
+		{
+			obj.tick(tick);
 			++it;
+		}
 	}
-	for (auto it = units_.begin(); it != units_.end();)
-	{
-		if (it->getHP() <= 0)
-			it = units_.erase(it);
-		else
-			++it;
-	}
-	for (auto it = resources_.begin(); it != resources_.end();)
-	{
-		if (it->getHP() <= 0)
-			it = resources_.erase(it);
-		else
-			++it;
-	}
-	for (auto it = walls_.begin(); it != walls_.end();)
-	{
-		if (it->getHP() <= 0)
-			it = walls_.erase(it);
-		else
-			++it;
-	}
-
-	// 3. TICK OBJECTS
-
-	for (Core & core : cores_)
-		core.tick(tick);
-	for (Resource & resource : resources_)
-		resource.tick(tick);
-	for (Unit & unit : units_)
-		unit.tick(tick);
-	for (Wall & wall : walls_)
-		wall.tick(tick);
 
 	visualizeGameState();
 }
 Object * Game::getObjectAtPos(Position pos)
 {
-	for (Core & core : cores_)
+	for (const auto & objPtr : objects_)
 	{
-		if (core.getPosition() == pos)
-			return &core;
+		Object & obj = *objPtr;
+		if (obj.getPosition() == pos)
+			return &obj;
 	}
-	for (Unit & unit : units_)
-	{
-		if (unit.getPosition() == pos)
-			return &unit;
-	}
+
 	return nullptr;
 }
 
@@ -221,8 +194,13 @@ void Game::sendState()
 	json state;
 
 	state["cores"] = json::array();
-	for (auto& core : cores_)
+	for (auto& objPtr : objects_)
 	{
+		Object & obj = *objPtr;
+		if (obj.getType() != ObjectType::Core)
+			continue;
+		Core & core = (Core &)obj;
+
 		json c;
 
 		c["id"] = core.getId();
@@ -236,8 +214,13 @@ void Game::sendState()
 	}
 
 	state["units"] = json::array();
-	for (auto& unit : units_)
+	for (auto& objPtr : objects_)
 	{
+		Object & obj = *objPtr;
+		if (obj.getType() != ObjectType::Unit)
+			continue;
+		Unit & unit = (Unit &)obj;
+
 		json u;
 
 		u["id"] = unit.getId();
@@ -252,8 +235,13 @@ void Game::sendState()
 	}
 
 	state["resources"] = json::array();
-	for (auto& resource : resources_)
+	for (auto& objPtr : objects_)
 	{
+		Object & obj = *objPtr;
+		if (obj.getType() != ObjectType::Resource)
+			continue;
+		Resource & resource = (Resource &)obj;
+
 		json r;
 
 		r["id"] = resource.getId();
@@ -265,8 +253,13 @@ void Game::sendState()
 	}
 
 	state["walls"] = json::array();
-	for (auto& wall : walls_)
+	for (auto& objPtr : objects_)
 	{
+		Object & obj = *objPtr;
+		if (obj.getType() != ObjectType::Wall)
+			continue;
+		Wall & wall = (Wall &)obj;
+
 		json w;
 
 		w["id"] = wall.getId();
@@ -329,20 +322,29 @@ void Game::sendConfig()
 
 Core * Game::getCore(unsigned int teamId)
 {
-	for (Core & core : cores_)
+	for (auto& objPtr : objects_)
 	{
+		Object & obj = *objPtr;
+		if (obj.getType() != ObjectType::Core)
+			continue;
+		Core & core = (Core &)obj;
+
 		if (core.getTeamId() == teamId)
 			return &core;
 	}
+
 	return nullptr;
 }
 
-Unit * Game::getUnit(unsigned int unitId)
+Object * Game::getObject(unsigned int id)
 {
-	for (Unit & unit : units_)
+	for (auto& objPtr : objects_)
 	{
-		if (unit.getId() == unitId)
-			return &unit;
+		Object & obj = *objPtr;
+
+		if (obj.getId() == id)
+			return &obj;
 	}
+
 	return nullptr;
 }

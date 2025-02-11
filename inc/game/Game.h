@@ -26,10 +26,8 @@ class Game
 
 		void run();
 
-		std::vector<Unit> & getUnits() { return units_; }
-
 		Core * getCore(unsigned int teamId);
-		Unit * getUnit(unsigned int unitId);
+		Object * getObject(unsigned int id);
 
 		Object * getObjectAtPos(Position pos);
 
@@ -40,10 +38,7 @@ class Game
 
 		unsigned int teamCount_;
 		unsigned int nextObjectId_;
-		std::vector<Core> cores_;
-		std::vector<Unit> units_;
-		std::vector<Resource> resources_;
-		std::vector<Wall> walls_;
+		std::vector<std::unique_ptr<Object>> objects_;
 		std::vector<Bridge*> bridges_;
 
 		void visualizeGameState();

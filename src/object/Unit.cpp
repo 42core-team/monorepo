@@ -28,8 +28,10 @@ void Unit::travel(MovementDirection dir)
 	}
 }
 
-void tick(unsigned long long tickCount)
-{}
+void Unit::tick(unsigned long long tickCount)
+{
+	(void) tickCount;
+}
 
 unsigned int Unit::calcNextMovementOpp()
 {

@@ -11,7 +11,7 @@ class Unit : public Object
 		
 		void tick(unsigned long long tickCount);
 		void travel(MovementDirection dir);
-
+		bool canTravel() { return next_move_opp_ == 0; }
 
 		unsigned int getTypeId() const { return type_id_; }
 		unsigned int getTeamId() const { return team_id_; }
