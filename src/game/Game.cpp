@@ -141,7 +141,14 @@ void Game::tick(unsigned long long tick)
 			if (obj)
 			{
 				if (obj->getType() == ObjectType::Unit)
+				{
 					obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageUnit);
+					if (obj->getHP() <= 0)
+					{
+						unit->setPosition(newPos);
+						unit->addBalance(((Unit *)obj)->getBalance());
+					}
+				}
 				else if (obj->getType() == ObjectType::Core)
 					obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageCore);
 				else if (obj->getType() == ObjectType::Resource)
@@ -152,8 +159,8 @@ void Game::tick(unsigned long long tick)
 			else
 			{
 				unit->setPosition(newPos);
-				unit->resetNextMoveOpp();
 			}
+			unit->resetNextMoveOpp();
 		}
 
 		delete action;
@@ -163,15 +170,17 @@ void Game::tick(unsigned long long tick)
 
 	for (auto it = objects_.begin(); it != objects_.end(); )
 	{
-		Object & obj = **it;
-		if (obj.getHP() <= 0)
+		Object * obj = it->get();
+		if (obj->getHP() <= 0)
 		{
-			it = objects_.erase(it); 
+			if (obj->getType() == ObjectType::Unit)
+				objects_.push_back(std::make_unique<Resource>(nextObjectId_++, obj->getPosition(), ((Unit *)obj)->getBalance())); // drop balance on death
+			it = objects_.erase(it);
 			// TODO: handle game over (send message, disconnect bridge, decrease teamCount_)
 		}
 		else
 		{
-			obj.tick(tick);
+			obj->tick(tick);
 			++it;
 		}
 	}
