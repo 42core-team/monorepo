@@ -32,7 +32,7 @@ void	ft_print_cores()
 			state = "DEAD";
 		else if (cores[index]->state == STATE_UNINITIALIZED)
 			state = "UNINITIALIZED";
-		printf("- id: %lu team_id: %lu x: %u y: %u hp: %lu state: %s\n", cores[index]->id, cores[index]->s_core.team_id, cores[index]->pos.x, cores[index]->pos.y, cores[index]->hp, state);
+		printf("- id: %lu team_id: %lu x: %u y: %u hp: %lu state: %s balance: %lu\n", cores[index]->id, cores[index]->s_core.team_id, cores[index]->pos.x, cores[index]->pos.y, cores[index]->hp, state, cores[index]->s_core.balance);
 		index++;
 	}
 }
@@ -72,7 +72,7 @@ void	ft_print_units()
 			state = "DEAD";
 		else if (units[index]->state == STATE_UNINITIALIZED)
 			state = "UNINITIALIZED";
-		printf("- id: %lu type_id: %lu team_id: %lu x: %u y: %u hp: %lu state: %s\n", units[index]->id, units[index]->s_unit.type_id, units[index]->s_unit.team_id, units[index]->pos.x, units[index]->pos.y, units[index]->hp, state);
+		printf("- id: %lu type_id: %lu team_id: %lu x: %u y: %u hp: %lu state: %s balance: %lu next_movement_opportunity %lu\n", units[index]->id, units[index]->s_unit.type_id, units[index]->s_unit.team_id, units[index]->pos.x, units[index]->pos.y, units[index]->hp, state, units[index]->s_unit.balance, units[index]->s_unit.next_movement_opp);
 		index++;
 	}
 }

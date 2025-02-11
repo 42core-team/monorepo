@@ -77,6 +77,8 @@ typedef struct s_obj
 			unsigned long team_id;
 			/// @brief The amount of money the unit is carrying.
 			unsigned long balance;
+			/// @brief The next time the unit can move, as defined by it's speed & how much it's carrying.
+			unsigned long next_movement_opp;
 		}	s_unit;
 	};
 } t_obj;

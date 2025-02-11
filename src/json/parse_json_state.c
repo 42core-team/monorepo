@@ -23,6 +23,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 				existingObj->s_unit.type_id = obj.s_unit.type_id;
 				existingObj->s_unit.team_id = obj.s_unit.team_id;
 				existingObj->s_unit.balance = obj.s_unit.balance;
+				existingObj->s_unit.next_movement_opp = obj.s_unit.next_movement_opp;
 			}
 			if ((*arr) == game.cores)
 			{
@@ -60,6 +61,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 				existingObj->s_unit.type_id = obj.s_unit.type_id;
 				existingObj->s_unit.team_id = obj.s_unit.team_id;
 				existingObj->s_unit.balance = obj.s_unit.balance;
+				existingObj->s_unit.next_movement_opp = obj.s_unit.next_movement_opp;
 			}
 			if ((*arr) == game.cores)
 			{
@@ -76,7 +78,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 
 	if ((*arr) == game.units && obj.s_unit.team_id == game.my_team_id)
 	{
-		printf("Error matching team units. This is never supposed to happen. Troublemaker: [id %lu, type %lu]\n", obj.id, obj.s_unit.type_id);
+		printf("Error matching team units. This is never supposed to happen. Have you freed something you shouldn't have? Troublemaker: [id %lu, type %lu, team %lu]\n", obj.id, obj.s_unit.type_id, obj.s_unit.team_id);
 	}
 
 	// 3. Add to the back
@@ -98,6 +100,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 		existingObj->s_unit.type_id = obj.s_unit.type_id;
 		existingObj->s_unit.team_id = obj.s_unit.team_id;
 		existingObj->s_unit.balance = obj.s_unit.balance;
+		existingObj->s_unit.next_movement_opp = obj.s_unit.next_movement_opp;
 	}
 	if ((*arr) == game.cores)
 	{
@@ -108,8 +111,6 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 
 static void ft_parse_object(json_node * json, t_obj_type type, t_obj *** game_arr)
 {
-	printf("parsing object type %d with json node %p\n", type, json);
-
 	if (*game_arr == NULL)
 	{
 		*game_arr = malloc(sizeof(t_obj *) * 1);
@@ -134,6 +135,7 @@ static void ft_parse_object(json_node * json, t_obj_type type, t_obj *** game_ar
 			readObj.s_unit.type_id = (unsigned long)json_find(json->array[i], "type")->number;
 			readObj.s_unit.team_id = (unsigned long)json_find(json->array[i], "teamId")->number;
 			readObj.s_unit.balance = (unsigned long)json_find(json->array[i], "balance")->number;
+			readObj.s_unit.next_movement_opp = (unsigned long)json_find(json->array[i], "nextMoveOpp")->number;
 		}
 		if (type == OBJ_CORE)
 		{
@@ -153,6 +155,18 @@ void	ft_parse_json_state(char *json)
 	ft_parse_object(json_find(root, "resources"), OBJ_RESOURCE, &game.resources);
 	ft_parse_object(json_find(root, "units"), OBJ_UNIT, &game.units);
 	ft_parse_object(json_find(root, "walls"), OBJ_WALL, &game.walls);
+
+	// clean uninitialized units, as the server did not send them
+	int j = 0;
+	for (size_t i = 0; game.units[i] != NULL; i++)
+	{
+		if (game.units[i]->state != STATE_UNINITIALIZED)
+			game.units[j++] = game.units[i];
+		else
+			free(game.units[i]);
+	}
+	game.units[j] = NULL;
+
 
 	free_json(root);
 }

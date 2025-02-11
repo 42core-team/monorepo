@@ -7,7 +7,6 @@ t_obj	*ft_create_unit(t_unit_type type_id)
 		unit_count++;
 	if ((int)type_id < 0 || (int)type_id >= unit_count)
 		return NULL;
-	ft_print_cores();
 	if (!ft_get_my_core() || !game.config.units || !game.config.units[type_id] || \
 			game.config.units[type_id]->cost > ft_get_my_core()->s_core.balance)
 		return NULL;
@@ -49,6 +48,9 @@ t_obj	*ft_create_unit(t_unit_type type_id)
 
 void	ft_move(t_obj *unit, t_direction direction)
 {
+	if (unit->s_unit.next_movement_opp != 0)
+		return;
+
 	t_action_travel	**actions = &game.actions.travels;
 	unsigned int	*count = &game.actions.travels_count;
 
