@@ -4,8 +4,10 @@ Game::Game(std::vector<unsigned int> team_ids) : teamCount_(team_ids.size()), ne
 {
 	GameConfig config = Config::getInstance();
 	cores_.reserve(team_ids.size());
+	std::vector<unsigned int> team_ids_double = team_ids;
+	shuffle_vector(team_ids_double); // randomly assign core positions to ensure fairness
 	for (unsigned int i = 0; i < team_ids.size(); ++i)
-		cores_.push_back(Core(nextObjectId_++, team_ids[i], Config::getCorePosition(i)));
+		cores_.push_back(Core(nextObjectId_++, team_ids_double[i], Config::getCorePosition(i)));
 	Logger::Log("Game created with " + std::to_string(team_ids.size()) + " teams.");
 }
 Game::~Game()

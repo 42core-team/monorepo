@@ -59,7 +59,7 @@ bool Bridge::receiveMessage(json& message)
 	if (readQueue_.empty()) return false;
 	message = readQueue_.front();
 	readQueue_.pop();
-	// std::cout << "Received message: " << message << std::endl;
+	std::cout << "Server received message: " << message << std::endl;
 	return true;
 }
 
