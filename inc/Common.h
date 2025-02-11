@@ -46,6 +46,10 @@ struct Position
 	{
 		return {x + other.x, y + other.y};
 	}
+	Position operator*(unsigned int scalar) const
+	{
+		return {x * scalar, y * scalar};
+	}
 
 	Position(unsigned int x, unsigned int y) : x(x), y(y) {}
 };

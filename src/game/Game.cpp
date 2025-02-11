@@ -7,7 +7,9 @@ Game::Game(std::vector<unsigned int> team_ids) : teamCount_(team_ids.size()), ne
 	std::vector<unsigned int> team_ids_double = team_ids;
 	shuffle_vector(team_ids_double); // randomly assign core positions to ensure fairness
 	for (unsigned int i = 0; i < team_ids.size(); ++i)
-		objects_.push_back(std::make_unique<Core>(nextObjectId_++, team_ids_double[i], Config::getCorePosition(i)));
+		objects_.push_back(std::make_unique<Core>(getNextObjectId(), team_ids_double[i], Config::getCorePosition(i)));
+	ResourceOnlyWorldGenerator generator;
+	generator.generateWorld(this);
 	Logger::Log("Game created with " + std::to_string(team_ids.size()) + " teams.");
 }
 Game::~Game()
@@ -118,7 +120,7 @@ void Game::tick(unsigned long long tick)
 			if (core.getBalance() < unitCost)
 				continue;
 
-			objects_.push_back(std::make_unique<Unit>(nextObjectId_++, core.getTeamId(), closestEmptyPos, unitType));
+			objects_.push_back(std::make_unique<Unit>(getNextObjectId(), core.getTeamId(), closestEmptyPos, unitType));
 			core.setBalance(core.getBalance() - unitCost);
 		}
 
@@ -174,7 +176,7 @@ void Game::tick(unsigned long long tick)
 		if (obj->getHP() <= 0)
 		{
 			if (obj->getType() == ObjectType::Unit)
-				objects_.push_back(std::make_unique<Resource>(nextObjectId_++, obj->getPosition(), ((Unit *)obj)->getBalance())); // drop balance on death
+				objects_.push_back(std::make_unique<Resource>(getNextObjectId(), obj->getPosition(), ((Unit *)obj)->getBalance())); // drop balance on death
 			it = objects_.erase(it);
 			// TODO: handle game over (send message, disconnect bridge, decrease teamCount_)
 		}

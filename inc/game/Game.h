@@ -13,6 +13,7 @@
 #include "Bridge.h"
 #include "Action.h"
 #include "Utils.h"
+#include "ResourceOnlyWorldGenerator.h"
 
 #include "json.hpp"
 using json = nlohmann::ordered_json;
@@ -28,8 +29,11 @@ class Game
 
 		Core * getCore(unsigned int teamId);
 		Object * getObject(unsigned int id);
+		std::vector<std::unique_ptr<Object>> & getObjects() { return objects_; }
 
 		Object * getObjectAtPos(Position pos);
+
+		unsigned int getNextObjectId() { return nextObjectId_++; }
 
 	private:
 		void tick(unsigned long long tick);

@@ -33,6 +33,8 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	srand(time(nullptr));
+
 	std::vector<unsigned int> expectedTeamIds;
 	for (int i = 1; i < argc; i++)
 		expectedTeamIds.push_back(std::stoi(argv[i]));
