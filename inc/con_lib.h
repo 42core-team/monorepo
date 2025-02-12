@@ -107,8 +107,10 @@ typedef struct s_unit_config
 	long dmg_resource;
 	/// @brief How much damage the unit deals to walls.
 	long dmg_wall;
-	/// @brief How far the unit can travel in one second.
+	/// @brief The time a unit waits between moves.
 	unsigned long speed;
+	/// @brief The minimum time a unit waits between moves.
+	unsigned long min_speed;
 } t_unit_config;
 typedef struct s_config
 {
