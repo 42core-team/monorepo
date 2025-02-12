@@ -34,7 +34,8 @@ void Unit::travel(MovementDirection dir)
 void Unit::tick(unsigned long long tickCount)
 {
 	(void) tickCount;
-	next_move_opp_--;
+	if (next_move_opp_ > 0)
+		next_move_opp_--;
 }
 
 unsigned int Unit::calcNextMovementOpp()
@@ -46,8 +47,10 @@ unsigned int Unit::calcNextMovementOpp()
 	if (resourcePart < 1)
 		resourcePart = 1; // up to 1/4 resource balance does not slow down
 
-	if (baseSpeed * resourcePart > minSpeed)
-		return minSpeed;
-	
-	return baseSpeed * resourcePart;
+	unsigned int speed = baseSpeed * resourcePart;
+
+	if (speed > minSpeed)
+		speed = minSpeed;
+
+	return speed;
 }

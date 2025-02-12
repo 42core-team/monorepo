@@ -45,6 +45,18 @@ GameConfig Config::defaultConfig()
 	miner.damageWall = 5;
 	config.units.push_back(miner);
 
+	UnitConfig carrier;
+	carrier.name = "Carrier";
+	carrier.cost = 125;
+	carrier.hp = 20;
+	carrier.speed = 4;
+	carrier.minSpeed = 10; // no slowdown when carrying money
+	carrier.damageCore = 3;
+	carrier.damageUnit = 2;
+	carrier.damageResource = 4;
+	carrier.damageWall = 3;
+	config.units.push_back(carrier);
+
 	config.corePositions.push_back({ 0, 0 });   // top left
 	config.corePositions.push_back({ 24, 24 }); // bottom right
 	config.corePositions.push_back({ 24, 0 });  // top right
