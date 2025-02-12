@@ -14,6 +14,8 @@ class CreateAction : public Action
 		CreateAction(json msg);
 
 		unsigned int getUnitTypeId() const { return type_id_; }
+
+		void execute(Game *game, Core * core);
 	
 	private:
 		unsigned int type_id_;

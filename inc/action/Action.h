@@ -4,10 +4,12 @@
 #include <vector>
 
 #include "Config.h"
-#include "Game.h"
+#include "Core.h"
+
 class CreateAction;
 class MoveAction;
 class TransferMoneyAction;
+class Game;
 
 #include "json.hpp"
 using json = nlohmann::ordered_json;
@@ -30,6 +32,8 @@ class Action
 
 		static std::vector<Action *> parseActions(json msg);
 
+		virtual void execute(Game *game, Core * core) = 0;
+
 	protected:
 		bool is_valid_;
 
@@ -39,6 +43,7 @@ class Action
 #include "CreateAction.h"
 #include "MoveAction.h"
 #include "TransferMoneyAction.h"
+#include "Game.h"
 
 #endif // ACTION_H
 

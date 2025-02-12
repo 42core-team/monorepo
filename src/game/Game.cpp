@@ -104,120 +104,7 @@ void Game::tick(unsigned long long tick)
 		Action * action = actions[i].first;
 		Core & core = actions[i].second;
 
-		if (action->getActionType() == ActionType::CREATE)
-		{
-			CreateAction * createAction = (CreateAction *)action;
-
-			Position closestEmptyPos = findFirstEmptyGridCell(this, core.getPosition());
-			if (!closestEmptyPos.isValid(Config::getInstance().width, Config::getInstance().height))
-				continue;
-
-			unsigned int unitType = createAction->getUnitTypeId();
-			if (unitType >= Config::getInstance().units.size())
-				continue;
-
-			unsigned int unitCost = Config::getUnitConfig(unitType).cost;
-			if (core.getBalance() < unitCost)
-				continue;
-
-			objects_.push_back(std::make_unique<Unit>(getNextObjectId(), core.getTeamId(), closestEmptyPos, unitType));
-			core.setBalance(core.getBalance() - unitCost);
-		}
-
-		else if (action->getActionType() == ActionType::MOVE)
-		{
-			MoveAction * moveAction = (MoveAction *)action;
-			Object * unitObj = getObject(moveAction->getUnitId());
-
-			if (!unitObj || unitObj->getType() != ObjectType::Unit)
-				continue;
-			Unit * unit = (Unit *)unitObj;
-			if (!unit->canTravel())
-				continue;
-
-			Position newPos = unit->getPosition() + moveAction->getDirection();
-			if (!newPos.isValid(Config::getInstance().width, Config::getInstance().height))
-				continue;
-
-			Object * obj = getObjectAtPos(newPos);
-			if (obj)
-			{
-				if (obj->getType() == ObjectType::Unit)
-				{
-					obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageUnit);
-					if (obj->getHP() <= 0)
-					{
-						unit->setPosition(newPos);
-						unit->addBalance(((Unit *)obj)->getBalance());
-						((Unit *)obj)->setBalance(0);
-					}
-				}
-				else if (obj->getType() == ObjectType::Core)
-					obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageCore);
-				else if (obj->getType() == ObjectType::Resource)
-					((Resource *)obj)->getMined(unit);
-				else if (obj->getType() == ObjectType::Wall)
-					obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageWall);
-			}
-			else
-			{
-				unit->setPosition(newPos);
-			}
-			unit->resetNextMoveOpp();
-		}
-
-		else if (action->getActionType() == ActionType::TRANSFER_MONEY)
-		{
-			TransferMoneyAction * transferMoneyAction = (TransferMoneyAction *)action;
-
-			Object * srcObj = getObject(transferMoneyAction->getSourceObjId());
-			Object * dstObj = getObject(transferMoneyAction->getTargetObjId());
-			if (!srcObj || !dstObj)
-				continue;
-
-			// only active objects can transfer money
-			if (srcObj->getType() != ObjectType::Core && srcObj->getType() != ObjectType::Unit)
-				continue;
-			if (dstObj->getType() != ObjectType::Core && dstObj->getType() != ObjectType::Unit)
-				continue;
-
-			// only adjacent objects can transfer money
-			if (srcObj->getPosition().distance(dstObj->getPosition()) > 1)
-				continue;
-
-			unsigned int amount = transferMoneyAction->getAmount();
-
-			// cant transfer someone else's money
-			if (srcObj->getType() == ObjectType::Core)
-			{
-				Core * srcCore = (Core *)srcObj;
-				if (srcCore->getTeamId() != core.getTeamId())
-					continue;
-				if (srcCore->getBalance() < amount)
-					amount = srcCore->getBalance();
-				srcCore->setBalance(srcCore->getBalance() - amount);
-			}
-			if (srcObj->getType() == ObjectType::Unit)
-			{
-				Unit * srcUnit = (Unit *)srcObj;
-				if (srcUnit->getTeamId() != core.getTeamId())
-					continue;
-				if (srcUnit->getBalance() < amount)
-					amount = srcUnit->getBalance();
-				srcUnit->setBalance(srcUnit->getBalance() - amount);
-			}
-
-			if (dstObj->getType() == ObjectType::Core)
-			{
-				Core * dstCore = (Core *)dstObj;
-				dstCore->setBalance(dstCore->getBalance() + amount);
-			}
-			if (dstObj->getType() == ObjectType::Unit)
-			{
-				Unit * dstUnit = (Unit *)dstObj;
-				dstUnit->setBalance(dstUnit->getBalance() + amount);
-			}
-		}
+		action->execute(this, &core);
 
 		delete action;
 	}
@@ -242,17 +129,6 @@ void Game::tick(unsigned long long tick)
 	}
 
 	visualizeGameState(tick);
-}
-Object * Game::getObjectAtPos(Position pos)
-{
-	for (const auto & objPtr : objects_)
-	{
-		Object & obj = *objPtr;
-		if (obj.getPosition() == pos)
-			return &obj;
-	}
-
-	return nullptr;
 }
 
 void Game::sendState()
@@ -403,7 +279,17 @@ Core * Game::getCore(unsigned int teamId)
 
 	return nullptr;
 }
+Object * Game::getObjectAtPos(Position pos)
+{
+	for (const auto & objPtr : objects_)
+	{
+		Object & obj = *objPtr;
+		if (obj.getPosition() == pos)
+			return &obj;
+	}
 
+	return nullptr;
+}
 Object * Game::getObject(unsigned int id)
 {
 	for (auto& objPtr : objects_)
