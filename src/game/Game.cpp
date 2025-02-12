@@ -372,6 +372,7 @@ void Game::sendConfig()
 		u["cost"] = unit.cost;
 		u["hp"] = unit.hp;
 		u["speed"] = unit.speed;
+		u["minSpeed"] = unit.minSpeed;
 
 		u["damageCore"] = unit.damageCore;
 		u["damageUnit"] = unit.damageUnit;

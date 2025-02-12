@@ -40,10 +40,14 @@ void Unit::tick(unsigned long long tickCount)
 unsigned int Unit::calcNextMovementOpp()
 {
 	unsigned int baseSpeed = Config::getInstance().units[type_id_].speed;
+	unsigned int minSpeed = Config::getInstance().units[type_id_].minSpeed;
 
 	float resourcePart = balance_ / (Config::getInstance().resourceIncome / 4);
 	if (resourcePart < 1)
 		resourcePart = 1; // up to 1/4 resource balance does not slow down
+
+	if (baseSpeed * resourcePart > minSpeed)
+		return minSpeed;
 	
 	return baseSpeed * resourcePart;
 }

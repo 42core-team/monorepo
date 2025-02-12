@@ -37,6 +37,7 @@ struct UnitConfig
 	unsigned int cost;
 	unsigned int hp;
 	unsigned int speed; // timeout between moves in ticks
+	unsigned int minSpeed;
 
 	unsigned int damageCore;
 	unsigned int damageUnit;

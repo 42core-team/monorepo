@@ -26,6 +26,7 @@ GameConfig Config::defaultConfig()
 	warrior.cost = 150;
 	warrior.hp = 25;
 	warrior.speed = 3;
+	warrior.minSpeed = 12;
 	warrior.damageCore = 10;
 	warrior.damageUnit = 6;
 	warrior.damageResource = 2;
@@ -37,6 +38,7 @@ GameConfig Config::defaultConfig()
 	miner.cost = 100;
 	miner.hp = 15;
 	miner.speed = 5;
+	miner.minSpeed = 15;
 	miner.damageCore = 3;
 	miner.damageUnit = 2;
 	miner.damageResource = 10;
