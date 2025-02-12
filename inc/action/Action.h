@@ -7,6 +7,7 @@
 #include "Game.h"
 class CreateAction;
 class MoveAction;
+class TransferMoneyAction;
 
 #include "json.hpp"
 using json = nlohmann::ordered_json;
@@ -14,7 +15,8 @@ using json = nlohmann::ordered_json;
 enum class ActionType
 {
 	MOVE,
-	CREATE
+	CREATE,
+	TRANSFER_MONEY
 };
 
 class Action
@@ -36,6 +38,7 @@ class Action
 
 #include "CreateAction.h"
 #include "MoveAction.h"
+#include "TransferMoneyAction.h"
 
 #endif // ACTION_H
 

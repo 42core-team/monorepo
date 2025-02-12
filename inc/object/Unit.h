@@ -19,6 +19,7 @@ class Unit : public Object
 		unsigned int getNextMoveOpp() const { return next_move_opp_; }
 
 		void addBalance(unsigned int amount) { balance_ += amount; }
+		void setBalance(unsigned int amount) { balance_ = amount; }
 		void resetNextMoveOpp() { next_move_opp_ = calcNextMovementOpp(); }
 
 	private:

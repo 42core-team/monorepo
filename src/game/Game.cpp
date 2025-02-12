@@ -149,6 +149,7 @@ void Game::tick(unsigned long long tick)
 					{
 						unit->setPosition(newPos);
 						unit->addBalance(((Unit *)obj)->getBalance());
+						((Unit *)obj)->setBalance(0);
 					}
 				}
 				else if (obj->getType() == ObjectType::Core)
@@ -163,6 +164,59 @@ void Game::tick(unsigned long long tick)
 				unit->setPosition(newPos);
 			}
 			unit->resetNextMoveOpp();
+		}
+
+		else if (action->getActionType() == ActionType::TRANSFER_MONEY)
+		{
+			TransferMoneyAction * transferMoneyAction = (TransferMoneyAction *)action;
+
+			Object * srcObj = getObject(transferMoneyAction->getSourceObjId());
+			Object * dstObj = getObject(transferMoneyAction->getTargetObjId());
+			if (!srcObj || !dstObj)
+				continue;
+
+			// only active objects can transfer money
+			if (srcObj->getType() != ObjectType::Core && srcObj->getType() != ObjectType::Unit)
+				continue;
+			if (dstObj->getType() != ObjectType::Core && dstObj->getType() != ObjectType::Unit)
+				continue;
+
+			// only adjacent objects can transfer money
+			if (srcObj->getPosition().distance(dstObj->getPosition()) > 1)
+				continue;
+
+			unsigned int amount = transferMoneyAction->getAmount();
+
+			// cant transfer someone else's money
+			if (srcObj->getType() == ObjectType::Core)
+			{
+				Core * srcCore = (Core *)srcObj;
+				if (srcCore->getTeamId() != core.getTeamId())
+					continue;
+				if (srcCore->getBalance() < amount)
+					amount = srcCore->getBalance();
+				srcCore->setBalance(srcCore->getBalance() - amount);
+			}
+			if (srcObj->getType() == ObjectType::Unit)
+			{
+				Unit * srcUnit = (Unit *)srcObj;
+				if (srcUnit->getTeamId() != core.getTeamId())
+					continue;
+				if (srcUnit->getBalance() < amount)
+					amount = srcUnit->getBalance();
+				srcUnit->setBalance(srcUnit->getBalance() - amount);
+			}
+
+			if (dstObj->getType() == ObjectType::Core)
+			{
+				Core * dstCore = (Core *)dstObj;
+				dstCore->setBalance(dstCore->getBalance() + amount);
+			}
+			if (dstObj->getType() == ObjectType::Unit)
+			{
+				Unit * dstUnit = (Unit *)dstObj;
+				dstUnit->setBalance(dstUnit->getBalance() + amount);
+			}
 		}
 
 		delete action;
