@@ -86,7 +86,8 @@ typedef struct s_obj
 typedef enum e_unit_type
 {
 	UNIT_WARRIOR = 0,
-	UNIT_MINER = 1
+	UNIT_MINER = 1,
+	UNIT_CARRIER = 2
 } t_unit_type;
 
 typedef struct s_unit_config
