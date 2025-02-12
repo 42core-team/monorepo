@@ -21,15 +21,6 @@ bool	ft_receive_config()
 	return true;
 }
 
-void	ft_init_game()
-{
-	game.cores = NULL;
-	game.resources = NULL;
-	game.units = NULL;
-	game.walls = NULL;
-	game.config.units = NULL;
-}
-
 /**
  * @brief Starts the connection to the server. This function should be called before any other function from this library.
  *
@@ -42,6 +33,7 @@ void	ft_init_con(char *team_name, int *argc, char **argv)
 	const char *env_ip = getenv("SERVER_IP");
 	const char *env_port = getenv("SERVER_PORT");
 	const int port = env_port ? atoi(env_port) : 4242;
+	memset(&game, 0, sizeof(t_game));
 	game.my_team_id = argv[1] ? atoi(argv[1]) : 0;
 
 	socket_fd = ft_init_socket(ft_init_addr(env_ip ? env_ip : "127.0.0.1", port));
@@ -50,7 +42,6 @@ void	ft_init_con(char *team_name, int *argc, char **argv)
 	ft_send_socket(socket_fd, login_msg);
 	free(login_msg);
 
-	ft_init_game();
 	ft_reset_actions();
 	bool validConf = ft_receive_config();
 

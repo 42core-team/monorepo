@@ -86,3 +86,30 @@ void	ft_travel_to_pos(t_obj *unit, t_pos pos)
 			ft_move(unit, DIR_UP);
 	}
 }
+
+void	ft_transfer_money(t_obj *source, t_obj *target, unsigned long amount)
+{
+	if (!source || !target || source->s_unit.balance < amount)
+		return;
+	if (source->type != OBJ_CORE && source->type != OBJ_UNIT)
+		return;
+	if (target->type != OBJ_CORE && target->type != OBJ_UNIT)
+		return;
+
+	t_action_transfer_money	**actions = &game.actions.transfer_moneys;
+	unsigned int			*count = &game.actions.transfer_moneys_count;
+
+	if (!*actions)
+	{
+		*actions = malloc(sizeof(t_action_transfer_money) * 2);
+		*count = 0;
+	}
+	else
+		*actions = realloc(*actions, sizeof(t_action_transfer_money) * (*count + 2));
+	(*actions)[*count + 1].source_id = 0;
+
+	(*actions)[*count].source_id = source->id;
+	(*actions)[*count].target_id = target->id;
+	(*actions)[*count].amount = amount;
+	(*count)++;
+}

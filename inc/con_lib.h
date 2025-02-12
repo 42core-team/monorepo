@@ -145,12 +145,20 @@ typedef struct s_action_travel
 	unsigned long id;
 	t_direction direction;
 } t_action_travel;
+typedef struct s_action_transfer_money
+{
+	unsigned long source_id;
+	unsigned long target_id;
+	unsigned long amount;
+} t_action_transfer_money;
 typedef struct s_actions
 {
 	t_action_create *creates;
 	unsigned int creates_count;
 	t_action_travel *travels;
 	unsigned int travels_count;
+	t_action_transfer_money *transfer_moneys;
+	unsigned int transfer_moneys_count;
 } t_actions;
 
 typedef struct s_game
@@ -281,6 +289,14 @@ void	ft_move(t_obj *unit, t_direction direction);
  * @param direction The target position.
  */
 void	ft_travel_to_pos(t_obj *unit, t_pos pos);
+/**
+ * @brief Transfers money from one object to another.
+ * 
+ * @param source The object that should transfer the money.
+ * @param target The object that should receive the money.
+ * @param amount The amount of money that should be transferred.
+ */
+void	ft_transfer_money(t_obj *source, t_obj *target, unsigned long amount);
 
 // -------------- print_utils.c --------------
 /**
