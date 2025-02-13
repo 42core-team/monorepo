@@ -25,6 +25,9 @@ MoveAction::MoveAction(json msg) : Action(ActionType::MOVE)
 
 void MoveAction::execute(Game *game, Core * core)
 {
+	if (!is_valid_)
+		return;
+
 	Object * unitObj = game->getObject(getUnitId());
 
 	if (!unitObj || unitObj->getType() != ObjectType::Unit)

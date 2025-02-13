@@ -13,6 +13,9 @@ CreateAction::CreateAction(json msg) : Action(ActionType::CREATE)
 
 void CreateAction::execute(Game *game, Core * core)
 {
+	if (!is_valid_)
+		return;
+
 	Position closestEmptyPos = findFirstEmptyGridCell(game, core->getPosition());
 	if (!closestEmptyPos.isValid(Config::getInstance().width, Config::getInstance().height))
 		return;

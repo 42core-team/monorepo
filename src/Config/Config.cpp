@@ -18,6 +18,7 @@ GameConfig Config::defaultConfig()
 	config.initialBalance = 200;
 
 	config.wallHp = 100;
+	config.wallBuildCost = 20;
 
 	// unit order must match order of units in conn lib unit type enum
 
@@ -31,6 +32,7 @@ GameConfig Config::defaultConfig()
 	warrior.damageUnit = 6;
 	warrior.damageResource = 2;
 	warrior.damageWall = 3;
+	warrior.canBuild = false;
 	config.units.push_back(warrior);
 
 	UnitConfig miner;
@@ -43,6 +45,7 @@ GameConfig Config::defaultConfig()
 	miner.damageUnit = 2;
 	miner.damageResource = 10;
 	miner.damageWall = 5;
+	miner.canBuild = false;
 	config.units.push_back(miner);
 
 	UnitConfig carrier;
@@ -55,7 +58,21 @@ GameConfig Config::defaultConfig()
 	carrier.damageUnit = 2;
 	carrier.damageResource = 4;
 	carrier.damageWall = 3;
+	carrier.canBuild = false;
 	config.units.push_back(carrier);
+
+	UnitConfig builder;
+	builder.name = "Builder";
+	builder.cost = 300;
+	builder.hp = 30;
+	builder.speed = 2;
+	builder.minSpeed = 8;
+	builder.damageCore = 5;
+	builder.damageUnit = 3;
+	builder.damageResource = 2;
+	builder.damageWall = 3;
+	builder.canBuild = true;
+	config.units.push_back(builder);
 
 	config.corePositions.push_back({ 0, 0 });   // top left
 	config.corePositions.push_back({ 24, 24 }); // bottom right

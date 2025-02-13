@@ -238,6 +238,7 @@ void Game::sendConfig()
 	configJson["initialBalance"] = config.initialBalance;
 
 	configJson["wallHp"] = config.wallHp;
+	configJson["wallBuildCost"] = config.wallBuildCost;
 
 	configJson["units"] = json::array();
 	for (auto& unit : config.units)
@@ -254,6 +255,8 @@ void Game::sendConfig()
 		u["damageUnit"] = unit.damageUnit;
 		u["damageResource"] = unit.damageResource;
 		u["damageWall"] = unit.damageWall;
+
+		u["canBuild"] = unit.canBuild;
 
 		configJson["units"].push_back(u);
 	}

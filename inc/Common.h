@@ -58,6 +58,7 @@ struct Position
 	}
 
 	Position(unsigned int x, unsigned int y) : x(x), y(y) {}
+	Position() : x(-1), y(-1) {} // purposeful overflow, max val to indicate invalidity
 };
 
 #endif // COMMON_H

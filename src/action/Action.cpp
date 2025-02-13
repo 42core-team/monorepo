@@ -20,6 +20,8 @@ std::vector<Action *> Action::parseActions(json msg)
 				newAction = new CreateAction(actionJson);
 			else if (actionJson["type"] == "transfer_money")
 				newAction = new TransferMoneyAction(actionJson);
+			else if (actionJson["type"] == "build")
+				newAction = new BuildAction(actionJson);
 			if (newAction && !newAction->is_valid_)
 			{
 				delete newAction;

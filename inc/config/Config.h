@@ -24,6 +24,7 @@ struct GameConfig
 	unsigned int initialBalance;
 
 	unsigned int wallHp;
+	unsigned int wallBuildCost;
 
 	std::vector<UnitConfig> units;
 
@@ -43,6 +44,8 @@ struct UnitConfig
 	unsigned int damageUnit;
 	unsigned int damageResource;
 	unsigned int damageWall;
+
+	bool canBuild;
 };
 
 class Config

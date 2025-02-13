@@ -15,6 +15,9 @@ TransferMoneyAction::TransferMoneyAction(json msg) : Action(ActionType::TRANSFER
 
 void TransferMoneyAction::execute(Game *game, Core * core)
 {
+	if (!is_valid_)
+		return;
+
 	Object * srcObj = game->getObject(getSourceObjId());
 	Object * dstObj = game->getObject(getTargetObjId());
 	if (!srcObj || !dstObj)
