@@ -28,17 +28,25 @@ bool	ft_receive_config()
  * @param argc The argc from the main function.
  * @param argv The argv from the main function.
  */
-void	ft_init_con(char *team_name, int *argc, char **argv)
+void	ft_init_con(char *team_name, int argc, char **argv)
 {
+	memset(&game, 0, sizeof(t_game));
+	memset(&game.config, 0, sizeof(t_config));
+	memset(&game.actions, 0, sizeof(t_actions));
+
 	const char *env_ip = getenv("SERVER_IP");
 	const char *env_port = getenv("SERVER_PORT");
 	const int port = env_port ? atoi(env_port) : 4242;
-	memset(&game, 0, sizeof(t_game));
 	game.my_team_id = argv[1] ? atoi(argv[1]) : 0;
 
 	socket_fd = ft_init_socket(ft_init_addr(env_ip ? env_ip : "127.0.0.1", port));
 
 	char *login_msg = ft_create_login_msg(team_name, argc, argv);
+	if (!login_msg)
+	{
+		printf("Unable to create login message, shutting down.\n");
+		exit(1);
+	}
 	ft_send_socket(socket_fd, login_msg);
 	free(login_msg);
 

@@ -28,12 +28,17 @@ void	ft_reset_actions()
 		free(game.actions.transfer_moneys);
 	game.actions.transfer_moneys = NULL;
 	game.actions.transfer_moneys_count = 0;
+
+	if (game.actions.builds != NULL)
+		free(game.actions.builds);
+	game.actions.builds = NULL;
+	game.actions.builds_count = 0;
 }
 
 char *ft_all_action_json(void)
 {
 	json_node *actions_array = create_node(JSON_TYPE_ARRAY);
-	int size = game.actions.travels_count + game.actions.creates_count + game.actions.transfer_moneys_count + 1;
+	int size = game.actions.travels_count + game.actions.creates_count + game.actions.transfer_moneys_count + game.actions.builds_count + 1;
 	actions_array->array = malloc(sizeof(json_node*) * size);
 	actions_array->array[size - 1] = NULL;
 
@@ -107,6 +112,35 @@ char *ft_all_action_json(void)
 		amount->key = strdup("amount");
 		amount->number = game.actions.transfer_moneys[i - game.actions.travels_count - game.actions.creates_count].amount;
 		action->array[3] = amount;
+
+		actions_array->array[i] = action;
+	}
+	max += game.actions.builds_count;
+	for (; i < max; i++)
+	{
+		json_node *action = create_node(JSON_TYPE_OBJECT);
+		action->array = malloc(sizeof(json_node*) * 5);
+		action->array[4] = NULL;
+
+		json_node *type = create_node(JSON_TYPE_STRING);
+		type->key = strdup("type");
+		type->string = strdup("build");
+		action->array[0] = type;
+
+		json_node *type_id = create_node(JSON_TYPE_NUMBER);
+		type_id->key = strdup("builder_id");
+		type_id->number = game.actions.builds[i - game.actions.travels_count - game.actions.creates_count - game.actions.transfer_moneys_count].id;
+		action->array[1] = type_id;
+
+		json_node *x = create_node(JSON_TYPE_NUMBER);
+		x->key = strdup("x");
+		x->number = game.actions.builds[i - game.actions.travels_count - game.actions.creates_count - game.actions.transfer_moneys_count].pos.x;
+		action->array[2] = x;
+
+		json_node *y = create_node(JSON_TYPE_NUMBER);
+		y->key = strdup("y");
+		y->number = game.actions.builds[i - game.actions.travels_count - game.actions.creates_count - game.actions.transfer_moneys_count].pos.y;
+		action->array[3] = y;
 
 		actions_array->array[i] = action;
 	}

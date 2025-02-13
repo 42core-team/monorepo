@@ -99,6 +99,7 @@ json_node* create_node(json_type type)
 		case JSON_TYPE_STRING:
 			node->string = NULL;
 			break;
+		case JSON_TYPE_BOOL:
 		case JSON_TYPE_NUMBER:
 			node->number = 0;
 			break;
@@ -239,7 +240,7 @@ static json_node* parse_array(const char **p)
 		skip_whitespace(p);
 		if (**p == ',')
 		{
-			(*p)++;  // skip comma
+			(*p)++;
 			skip_whitespace(p);
 		}
 		else if (**p == ']')
@@ -286,10 +287,24 @@ static json_node* parse_value(const char **p)
 		node->number = num;
 		return node;
 	}
-	else if (strncmp(*p, "null", 4) == 0)
+	else if (strncmp(*p, "null", 4) == 0 || strncmp(*p, "NULL", 4) == 0)
 	{
 		*p += 4;
 		return create_node(JSON_TYPE_NULL);
+	}
+	else if (strncmp(*p, "true", 4) == 0 || strncmp(*p, "TRUE", 4) == 0)
+	{
+		*p += 4;
+		json_node *node = create_node(JSON_TYPE_BOOL);
+		node->number = 1;
+		return node;
+	}
+	else if (strncmp(*p, "false", 5) == 0 || strncmp(*p, "FALSE", 5) == 0)
+	{
+		*p += 5;
+		json_node *node = create_node(JSON_TYPE_BOOL);
+		node->number = 0;
+		return node;
 	}
 	else
 	{
@@ -401,6 +416,9 @@ static void json_to_string_internal(json_node *node, StringBuffer *sb)
 		case JSON_TYPE_STRING:
 			sb_append_escaped(sb, node->string);
 			break;
+		case JSON_TYPE_BOOL:
+			sb_append(sb, node->number ? "true" : "false");
+			break;
 		case JSON_TYPE_OBJECT:
 		{
 			sb_append_char(sb, '{');
@@ -467,6 +485,9 @@ static void json_to_formatted_string_internal(json_node *node, StringBuffer *sb,
 		case JSON_TYPE_STRING:
 			sb_append_escaped(sb, node->string);
 			break;
+		case JSON_TYPE_BOOL:
+			sb_append(sb, node->number ? "true" : "false");
+			break;
 		case JSON_TYPE_OBJECT:
 		{
 			sb_append(sb, "{\n");
@@ -530,7 +551,7 @@ json_node *json_find_recursive(json_node *json, char *key)
 	{
 		for (size_t i = 0; json->array[i] != NULL; i++)
 		{
-			json_node *found = json_find(json->array[i], key);
+			json_node *found = json_find_recursive(json->array[i], key);
 			if (found)
 				return found;
 		}
@@ -539,7 +560,7 @@ json_node *json_find_recursive(json_node *json, char *key)
 	{
 		for (size_t i = 0; json->array[i] != NULL; i++)
 		{
-			json_node *found = json_find(json->array[i], key);
+			json_node *found = json_find_recursive(json->array[i], key);
 			if (found)
 				return found;
 		}

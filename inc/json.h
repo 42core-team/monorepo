@@ -11,6 +11,7 @@
 typedef enum e_json_type
 {
 	JSON_TYPE_NULL,
+	JSON_TYPE_BOOL,
 	JSON_TYPE_STRING,
 	JSON_TYPE_NUMBER,
 	JSON_TYPE_OBJECT,
@@ -38,7 +39,6 @@ char *json_to_formatted_string(json_node *json);			// Convert a JSON tree to a f
 json_node *json_find(json_node *json, char *key);			// Find a node in the JSON tree by key (top-level only)
 json_node *json_find_recursive(json_node *json, char *key);	// Find a node in the JSON tree by key (recursive)
 void free_json(json_node *json);							// Free all memory allocated for the JSON tree
+json_node *create_node(json_type type);						// Create a new, empty-initialized node
 
-json_node* create_node(json_type type);
-
-#endif
+#endif // JSON_H

@@ -18,6 +18,6 @@ char	*ft_all_action_json();
 void	ft_reset_actions();
 
 //encode_json_login.c
-char	*ft_create_login_msg(char *team_name, int *argc, char **argv);
+char	*ft_create_login_msg(char *team_name, int argc, char **argv);
 
 #endif

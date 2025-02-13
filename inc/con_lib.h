@@ -87,7 +87,8 @@ typedef enum e_unit_type
 {
 	UNIT_WARRIOR = 0,
 	UNIT_MINER = 1,
-	UNIT_CARRIER = 2
+	UNIT_CARRIER = 2,
+	UNIT_BUILDER = 3
 } t_unit_type;
 
 typedef struct s_unit_config
@@ -112,6 +113,8 @@ typedef struct s_unit_config
 	unsigned long speed;
 	/// @brief The minimum time a unit waits between moves.
 	unsigned long min_speed;
+	/// @brief Whether the unit can build walls.
+	bool can_build;
 } t_unit_config;
 typedef struct s_config
 {
@@ -135,6 +138,8 @@ typedef struct s_config
 	unsigned long initial_balance;
 	/// @brief How much healthpoints a wall has at the start of the game.
 	unsigned long wall_hp;
+	/// @brief How much it costs for a builder to build a wall.
+	unsigned long wall_build_cost;
 	/// @brief List of all unit types that are available in the game. NULL-terminated.
 	t_unit_config **units;
 } t_config;
@@ -154,6 +159,11 @@ typedef struct s_action_transfer_money
 	unsigned long target_id;
 	unsigned long amount;
 } t_action_transfer_money;
+typedef struct s_action_build
+{
+	unsigned long id;
+	t_pos pos;
+} t_action_build;
 typedef struct s_actions
 {
 	t_action_create *creates;
@@ -162,6 +172,8 @@ typedef struct s_actions
 	unsigned int travels_count;
 	t_action_transfer_money *transfer_moneys;
 	unsigned int transfer_moneys_count;
+	t_action_build *builds;
+	unsigned int builds_count;
 } t_actions;
 
 typedef struct s_game
@@ -210,7 +222,7 @@ typedef struct s_game
 */
 extern t_game game;
 
-void ft_init_con(char *team_name, int *argc, char **argv);
+void ft_init_con(char *team_name, int argc, char **argv);
 void ft_close_con();
 void ft_enable_debug();
 void ft_loop(void (*ft_init_func)(void *ptr), void (*ft_user_loop)(void *ptr), void (*ft_on_exit)(void *ptr), void *ptr);
@@ -300,6 +312,13 @@ void	ft_travel_to_pos(t_obj *unit, t_pos pos);
  * @param amount The amount of money that should be transferred.
  */
 void	ft_transfer_money(t_obj *source, t_obj *target, unsigned long amount);
+/**
+ * @brief Builds a wall at a specific position. Won't work if unit isn't a builder.
+ * 
+ * @param builder The builder that should build the wall.
+ * @param pos The position where the wall should be built.
+ */
+void	ft_build(t_obj *builder, t_pos pos);
 
 // -------------- print_utils.c --------------
 /**
@@ -343,4 +362,4 @@ void	ft_free_game();
 void	ft_free_config();
 void	ft_perror_exit(char *msg);
 
-#endif
+#endif // CON_LIB_H

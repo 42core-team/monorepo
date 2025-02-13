@@ -113,3 +113,27 @@ void	ft_transfer_money(t_obj *source, t_obj *target, unsigned long amount)
 	(*actions)[*count].amount = amount;
 	(*count)++;
 }
+
+void	ft_build(t_obj *builder, t_pos pos)
+{
+	if (!builder || builder->type != OBJ_UNIT || builder->s_unit.type_id != UNIT_BUILDER)
+		return;
+	if (builder->s_unit.balance < game.config.wall_build_cost)
+		return;
+
+	t_action_build	**actions = &game.actions.builds;
+	unsigned int	*count = &game.actions.builds_count;
+
+	if (!*actions)
+	{
+		*actions = malloc(sizeof(t_action_build) * 2);
+		*count = 0;
+	}
+	else
+		*actions = realloc(*actions, sizeof(t_action_build) * (*count + 2));
+	(*actions)[*count + 1].id = 0;
+
+	(*actions)[*count].id = builder->id;
+	(*actions)[*count].pos = pos;
+	(*count)++;
+}

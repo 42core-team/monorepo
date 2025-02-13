@@ -1,8 +1,12 @@
 #include "parse_json.h"
 
-char	*ft_create_login_msg(char *team_name, int *argc, char **argv)
+char	*ft_create_login_msg(char *team_name, int argc, char **argv)
 {
-	(void)argc;
+	if (argc < 2)
+	{
+		printf("Missing team id argument, cannot send login message.\n");
+		exit(1);
+	}
 
 	json_node * root = create_node(JSON_TYPE_OBJECT);
 	root->array = malloc(sizeof(json_node *) * 4);

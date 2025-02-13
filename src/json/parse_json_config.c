@@ -31,6 +31,7 @@ static t_unit_config	**ft_parse_unit_config(json_node * root)
 		units[i]->dmg_unit = (long)json_find(unit_node, "damageUnit")->number;
 		units[i]->dmg_resource = (long)json_find(unit_node, "damageResource")->number;
 		units[i]->dmg_wall = (long)json_find(unit_node, "damageWall")->number;
+		units[i]->can_build = json_find(unit_node, "canBuild")->number;
 	}
 	units[array_size] = NULL;
 
@@ -51,7 +52,8 @@ void	ft_parse_json_config(char *json)
 	game.config.core_hp = (unsigned long)json_find(root, "coreHp")->number;
 	game.config.initial_balance = (unsigned long)json_find(root, "initialBalance")->number;
 	game.config.wall_hp = (unsigned long)json_find(root, "wallHp")->number;
-	
+	game.config.wall_build_cost = (unsigned long)json_find(root, "wallBuildCost")->number;
+
 	game.config.units = ft_parse_unit_config(root);
 	
 	free_json(root);
