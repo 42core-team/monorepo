@@ -25,6 +25,8 @@ void BuildAction::execute(Game *game, Core * core)
 	if (builderObj == nullptr || builderObj->getType() != ObjectType::Unit)
 		return;
 	Unit *builder = dynamic_cast<Unit *>(builderObj);
+	if (!Config::getInstance().units[builder->getTypeId()].canBuild)
+		return;
 
 	if (game->getObjectAtPos(position_) != nullptr)
 		return;

@@ -32,6 +32,8 @@ GameConfig Config::defaultConfig()
 	warrior.damageUnit = 6;
 	warrior.damageResource = 2;
 	warrior.damageWall = 3;
+	warrior.attackType = AttackType::DIRECT_HIT;
+	warrior.attackReach = 1;
 	warrior.canBuild = false;
 	config.units.push_back(warrior);
 
@@ -46,6 +48,8 @@ GameConfig Config::defaultConfig()
 	miner.damageResource = 10;
 	miner.damageWall = 5;
 	miner.canBuild = false;
+	miner.attackType = AttackType::DIRECT_HIT;
+	miner.attackReach = 1;
 	config.units.push_back(miner);
 
 	UnitConfig carrier;
@@ -58,6 +62,8 @@ GameConfig Config::defaultConfig()
 	carrier.damageUnit = 2;
 	carrier.damageResource = 4;
 	carrier.damageWall = 3;
+	carrier.attackType = AttackType::DIRECT_HIT;
+	carrier.attackReach = 1;
 	carrier.canBuild = false;
 	config.units.push_back(carrier);
 
@@ -71,8 +77,25 @@ GameConfig Config::defaultConfig()
 	builder.damageUnit = 3;
 	builder.damageResource = 2;
 	builder.damageWall = 3;
+	builder.attackType = AttackType::DIRECT_HIT;
+	builder.attackReach = 1;
 	builder.canBuild = true;
 	config.units.push_back(builder);
+
+	UnitConfig archer;
+	archer.name = "Archer";
+	archer.cost = 200;
+	archer.hp = 8;
+	archer.speed = 2;
+	archer.minSpeed = 12;
+	archer.damageCore = 3;
+	archer.damageUnit = 3;
+	archer.damageResource = 0;
+	archer.damageWall = 0;
+	archer.attackType = AttackType::DIRECTION_SHOT;
+	archer.attackReach = 5;
+	archer.canBuild = false;
+	config.units.push_back(archer);
 
 	config.corePositions.push_back({ 0, 0 });   // top left
 	config.corePositions.push_back({ 24, 24 }); // bottom right

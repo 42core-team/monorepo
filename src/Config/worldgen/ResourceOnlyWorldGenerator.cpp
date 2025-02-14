@@ -12,7 +12,7 @@ void ResourceOnlyWorldGenerator::generateWorld(Game * game)
 {
 	unsigned int width = Config::getInstance().width;
 	unsigned int height = Config::getInstance().height;
-	int resourceDensity = 3;
+	int resourceDensity = 10;
 
 	for (unsigned int i = 0; i < width; i++)
 		for (unsigned int j = 0; j < height; j++)

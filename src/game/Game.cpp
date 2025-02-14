@@ -255,6 +255,8 @@ void Game::sendConfig()
 		u["damageUnit"] = unit.damageUnit;
 		u["damageResource"] = unit.damageResource;
 		u["damageWall"] = unit.damageWall;
+		u["attackType"] = (int)unit.attackType;
+		u["attackReach"] = unit.attackReach;
 
 		u["canBuild"] = unit.canBuild;
 

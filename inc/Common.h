@@ -16,14 +16,19 @@ struct Position
 	unsigned int x;
 	unsigned int y;
 
-	bool operator==(const Position& other) const
-	{
-		return x == other.x && y == other.y;
-	}
+	Position(unsigned int x, unsigned int y) : x(x), y(y) {}
+	Position() : x(-1), y(-1) {} // purposeful overflow, max val to indicate invalidity
+
 	bool isValid(unsigned int maxX, unsigned int maxY) const
 	{
 		return x < maxX && y < maxY;
 	}
+
+	bool operator==(const Position& other) const
+	{
+		return x == other.x && y == other.y;
+	}
+
 	Position operator+(const MovementDirection& dir) const
 	{
 		Position newPos = *this;
@@ -48,17 +53,23 @@ struct Position
 	{
 		return {x + other.x, y + other.y};
 	}
+	Position operator+(unsigned int scalar) const
+	{
+		return {x + scalar, y + scalar};
+	}
+	Position operator-(const Position& other) const
+	{
+		return {x - other.x, y - other.y};
+	}
 	Position operator*(unsigned int scalar) const
 	{
 		return {x * scalar, y * scalar};
 	}
+
 	double distance(const Position& other) const
 	{
 		return sqrt(pow(x - other.x, 2) + pow(y - other.y, 2));
 	}
-
-	Position(unsigned int x, unsigned int y) : x(x), y(y) {}
-	Position() : x(-1), y(-1) {} // purposeful overflow, max val to indicate invalidity
 };
 
 #endif // COMMON_H

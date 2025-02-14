@@ -31,6 +31,8 @@ void Game::visualizeGameState(unsigned long long tick)
 						unitInd = "Cc";
 					else if (unit->getTypeId() == 3)
 						unitInd = "Bb";
+					else if (unit->getTypeId() == 4)
+						unitInd = "Aa";
 					std::cout << unitInd[unit->getTeamId() % 2];
 				}
 				else if (obj->getType() == ObjectType::Resource)
