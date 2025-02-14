@@ -88,8 +88,14 @@ typedef enum e_unit_type
 	UNIT_WARRIOR = 0,
 	UNIT_MINER = 1,
 	UNIT_CARRIER = 2,
-	UNIT_BUILDER = 3
+	UNIT_BUILDER = 3,
+	UNIT_ARCHER = 4
 } t_unit_type;
+typedef enum e_attack_type
+{
+	ATTACK_DIRECT_HIT = 0,
+	ATTACK_DIRECTION_SHOT = 1
+} t_attack_type;
 
 typedef struct s_unit_config
 {
@@ -102,13 +108,17 @@ typedef struct s_unit_config
 	/// @brief How much healthpoints the unit has.
 	unsigned long hp;
 	/// @brief How much damage the unit deals to cores.
-	long dmg_core;
+	unsigned long dmg_core;
 	/// @brief How much damage the unit deals to units.
-	long dmg_unit;
+	unsigned long dmg_unit;
 	/// @brief How much damage the unit deals to resources.
-	long dmg_resource;
+	unsigned long dmg_resource;
 	/// @brief How much damage the unit deals to walls.
-	long dmg_wall;
+	unsigned long dmg_wall;
+	/// @brief The units attack type.
+	t_attack_type attack_type;
+	/// @brief The maximum reach the unit can attack. Unused for direct hit attack type units.
+	unsigned long attack_reach;
 	/// @brief The time a unit waits between moves.
 	unsigned long speed;
 	/// @brief The minimum time a unit waits between moves.
@@ -362,4 +372,4 @@ void	ft_free_game();
 void	ft_free_config();
 void	ft_perror_exit(char *msg);
 
-#endif // CON_LIB_H
+#endif
