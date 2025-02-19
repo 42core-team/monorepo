@@ -98,7 +98,11 @@ bool MoveAction::execute(Game *game, Core * core)
 
 	Object * obj = game->getObjectAtPos(newPos);
 	if (!obj)
+	{
 		unit->setPosition(newPos);
+		unit->resetNextMoveOpp();
+		return true;
+	}
 
 	if (attackType == AttackType::DIRECT_HIT)
 	{

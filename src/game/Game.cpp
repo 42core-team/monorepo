@@ -132,7 +132,13 @@ void Game::tick(unsigned long long tick)
 	// 3. SEND STATE
 
 	sendState(actions);
-	visualizeGameState(tick);
+	// visualizeGameState(tick);
+
+	for (auto& action : actions)
+	{
+		if (action.first != nullptr)
+			delete action.first;
+	}
 }
 
 void Game::sendState(std::vector<std::pair<Action *, Core &>> actions)
