@@ -21,8 +21,8 @@ typedef enum e_status
 
 typedef enum e_obj_type
 {
-	OBJ_UNIT,
 	OBJ_CORE,
+	OBJ_UNIT,
 	OBJ_RESOURCE,
 	OBJ_WALL
 } t_obj_type;
@@ -80,6 +80,11 @@ typedef struct s_obj
 			/// @brief The next time the unit can move, as defined by it's speed & how much it's carrying.
 			unsigned long next_movement_opp;
 		}	s_unit;
+		struct
+		{
+			/// @brief The amount of money the resource is carrying.
+			unsigned long balance;
+		}	s_resource;
 	};
 } t_obj;
 
