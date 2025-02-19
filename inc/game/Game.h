@@ -4,6 +4,7 @@
 #include <vector>
 #include <chrono>
 #include <iostream>
+#include <fstream>
 
 #include "Config.h"
 #include "Core.h"
@@ -14,6 +15,7 @@
 #include "Action.h"
 #include "Utils.h"
 #include "ResourceOnlyWorldGenerator.h"
+#include "ReplayEncoder.h"
 
 #include "json.hpp"
 using json = nlohmann::ordered_json;
@@ -44,6 +46,8 @@ class Game
 		unsigned int nextObjectId_;
 		std::vector<std::unique_ptr<Object>> objects_;
 		std::vector<Bridge*> bridges_;
+
+		ReplayEncoder replayEncoder_;
 
 		void visualizeGameState(unsigned long long tick);
 };

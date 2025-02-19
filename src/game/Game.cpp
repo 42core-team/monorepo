@@ -70,6 +70,12 @@ void Game::run()
 
 		tickCount++;
 	}
+
+	std::cout << "Game over!" << std::endl;
+	json replay = replayEncoder_.getReplay();
+	std::ofstream replayFile("replay_" + std::to_string(std::chrono::system_clock::now().time_since_epoch().count()) + ".json");
+	replayFile << replay.dump(4);
+	replayFile.close();
 }
 
 void Game::tick(unsigned long long tick)
@@ -120,6 +126,7 @@ void Game::tick(unsigned long long tick)
 			if (obj->getType() == ObjectType::Unit)
 				objects_.push_back(std::make_unique<Resource>(getNextObjectId(), obj->getPosition(), ((Unit *)obj)->getBalance())); // drop balance on death
 			it = objects_.erase(it);
+			teamCount_--;
 			// TODO: handle game over (send message, disconnect bridge, decrease teamCount_)
 		}
 		else
@@ -189,11 +196,10 @@ void Game::sendState(std::vector<std::pair<Action *, Core &>> actions, unsigned 
 
 		state["actions"].push_back(action.first->encodeJSON());
 	}
-	
+
+	replayEncoder_.addTickState(state);
 	for (auto bridge : bridges_)
-	{
 		bridge->sendMessage(state);
-	}
 }
 void Game::sendConfig()
 {
