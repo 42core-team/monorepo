@@ -170,7 +170,7 @@ void	ft_parse_json_state(char *json)
 		}
 		if (readObj.type == OBJ_UNIT)
 		{
-			readObj.s_unit.type_id = (unsigned long)json_find(objects->array[i], "type")->number;
+			readObj.s_unit.type_id = (unsigned long)json_find(objects->array[i], "typeId")->number;
 			readObj.s_unit.team_id = (unsigned long)json_find(objects->array[i], "teamId")->number;
 			readObj.s_unit.balance = (unsigned long)json_find(objects->array[i], "balance")->number;
 			readObj.s_unit.next_movement_opp = (unsigned long)json_find(objects->array[i], "nextMoveOpp")->number;
