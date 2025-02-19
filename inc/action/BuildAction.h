@@ -13,7 +13,9 @@ class BuildAction : public Action
 	public:
 		BuildAction(json msg);
 
-		void execute(Game *game, Core * core);
+		bool execute(Game *game, Core * core);
+		void decodeJSON(json msg);
+		json encodeJSON();
 
 		unsigned int getBuilderId() const { return builder_id_; }
 		Position getPosition() const { return position_; }

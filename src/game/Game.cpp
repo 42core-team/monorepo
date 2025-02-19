@@ -57,7 +57,6 @@ void Game::run()
 		std::this_thread::sleep_until(nextTickTime);
 
 		tick(tickCount);
-		sendState();
 
 		alivePlayers = 0;
 		for (const auto & objPtr : objects_)
@@ -104,9 +103,11 @@ void Game::tick(unsigned long long tick)
 		Action * action = actions[i].first;
 		Core & core = actions[i].second;
 
-		action->execute(this, &core);
-
-		delete action;
+		if (!action->execute(this, &core))
+		{
+			delete action;
+			actions[i].first = nullptr;
+		}
 	}
 
 	// 2. UPDATE OBJECTS
@@ -128,10 +129,13 @@ void Game::tick(unsigned long long tick)
 		}
 	}
 
+	// 3. SEND STATE
+
+	sendState(actions);
 	visualizeGameState(tick);
 }
 
-void Game::sendState()
+void Game::sendState(std::vector<std::pair<Action *, Core &>> actions)
 {
 	json state;
 
@@ -211,6 +215,16 @@ void Game::sendState()
 		w["hp"] = wall.getHP();
 
 		state["walls"].push_back(w);
+	}
+
+	// append all actions that were executed without issues this turn
+	state["actions"] = json::array();
+	for (auto& action : actions)
+	{
+		if (action.first == nullptr)
+			continue;
+
+		state["actions"].push_back(action.first->encodeJSON());
 	}
 	
 	for (auto bridge : bridges_)

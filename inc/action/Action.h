@@ -34,7 +34,9 @@ class Action
 
 		static std::vector<Action *> parseActions(json msg);
 
-		virtual void execute(Game *game, Core * core) = 0;
+		virtual bool execute(Game *game, Core * core) = 0;
+		virtual void decodeJSON(json msg) = 0;
+		virtual json encodeJSON() = 0;
 
 	protected:
 		bool is_valid_;
@@ -49,4 +51,3 @@ class Action
 #include "Game.h"
 
 #endif // ACTION_H
-

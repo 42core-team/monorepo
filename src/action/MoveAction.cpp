@@ -2,6 +2,11 @@
 
 MoveAction::MoveAction(json msg) : Action(ActionType::MOVE)
 {
+	decodeJSON(msg);
+}
+
+void MoveAction::decodeJSON(json msg)
+{
 	if (!msg.contains("unit_id") || !msg.contains("dir"))
 	{
 		is_valid_ = false;
@@ -22,11 +27,35 @@ MoveAction::MoveAction(json msg) : Action(ActionType::MOVE)
 	else
 		is_valid_ = false;
 }
+json MoveAction::encodeJSON()
+{
+	json js;
 
-static void attackObj(Object *obj, Unit * unit) // returns object new hp, 1 if no object present
+	js["type"] = "move";
+	js["unit_id"] = unit_id_;
+	switch (dir_)
+	{
+	case MovementDirection::UP:
+		js["dir"] = "u";
+		break;
+	case MovementDirection::DOWN:
+		js["dir"] = "d";
+		break;
+	case MovementDirection::LEFT:
+		js["dir"] = "l";
+		break;
+	case MovementDirection::RIGHT:
+		js["dir"] = "r";
+		break;
+	}
+
+	return js;
+}
+
+static bool attackObj(Object *obj, Unit * unit) // returns object new hp, 1 if no object present
 {
 	if (!obj)
-		return;
+		return false;
 	if (obj->getType() == ObjectType::Unit)
 	{
 		obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageUnit);
@@ -42,27 +71,28 @@ static void attackObj(Object *obj, Unit * unit) // returns object new hp, 1 if n
 		((Resource *)obj)->getMined(unit);
 	else if (obj->getType() == ObjectType::Wall)
 		obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageWall);
-}
 
-void MoveAction::execute(Game *game, Core * core)
+	return true;
+}
+bool MoveAction::execute(Game *game, Core * core)
 {
 	if (!is_valid_)
-		return;
+		return false;
 
 	Object * unitObj = game->getObject(getUnitId());
 
 	if (!unitObj || unitObj->getType() != ObjectType::Unit)
-		return;
+		return false;
 	Unit * unit = (Unit *)unitObj;
 	if (!unit->canTravel())
-		return;
+		return false;
 	if (unit->getTeamId() != core->getTeamId())
-		return;
+		return false;
 
 	Position unitPos = unit->getPosition();
 	Position newPos = unitPos + getDirection();
 	if (!newPos.isValid(Config::getInstance().width, Config::getInstance().height))
-		return;
+		return false;
 
 	AttackType attackType = Config::getInstance().units[unit->getTypeId()].attackType;
 
@@ -72,7 +102,8 @@ void MoveAction::execute(Game *game, Core * core)
 
 	if (attackType == AttackType::DIRECT_HIT)
 	{
-		attackObj(obj, unit);
+		if (!attackObj(obj, unit))
+			return false;
 	}
 	else if (attackType == AttackType::DIRECTION_SHOT)
 	{
@@ -90,7 +121,8 @@ void MoveAction::execute(Game *game, Core * core)
 				continue;
 
 			Object* shotObj = game->getObjectAtPos(posI);
-			attackObj(shotObj, unit);
+			if (!attackObj(shotObj, unit))
+				return false;
 		}
 	}
 	else
@@ -99,4 +131,6 @@ void MoveAction::execute(Game *game, Core * core)
 	}
 
 	unit->resetNextMoveOpp();
+
+	return true;
 }

@@ -17,7 +17,9 @@ class TransferMoneyAction : public Action
 		unsigned int getTargetObjId() const { return target_id_; }
 		unsigned int getAmount() const { return amount_; }
 
-		void execute(Game *game, Core * core);
+		bool execute(Game *game, Core * core);
+		void decodeJSON(json msg);
+		json encodeJSON();
 	
 	private:
 		unsigned int source_id_;
