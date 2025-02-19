@@ -17,21 +17,29 @@ t_obj	*ft_get_my_core(void)
 	return (NULL);
 }
 
-t_obj	*ft_get_first_opponent_core(void)
+t_obj	*ft_get_nearest_opponent_core(t_obj *unit)
 {
 	int	ind = 0;
 
 	if (!game.cores)
 		return (NULL);
 
+	t_obj *core = NULL;
+	double min_dist = __DBL_MAX__;
 	while (game.cores[ind] != NULL)
 	{
 		if (game.cores[ind]->s_core.team_id != game.my_team_id)
-			return (game.cores[ind]);
+		{
+			if (ft_distance(game.cores[ind], unit) < min_dist)
+			{
+				core = game.cores[ind];
+				min_dist = ft_distance(game.cores[ind], unit);
+			}
+		}
 		ind++;
 	}
 
-	return (NULL);
+	return (core);
 }
 
 t_obj	*ft_get_nearest_core(t_obj *obj)

@@ -250,7 +250,7 @@ t_obj	*ft_get_my_core(void);
 /**
  * @brief Get the first opponent core
  */
-t_obj	*ft_get_first_opponent_core(void);
+t_obj	*ft_get_nearest_opponent_core(t_obj *unit);
 /**
  * @brief Get the nearest core to the given obj
  */
