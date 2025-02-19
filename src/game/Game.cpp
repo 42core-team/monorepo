@@ -131,8 +131,8 @@ void Game::tick(unsigned long long tick)
 
 	// 3. SEND STATE
 
-	sendState(actions);
-	// visualizeGameState(tick);
+	sendState(actions, tick);
+	visualizeGameState(tick);
 
 	for (auto& action : actions)
 	{
@@ -141,86 +141,43 @@ void Game::tick(unsigned long long tick)
 	}
 }
 
-void Game::sendState(std::vector<std::pair<Action *, Core &>> actions)
+void Game::sendState(std::vector<std::pair<Action *, Core &>> actions, unsigned long long tick)
 {
 	json state;
 
-	state["cores"] = json::array();
+	state["tick"] = tick;
+
+	state["objects"] = json::array();
 	for (auto& objPtr : objects_)
 	{
 		Object & obj = *objPtr;
-		if (obj.getType() != ObjectType::Core)
-			continue;
-		Core & core = (Core &)obj;
 
-		json c;
+		json o;
 
-		c["id"] = core.getId();
-		c["teamId"] = core.getTeamId();
-		c["x"] = core.getPosition().x;
-		c["y"] = core.getPosition().y;
-		c["hp"] = core.getHP();
-		c["balance"] = core.getBalance();
+		o["id"] = obj.getId();
+		o["type"] = (int)obj.getType();
+		o["x"] = obj.getPosition().x;
+		o["y"] = obj.getPosition().y;
+		o["hp"] = obj.getHP();
 
-		state["cores"].push_back(c);
-	}
+		if (obj.getType() == ObjectType::Core)
+		{
+			o["teamId"] = ((Core &)obj).getTeamId();
+			o["balance"] = ((Core &)obj).getBalance();
+		}
+		if (obj.getType() == ObjectType::Unit)
+		{
+			o["teamId"] = ((Unit &)obj).getTeamId();
+			o["typeId"] = ((Unit &)obj).getTypeId();
+			o["balance"] = ((Unit &)obj).getBalance();
+			o["nextMoveOpp"] = ((Unit &)obj).getNextMoveOpp();
+		}
+		if (obj.getType() == ObjectType::Resource)
+		{
+			o["balance"] = ((Resource &)obj).getBalance();
+		}
 
-	state["units"] = json::array();
-	for (auto& objPtr : objects_)
-	{
-		Object & obj = *objPtr;
-		if (obj.getType() != ObjectType::Unit)
-			continue;
-		Unit & unit = (Unit &)obj;
-
-		json u;
-
-		u["id"] = unit.getId();
-		u["teamId"] = unit.getTeamId();
-		u["x"] = unit.getPosition().x;
-		u["y"] = unit.getPosition().y;
-		u["hp"] = unit.getHP();
-		u["type"] = unit.getTypeId();
-		u["balance"] = unit.getBalance();
-		u["nextMoveOpp"] = unit.getNextMoveOpp();
-
-		state["units"].push_back(u);
-	}
-
-	state["resources"] = json::array();
-	for (auto& objPtr : objects_)
-	{
-		Object & obj = *objPtr;
-		if (obj.getType() != ObjectType::Resource)
-			continue;
-		Resource & resource = (Resource &)obj;
-
-		json r;
-
-		r["id"] = resource.getId();
-		r["x"] = resource.getPosition().x;
-		r["y"] = resource.getPosition().y;
-		r["hp"] = resource.getHP();
-
-		state["resources"].push_back(r);
-	}
-
-	state["walls"] = json::array();
-	for (auto& objPtr : objects_)
-	{
-		Object & obj = *objPtr;
-		if (obj.getType() != ObjectType::Wall)
-			continue;
-		Wall & wall = (Wall &)obj;
-
-		json w;
-
-		w["id"] = wall.getId();
-		w["x"] = wall.getPosition().x;
-		w["y"] = wall.getPosition().y;
-		w["hp"] = wall.getHP();
-
-		state["walls"].push_back(w);
+		state["objects"].push_back(o);
 	}
 
 	// append all actions that were executed without issues this turn

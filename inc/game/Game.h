@@ -37,7 +37,7 @@ class Game
 
 	private:
 		void tick(unsigned long long tick);
-		void sendState(std::vector<std::pair<Action *, Core &>> actions);
+		void sendState(std::vector<std::pair<Action *, Core &>> actions, unsigned long long tick);
 		void sendConfig();
 
 		unsigned int teamCount_;

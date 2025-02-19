@@ -4,6 +4,7 @@
 #include "Common.h"
 #include "Config.h"
 
+// must be in same order as t_obj_type in connection lib
 enum class ObjectType
 {
 	Core,
