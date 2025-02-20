@@ -74,7 +74,7 @@ void Game::run()
 	std::cout << "Game over!" << std::endl;
 	json replay = replayEncoder_.getReplay();
 	std::ofstream replayFile("replay_" + std::to_string(std::chrono::system_clock::now().time_since_epoch().count()) + ".json");
-	replayFile << replay.dump(4);
+	replayFile << replay.dump();
 	replayFile.close();
 }
 
