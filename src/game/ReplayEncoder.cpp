@@ -9,7 +9,7 @@ json ReplayEncoder::diffObject(const json& currentObj, const json& previousObj)
 	for (auto it = currentObj.begin(); it != currentObj.end(); ++it)
 	{
 		const std::string& key = it.key();
-		if (key == "id")
+		if (key == "id" || key == "nextMoveOpp")
 			continue;
 
 		if (previousObj.find(key) == previousObj.end() || previousObj.at(key) != it.value())
