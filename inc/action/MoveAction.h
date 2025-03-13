@@ -5,6 +5,7 @@
 
 #include "Action.h"
 #include "Common.h"
+#include "Unit.h"
 
 #include "json.hpp"
 using json = nlohmann::ordered_json;
@@ -24,6 +25,9 @@ class MoveAction : public Action
 	private:
 		unsigned int unit_id_;
 		MovementDirection dir_;
+		bool attacked_;
+
+		bool attackObj(Object *obj, Unit * unit);
 };
 
 #endif // MOVE_ACTION_H

@@ -1,6 +1,6 @@
 #include "MoveAction.h"
 
-MoveAction::MoveAction(json msg) : Action(ActionType::MOVE)
+MoveAction::MoveAction(json msg) : Action(ActionType::MOVE), attacked_(false)
 {
 	decodeJSON(msg);
 }
@@ -48,11 +48,13 @@ json MoveAction::encodeJSON()
 		js["dir"] = "r";
 		break;
 	}
+	if (attacked_)
+		js["attacked"] = attacked_;
 
 	return js;
 }
 
-static bool attackObj(Object *obj, Unit * unit) // returns object new hp, 1 if no object present
+bool MoveAction::attackObj(Object *obj, Unit * unit) // returns object new hp, 1 if no object present
 {
 	if (!obj)
 		return false;
@@ -71,6 +73,8 @@ static bool attackObj(Object *obj, Unit * unit) // returns object new hp, 1 if n
 		((Resource *)obj)->getMined(unit);
 	else if (obj->getType() == ObjectType::Wall)
 		obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageWall);
+
+	attacked_ = true;
 
 	return true;
 }

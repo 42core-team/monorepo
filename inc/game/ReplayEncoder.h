@@ -11,6 +11,7 @@ public:
 	~ReplayEncoder() = default;
 
 	void addTickState(const json& state);
+	void includeConfig(json& config);
 	json getReplay() const;
 
 private:
@@ -18,6 +19,7 @@ private:
 	json diffObject(const json& currentObj, const json& previousObj);
 
 	json ticks_;
+	json config_;
 
 	std::unordered_map<int, json> previousObjects_;
 

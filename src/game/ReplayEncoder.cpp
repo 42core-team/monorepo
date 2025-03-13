@@ -82,18 +82,26 @@ void ReplayEncoder::addTickState(const json& state)
 	json actions = state.value("actions", json::array());
 
 	json tickDiff;
-	tickDiff["objects"] = objectsDiff;
-	tickDiff["actions"] = actions;
+	if (!objectsDiff.empty())
+		tickDiff["objects"] = objectsDiff;
+	if (!actions.empty())
+		tickDiff["actions"] = actions;
 
 	ticks_[std::to_string(tick)] = tickDiff;
 
 	lastTickCount_ = tick;
 }
 
+void ReplayEncoder::includeConfig(json& config)
+{
+	config_ = config;
+}
+
 json ReplayEncoder::getReplay() const
 {
 	json finalReplay;
 	finalReplay["ticks"] = ticks_;
+	finalReplay["config"] = config_;
 	finalReplay["full_tick_amount"] = lastTickCount_;
 	return finalReplay;
 }
