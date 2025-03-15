@@ -37,7 +37,7 @@ t_obj *ft_get_obj_at_pos(t_pos pos)
 	t_obj	**objs;
 	int		i;
 
-	for (int obj_type = 0; obj_type < 3; obj_type++)
+	for (int obj_type = 0; obj_type < 4; obj_type++)
 	{
 		switch (obj_type)
 		{
@@ -49,6 +49,9 @@ t_obj *ft_get_obj_at_pos(t_pos pos)
 				break;
 			case 2:
 				objs = game.resources;
+				break;
+			case 3:
+				objs = game.walls;
 				break;
 		}
 

@@ -247,6 +247,10 @@ void ft_loop(void (*ft_init_func)(void *ptr), void (*ft_user_loop)(void *ptr), v
  * @brief Get any object based on its id
  */
 t_obj	*ft_get_obj_from_id(unsigned long id);
+/*
+ * @brief Get the object at a specific position or null
+ */
+t_obj	*ft_get_obj_at_pos(t_pos pos);
 // --------------- core getter ---------------
 /**
  * @brief Get my core
