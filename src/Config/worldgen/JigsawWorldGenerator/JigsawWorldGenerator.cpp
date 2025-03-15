@@ -71,6 +71,20 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game* game, const MapTemplate &temp,
 			if (cell == ' ')
 				continue;
 
+			bool tooClose = false;
+			for (const auto &core : game->getCores())
+			{
+				int dx = posX + x - core.getPosition().x;
+				int dy = posY + y - core.getPosition().y;
+				if (std::sqrt(dx * dx + dy * dy) < coreSafeRange_)
+				{
+					tooClose = true;
+					break;
+				}
+			}
+			if (tooClose)
+				continue;
+
 			Position targetPos(posX + x, posY + y);
 			if (cell == 'X')
 				game->getObjects().push_back(std::make_unique<Wall>(game->getNextObjectId(), targetPos));

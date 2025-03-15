@@ -21,8 +21,8 @@ class JigsawWorldGenerator {
 	private:
 		std::vector<MapTemplate> templates_;
 		int minSpacing_ = 1;
-		int coreSafeRange_ = 3;
-		int expectedResourceCount_ = 30;
+		int coreSafeRange_ = 4;
+		int expectedResourceCount_ = 20;
 
 		std::default_random_engine eng_ = std::default_random_engine(std::chrono::system_clock::now().time_since_epoch().count());
 
