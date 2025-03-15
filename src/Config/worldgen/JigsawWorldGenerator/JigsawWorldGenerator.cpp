@@ -210,11 +210,12 @@ void JigsawWorldGenerator::generateWorld(Game* game)
 
 	for (int i = 0; i < 100; ++i)
 	{
-		const MapTemplate &temp = templates_[templateDist(eng_)];
+		const MapTemplate &original = templates_[templateDist(eng_)];
+		MapTemplate temp = original.getTransformedTemplate(eng_);
 		int posX = distX(eng_);
 		int posY = distY(eng_);
 		if (tryPlaceTemplate(game, temp, posX, posY))
-			std::cout << "Successfully placed a template at (" << posX << ", " << posY << ")\n";
+			std::cout << "Successfully placed a template " + temp.name + " at (" << posX << ", " << posY << ")\n";
 	}
 
 	balanceResources(game);
