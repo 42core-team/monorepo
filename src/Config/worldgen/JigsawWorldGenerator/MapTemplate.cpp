@@ -1,12 +1,14 @@
 #include "MapTemplate.h"
 
-void MapTemplate::loadFromFile(const std::string &filepath) {
+void MapTemplate::loadFromFile(const std::string &filepath)
+{
 	std::ifstream infile(filepath);
 	if (!infile)
 		throw std::runtime_error("Unable to open template file: " + filepath);
 	
 	std::string line;
-	while (std::getline(infile, line)) {
+	while (std::getline(infile, line))
+	{
 		std::vector<char> row(line.begin(), line.end());
 		grid.push_back(row);
 	}
