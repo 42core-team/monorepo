@@ -56,8 +56,8 @@ GameConfig Config::defaultConfig()
 	carrier.name = "Carrier";
 	carrier.cost = 125;
 	carrier.hp = 20;
-	carrier.speed = 4;
-	carrier.minSpeed = 10; // no slowdown when carrying money
+	carrier.speed = 3;
+	carrier.minSpeed = 5;
 	carrier.damageCore = 3;
 	carrier.damageUnit = 2;
 	carrier.damageResource = 4;
