@@ -8,7 +8,7 @@ Game::Game(std::vector<unsigned int> team_ids) : teamCount_(team_ids.size()), ne
 	shuffle_vector(team_ids_double); // randomly assign core positions to ensure fairness
 	for (unsigned int i = 0; i < team_ids.size(); ++i)
 		objects_.push_back(std::make_unique<Core>(getNextObjectId(), team_ids_double[i], Config::getCorePosition(i)));
-	ResourceOnlyWorldGenerator generator;
+	JigsawWorldGenerator generator;
 	generator.generateWorld(this);
 	Logger::Log("Game created with " + std::to_string(team_ids.size()) + " teams.");
 }
@@ -274,6 +274,22 @@ Core * Game::getCore(unsigned int teamId)
 	}
 
 	return nullptr;
+}
+std::vector<Core> Game::getCores()
+{
+	std::vector<Core> cores;
+	cores.reserve(teamCount_);
+	for (auto& objPtr : objects_)
+	{
+		Object & obj = *objPtr;
+		if (obj.getType() != ObjectType::Core)
+			continue;
+		Core & core = (Core &)obj;
+
+		cores.push_back(core);
+	}
+
+	return cores;
 }
 Object * Game::getObjectAtPos(Position pos)
 {

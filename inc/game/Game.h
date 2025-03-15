@@ -14,7 +14,7 @@
 #include "Bridge.h"
 #include "Action.h"
 #include "Utils.h"
-#include "ResourceOnlyWorldGenerator.h"
+#include "JigsawWorldGenerator.h"
 #include "ReplayEncoder.h"
 
 #include "json.hpp"
@@ -30,6 +30,7 @@ class Game
 		void run();
 
 		Core * getCore(unsigned int teamId);
+		std::vector<Core> getCores();
 		Object * getObject(unsigned int id);
 		std::vector<std::unique_ptr<Object>> & getObjects() { return objects_; }
 
