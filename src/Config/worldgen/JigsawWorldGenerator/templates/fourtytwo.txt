@@ -1,5 +1,5 @@
-X X  XX 
-XeX X eX
-XXX   X 
-  X  Xe 
-  X XXXX
+9 9  99 
+9e9 9 e9
+999   9 
+  9  9e 
+  9 9999
