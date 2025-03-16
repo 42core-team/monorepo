@@ -1,4 +1,5 @@
 #include "parse_json.h"
+#include "event_handler.h"
 
 static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 {
@@ -13,6 +14,18 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 		if ((*arr)[index]->id == obj.id)
 		{
 			t_obj * existingObj = (*arr)[index];
+
+			t_obj_state oldState = existingObj->state;
+			t_pos oldPos = existingObj->pos;
+			unsigned long oldHp = existingObj->hp;
+			unsigned long oldBalance = 0;
+			if ((*arr) == game.units)
+				oldBalance = existingObj->s_unit.balance;
+			if ((*arr) == game.cores)
+				oldBalance = existingObj->s_core.balance;
+			if ((*arr) == game.resources)
+				oldBalance = existingObj->s_resource.balance;
+
 			existingObj->type = obj.type;
 			existingObj->state = STATE_ALIVE;
 			existingObj->id = obj.id;
@@ -34,6 +47,26 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 			{
 				existingObj->s_resource.balance = obj.s_resource.balance;
 			}
+
+			if (event_handler.on_object_state_change && oldState != existingObj->state)
+				event_handler.on_object_state_change(existingObj, oldState, existingObj->state, user_data);
+			if (event_handler.on_object_pos_change && (oldPos.x != existingObj->pos.x || oldPos.y != existingObj->pos.y))
+				event_handler.on_object_pos_change(existingObj, oldPos, existingObj->pos, user_data);
+			if (event_handler.on_object_health_change && oldHp != existingObj->hp)
+				event_handler.on_object_health_change(existingObj, oldHp, existingObj->hp, user_data);
+			if (event_handler.on_object_balance_change)
+			{
+				unsigned long new_balance = 0;
+				if ((*arr) == game.units)
+					new_balance = existingObj->s_unit.balance;
+				else if ((*arr) == game.cores)
+					new_balance = existingObj->s_core.balance;
+				else if ((*arr) == game.resources)
+					new_balance = existingObj->s_resource.balance;
+				if (oldBalance != new_balance)
+					event_handler.on_object_balance_change(existingObj, oldBalance, new_balance, user_data);
+			}
+
 			objInserted = true;
 			break;
 		}
@@ -124,6 +157,8 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 void	ft_parse_json_state(char *json)
 {
 	json_node * root = string_to_json(json);
+
+	parse_json_actions(root);
 
 	game.elapsed_ticks = (unsigned long)json_find(root, "tick")->number;
 
