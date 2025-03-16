@@ -1,6 +1,8 @@
 #ifndef CON_LIB_H
 #define CON_LIB_H
 
+#include "event_handler.h"
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdbool.h>

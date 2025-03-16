@@ -125,14 +125,14 @@ void ft_loop(t_event_handler handler, void *custom_data)
 			event_handler.on_tick(game.elapsed_ticks, custom_data);
 		if (event_handler.on_object_ticked)
 		{
-			for (size_t i = 0; game.resources[i]; i++)
-				event_handler.on_object_ticked(&game.resources[i], game.elapsed_ticks, custom_data);
-			for (size_t i = 0; game.units[i]; i++)
-				event_handler.on_object_ticked(&game.units[i], game.elapsed_ticks, custom_data);
-			for (size_t i = 0; game.walls[i]; i++)
-				event_handler.on_object_ticked(&game.walls[i], game.elapsed_ticks, custom_data);
-			for (size_t i = 0; game.cores[i]; i++)
-				event_handler.on_object_ticked(&game.cores[i], game.elapsed_ticks, custom_data);
+			for (size_t i = 0; game.resources && game.resources[i]; i++)
+				event_handler.on_object_ticked(game.resources[i], game.elapsed_ticks, custom_data);
+			for (size_t i = 0; game.units && game.units[i]; i++)
+				event_handler.on_object_ticked(game.units[i], game.elapsed_ticks, custom_data);
+			for (size_t i = 0; game.walls && game.walls[i]; i++)
+				event_handler.on_object_ticked(game.walls[i], game.elapsed_ticks, custom_data);
+			for (size_t i = 0; game.cores && game.cores[i]; i++)
+				event_handler.on_object_ticked(game.cores[i], game.elapsed_ticks, custom_data);
 		}
 	}
 

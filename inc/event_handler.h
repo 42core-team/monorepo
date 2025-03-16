@@ -5,6 +5,10 @@
 
 extern void * user_data;
 
+typedef struct s_obj t_obj;
+typedef struct s_pos t_pos;
+typedef enum e_obj_state t_obj_state;
+
 typedef struct s_event_handler {
 	// Called on every global tick (how often per second can be found in config)
 	void (*on_tick)(unsigned long tick, void *custom_data);
@@ -23,11 +27,6 @@ typedef struct s_event_handler {
 	void (*on_object_balance_change)(t_obj *obj, unsigned long old_balance, unsigned long new_balance, void *custom_data);
 	// Called when an object's health changes
 	void (*on_object_health_change)(t_obj *obj, unsigned long old_hp, unsigned long new_hp, void *custom_data);
-
-	// Called when a unit changes its target (stub—requires additional state management)
-	void (*on_unit_change_target)(t_obj *unit, t_obj *old_target, t_obj *new_target, void *custom_data);
-	// Called when a unit is attacked (attacker can be NULL if unknown)
-	void (*on_unit_attacked)(t_obj *unit, t_obj *attacker, unsigned long damage, void *custom_data);
 } t_event_handler;
 
 extern t_event_handler event_handler;
