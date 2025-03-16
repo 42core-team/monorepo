@@ -158,6 +158,8 @@ void	ft_parse_json_state(char *json)
 {
 	json_node * root = string_to_json(json);
 
+	parse_json_actions(root);
+
 	game.elapsed_ticks = (unsigned long)json_find(root, "tick")->number;
 
 	json_node * objects = json_find(root, "objects");

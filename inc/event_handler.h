@@ -27,6 +27,13 @@ typedef struct s_event_handler {
 	void (*on_object_balance_change)(t_obj *obj, unsigned long old_balance, unsigned long new_balance, void *custom_data);
 	// Called when an object's health changes
 	void (*on_object_health_change)(t_obj *obj, unsigned long old_hp, unsigned long new_hp, void *custom_data);
+
+	// Called when a unit builds a wall
+	void (*on_unit_build)(t_obj *builder, t_pos pos, void *custom_data);
+	// Called when a unit transfers money to another unit or core
+	void (*on_unit_transfer_money)(t_obj *source_unit, t_obj *target_unit, unsigned long amount, void *custom_data);
+	// Called when a unit attacks another object
+	void (*on_unit_attack)(t_obj *attacker_unit, t_obj *target_unit, unsigned long damage, void *custom_data);
 } t_event_handler;
 
 extern t_event_handler event_handler;
