@@ -113,12 +113,12 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game* game, const MapTemplate &temp,
 				else
 					game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), targetPos));
 			}
-			else if (std::string("uvwxyz!§$%").find(cell) != std::string::npos)
+			else if (std::string("uvwxyz!/$%").find(cell) != std::string::npos)
 			{
 				int resourceLikelihood = cell - 'u';
 				if (cell == '!')
 					resourceLikelihood = 6;
-				else if (cell == '§')
+				else if (cell == '/')
 					resourceLikelihood = 7;
 				else if (cell == '$')
 					resourceLikelihood = 8;

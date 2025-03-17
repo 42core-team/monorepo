@@ -20,7 +20,7 @@ Please note that template may be randomly mirrored and rotated before being disp
 | 100%   | X    | R        | -                       | -                       |
 | 90%    | 9    | j        | t                       | %                       |
 | 80%    | 8    | i        | s                       | $                       |
-| 70%    | 7    | h        | r                       | §                       |
+| 70%    | 7    | h        | r                       | /                       |
 | 60%    | 6    | g        | q                       | !                       |
 | 50%    | 5    | f        | p                       | z                       |
 | 40%    | 4    | e        | o                       | y                       |
