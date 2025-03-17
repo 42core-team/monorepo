@@ -23,10 +23,11 @@ public:
 
 	MapTemplate getTransformedTemplate(std::default_random_engine &eng) const;
 
+	MapTemplate rotate90() const;
+
 private:
 	void loadFromFile(const std::string &filepath);
 
-	MapTemplate rotate90() const;
 	MapTemplate mirrorHorizontally() const;
 	MapTemplate mirrorVertically() const;
 };

@@ -38,6 +38,8 @@ class Game
 
 		unsigned int getNextObjectId() { return nextObjectId_++; }
 
+		void visualizeGameState(unsigned long long tick);
+
 	private:
 		void tick(unsigned long long tick);
 		void sendState(std::vector<std::pair<Action *, Core &>> actions, unsigned long long tick);
@@ -50,8 +52,6 @@ class Game
 		std::vector<Bridge*> bridges_;
 
 		ReplayEncoder replayEncoder_;
-
-		void visualizeGameState(unsigned long long tick);
 };
 
 #endif // GAME_H
