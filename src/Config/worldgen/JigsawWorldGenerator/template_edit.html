@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Jigsaw World Generator Template Editor</title>
+	<style>
+		/* Dark mode styling for a refined look */
+		body {
+			background: #121212;
+			color: #e0e0e0;
+			font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+			margin: 20px;
+		}
+
+		textarea {
+			background: #1e1e1e;
+			color: #e0e0e0;
+			border: 1px solid #444;
+			padding: 10px;
+			margin-bottom: 20px;
+			width: 100%;
+			box-sizing: border-box;
+		}
+
+		/* Grid container updated with explicit width for proper grid layout */
+		#gridContainer {
+			display: grid;
+			gap: 2px;
+			background: #222;
+			padding: 5px;
+			width: fit-content;
+		}
+
+		/* Adjusted cell size to 50x50 for a larger hitbox */
+		.cell {
+			position: relative;
+			width: 50px;
+			height: 50px;
+			background: #333;
+			border: 1px solid #555;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			cursor: pointer;
+			user-select: none;
+		}
+
+		.plus-cell {
+			background: #333;
+			border: 1px dashed #666;
+			cursor: pointer;
+			text-align: center;
+			line-height: 50px;
+			font-size: 24px;
+			color: #aaa;
+			opacity: 0.6;
+			width: 50px;
+			height: 50px;
+		}
+
+		.inner-plus {
+			font-size: 20px;
+			color: #0af;
+			opacity: 0.8;
+			cursor: pointer;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			width: 100%;
+			height: 100%;
+		}
+
+		.icon {
+			font-size: 24px;
+			line-height: 50px;
+		}
+
+		.icon.overlay {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			text-align: center;
+			pointer-events: none;
+		}
+
+		.chance-label {
+			position: absolute;
+			bottom: 0;
+			right: 2px;
+			font-size: 10px;
+			background: rgba(0, 0, 0, 0.7);
+			padding: 1px 3px;
+			border-radius: 3px;
+		}
+
+		/* Popup styles */
+		#editorPopup,
+		#addPopup {
+			position: absolute;
+			background: #333;
+			color: #e0e0e0;
+			border: 1px solid #555;
+			padding: 10px;
+			z-index: 100;
+			box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+		}
+
+		#editorPopup input[type="range"] {
+			width: 150px;
+		}
+
+		#addPopup button {
+			margin: 2px;
+		}
+
+		/* Styles for the heading and template info */
+		header {
+			margin-bottom: 20px;
+			padding-bottom: 10px;
+			border-bottom: 1px solid #444;
+		}
+
+		header h1,
+		header h2 {
+			margin: 0;
+			padding: 0;
+		}
+
+		header blockquote {
+			font-style: italic;
+			margin: 5px 0;
+		}
+
+		header table {
+			border-collapse: collapse;
+			margin-top: 10px;
+		}
+
+		header table,
+		header th,
+		header td {
+			border: 1px solid #555;
+			padding: 5px;
+		}
+	</style>
+</head>
+
+<body>
+	<header>
+		<h1>Jigsaw World Generator Template Editor</h1>
+		<blockquote>Mix of random and manually put together world assets, which makes cool maps. Editor for said assets.
+		</blockquote>
+	</header>
+	<!-- Text area for raw map data -->
+	<textarea id="mapData" rows="6">X</textarea>
+	<!-- Container for the grid display -->
+	<div id="gridContainer"></div>
+	<!-- Popup for cell editing (chance adjustment & deletion) -->
+	<div id="editorPopup" style="display: none;">
+		<label>
+			Chance: <span id="chanceValue">--%</span>
+		</label>
+		<br />
+		<!-- Slider now spans 0 to 100 in 10% increments -->
+		<input type="range" id="chanceSlider" min="0" max="100" step="10" />
+		<br />
+		<button id="closePopup">Done</button>
+		<button id="deleteCell">Delete</button>
+	</div>
+	<!-- Popup for adding new objects -->
+	<div id="addPopup" style="display: none;">
+		<p>Select object type:</p>
+		<!-- Only fixed options are provided; variable options removed as per your request -->
+		<button class="addChoice" data-char="X">Fixed Wall (X)</button>
+		<button class="addChoice" data-char="R">Fixed Resource (R)</button>
+		<button class="addChoice" data-char="t">Wall, if not resource (t)</button>
+		<button class="addChoice" data-char="%">Resource, if not wall (%)</button>
+		<br />
+		<button id="cancelAdd">Cancel</button>
+	</div>
+	<script>
+		/***********************
+		 * Mapping Definitions *
+		 ***********************/
+		const mapping = {
+			"X": { group: "fixed-wall", chance: 100 },
+			"R": { group: "fixed-resource", chance: 100 },
+			"0": { group: "wall-variable", chance: 0 },
+			"1": { group: "wall-variable", chance: 10 },
+			"2": { group: "wall-variable", chance: 20 },
+			"3": { group: "wall-variable", chance: 30 },
+			"4": { group: "wall-variable", chance: 40 },
+			"5": { group: "wall-variable", chance: 50 },
+			"6": { group: "wall-variable", chance: 60 },
+			"7": { group: "wall-variable", chance: 70 },
+			"8": { group: "wall-variable", chance: 80 },
+			"9": { group: "wall-variable", chance: 90 },
+			"a": { group: "resource-variable", chance: 0 },
+			"b": { group: "resource-variable", chance: 10 },
+			"c": { group: "resource-variable", chance: 20 },
+			"d": { group: "resource-variable", chance: 30 },
+			"e": { group: "resource-variable", chance: 40 },
+			"f": { group: "resource-variable", chance: 50 },
+			"g": { group: "resource-variable", chance: 60 },
+			"h": { group: "resource-variable", chance: 70 },
+			"i": { group: "resource-variable", chance: 80 },
+			"j": { group: "resource-variable", chance: 90 },
+			"k": { group: "wall-otherwise", chance: 0 },
+			"l": { group: "wall-otherwise", chance: 10 },
+			"m": { group: "wall-otherwise", chance: 20 },
+			"n": { group: "wall-otherwise", chance: 30 },
+			"o": { group: "wall-otherwise", chance: 40 },
+			"p": { group: "wall-otherwise", chance: 50 },
+			"q": { group: "wall-otherwise", chance: 60 },
+			"r": { group: "wall-otherwise", chance: 70 },
+			"s": { group: "wall-otherwise", chance: 80 },
+			"t": { group: "wall-otherwise", chance: 90 },
+			"u": { group: "resource-otherwise", chance: 0 },
+			"v": { group: "resource-otherwise", chance: 10 },
+			"w": { group: "resource-otherwise", chance: 20 },
+			"x": { group: "resource-otherwise", chance: 30 },
+			"y": { group: "resource-otherwise", chance: 40 },
+			"z": { group: "resource-otherwise", chance: 50 },
+			"!": { group: "resource-otherwise", chance: 60 },
+			"§": { group: "resource-otherwise", chance: 70 },
+			"$": { group: "resource-otherwise", chance: 80 },
+			"%": { group: "resource-otherwise", chance: 90 }
+		};
+
+		const inverseMapping = {
+			"fixed-wall": { 100: "X" },
+			"fixed-resource": { 100: "R" },
+			"wall-variable": {
+				0: "0",
+				10: "1",
+				20: "2",
+				30: "3",
+				40: "4",
+				50: "5",
+				60: "6",
+				70: "7",
+				80: "8",
+				90: "9",
+				100: "X"
+			},
+			"resource-variable": {
+				0: "a",
+				10: "b",
+				20: "c",
+				30: "d",
+				40: "e",
+				50: "f",
+				60: "g",
+				70: "h",
+				80: "i",
+				90: "j",
+				100: "R"
+			},
+			"wall-otherwise": {
+				0: "k",
+				10: "l",
+				20: "m",
+				30: "n",
+				40: "o",
+				50: "p",
+				60: "q",
+				70: "r",
+				80: "s",
+				90: "t",
+				100: "t"
+			},
+			"resource-otherwise": {
+				0: "u",
+				10: "v",
+				20: "w",
+				30: "x",
+				40: "y",
+				50: "z",
+				60: "!",
+				70: "§",
+				80: "$",
+				90: "%",
+				100: "%"
+			}
+		};
+
+		/****************************
+		 * Global Variables & Icons *
+		 ****************************/
+		const wallIcon = "🧱";
+		const resourceIcon = "💎";
+		const minOpacity = 0.5;
+
+		let gridData = [];
+		const mapDataTextarea = document.getElementById("mapData");
+		const gridContainer = document.getElementById("gridContainer");
+		const editorPopup = document.getElementById("editorPopup");
+		const chanceSlider = document.getElementById("chanceSlider");
+		const chanceValueLabel = document.getElementById("chanceValue");
+		const closePopupBtn = document.getElementById("closePopup");
+		const deleteCellBtn = document.getElementById("deleteCell");
+		const addPopup = document.getElementById("addPopup");
+		const cancelAddBtn = document.getElementById("cancelAdd");
+
+		let selectedCell = null;
+		let selectedCellPos = { row: null, col: null };
+		let insertionInfo = null;
+
+		/******************************************************
+		 * Local Storage Functions - Save & Load Map Data   *
+		 ******************************************************/
+		// Save the current map data from the textarea to localStorage.
+		function saveToLocalStorage() {
+			localStorage.setItem("jigsawMapData", mapDataTextarea.value);
+		}
+
+		// Load saved map data from localStorage (if available) into the textarea.
+		function loadFromLocalStorage() {
+			const savedData = localStorage.getItem("jigsawMapData");
+			if (savedData) {
+				mapDataTextarea.value = savedData;
+			}
+		}
+
+		/************************************
+		 * Utility & Helper Functions *
+		 ************************************/
+		function createEmptyPlaceholder() {
+			return null;
+		}
+
+		function refreshGrid() {
+			// Purge empty rows and columns before re-rendering.
+			gridData = cleanGridData(gridData);
+			renderGrid();
+			updateTextArea();
+		}
+
+		function cleanGridData(data) {
+			// If there are no rows, simply return the data
+			if (data.length === 0) return data;
+
+			// Determine the first and last row indices that contain any non-null cell.
+			let firstRow = 0;
+			while (firstRow < data.length && data[firstRow].every(cell => cell === null)) {
+				firstRow++;
+			}
+			let lastRow = data.length - 1;
+			while (lastRow >= 0 && data[lastRow].every(cell => cell === null)) {
+				lastRow--;
+			}
+			// If all rows are empty, return an empty grid
+			if (firstRow > lastRow) return [];
+
+			// Trim the grid vertically between the first and last non-empty rows.
+			let trimmedRows = data.slice(firstRow, lastRow + 1);
+
+			// Assuming all rows are of equal length, find the first and last columns that contain content.
+			const numCols = trimmedRows[0].length;
+			let firstCol = 0;
+			while (firstCol < numCols) {
+				let allNull = true;
+				for (let r = 0; r < trimmedRows.length; r++) {
+					if (trimmedRows[r][firstCol] !== null) {
+						allNull = false;
+						break;
+					}
+				}
+				if (!allNull) break;
+				firstCol++;
+			}
+			let lastCol = numCols - 1;
+			while (lastCol >= 0) {
+				let allNull = true;
+				for (let r = 0; r < trimmedRows.length; r++) {
+					if (trimmedRows[r][lastCol] !== null) {
+						allNull = false;
+						break;
+					}
+				}
+				if (!allNull) break;
+				lastCol--;
+			}
+			// If no non-empty column is found, return rows of empty arrays.
+			if (firstCol > lastCol) return trimmedRows.map(() => []);
+
+			// Trim each row horizontally from firstCol to lastCol.
+			let trimmedData = trimmedRows.map(row => row.slice(firstCol, lastCol + 1));
+			return trimmedData;
+		}
+
+		function parseMap(text) {
+			const rows = text.split("\n").map(line => line.trimEnd());
+			const maxCols = Math.max(...rows.map(r => r.length));
+			const data = [];
+			for (let r = 0; r < rows.length; r++) {
+				let rowText = rows[r];
+				if (rowText.length < maxCols) {
+					rowText = rowText.padEnd(maxCols, " ");
+				}
+				const rowArray = [];
+				for (let c = 0; c < rowText.length; c++) {
+					const ch = rowText[c];
+					if (ch === " ") {
+						rowArray.push(null);
+					} else if (mapping[ch] !== undefined) {
+						rowArray.push({
+							char: ch,
+							group: mapping[ch].group,
+							chance: mapping[ch].chance
+						});
+					} else {
+						rowArray.push(null);
+					}
+				}
+				data.push(rowArray);
+			}
+			return cleanGridData(data);
+		}
+
+		function getCharForCell(cell) {
+			if (!cell) return " ";
+			if (inverseMapping[cell.group] && inverseMapping[cell.group][cell.chance] !== undefined) {
+				return inverseMapping[cell.group][cell.chance];
+			}
+			return cell.char;
+		}
+
+		function computeOpacity(chance) {
+			return minOpacity + (chance / 100) * (1 - minOpacity);
+		}
+
+		function getPrimaryIcon(cell) {
+			if (!cell) return "";
+			return cell.group.includes("wall") ? wallIcon : resourceIcon;
+		}
+
+		function isEditable(cell) {
+			return cell != null;
+		}
+
+		/****************************
+		 * Rendering the Grid *
+		 ****************************/
+		function getBackgroundColor(cell) {
+			if (cell.group === "fixed-wall" || cell.group === "wall-variable") {
+				// For walls: brown if chance >= 50%, otherwise gray.
+				return cell.chance >= 50 ? "#8B4513" : "#333";
+			} else if (cell.group === "fixed-resource" || cell.group === "resource-variable") {
+				// For resources: blue if chance >= 50%, otherwise gray.
+				return cell.chance >= 50 ? "#1E90FF" : "#333";
+			} else if (cell.group === "resource-otherwise") {
+				// For resources otherwise wall: blue if >= 50%, otherwise brown.
+				return cell.chance >= 50 ? "#1E90FF" : "#8B4513";
+			} else if (cell.group === "wall-otherwise") {
+				// For wall otherwise resource: brown if >= 50%, otherwise blue.
+				return cell.chance >= 50 ? "#8B4513" : "#1E90FF";
+			}
+			return "#333"; // Fallback to gray if nothing matches.
+		}
+		function renderGrid() {
+			gridContainer.innerHTML = "";
+			const numRows = gridData.length;
+			const numCols = numRows ? gridData[0].length : 0;
+			const dispRows = numRows + 2;
+			const dispCols = numCols + 2;
+			gridContainer.style.gridTemplateColumns = `repeat(${dispCols}, 50px)`;
+
+			for (let r = 0; r < dispRows; r++) {
+				for (let c = 0; c < dispCols; c++) {
+					if (r === 0 || r === dispRows - 1 || c === 0 || c === dispCols - 1) {
+						const plusDiv = document.createElement("div");
+						plusDiv.className = "cell plus-cell";
+						plusDiv.textContent = "+";
+						plusDiv.dataset.dispRow = r;
+						plusDiv.dataset.dispCol = c;
+						plusDiv.addEventListener("click", (e) => {
+							e.stopPropagation();
+							openAddPopup(plusDiv, r, c);
+						});
+						gridContainer.appendChild(plusDiv);
+					} else {
+						const cell = gridData[r - 1][c - 1];
+						const cellDiv = document.createElement("div");
+						cellDiv.className = "cell";
+						cellDiv.dataset.row = r - 1;
+						cellDiv.dataset.col = c - 1;
+
+						if (cell) {
+							cellDiv.style.backgroundColor = getBackgroundColor(cell);
+
+							// Optionally, add overlay icons for cells with chance < 100%
+							if (cell.chance < 100) {
+								if (cell.group === "resource-otherwise") {
+									const bgSpan = document.createElement("div");
+									bgSpan.className = "icon overlay";
+									bgSpan.textContent = wallIcon;
+									bgSpan.style.opacity = "1";
+									cellDiv.appendChild(bgSpan);
+								} else if (cell.group === "wall-otherwise") {
+									const bgSpan = document.createElement("div");
+									bgSpan.className = "icon overlay";
+									bgSpan.textContent = resourceIcon;
+									bgSpan.style.opacity = "1";
+									cellDiv.appendChild(bgSpan);
+								}
+							}
+							const primarySpan = document.createElement("div");
+							primarySpan.className = "icon primary";
+							primarySpan.textContent = getPrimaryIcon(cell);
+							primarySpan.style.opacity = computeOpacity(cell.chance);
+							cellDiv.appendChild(primarySpan);
+
+							const chanceLabel = document.createElement("div");
+							chanceLabel.className = "chance-label";
+							chanceLabel.textContent = cell.chance + "%";
+							cellDiv.appendChild(chanceLabel);
+
+							cellDiv.addEventListener("click", (e) => {
+								e.stopPropagation();
+								openEditor(cell, cellDiv);
+							});
+						} else {
+							const innerPlus = document.createElement("div");
+							innerPlus.className = "inner-plus";
+							innerPlus.textContent = "+";
+							innerPlus.addEventListener("click", (e) => {
+								e.stopPropagation();
+								openAddPopupInner(r - 1, c - 1);
+							});
+							cellDiv.appendChild(innerPlus);
+						}
+						gridContainer.appendChild(cellDiv);
+					}
+				}
+			}
+		}
+
+		/****************************
+		 * Updating the Text Area *
+		 ****************************/
+		function updateTextArea() {
+			gridData = cleanGridData(gridData);
+			let text = "";
+			for (let r = 0; r < gridData.length; r++) {
+				let rowStr = "";
+				for (let c = 0; c < gridData[r].length; c++) {
+					const cell = gridData[r][c];
+					rowStr += cell ? getCharForCell(cell) : " ";
+				}
+				text += rowStr + (r < gridData.length - 1 ? "\n" : "");
+			}
+			mapDataTextarea.value = text;
+			// Save the latest state to localStorage after every update.
+			saveToLocalStorage();
+		}
+
+		/*******************************
+		 * Cell Editor Popup Handling *
+		 *******************************/
+		function openEditor(cell, cellDiv) {
+			selectedCell = cell;
+			selectedCellPos = {
+				row: parseInt(cellDiv.dataset.row),
+				col: parseInt(cellDiv.dataset.col)
+			};
+			const rect = cellDiv.getBoundingClientRect();
+			editorPopup.style.top = rect.bottom + window.scrollY + "px";
+			editorPopup.style.left = rect.left + window.scrollX + "px";
+			chanceSlider.value = cell.chance;
+			chanceValueLabel.textContent = cell.chance + "%";
+			editorPopup.style.display = "block";
+		}
+
+		chanceSlider.addEventListener("input", function () {
+			if (!selectedCell) return;
+			const newChance = parseInt(chanceSlider.value);
+			if (selectedCell.group === "fixed-wall" && newChance < 100) {
+				selectedCell.group = "wall-variable";
+			}
+			if (selectedCell.group === "fixed-resource" && newChance < 100) {
+				selectedCell.group = "resource-variable";
+			}
+			if (selectedCell.group === "wall-variable" && newChance === 100) {
+				selectedCell.group = "fixed-wall";
+			}
+			if (selectedCell.group === "resource-variable" && newChance === 100) {
+				selectedCell.group = "fixed-resource";
+			}
+			selectedCell.chance = newChance;
+			chanceValueLabel.textContent = newChance + "%";
+			selectedCell.char = getCharForCell(selectedCell);
+			renderGrid();
+			updateTextArea();
+		});
+
+		closePopupBtn.addEventListener("click", function () {
+			editorPopup.style.display = "none";
+			selectedCell = null;
+		});
+
+		deleteCellBtn.addEventListener("click", function () {
+			if (selectedCellPos.row !== null && selectedCellPos.col !== null) {
+				gridData[selectedCellPos.row][selectedCellPos.col] = null;
+				editorPopup.style.display = "none";
+				selectedCell = null;
+				refreshGrid();
+			}
+		});
+
+		/*********************************************
+		 * Plus & Add Popup Handling for Insertions *
+		 *********************************************/
+		function openAddPopup(plusElem, dispRow, dispCol) {
+			const numRows = gridData.length;
+			const numCols = numRows ? gridData[0].length : 0;
+			const isTop = dispRow === 0;
+			const isBottom = dispRow === numRows + 1;
+			const isLeft = dispCol === 0;
+			const isRight = dispCol === numCols + 1;
+			insertionInfo = {
+				isTop,
+				isBottom,
+				isLeft,
+				isRight,
+				dispRow,
+				dispCol,
+				numRows,
+				numCols,
+				inner: false
+			};
+			const rect = plusElem.getBoundingClientRect();
+			addPopup.style.top = rect.bottom + window.scrollY + "px";
+			addPopup.style.left = rect.left + window.scrollX + "px";
+			addPopup.style.display = "block";
+		}
+
+		function openAddPopupInner(row, col) {
+			insertionInfo = { inner: true, row, col };
+			const cellDiv = document.querySelector(`.cell[data-row='${row}'][data-col='${col}']`);
+			if (cellDiv) {
+				const rect = cellDiv.getBoundingClientRect();
+				addPopup.style.top = rect.bottom + window.scrollY + "px";
+				addPopup.style.left = rect.left + window.scrollX + "px";
+				addPopup.style.display = "block";
+			}
+		}
+
+		document.querySelectorAll(".addChoice").forEach(function (btn) {
+			btn.addEventListener("click", function () {
+				const chosenChar = btn.dataset.char;
+				const newCell = {
+					char: chosenChar,
+					group: mapping[chosenChar].group,
+					chance: mapping[chosenChar].chance
+				};
+				if (insertionInfo.inner) {
+					gridData[insertionInfo.row][insertionInfo.col] = newCell;
+				} else {
+					const info = insertionInfo;
+					if (info.isTop) {
+						gridData.unshift(new Array(info.numCols).fill(null));
+					}
+					if (info.isBottom) {
+						gridData.push(new Array(info.numCols).fill(null));
+					}
+					if (info.isLeft) {
+						gridData.forEach((row) => row.unshift(null));
+					}
+					if (info.isRight) {
+						gridData.forEach((row) => row.push(null));
+					}
+					let newRowIndex = info.isTop ? 0 : info.isBottom ? gridData.length - 1 : info.dispRow - 1;
+					let newColIndex = info.isLeft ? 0 : info.isRight ? gridData[0].length - 1 : info.dispCol - 1;
+					gridData[newRowIndex][newColIndex] = newCell;
+				}
+				addPopup.style.display = "none";
+				insertionInfo = null;
+				refreshGrid();
+			});
+		});
+
+		cancelAddBtn.addEventListener("click", function () {
+			addPopup.style.display = "none";
+			insertionInfo = null;
+		});
+
+		/****************************
+		 * Textarea Change Handling *
+		 ****************************/
+		mapDataTextarea.addEventListener("input", function () {
+			gridData = parseMap(mapDataTextarea.value);
+			renderGrid();
+		});
+
+		/**************************************
+		 * Initial Loading and Rendering    *
+		 **************************************/
+		// Upon page load, retrieve any stored data and refresh the grid accordingly.
+		window.addEventListener("load", function () {
+			loadFromLocalStorage();
+			gridData = parseMap(mapDataTextarea.value);
+			refreshGrid();
+		});
+	</script>
+</body>
+
+</html>

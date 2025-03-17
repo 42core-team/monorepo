@@ -104,6 +104,32 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game* game, const MapTemplate &temp,
 				if (dist(eng_) < resourceLikelihood)
 					game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), targetPos));
 			}
+			else if (std::string("klmnopqrst").find(cell) != std::string::npos)
+			{
+				int wallLikelihood = cell - 'k';
+				std::uniform_int_distribution<int> dist(0, 9);
+				if (dist(eng_) < wallLikelihood)
+					game->getObjects().push_back(std::make_unique<Wall>(game->getNextObjectId(), targetPos));
+				else
+					game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), targetPos));
+			}
+			else if (std::string("uvwxyz!§$%").find(cell) != std::string::npos)
+			{
+				int resourceLikelihood = cell - 'u';
+				if (cell == '!')
+					resourceLikelihood = 6;
+				else if (cell == '§')
+					resourceLikelihood = 7;
+				else if (cell == '$')
+					resourceLikelihood = 8;
+				else if (cell == '%')
+					resourceLikelihood = 9;
+				std::uniform_int_distribution<int> dist(0, 9);
+				if (dist(eng_) < resourceLikelihood)
+					game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), targetPos));
+				else
+					game->getObjects().push_back(std::make_unique<Wall>(game->getNextObjectId(), targetPos));
+			}
 		}
 	}
 	return true;
