@@ -123,7 +123,7 @@ void Game::tick(unsigned long long tick)
 		Object * obj = it->get();
 		if (obj->getHP() <= 0)
 		{
-			if (obj->getType() == ObjectType::Unit)
+			if (obj->getType() == ObjectType::Unit && ((Unit *)obj)->getBalance() > 0)
 				objects_.push_back(std::make_unique<Resource>(getNextObjectId(), obj->getPosition(), ((Unit *)obj)->getBalance())); // drop balance on death
 			it = objects_.erase(it);
 			teamCount_--;
