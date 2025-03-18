@@ -3,13 +3,18 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 
 #include "Common.h"
+
+class WorldGenerator;
 
 struct UnitConfig;
 
 struct GameConfig
 {
+	std::unique_ptr<WorldGenerator> worldGenerator;
+
 	unsigned int width;
 	unsigned int height;
 	unsigned int tickRate; // ticks per second
@@ -60,11 +65,14 @@ struct UnitConfig
 class Config
 {
 	public:
-		static GameConfig defaultConfig();
+		static void initConfig(bool softcore);
 		static GameConfig & getInstance();
+
+		static GameConfig hardCoreConfig();
+		static GameConfig softCoreConfig();
+
 		static Position & getCorePosition(unsigned int teamId);
 		static UnitConfig & getUnitConfig(unsigned int typeId);
 };
-
 
 #endif // CONFIG_H

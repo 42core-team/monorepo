@@ -21,13 +21,13 @@ using json = nlohmann::ordered_json;
 
 int main(int argc, char *argv[])
 {
-	if (argc < 3)
+	if (argc < 4)
 	{
 		Logger::Log(LogLevel::ERROR, std::string("Usage: ") + argv[0] + " <teamId1> <teamId2> ...");
 		return 1;
 	}
 
-	if (argc - 1 > (int)Config::getInstance().corePositions.size())
+	if (argc - 2 > (int)Config::getInstance().corePositions.size())
 	{
 		Logger::Log(LogLevel::ERROR, "Too many team IDs specified.");
 		return 1;
@@ -35,8 +35,16 @@ int main(int argc, char *argv[])
 
 	srand(time(nullptr));
 
+	bool useSoftCoreConfig = false;
+	std::string configArg = std::string(argv[1]);
+	if (configArg == "--soft" || configArg == "-s")
+		useSoftCoreConfig = true;
+	else
+		useSoftCoreConfig = false;
+	Config::initConfig(useSoftCoreConfig);
+
 	std::vector<unsigned int> expectedTeamIds;
-	for (int i = 1; i < argc; i++)
+	for (int i = 2; i < argc; i++)
 		expectedTeamIds.push_back(std::stoi(argv[i]));
 
 	std::sort(expectedTeamIds.begin(), expectedTeamIds.end());

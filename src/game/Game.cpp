@@ -2,14 +2,12 @@
 
 Game::Game(std::vector<unsigned int> team_ids) : teamCount_(team_ids.size()), nextObjectId_(1)
 {
-	GameConfig config = Config::getInstance();
 	objects_.reserve(team_ids.size());
 	std::vector<unsigned int> team_ids_double = team_ids;
 	shuffle_vector(team_ids_double); // randomly assign core positions to ensure fairness
 	for (unsigned int i = 0; i < team_ids.size(); ++i)
 		objects_.push_back(std::make_unique<Core>(getNextObjectId(), team_ids_double[i], Config::getCorePosition(i)));
-	JigsawWorldGenerator generator;
-	generator.generateWorld(this);
+	Config::getInstance().worldGenerator->generateWorld(this);
 	Logger::Log("Game created with " + std::to_string(team_ids.size()) + " teams.");
 }
 Game::~Game()
@@ -205,7 +203,7 @@ void Game::sendState(std::vector<std::pair<Action *, Core &>> actions, unsigned 
 }
 json Game::getConfig() const
 {
-	GameConfig config = Config::getInstance();
+	const GameConfig& config = Config::getInstance();
 
 	json configJson;
 
@@ -291,6 +289,7 @@ std::vector<Core> Game::getCores()
 
 	return cores;
 }
+// TODO: dont use normal c pointers jesus christ
 Object * Game::getObjectAtPos(Position pos)
 {
 	for (const auto & objPtr : objects_)

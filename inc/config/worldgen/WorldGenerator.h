@@ -7,18 +7,17 @@
 #include "Object.h"
 #include "Resource.h"
 #include "Wall.h"
+#include "Game.h"
 
 class Game;
 
 class WorldGenerator
 {
 	public:
-	WorldGenerator();
-	virtual ~WorldGenerator();
-	
-	virtual void generateWorld(Game * game) = 0;
+		WorldGenerator();
+		virtual ~WorldGenerator() = default;
+		
+		virtual void generateWorld(Game * game) = 0;
 };
-
-#include "Game.h"
 
 #endif // WORLD_GENERATOR_H

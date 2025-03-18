@@ -6,7 +6,6 @@
 #include <iostream>
 #include <fstream>
 
-#include "Config.h"
 #include "Core.h"
 #include "Unit.h"
 #include "Resource.h"
@@ -14,11 +13,12 @@
 #include "Bridge.h"
 #include "Action.h"
 #include "Utils.h"
-#include "JigsawWorldGenerator.h"
 #include "ReplayEncoder.h"
 
 #include "json.hpp"
 using json = nlohmann::ordered_json;
+
+class Config;
 
 class Game
 {
@@ -53,5 +53,8 @@ class Game
 
 		ReplayEncoder replayEncoder_;
 };
+
+#include "Config.h"
+#include "WorldGenerator.h"
 
 #endif // GAME_H

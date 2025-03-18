@@ -3,7 +3,3 @@
 WorldGenerator::WorldGenerator()
 {
 }
-
-WorldGenerator::~WorldGenerator()
-{
-}

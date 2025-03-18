@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "Config.h"
 #include "MapTemplate.h"
+#include "WorldGenerator.h"
 
 #include <vector>
 #include <string>
@@ -19,7 +20,7 @@ struct Rectangle {
 	unsigned int height;
 };
 
-class JigsawWorldGenerator {
+class JigsawWorldGenerator : public WorldGenerator {
 	public:
 		JigsawWorldGenerator(unsigned int seed = 0);
 
