@@ -7,14 +7,16 @@ TransferMoneyAction::TransferMoneyAction(json msg) : Action(ActionType::TRANSFER
 
 void TransferMoneyAction::decodeJSON(json msg)
 {
-	if (!msg.contains("source_id") || !msg.contains("target_id") || !msg.contains("amount"))
+	if (!msg.contains("source_id") || !msg.contains("x") || !msg.contains("y") || !msg.contains("amount"))
 	{
 		is_valid_ = false;
 		return;
 	}
 
 	source_id_ = msg["source_id"];
-	target_id_ = msg["target_id"];
+	int y = msg["x"];
+	int x = msg["y"];
+	target_ = Position(x, y);
 	amount_ = msg["amount"];
 }
 json TransferMoneyAction::encodeJSON()
@@ -23,10 +25,36 @@ json TransferMoneyAction::encodeJSON()
 
 	js["type"] = "transfer_money";
 	js["source_id"] = source_id_;
-	js["target_id"] = target_id_;
+	js["x"] = target_.x;
+	js["y"] = target_.y;
 	js["amount"] = amount_;
 
 	return js;
+}
+
+bool TransferMoneyAction::dropMoney(Game *game, Core * core, Object *srcObj)
+{
+	if (srcObj->getType() != ObjectType::Unit)
+		return false;
+
+	if (srcObj->getPosition().distance(target_) > 1)
+		return false;
+
+	if (srcObj->getPosition() == target_)
+		return false;
+
+	Unit * srcUnit = (Unit *)srcObj;
+	if (srcUnit->getTeamId() != core->getTeamId())
+		return false;
+
+	if (srcUnit->getBalance() < amount_)
+		amount_ = srcUnit->getBalance();
+	srcUnit->setBalance(srcUnit->getBalance() - amount_);
+
+	Position pos = srcUnit->getPosition();
+	game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), pos, amount_));
+
+	return true;
 }
 
 bool TransferMoneyAction::execute(Game *game, Core * core)
@@ -34,10 +62,13 @@ bool TransferMoneyAction::execute(Game *game, Core * core)
 	if (!is_valid_)
 		return false;
 
-	Object * srcObj = game->getObject(getSourceObjId());
-	Object * dstObj = game->getObject(getTargetObjId());
-	if (!srcObj || !dstObj)
+	Object * srcObj = game->getObject(source_id_);
+	if (!srcObj)
 		return false;
+
+	Object * dstObj = game->getObjectAtPos(target_);
+	if (!dstObj)
+		return dropMoney(game, core, srcObj);
 
 	// only active objects can transfer money
 	if (srcObj->getType() != ObjectType::Core && srcObj->getType() != ObjectType::Unit)
@@ -49,7 +80,7 @@ bool TransferMoneyAction::execute(Game *game, Core * core)
 	if (srcObj->getPosition().distance(dstObj->getPosition()) > 1)
 		return false;
 
-	unsigned int amount = getAmount();
+	unsigned int amount = amount_;
 
 	// cant transfer someone else's money
 	if (srcObj->getType() == ObjectType::Core)

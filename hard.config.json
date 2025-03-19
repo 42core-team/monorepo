@@ -8,7 +8,7 @@
 	"resourceIncome": 200,
 	"moneyObjIncome": 100,
 	"coreHp": 350,
-	"initialBalance": 200,
+	"initialBalance": 300,
 	"wallHp": 100,
 	"wallBuildCost": 20,
 	"worldGenerator": "jigsaw",
