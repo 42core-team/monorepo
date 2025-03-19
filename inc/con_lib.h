@@ -178,7 +178,7 @@ typedef struct s_action_travel
 typedef struct s_action_transfer_money
 {
 	unsigned long source_id;
-	unsigned long target_id;
+	t_pos target_pos;
 	unsigned long amount;
 } t_action_transfer_money;
 typedef struct s_action_build
@@ -334,6 +334,14 @@ void	ft_move(t_obj *unit, t_direction direction);
  * @param direction The target position.
  */
 void	ft_travel_to_pos(t_obj *unit, t_pos pos);
+/**
+ * @brief Drops money at a specific position.
+ * 
+ * @param source The object that should drop the money.
+ * @param target_pos The position where the money should be dropped.
+ * @param amount The amount of money that should be dropped.
+ */
+void	ft_drop_money(t_obj *source, t_pos target_pos, unsigned long amount);
 /**
  * @brief Transfers money from one object to another.
  * 

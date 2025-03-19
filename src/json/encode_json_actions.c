@@ -90,8 +90,8 @@ char *ft_all_action_json(void)
 	for (; i < max; i++)
 	{
 		json_node *action = create_node(JSON_TYPE_OBJECT);
-		action->array = malloc(sizeof(json_node*) * 5);
-		action->array[4] = NULL;
+		action->array = malloc(sizeof(json_node*) * 6);
+		action->array[5] = NULL;
 
 		json_node *type = create_node(JSON_TYPE_STRING);
 		type->key = strdup("type");
@@ -103,15 +103,20 @@ char *ft_all_action_json(void)
 		source_id->number = game.actions.transfer_moneys[i - game.actions.travels_count - game.actions.creates_count].source_id;
 		action->array[1] = source_id;
 
-		json_node *target_id = create_node(JSON_TYPE_NUMBER);
-		target_id->key = strdup("target_id");
-		target_id->number = game.actions.transfer_moneys[i - game.actions.travels_count - game.actions.creates_count].target_id;
-		action->array[2] = target_id;
+		json_node *target_x = create_node(JSON_TYPE_NUMBER);
+		target_x->key = strdup("x");
+		target_x->number = game.actions.transfer_moneys[i - game.actions.travels_count - game.actions.creates_count].target_pos.x;
+		action->array[2] = target_x;
+
+		json_node *target_y = create_node(JSON_TYPE_NUMBER);
+		target_y->key = strdup("y");
+		target_y->number = game.actions.transfer_moneys[i - game.actions.travels_count - game.actions.creates_count].target_pos.y;
+		action->array[3] = target_y;
 
 		json_node *amount = create_node(JSON_TYPE_NUMBER);
 		amount->key = strdup("amount");
 		amount->number = game.actions.transfer_moneys[i - game.actions.travels_count - game.actions.creates_count].amount;
-		action->array[3] = amount;
+		action->array[4] = amount;
 
 		actions_array->array[i] = action;
 	}

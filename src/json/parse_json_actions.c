@@ -31,14 +31,34 @@ void parse_json_actions(json_node *root)
 			else if (strcmp(type_node->string, "transfer_money") == 0)
 			{
 				json_node *source_node = json_find(action, "source_id");
-				json_node *target_node = json_find(action, "target_id");
+				json_node *target_x_node = json_find(action, "x");
+				json_node *target_y_node = json_find(action, "y");
 				json_node *amount_node = json_find(action, "amount");
-				if (source_node && target_node && amount_node)
-					if (event_handler.on_unit_transfer_money)
-						event_handler.on_unit_transfer_money(ft_get_obj_from_id((unsigned long)source_node->number),
-																ft_get_obj_from_id((unsigned long)target_node->number),
-																(unsigned long)amount_node->number,
-																user_data);
+				t_pos target_pos = {0, 0};
+				if (source_node && target_x_node && target_y_node && amount_node)
+				{
+					target_pos.x = (unsigned short)target_x_node->number;
+					target_pos.y = (unsigned short)target_y_node->number;
+
+					t_obj *unit = ft_get_obj_at_pos(target_pos);
+
+					if (!unit)
+					{
+						if (event_handler.on_unit_drop_money)
+							event_handler.on_unit_drop_money(ft_get_obj_from_id((unsigned long)source_node->number),
+																	target_pos,
+																	(unsigned long)amount_node->number,
+																	user_data);
+					}
+					else
+					{
+						if (event_handler.on_unit_transfer_money)
+							event_handler.on_unit_transfer_money(ft_get_obj_from_id((unsigned long)source_node->number),
+																	unit,
+																	(unsigned long)amount_node->number,
+																	user_data);
+					}
+				}
 			}
 			else if (strcmp(type_node->string, "move") == 0)
 			{
