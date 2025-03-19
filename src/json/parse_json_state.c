@@ -224,6 +224,8 @@ void	ft_parse_json_state(char *json)
 			game_arr = &game.resources;
 		else if (readObj.type == OBJ_WALL)
 			game_arr = &game.walls;
+		else if (readObj.type == OBJ_MONEY)
+			game_arr = &game.moneys;
 
 		if (*game_arr == NULL)
 		{

@@ -26,7 +26,8 @@ typedef enum e_obj_type
 	OBJ_CORE,
 	OBJ_UNIT,
 	OBJ_RESOURCE,
-	OBJ_WALL
+	OBJ_WALL,
+	OBJ_MONEY
 } t_obj_type;
 typedef enum e_obj_state
 {
@@ -87,6 +88,11 @@ typedef struct s_obj
 			/// @brief The amount of money the resource is carrying.
 			unsigned long balance;
 		}	s_resource;
+		struct
+		{
+			/// @brief The amount of money.
+			unsigned long balance;
+		}	s_money;
 	};
 } t_obj;
 
@@ -226,6 +232,10 @@ typedef struct s_game
 	 * @brief List of all units and their informations. NULL-terminated.
 	 */
 	t_obj **units;
+	/**
+	 * @brief List of all moneys and their informations. NULL-terminated.
+	 */
+	t_obj **moneys;
 	/**
 	 * @brief List of all actions that will be send to the server when your function ends.
 	 */
