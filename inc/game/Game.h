@@ -35,6 +35,7 @@ class Game
 		std::vector<std::unique_ptr<Object>> & getObjects() { return objects_; }
 
 		Object * getObjectAtPos(Position pos);
+		void removeObjectById(unsigned int id);
 
 		unsigned int getNextObjectId() { return nextObjectId_++; }
 

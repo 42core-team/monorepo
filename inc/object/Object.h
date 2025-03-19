@@ -10,7 +10,8 @@ enum class ObjectType
 	Core,
 	Unit,
 	Resource,
-	Wall
+	Wall,
+	Money
 };
 
 class Object

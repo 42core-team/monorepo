@@ -43,6 +43,10 @@ void Game::visualizeGameState(unsigned long long tick)
 				{
 					std::cout << "X";
 				}
+				else if (obj->getType() == ObjectType::Money)
+				{
+					std::cout << "$";
+				}
 			}
 			else
 			{

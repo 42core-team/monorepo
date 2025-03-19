@@ -54,25 +54,24 @@ json MoveAction::encodeJSON()
 	return js;
 }
 
-bool MoveAction::attackObj(Object *obj, Unit * unit) // returns object new hp, 1 if no object present
+bool MoveAction::attackObj(Object *obj, Unit * unit, Game *game) // returns object new hp, 1 if no object present
 {
 	if (!obj)
 		return false;
 	if (obj->getType() == ObjectType::Unit)
-	{
 		obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageUnit);
-		if (obj->getHP() <= 0)
-		{
-			unit->addBalance(((Unit *)obj)->getBalance());
-			((Unit *)obj)->setBalance(0);
-		}
-	}
 	else if (obj->getType() == ObjectType::Core)
 		obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageCore);
 	else if (obj->getType() == ObjectType::Resource)
 		((Resource *)obj)->getMined(unit);
 	else if (obj->getType() == ObjectType::Wall)
 		obj->setHP(obj->getHP() - Config::getInstance().units[unit->getTypeId()].damageWall);
+	else if (obj->getType() == ObjectType::Money)
+	{
+		unit->setBalance(unit->getBalance() + ((Money *)obj)->getBalance());
+		game->removeObjectById(obj->getId());
+		return true;
+	}
 
 	attacked_ = true;
 
@@ -110,7 +109,7 @@ bool MoveAction::execute(Game *game, Core * core)
 
 	if (attackType == AttackType::DIRECT_HIT)
 	{
-		if (!attackObj(obj, unit))
+		if (!attackObj(obj, unit, game))
 			return false;
 	}
 	else if (attackType == AttackType::DIRECTION_SHOT)
@@ -129,7 +128,7 @@ bool MoveAction::execute(Game *game, Core * core)
 				continue;
 
 			Object* shotObj = game->getObjectAtPos(posI);
-			if (!attackObj(shotObj, unit))
+			if (!attackObj(shotObj, unit, game))
 				return false;
 		}
 	}
