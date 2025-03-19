@@ -1,0 +1,72 @@
+{
+	"width": 25,
+	"height": 25,
+	"tickRate": 5,
+	"idleIncome": 0,
+	"idleIncomeTimeOut": 600,
+	"resourceHp": 50,
+	"resourceIncome": 200,
+	"coreHp": 350,
+	"initialBalance": 200,
+	"wallHp": 100,
+	"wallBuildCost": 20,
+	"worldGenerator": "jigsaw",
+	"units": [
+		{
+			"name": "Warrior",
+			"cost": 150,
+			"hp": 25,
+			"speed": 3,
+			"minSpeed": 12,
+			"damageCore": 10,
+			"damageUnit": 6,
+			"damageResource": 2,
+			"damageWall": 3,
+			"attackType": 0,
+			"attackReach": 1,
+			"canBuild": false
+		},
+		{
+			"name": "Miner",
+			"cost": 100,
+			"hp": 15,
+			"speed": 5,
+			"minSpeed": 15,
+			"damageCore": 3,
+			"damageUnit": 2,
+			"damageResource": 10,
+			"damageWall": 5,
+			"attackType": 0,
+			"attackReach": 1,
+			"canBuild": false
+		},
+		{
+			"name": "Carrier",
+			"cost": 125,
+			"hp": 20,
+			"speed": 3,
+			"minSpeed": 5,
+			"damageCore": 3,
+			"damageUnit": 2,
+			"damageResource": 4,
+			"damageWall": 3,
+			"attackType": 0,
+			"attackReach": 1,
+			"canBuild": false
+		},
+		{
+			"name": "Builder",
+			"cost": 300,
+			"hp": 30,
+			"speed": 2,
+			"minSpeed": 8,
+			"damageCore": 5,
+			"damageUnit": 3,
+			"damageResource": 2,
+			"damageWall": 3,
+			"attackType": 0,
+			"attackReach": 1,
+			"canBuild": true
+		}
+	]
+}

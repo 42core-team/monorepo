@@ -7,6 +7,9 @@
 
 #include "Common.h"
 
+#include "json.hpp"
+using json = nlohmann::ordered_json;
+
 class WorldGenerator;
 
 struct UnitConfig;
@@ -65,11 +68,8 @@ struct UnitConfig
 class Config
 {
 	public:
-		static void initConfig(bool softcore);
 		static GameConfig & getInstance();
-
-		static GameConfig hardCoreConfig();
-		static GameConfig softCoreConfig();
+		static json encodeConfig();
 
 		static Position & getCorePosition(unsigned int teamId);
 		static UnitConfig & getUnitConfig(unsigned int typeId);

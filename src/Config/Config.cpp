@@ -7,175 +7,78 @@ namespace {
 	std::unique_ptr<GameConfig> configInstance;
 }
 
-GameConfig Config::hardCoreConfig()
-{
+GameConfig parseConfig() {
 	GameConfig config;
 
-	config.worldGenerator = std::make_unique<JigsawWorldGenerator>();
+	std::ifstream inFile("config.json");
+	if (!inFile) {
+		std::cerr << "Error: Could not open config.json" << std::endl;
+		exit(EXIT_FAILURE);
+	}
 
-	config.width = 25;
-	config.height = 25;
-	config.tickRate = 5;
+	json j;
+	inFile >> j;
 
-	config.idleIncome = 1;
-	config.idleIncomeTimeOut = 600; // 2 minutes
+	config.width            = j.value("width", 25);
+	config.height           = j.value("height", 25);
+	config.tickRate         = j.value("tickRate", 5);
+	config.idleIncome       = j.value("idleIncome", 1);
+	config.idleIncomeTimeOut= j.value("idleIncomeTimeOut", 600);
+	config.resourceHp       = j.value("resourceHp", 50);
+	config.resourceIncome   = j.value("resourceIncome", 200);
+	config.coreHp           = j.value("coreHp", 350);
+	config.initialBalance   = j.value("initialBalance", 200);
+	config.wallHp           = j.value("wallHp", 100);
+	config.wallBuildCost    = j.value("wallBuildCost", 20);
 
-	config.resourceHp = 50;
-	config.resourceIncome = 200;
+	std::string wgType = j.value("worldGenerator", "jigsaw");
+	if (wgType == "jigsaw")
+		config.worldGenerator = std::make_unique<JigsawWorldGenerator>();
+	else if (wgType == "Distanced")
+		config.worldGenerator = std::make_unique<DistancedResourceWorldGenerator>();
+	else
+		config.worldGenerator = std::make_unique<JigsawWorldGenerator>();
 
-	config.coreHp = 350;
-	config.initialBalance = 200;
+	if (j.contains("units") && j["units"].is_array())
+	{
+		for (const auto &unitJson : j["units"])
+		{
+			UnitConfig unit;
+			unit.name           = unitJson.value("name", "Unnamed");
+			unit.cost           = unitJson.value("cost", 0);
+			unit.hp             = unitJson.value("hp", 0);
+			unit.speed          = unitJson.value("speed", 0);
+			unit.minSpeed       = unitJson.value("minSpeed", 0);
+			unit.damageCore     = unitJson.value("damageCore", 0);
+			unit.damageUnit     = unitJson.value("damageUnit", 0);
+			unit.damageResource = unitJson.value("damageResource", 0);
+			unit.damageWall     = unitJson.value("damageWall", 0);
+			int attackTypeInt   = unitJson.value("attackType", 0);
+			unit.attackType     = static_cast<AttackType>(attackTypeInt);
+			unit.attackReach    = unitJson.value("attackReach", 0);
+			unit.canBuild       = unitJson.value("canBuild", false);
 
-	config.wallHp = 100;
-	config.wallBuildCost = 20;
+			config.units.push_back(unit);
+		}
+	}
 
-	// unit order must match order of units in conn lib unit type enum
-
-	UnitConfig warrior;
-	warrior.name = "Warrior";
-	warrior.cost = 150;
-	warrior.hp = 25;
-	warrior.speed = 3;
-	warrior.minSpeed = 12;
-	warrior.damageCore = 10;
-	warrior.damageUnit = 6;
-	warrior.damageResource = 2;
-	warrior.damageWall = 3;
-	warrior.attackType = AttackType::DIRECT_HIT;
-	warrior.attackReach = 1;
-	warrior.canBuild = false;
-	config.units.push_back(warrior);
-
-	UnitConfig miner;
-	miner.name = "Miner";
-	miner.cost = 100;
-	miner.hp = 15;
-	miner.speed = 5;
-	miner.minSpeed = 15;
-	miner.damageCore = 3;
-	miner.damageUnit = 2;
-	miner.damageResource = 10;
-	miner.damageWall = 5;
-	miner.canBuild = false;
-	miner.attackType = AttackType::DIRECT_HIT;
-	miner.attackReach = 1;
-	config.units.push_back(miner);
-
-	UnitConfig carrier;
-	carrier.name = "Carrier";
-	carrier.cost = 125;
-	carrier.hp = 20;
-	carrier.speed = 3;
-	carrier.minSpeed = 5;
-	carrier.damageCore = 3;
-	carrier.damageUnit = 2;
-	carrier.damageResource = 4;
-	carrier.damageWall = 3;
-	carrier.attackType = AttackType::DIRECT_HIT;
-	carrier.attackReach = 1;
-	carrier.canBuild = false;
-	config.units.push_back(carrier);
-
-	UnitConfig builder;
-	builder.name = "Builder";
-	builder.cost = 300;
-	builder.hp = 30;
-	builder.speed = 2;
-	builder.minSpeed = 8;
-	builder.damageCore = 5;
-	builder.damageUnit = 3;
-	builder.damageResource = 2;
-	builder.damageWall = 3;
-	builder.attackType = AttackType::DIRECT_HIT;
-	builder.attackReach = 1;
-	builder.canBuild = true;
-	config.units.push_back(builder);
-
-	config.corePositions.push_back({ 0, 0 });   // top left
-	config.corePositions.push_back({ 24, 24 }); // bottom right
-	config.corePositions.push_back({ 24, 0 });  // top right
-	config.corePositions.push_back({ 0, 24 });  // bottom left
-
-	return config;
-}
-
-GameConfig Config::softCoreConfig()
-{
-	GameConfig config;
-
-	config.worldGenerator = std::make_unique<DistancedResourceWorldGenerator>();
-
-	config.width = 25;
-	config.height = 25;
-	config.tickRate = 5;
-
-	config.idleIncome = 1;
-	config.idleIncomeTimeOut = 600; // 2 minutes
-
-	config.resourceHp = 50;
-	config.resourceIncome = 200;
-
-	config.coreHp = 350;
-	config.initialBalance = 200;
-
-	config.wallHp = 100;
-	config.wallBuildCost = 20;
-
-	// unit order must match order of units in conn lib unit type enum
-
-	UnitConfig warrior;
-	warrior.name = "Warrior";
-	warrior.cost = 150;
-	warrior.hp = 25;
-	warrior.speed = 3;
-	warrior.minSpeed = 10;
-	warrior.damageCore = 10;
-	warrior.damageUnit = 6;
-	warrior.damageResource = 2;
-	warrior.damageWall = 3;
-	warrior.attackType = AttackType::DIRECT_HIT;
-	warrior.attackReach = 1;
-	warrior.canBuild = false;
-	config.units.push_back(warrior);
-
-	UnitConfig miner;
-	miner.name = "Miner";
-	miner.cost = 100;
-	miner.hp = 15;
-	miner.speed = 5;
-	miner.minSpeed = 12;
-	miner.damageCore = 3;
-	miner.damageUnit = 2;
-	miner.damageResource = 10;
-	miner.damageWall = 5;
-	miner.canBuild = false;
-	miner.attackType = AttackType::DIRECT_HIT;
-	miner.attackReach = 1;
-	config.units.push_back(miner);
-
-	UnitConfig carrier;
-	carrier.name = "Carrier";
-	carrier.cost = 125;
-	carrier.hp = 20;
-	carrier.speed = 3;
-	carrier.minSpeed = 3;
-	carrier.damageCore = 3;
-	carrier.damageUnit = 2;
-	carrier.damageResource = 4;
-	carrier.damageWall = 3;
-	carrier.attackType = AttackType::DIRECT_HIT;
-	carrier.attackReach = 1;
-	carrier.canBuild = false;
-	config.units.push_back(carrier);
-
-	config.corePositions.push_back({ 0, 0 });   // top left
-	config.corePositions.push_back({ 24, 24 }); // bottom right
-	config.corePositions.push_back({ 24, 0 });  // top right
-	config.corePositions.push_back({ 0, 24 });  // bottom left
-	config.corePositions.push_back({ 0, 12 });  // left
-	config.corePositions.push_back({ 24, 12 }); // right
-	config.corePositions.push_back({ 12, 0 });  // top
-	config.corePositions.push_back({ 12, 24 }); // bottom
+	if (j.contains("corePositions") && j["corePositions"].is_array())
+	{
+		for (const auto &posJson : j["corePositions"])
+		{
+			Position pos;
+			pos.x = posJson.value("x", 0);
+			pos.y = posJson.value("y", 0);
+			config.corePositions.push_back(pos);
+		}
+	}
+	else
+	{
+		config.corePositions.push_back({ 0, 0 });
+		config.corePositions.push_back({ config.width - 1, config.height - 1 });
+		config.corePositions.push_back({ config.width - 1, 0 });
+		config.corePositions.push_back({ 0, config.height - 1 });
+	}
 
 	return config;
 }
@@ -183,17 +86,8 @@ GameConfig Config::softCoreConfig()
 GameConfig & Config::getInstance()
 {
 	if (!configInstance)
-		configInstance = std::make_unique<GameConfig>(hardCoreConfig());
+		configInstance = std::make_unique<GameConfig>(parseConfig());
 	return *configInstance;
-}
-void Config::initConfig(bool softcore)
-{
-	if (!configInstance) {
-		if (softcore)
-			configInstance = std::make_unique<GameConfig>(softCoreConfig());
-		else
-			configInstance = std::make_unique<GameConfig>(hardCoreConfig());
-	}
 }
 
 Position & Config::getCorePosition(unsigned int teamId)
@@ -203,4 +97,52 @@ Position & Config::getCorePosition(unsigned int teamId)
 UnitConfig & Config::getUnitConfig(unsigned int typeId)
 {
 	return getInstance().units[typeId];
+}
+
+json Config::encodeConfig()
+{
+	const GameConfig& config = Config::getInstance();
+
+	json configJson;
+
+	configJson["width"] = config.width;
+	configJson["height"] = config.height;
+	configJson["tickRate"] = config.tickRate;
+
+	configJson["idleIncome"] = config.idleIncome;
+	configJson["idleIncomeTimeOut"] = config.idleIncomeTimeOut;
+
+	configJson["resourceHp"] = config.resourceHp;
+	configJson["resourceIncome"] = config.resourceIncome;
+
+	configJson["coreHp"] = config.coreHp;
+	configJson["initialBalance"] = config.initialBalance;
+
+	configJson["wallHp"] = config.wallHp;
+	configJson["wallBuildCost"] = config.wallBuildCost;
+
+	configJson["units"] = json::array();
+	for (auto& unit : config.units)
+	{
+		json u;
+
+		u["name"] = unit.name;
+		u["cost"] = unit.cost;
+		u["hp"] = unit.hp;
+		u["speed"] = unit.speed;
+		u["minSpeed"] = unit.minSpeed;
+
+		u["damageCore"] = unit.damageCore;
+		u["damageUnit"] = unit.damageUnit;
+		u["damageResource"] = unit.damageResource;
+		u["damageWall"] = unit.damageWall;
+		u["attackType"] = (int)unit.attackType;
+		u["attackReach"] = unit.attackReach;
+
+		u["canBuild"] = unit.canBuild;
+
+		configJson["units"].push_back(u);
+	}
+
+	return configJson;
 }

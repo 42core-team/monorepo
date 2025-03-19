@@ -70,7 +70,7 @@ void Game::run()
 	}
 
 	std::cout << "Game over!" << std::endl;
-	json config = getConfig();
+	json config = Config::encodeConfig();
 	replayEncoder_.includeConfig(config);
 	json replay = replayEncoder_.getReplay();
 	std::ofstream replayFile("replay_" + std::to_string(std::chrono::system_clock::now().time_since_epoch().count()) + ".json");
@@ -201,56 +201,9 @@ void Game::sendState(std::vector<std::pair<Action *, Core &>> actions, unsigned 
 	for (auto bridge : bridges_)
 		bridge->sendMessage(state);
 }
-json Game::getConfig() const
-{
-	const GameConfig& config = Config::getInstance();
-
-	json configJson;
-
-	configJson["width"] = config.width;
-	configJson["height"] = config.height;
-	configJson["tickRate"] = config.tickRate;
-
-	configJson["idleIncome"] = config.idleIncome;
-	configJson["idleIncomeTimeOut"] = config.idleIncomeTimeOut;
-
-	configJson["resourceHp"] = config.resourceHp;
-	configJson["resourceIncome"] = config.resourceIncome;
-
-	configJson["coreHp"] = config.coreHp;
-	configJson["initialBalance"] = config.initialBalance;
-
-	configJson["wallHp"] = config.wallHp;
-	configJson["wallBuildCost"] = config.wallBuildCost;
-
-	configJson["units"] = json::array();
-	for (auto& unit : config.units)
-	{
-		json u;
-
-		u["name"] = unit.name;
-		u["cost"] = unit.cost;
-		u["hp"] = unit.hp;
-		u["speed"] = unit.speed;
-		u["minSpeed"] = unit.minSpeed;
-
-		u["damageCore"] = unit.damageCore;
-		u["damageUnit"] = unit.damageUnit;
-		u["damageResource"] = unit.damageResource;
-		u["damageWall"] = unit.damageWall;
-		u["attackType"] = (int)unit.attackType;
-		u["attackReach"] = unit.attackReach;
-
-		u["canBuild"] = unit.canBuild;
-
-		configJson["units"].push_back(u);
-	}
-
-	return configJson;
-}
 void Game::sendConfig()
 {
-	json config = getConfig();
+	json config = Config::encodeConfig();
 
 	for (auto bridge : bridges_)
 	{
