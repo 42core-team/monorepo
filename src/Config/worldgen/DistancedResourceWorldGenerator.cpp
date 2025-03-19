@@ -4,10 +4,6 @@ DistancedResourceWorldGenerator::DistancedResourceWorldGenerator()
 {
 }
 
-DistancedResourceWorldGenerator::~DistancedResourceWorldGenerator()
-{
-}
-
 void DistancedResourceWorldGenerator::generateWorld(Game * game)
 {
 	unsigned int width = Config::getInstance().width;
@@ -18,6 +14,7 @@ void DistancedResourceWorldGenerator::generateWorld(Game * game)
 	{
 		std::uniform_int_distribution<int> distX(0, width);
 		std::uniform_int_distribution<int> distY(0, height);
+		std::uniform_int_distribution<int> resourceOrMoney(0, 4);
 
 		Position targetPos(distX(eng_), distY(eng_));
 
@@ -28,7 +25,12 @@ void DistancedResourceWorldGenerator::generateWorld(Game * game)
 					adjacentObjects++;
 
 		if (adjacentObjects == 0)
-			game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), targetPos));
+		{
+			if (resourceOrMoney(eng_) == 0)
+				game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), targetPos));
+			else
+				game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), targetPos));
+		}
 		else
 			i--;
 	}

@@ -12,7 +12,6 @@ class DistancedResourceWorldGenerator : public WorldGenerator
 {
 	public:
 		DistancedResourceWorldGenerator();
-		~DistancedResourceWorldGenerator();
 
 		void generateWorld(Game * game);
 

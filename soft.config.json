@@ -6,6 +6,7 @@
 	"idleIncomeTimeOut": 600,
 	"resourceHp": 50,
 	"resourceIncome": 200,
+	"moneyObjIncome": 100,
 	"coreHp": 350,
 	"initialBalance": 200,
 	"wallHp": 100,

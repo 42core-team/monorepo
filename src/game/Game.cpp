@@ -124,7 +124,7 @@ void Game::tick(unsigned long long tick)
 		if (obj->getHP() <= 0)
 		{
 			if (obj->getType() == ObjectType::Unit && ((Unit *)obj)->getBalance() > 0)
-				objects_.push_back(std::make_unique<Resource>(getNextObjectId(), obj->getPosition(), ((Unit *)obj)->getBalance())); // drop balance on death
+				objects_.push_back(std::make_unique<Money>(getNextObjectId(), obj->getPosition(), ((Unit *)obj)->getBalance())); // drop balance on death
 			it = objects_.erase(it);
 			teamCount_--;
 			// TODO: handle game over (send message, disconnect bridge, decrease teamCount_)
@@ -179,7 +179,7 @@ void Game::sendState(std::vector<std::pair<Action *, Core &>> actions, unsigned 
 			o["balance"] = ((Unit &)obj).getBalance();
 			o["nextMoveOpp"] = ((Unit &)obj).getNextMoveOpp();
 		}
-		if (obj.getType() == ObjectType::Resource)
+		if (obj.getType() == ObjectType::Resource || obj.getType() == ObjectType::Money)
 		{
 			o["balance"] = ((Resource &)obj).getBalance();
 		}
@@ -265,4 +265,17 @@ Object * Game::getObject(unsigned int id)
 	}
 
 	return nullptr;
+}
+void Game::removeObjectById(unsigned int id)
+{
+	for (auto it = objects_.begin(); it != objects_.end(); ++it)
+	{
+		Object & obj = **it;
+
+		if (obj.getId() == id)
+		{
+			it = objects_.erase(it);
+			return;
+		}
+	}
 }
