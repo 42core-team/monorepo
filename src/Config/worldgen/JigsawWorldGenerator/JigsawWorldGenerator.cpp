@@ -74,6 +74,19 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game* game, const MapTemplate &temp,
 	if (!canPlaceTemplate(game, temp, posX, posY) && !force)
 		return false;
 
+	const std::unordered_map<char, int> moneyLikelihoodMap = {
+		{'K', 0},
+		{'L', 1},
+		{'N', 2},
+		{'O', 3},
+		{'P', 4},
+		{'Q', 5},
+		{'S', 6},
+		{'T', 7},
+		{'U', 8},
+		{'V', 9}
+	};
+
 	for (int y = 0; y < temp.height; ++y)
 	{
 		for (int x = 0; x < temp.width; ++x)
@@ -87,6 +100,8 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game* game, const MapTemplate &temp,
 				game->getObjects().push_back(std::make_unique<Wall>(game->getNextObjectId(), targetPos));
 			else if (cell == 'R')
 				game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), targetPos));
+			else if (cell == 'M')
+				game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), targetPos));
 			else if (std::string("0123456789").find(cell) != std::string::npos)
 			{
 				int wallLikelihood = cell - '0';
@@ -101,6 +116,13 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game* game, const MapTemplate &temp,
 				if (dist(eng_) < resourceLikelihood)
 					game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), targetPos));
 			}
+			else if (std::string("ABCDEFGHIJ").find(cell) != std::string::npos)
+			{
+				int moneyLikelihood = cell - 'A';
+				std::uniform_int_distribution<int> dist(0, 9);
+				if (dist(eng_) < moneyLikelihood)
+					game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), targetPos));
+			}
 			else if (std::string("klmnopqrst").find(cell) != std::string::npos)
 			{
 				int wallLikelihood = cell - 'k';
@@ -112,20 +134,33 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game* game, const MapTemplate &temp,
 			}
 			else if (std::string("uvwxyz!/$%").find(cell) != std::string::npos)
 			{
-				int resourceLikelihood = cell - 'u';
+				int moneyLikelihood = cell - 'u';
 				if (cell == '!')
-					resourceLikelihood = 6;
+					moneyLikelihood = 6;
 				else if (cell == '/')
-					resourceLikelihood = 7;
+					moneyLikelihood = 7;
 				else if (cell == '$')
-					resourceLikelihood = 8;
+					moneyLikelihood = 8;
 				else if (cell == '%')
-					resourceLikelihood = 9;
+					moneyLikelihood = 9;
 				std::uniform_int_distribution<int> dist(0, 9);
-				if (dist(eng_) < resourceLikelihood)
-					game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), targetPos));
+				if (dist(eng_) < moneyLikelihood)
+					game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), targetPos));
 				else
 					game->getObjects().push_back(std::make_unique<Wall>(game->getNextObjectId(), targetPos));
+			}
+			else if (std::string("KLNOPQSTUV").find(cell) != std::string::npos)
+			{
+				auto it = moneyLikelihoodMap.find(cell);
+				if (it != moneyLikelihoodMap.end())
+				{
+					int moneyLikelihood = it->second;
+					std::uniform_int_distribution<int> dist(0, 9);
+					if (dist(eng_) < moneyLikelihood)
+						game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), targetPos));
+					else
+						game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), targetPos));
+				}
 			}
 		}
 	}
@@ -151,7 +186,7 @@ void JigsawWorldGenerator::balanceResources(Game* game)
 				break;
 			}
 		}
-		
+
 		if (canBeRemoved)
 			resourceIndices.push_back(i);
 	}
