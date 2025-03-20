@@ -47,6 +47,9 @@ bool BuildAction::execute(Game *game, Core * core)
 	if (game->getObjectAtPos(position_) != nullptr)
 		return false;
 
+	if (position_.distance(builder->getPosition()) > 1)
+		return false;
+
 	if (builder->getBalance() < Config::getInstance().wallBuildCost)
 		return false;
 	builder->setBalance(builder->getBalance() - Config::getInstance().wallBuildCost);
