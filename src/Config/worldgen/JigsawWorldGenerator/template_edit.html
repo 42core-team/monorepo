@@ -174,10 +174,12 @@
 	<div id="addPopup" style="display: none;">
 		<p>Select object type:</p>
 		<!-- Only fixed options are provided; variable options removed as per your request -->
-		<button class="addChoice" data-char="X">Fixed Wall (X)</button>
-		<button class="addChoice" data-char="R">Fixed Resource (R)</button>
-		<button class="addChoice" data-char="t">Wall, if not resource (t)</button>
-		<button class="addChoice" data-char="%">Resource, if not wall (%)</button>
+		<button class="addChoice" data-char="X">Wall (X)</button>
+		<button class="addChoice" data-char="R">Resource (R)</button>
+		<button class="addChoice" data-char="M">Money (M)</button>
+		<button class="addChoice" data-char="t">Wall or Resource (t)</button>
+		<button class="addChoice" data-char="V">Resource or Money (V)</button>
+		<button class="addChoice" data-char="$">Money or Wall ($)</button>
 		<br />
 		<button id="cancelAdd">Cancel</button>
 	</div>
@@ -188,6 +190,7 @@
 		const mapping = {
 			"X": { group: "fixed-wall", chance: 100 },
 			"R": { group: "fixed-resource", chance: 100 },
+			"M": { group: "fixed-money", chance: 100 },
 			"0": { group: "wall-variable", chance: 0 },
 			"1": { group: "wall-variable", chance: 10 },
 			"2": { group: "wall-variable", chance: 20 },
@@ -208,31 +211,52 @@
 			"h": { group: "resource-variable", chance: 70 },
 			"i": { group: "resource-variable", chance: 80 },
 			"j": { group: "resource-variable", chance: 90 },
-			"k": { group: "wall-otherwise", chance: 0 },
-			"l": { group: "wall-otherwise", chance: 10 },
-			"m": { group: "wall-otherwise", chance: 20 },
-			"n": { group: "wall-otherwise", chance: 30 },
-			"o": { group: "wall-otherwise", chance: 40 },
-			"p": { group: "wall-otherwise", chance: 50 },
-			"q": { group: "wall-otherwise", chance: 60 },
-			"r": { group: "wall-otherwise", chance: 70 },
-			"s": { group: "wall-otherwise", chance: 80 },
-			"t": { group: "wall-otherwise", chance: 90 },
-			"u": { group: "resource-otherwise", chance: 0 },
-			"v": { group: "resource-otherwise", chance: 10 },
-			"w": { group: "resource-otherwise", chance: 20 },
-			"x": { group: "resource-otherwise", chance: 30 },
-			"y": { group: "resource-otherwise", chance: 40 },
-			"z": { group: "resource-otherwise", chance: 50 },
-			"!": { group: "resource-otherwise", chance: 60 },
-			"/": { group: "resource-otherwise", chance: 70 },
-			"$": { group: "resource-otherwise", chance: 80 },
-			"%": { group: "resource-otherwise", chance: 90 }
+			"A": { group: "money-variable", chance: 0 },
+			"B": { group: "money-variable", chance: 10 },
+			"C": { group: "money-variable", chance: 20 },
+			"D": { group: "money-variable", chance: 30 },
+			"E": { group: "money-variable", chance: 40 },
+			"F": { group: "money-variable", chance: 50 },
+			"G": { group: "money-variable", chance: 60 },
+			"H": { group: "money-variable", chance: 70 },
+			"I": { group: "money-variable", chance: 80 },
+			"J": { group: "money-variable", chance: 90 },
+			"k": { group: "wall-otherwise-resource", chance: 0 },
+			"l": { group: "wall-otherwise-resource", chance: 10 },
+			"m": { group: "wall-otherwise-resource", chance: 20 },
+			"n": { group: "wall-otherwise-resource", chance: 30 },
+			"o": { group: "wall-otherwise-resource", chance: 40 },
+			"p": { group: "wall-otherwise-resource", chance: 50 },
+			"q": { group: "wall-otherwise-resource", chance: 60 },
+			"r": { group: "wall-otherwise-resource", chance: 70 },
+			"s": { group: "wall-otherwise-resource", chance: 80 },
+			"t": { group: "wall-otherwise-resource", chance: 90 },
+			"u": { group: "money-otherwise-wall", chance: 0 },
+			"v": { group: "money-otherwise-wall", chance: 10 },
+			"w": { group: "money-otherwise-wall", chance: 20 },
+			"x": { group: "money-otherwise-wall", chance: 30 },
+			"y": { group: "money-otherwise-wall", chance: 40 },
+			"z": { group: "money-otherwise-wall", chance: 50 },
+			"!": { group: "money-otherwise-wall", chance: 60 },
+			"/": { group: "money-otherwise-wall", chance: 70 },
+			"$": { group: "money-otherwise-wall", chance: 80 },
+			"%": { group: "money-otherwise-wall", chance: 90 },
+			"K": { group: "resource-otherwise-money", chance: 0 },
+			"L": { group: "resource-otherwise-money", chance: 10 },
+			"N": { group: "resource-otherwise-money", chance: 20 },
+			"O": { group: "resource-otherwise-money", chance: 30 },
+			"P": { group: "resource-otherwise-money", chance: 40 },
+			"Q": { group: "resource-otherwise-money", chance: 50 },
+			"S": { group: "resource-otherwise-money", chance: 60 },
+			"T": { group: "resource-otherwise-money", chance: 70 },
+			"U": { group: "resource-otherwise-money", chance: 80 },
+			"V": { group: "resource-otherwise-money", chance: 90 }
 		};
 
 		const inverseMapping = {
 			"fixed-wall": { 100: "X" },
 			"fixed-resource": { 100: "R" },
+			"fixed-money": { 100: "M" },
 			"wall-variable": {
 				0: "0",
 				10: "1",
@@ -259,7 +283,20 @@
 				90: "j",
 				100: "R"
 			},
-			"wall-otherwise": {
+			"money-variable": {
+				0: "A",
+				10: "B",
+				20: "C",
+				30: "D",
+				40: "E",
+				50: "F",
+				60: "G",
+				70: "H",
+				80: "I",
+				90: "J",
+				100: "M"
+			},
+			"wall-otherwise-resource": {
 				0: "k",
 				10: "l",
 				20: "m",
@@ -270,9 +307,9 @@
 				70: "r",
 				80: "s",
 				90: "t",
-				100: "t"
+				100: "X"
 			},
-			"resource-otherwise": {
+			"money-otherwise-wall": {
 				0: "u",
 				10: "v",
 				20: "w",
@@ -283,7 +320,20 @@
 				70: "/",
 				80: "$",
 				90: "%",
-				100: "%"
+				100: "M"
+			},
+			"resource-otherwise-money": {
+				0: "K",
+				10: "L",
+				20: "N",
+				30: "O",
+				40: "P",
+				50: "Q",
+				60: "S",
+				70: "T",
+				80: "U",
+				90: "V",
+				100: "R"
 			}
 		};
 
@@ -292,7 +342,8 @@
 		 ****************************/
 		const wallIcon = "🧱";
 		const resourceIcon = "💎";
-		const minOpacity = 0.5;
+		const moneyIcon = "💰";
+		const minOpacity = 0.3;
 
 		let gridData = [];
 		const mapDataTextarea = document.getElementById("mapData");
@@ -435,7 +486,25 @@
 
 		function getPrimaryIcon(cell) {
 			if (!cell) return "";
-			return cell.group.includes("wall") ? wallIcon : resourceIcon;
+			if (cell.group === "money-otherwise-wall") {
+				return moneyIcon;
+			}
+			if (cell.group === "resource-otherwise-money") {
+				return resourceIcon;
+			}
+			if (cell.group === "wall-otherwise-resource") {
+				return wallIcon;
+			}
+			if (cell.group === "fixed-wall" || cell.group === "wall-variable") {
+				return wallIcon;
+			}
+			if (cell.group === "fixed-resource" || cell.group === "resource-variable") {
+				return resourceIcon;
+			}
+			if (cell.group === "fixed-money" || cell.group === "money-variable") {
+				return moneyIcon;
+			}
+			return '❓';
 		}
 
 		function isEditable(cell) {
@@ -445,19 +514,23 @@
 		/****************************
 		 * Rendering the Grid *
 		 ****************************/
+		// wall: #8B4513
+		// resource: #1E90FF
+		// money: #FFD700
+		// default: #333
 		function getBackgroundColor(cell) {
 			if (cell.group === "fixed-wall" || cell.group === "wall-variable") {
-				// For walls: brown if chance >= 50%, otherwise gray.
 				return cell.chance >= 50 ? "#8B4513" : "#333";
 			} else if (cell.group === "fixed-resource" || cell.group === "resource-variable") {
-				// For resources: blue if chance >= 50%, otherwise gray.
 				return cell.chance >= 50 ? "#1E90FF" : "#333";
-			} else if (cell.group === "resource-otherwise") {
-				// For resources otherwise wall: blue if >= 50%, otherwise brown.
-				return cell.chance >= 50 ? "#1E90FF" : "#8B4513";
-			} else if (cell.group === "wall-otherwise") {
-				// For wall otherwise resource: brown if >= 50%, otherwise blue.
+			} else if (cell.group === "fixed-money" || cell.group === "money-variable") {
+				return cell.chance >= 50 ? "#FFD700" : "#333";
+			} else if (cell.group === "wall-otherwise-resource") {
 				return cell.chance >= 50 ? "#8B4513" : "#1E90FF";
+			} else if (cell.group === "money-otherwise-wall") {
+				return cell.chance >= 50 ? "#FFD700" : "#8B4513";
+			} else if (cell.group === "resource-otherwise-money") {
+				return cell.chance >= 50 ? "#1E90FF" : "#FFD700";
 			}
 			return "#333"; // Fallback to gray if nothing matches.
 		}
@@ -494,16 +567,22 @@
 
 							// Optionally, add overlay icons for cells with chance < 100%
 							if (cell.chance < 100) {
-								if (cell.group === "resource-otherwise") {
+								if (cell.group === "resource-otherwise-money") {
 									const bgSpan = document.createElement("div");
 									bgSpan.className = "icon overlay";
-									bgSpan.textContent = wallIcon;
+									bgSpan.textContent = moneyIcon;
 									bgSpan.style.opacity = "1";
 									cellDiv.appendChild(bgSpan);
-								} else if (cell.group === "wall-otherwise") {
+								} else if (cell.group === "wall-otherwise-resource") {
 									const bgSpan = document.createElement("div");
 									bgSpan.className = "icon overlay";
 									bgSpan.textContent = resourceIcon;
+									bgSpan.style.opacity = "1";
+									cellDiv.appendChild(bgSpan);
+								} else if (cell.group === "money-otherwise-wall") {
+									const bgSpan = document.createElement("div");
+									bgSpan.className = "icon overlay";
+									bgSpan.textContent = wallIcon;
 									bgSpan.style.opacity = "1";
 									cellDiv.appendChild(bgSpan);
 								}
@@ -584,11 +663,17 @@
 			if (selectedCell.group === "fixed-resource" && newChance < 100) {
 				selectedCell.group = "resource-variable";
 			}
+			if (selectedCell.group === "fixed-money" && newChance < 100) {
+				selectedCell.group = "money-variable";
+			}
 			if (selectedCell.group === "wall-variable" && newChance === 100) {
 				selectedCell.group = "fixed-wall";
 			}
 			if (selectedCell.group === "resource-variable" && newChance === 100) {
 				selectedCell.group = "fixed-resource";
+			}
+			if (selectedCell.group === "money-variable" && newChance === 100) {
+				selectedCell.group = "fixed-money";
 			}
 			selectedCell.chance = newChance;
 			chanceValueLabel.textContent = newChance + "%";
