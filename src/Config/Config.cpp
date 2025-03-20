@@ -26,19 +26,21 @@ GameConfig parseConfig() {
 	config.idleIncomeTimeOut= j.value("idleIncomeTimeOut", 600);
 	config.resourceHp       = j.value("resourceHp", 50);
 	config.resourceIncome   = j.value("resourceIncome", 200);
+	config.resourceCount    = j.value("resourceCount", 50);
 	config.moneyObjIncome   = j.value("moneyObjIncome", 100);
 	config.coreHp           = j.value("coreHp", 350);
 	config.initialBalance   = j.value("initialBalance", 200);
 	config.wallHp           = j.value("wallHp", 100);
 	config.wallBuildCost    = j.value("wallBuildCost", 20);
 
-	std::string wgType = j.value("worldGenerator", "jigsaw");
+	std::string wgType = j.value("worldGenerator", "distanced_resources");
 	if (wgType == "jigsaw")
 		config.worldGenerator = std::make_unique<JigsawWorldGenerator>();
 	else if (wgType == "distanced_resources")
 		config.worldGenerator = std::make_unique<DistancedResourceWorldGenerator>();
 	else
 		config.worldGenerator = std::make_unique<JigsawWorldGenerator>();
+	config.worldGeneratorConfig = j.value("worldGeneratorConfig", json());
 
 	if (j.contains("units") && j["units"].is_array())
 	{
