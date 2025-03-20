@@ -2,7 +2,7 @@
 
 Position findFirstEmptyGridCell(Game* game, Position startPos) // bfs / flood fill
 {
-	Position errorPos = {Config::getInstance().width, Config::getInstance().height};
+	Position errorPos = {static_cast<int>(Config::getInstance().width), static_cast<int>(Config::getInstance().height)};
 	const int width  = Config::getInstance().width;
 	const int height = Config::getInstance().height;
 	

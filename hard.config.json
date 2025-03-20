@@ -1,6 +1,6 @@
 {
-	"width": 25,
-	"height": 25,
+	"width": 30,
+	"height": 30,
 	"tickRate": 5,
 	"idleIncome": 0,
 	"idleIncomeTimeOut": 600,
@@ -76,8 +76,8 @@
 			"y": 0
 		},
 		{
-			"x": 24,
-			"y": 24
+			"x": 29,
+			"y": 29
 		}
 	]
 }

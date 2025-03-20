@@ -42,10 +42,6 @@ bool JigsawWorldGenerator::canPlaceTemplate(Game* game, const MapTemplate &temp,
 			int targetY = posY + y;
 			Position targetPos(targetX, targetY);
 
-			if (targetX < 0 || targetX >= (int)Config::getInstance().width ||
-				targetY < 0 || targetY >= (int)Config::getInstance().height)
-				return false;
-
 			if (game->getObjectAtPos(targetPos) != nullptr)
 				return false;
 
@@ -90,6 +86,9 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game* game, const MapTemplate &temp,
 		{
 			char cell = temp.grid[y][x];
 			if (cell == ' ')
+				continue;
+
+			if (posX + x < 0 || posX + x >= (int)Config::getInstance().width || posY + y < 0 || posY + y >= (int)Config::getInstance().height)
 				continue;
 
 			Position targetPos(posX + x, posY + y);
@@ -279,8 +278,8 @@ void JigsawWorldGenerator::generateWorld(Game* game)
 	unsigned int width = Config::getInstance().width;
 	unsigned int height = Config::getInstance().height;
 
-	std::uniform_int_distribution<int> distX(0, width - 1);
-	std::uniform_int_distribution<int> distY(0, height - 1);
+	std::uniform_int_distribution<int> distX(0, width * 2);
+	std::uniform_int_distribution<int> distY(0, height * 2);
 	std::uniform_int_distribution<size_t> templateDist(0, templates_.size() - 1);
 
 	Logger::Log(LogLevel::INFO, "Step 1: Placing templates");
@@ -288,8 +287,8 @@ void JigsawWorldGenerator::generateWorld(Game* game)
 	{
 		const MapTemplate &original = templates_[templateDist(eng_)];
 		MapTemplate temp = original.getTransformedTemplate(eng_);
-		int posX = distX(eng_);
-		int posY = distY(eng_);
+		int posX = distX(eng_) - width / 2;
+		int posY = distY(eng_) - height / 2;
 		if (tryPlaceTemplate(game, temp, posX, posY))
 			std::cout << "Placed a template at (" << posX << ", " << posY << ")\n";
 	}

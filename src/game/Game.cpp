@@ -245,6 +245,8 @@ std::vector<Core> Game::getCores()
 // TODO: dont use normal c pointers jesus christ
 Object * Game::getObjectAtPos(Position pos)
 {
+	if (pos.x < 0 || pos.y < 0 || pos.x >= static_cast<int>(Config::getInstance().width) || pos.y >= static_cast<int>(Config::getInstance().height))
+		return nullptr;
 	for (const auto & objPtr : objects_)
 	{
 		Object & obj = *objPtr;

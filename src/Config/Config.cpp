@@ -75,10 +75,9 @@ GameConfig parseConfig() {
 	}
 	else
 	{
+		Logger::Log(LogLevel::ERROR, "No core positions found in config. Using default positions. Please fix this.");
 		config.corePositions.push_back({ 0, 0 });
-		config.corePositions.push_back({ config.width - 1, config.height - 1 });
-		config.corePositions.push_back({ config.width - 1, 0 });
-		config.corePositions.push_back({ 0, config.height - 1 });
+		config.corePositions.push_back({ static_cast<int>(config.width - 1), static_cast<int>(config.height - 1) });
 	}
 
 	return config;

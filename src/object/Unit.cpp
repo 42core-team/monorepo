@@ -17,7 +17,7 @@ void Unit::travel(MovementDirection dir)
 				position_.y -= 1;
 			break;
 		case MovementDirection::DOWN:
-			if (position_.y < config.height - 1)
+			if (position_.y < static_cast<int>(config.height) - 1)
 				position_.y += 1;
 			break;
 		case MovementDirection::LEFT:
@@ -25,7 +25,7 @@ void Unit::travel(MovementDirection dir)
 				position_.x -= 1;
 			break;
 		case MovementDirection::RIGHT:
-			if (position_.x < config.width - 1)
+			if (position_.x < static_cast<int>(config.width) - 1)
 				position_.x += 1;
 			break;
 	}
