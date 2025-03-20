@@ -17,6 +17,7 @@ struct UnitConfig;
 struct GameConfig
 {
 	std::unique_ptr<WorldGenerator> worldGenerator;
+	json worldGeneratorConfig;
 
 	unsigned int width;
 	unsigned int height;
@@ -27,6 +28,7 @@ struct GameConfig
 
 	unsigned int resourceHp;
 	unsigned int resourceIncome;
+	unsigned int resourceCount;
 	unsigned int moneyObjIncome;
 
 	unsigned int coreHp;

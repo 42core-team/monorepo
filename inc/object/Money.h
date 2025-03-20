@@ -14,6 +14,7 @@ class Money : public Object
 		Money(unsigned int id, Position pos, unsigned int balance);
 
 		void tick(unsigned long long tickCount);
+		std::unique_ptr<Object> & clone(Position newPos, Game * game) const;
 
 		unsigned int getBalance() const { return balance_; }
 

@@ -5,8 +5,9 @@
 
 #include "Action.h"
 #include "Common.h"
-#include "Unit.h"
 #include "Money.h"
+
+class Unit;
 
 #include "json.hpp"
 using json = nlohmann::ordered_json;

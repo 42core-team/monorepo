@@ -10,6 +10,8 @@ class Unit : public Object
 		Unit(unsigned int id, unsigned int teamId, Position pos, unsigned int type_id);
 		
 		void tick(unsigned long long tickCount);
+		std::unique_ptr<Object> & clone(Position newPos, Game * game) const;
+
 		void travel(MovementDirection dir);
 		bool canTravel() { return next_move_opp_ == 0; }
 

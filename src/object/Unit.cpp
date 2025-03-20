@@ -1,5 +1,9 @@
 #include "Unit.h"
 
+#include "Game.h"
+
+#include <cassert>
+
 Unit::Unit(unsigned int id, unsigned int teamId, Position pos, unsigned int type_id)
 	: Object(id, pos, Config::getInstance().units[type_id].hp, ObjectType::Unit), type_id_(type_id), team_id_(teamId), balance_(0)
 {
@@ -53,4 +57,13 @@ unsigned int Unit::calcNextMovementOpp()
 		speed = minSpeed;
 
 	return speed;
+}
+
+std::unique_ptr<Object> & Unit::clone(Position newPos, Game * game) const
+{
+	(void)newPos;
+	(void)game;
+	assert(false && "Unit::clone() should never be called for Core objects");
+	static std::unique_ptr<Object> dummy;
+	return dummy;
 }

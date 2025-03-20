@@ -269,6 +269,37 @@ void JigsawWorldGenerator::placeWalls(Game* game)
 	}
 }
 
+void JigsawWorldGenerator::mirrorWorld(Game* game)
+{
+	unsigned int width  = Config::getInstance().width;
+	unsigned int height = Config::getInstance().height;
+
+	auto& objects = game->getObjects();
+
+	objects.erase(
+		std::remove_if(objects.begin(), objects.end(), [width, height](const std::unique_ptr<Object>& obj)
+		{
+			Position pos = obj->getPosition();
+			double ratio = static_cast<double>(pos.x) / (width - 1) + static_cast<double>(pos.y) / (height - 1);
+			return (ratio > 1.0 && obj->getType() != ObjectType::Core);
+		}),
+		objects.end()
+	);
+
+	for (const auto& obj : objects)
+	{
+		Position pos = obj->getPosition();
+		double ratio = static_cast<double>(pos.x) / (width - 1) + static_cast<double>(pos.y) / (height - 1);
+		if (ratio < 1.0 && obj->getType() != ObjectType::Core)
+		{
+			int newX = height - 1 - pos.x;
+			int newY = width  - 1 - pos.y;
+			Position newPos(newX, newY);
+			obj->clone(newPos, game);
+		}
+	}
+}
+
 void JigsawWorldGenerator::generateWorld(Game* game)
 {
 	Logger::Log(LogLevel::INFO, "Generating world with JigsawWorldGenerator");
@@ -278,8 +309,8 @@ void JigsawWorldGenerator::generateWorld(Game* game)
 	unsigned int width = Config::getInstance().width;
 	unsigned int height = Config::getInstance().height;
 
-	std::uniform_int_distribution<int> distX(0, width * 2);
-	std::uniform_int_distribution<int> distY(0, height * 2);
+	std::uniform_int_distribution<int> distX(0, width + 10);
+	std::uniform_int_distribution<int> distY(0, height + 10);
 	std::uniform_int_distribution<size_t> templateDist(0, templates_.size() - 1);
 
 	Logger::Log(LogLevel::INFO, "Step 1: Placing templates");
@@ -287,8 +318,8 @@ void JigsawWorldGenerator::generateWorld(Game* game)
 	{
 		const MapTemplate &original = templates_[templateDist(eng_)];
 		MapTemplate temp = original.getTransformedTemplate(eng_);
-		int posX = distX(eng_) - width / 2;
-		int posY = distY(eng_) - height / 2;
+		int posX = distX(eng_)  - 5;
+		int posY = distY(eng_) - 5;
 		if (tryPlaceTemplate(game, temp, posX, posY))
 			std::cout << "Placed a template at (" << posX << ", " << posY << ")\n";
 	}
@@ -300,6 +331,10 @@ void JigsawWorldGenerator::generateWorld(Game* game)
 
 	Logger::Log(LogLevel::INFO, "Step 3: Balancing resources");
 	balanceResources(game);
+	game->visualizeGameState(0);
+
+	Logger::Log(LogLevel::INFO, "Step 4: Mirroring world");
+	mirrorWorld(game);
 	game->visualizeGameState(0);
 
 	Logger::Log(LogLevel::INFO, "World generation complete");

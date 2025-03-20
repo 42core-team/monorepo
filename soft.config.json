@@ -6,12 +6,16 @@
 	"idleIncomeTimeOut": 600,
 	"resourceHp": 50,
 	"resourceIncome": 200,
+	"resourceCount": 50,
 	"moneyObjIncome": 100,
 	"coreHp": 350,
 	"initialBalance": 400,
 	"wallHp": 100,
 	"wallBuildCost": 20,
 	"worldGenerator": "distanced_resources",
+	"worldGeneratorConfig": {
+		"moneyChance": 4
+	},
 	"units": [
 		{
 			"name": "Warrior",
@@ -63,30 +67,6 @@
 		},
 		{
 			"x": 24,
-			"y": 24
-		},
-		{
-			"x": 0,
-			"y": 24
-		},
-		{
-			"x": 24,
-			"y": 0
-		},
-		{
-			"x": 0,
-			"y": 12
-		},
-		{
-			"x": 24,
-			"y": 12
-		},
-		{
-			"x": 12,
-			"y": 0
-		},
-		{
-			"x": 12,
 			"y": 24
 		}
 	]
