@@ -41,4 +41,5 @@ class JigsawWorldGenerator : public WorldGenerator {
 
 		void balanceResources(Game* game);
 		void placeWalls(Game* game);
+		void mirrorWorld(Game* game);
 };

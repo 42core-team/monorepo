@@ -10,6 +10,7 @@ class Wall : public Object
 		Wall(unsigned int id, Position pos);
 
 		void tick(unsigned long long tickCount);
+		std::unique_ptr<Object> & clone(Position newPos, Game * game) const;
 };
 
 #endif // WALL_H
