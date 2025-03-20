@@ -68,7 +68,7 @@ struct Position
 
 	double distance(const Position& other) const
 	{
-		return sqrt(pow(x - other.x, 2) + pow(y - other.y, 2));
+		return std::abs(static_cast<int>(x) - static_cast<int>(other.x)) + std::abs(static_cast<int>(y) - static_cast<int>(other.y));
 	}
 };
 

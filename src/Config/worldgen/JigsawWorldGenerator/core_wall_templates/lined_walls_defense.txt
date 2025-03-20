@@ -1,6 +1,0 @@
-   RRR
-      
-      
-R    X
-R   RX
-R  XXX

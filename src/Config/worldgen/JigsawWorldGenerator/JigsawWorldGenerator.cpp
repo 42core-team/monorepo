@@ -59,12 +59,9 @@ bool JigsawWorldGenerator::canPlaceTemplate(Game* game, const MapTemplate &temp,
 				}
 			}
 
-			for (const auto &region : coreWallRegions_)
-			{
-				if ((unsigned int)targetX >= region.x && (unsigned int)targetX < region.x + region.width &&
-					(unsigned int)targetY >= region.y && (unsigned int)targetY < region.y + region.height)
+			for (const auto & core : game->getCores())
+				if (core.getPosition().distance(targetPos) < minCoreDistance_)
 					return false;
-			}
 		}
 	}
 	return true;
@@ -171,25 +168,8 @@ void JigsawWorldGenerator::balanceResources(Game* game)
 {
 	std::vector<size_t> resourceIndices;
 	for (size_t i = 0; i < game->getObjects().size(); ++i)
-	{
-		bool canBeRemoved = true;
-		if (game->getObjects()[i]->getType() != ObjectType::Resource)
-			canBeRemoved = false;
-		for (const auto &safeZone : coreWallRegions_)
-		{
-			if (game->getObjects()[i]->getPosition().x >= safeZone.x &&
-				game->getObjects()[i]->getPosition().x < safeZone.x + safeZone.width &&
-				game->getObjects()[i]->getPosition().y >= safeZone.y &&
-				game->getObjects()[i]->getPosition().y < safeZone.y + safeZone.height)
-			{
-				canBeRemoved = false;
-				break;
-			}
-		}
-
-		if (canBeRemoved)
+		if (game->getObjects()[i]->getType() == ObjectType::Resource)
 			resourceIndices.push_back(i);
-	}
 	int currentResources = resourceIndices.size();
 	
 	if (currentResources > expectedResourceCount_)
@@ -212,27 +192,19 @@ void JigsawWorldGenerator::balanceResources(Game* game)
 		std::uniform_int_distribution<int> distX(0, Config::getInstance().width - 1);
 		std::uniform_int_distribution<int> distY(0, Config::getInstance().height - 1);
 
-		while (addCount > 0)
+		int max_iter = 1000;
+		while (addCount > 0 && --max_iter > 0)
 		{
 			int x = distX(eng_);
 			int y = distY(eng_);
 			Position pos(x, y);
 
-			if (game->getObjectAtPos(pos) == nullptr)
-			{
-				bool nearCore = false;
-				for (const auto &safeZone : coreWallRegions_)
-				{
-					if (pos.x >= safeZone.x && pos.x < safeZone.x + safeZone.width &&
-						pos.y >= safeZone.y && pos.y < safeZone.y + safeZone.height)
-					{
-						nearCore = true;
-						break;
-					}
-				}
-				if (nearCore)
+			for (const auto & core : game->getCores())
+				if (core.getPosition().distance(pos) < minCoreDistance_)
 					continue;
 
+			if (game->getObjectAtPos(pos) == nullptr)
+			{
 				game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), pos));
 				addCount--;
 			}
@@ -244,116 +216,74 @@ void JigsawWorldGenerator::placeWalls(Game* game)
 {
 	std::uniform_int_distribution<int> distX(0, Config::getInstance().width - 1);
 	std::uniform_int_distribution<int> distY(0, Config::getInstance().height - 1);
+	std::uniform_real_distribution<double> probDist(0.0, 1.0);
 
-	for (int i = 0; i < 100; ++i)
+	for (int i = 0; i < 75; ++i)
 	{
 		int x = distX(eng_);
 		int y = distY(eng_);
 		Position pos(x, y);
-		if (game->getObjectAtPos(pos) == nullptr)
-		{
-			bool nearCore = false;
-			for (const auto &safeZone : coreWallRegions_)
-			{
-				if (pos.x >= safeZone.x && pos.x < safeZone.x + safeZone.width &&
-					pos.y >= safeZone.y && pos.y < safeZone.y + safeZone.height)
-				{
-					nearCore = true;
-					break;
-				}
-			}
-			if (nearCore)
-				continue;
-
-			bool canPlace = true;
-			for (int sy = -1; sy <= 1; ++sy)
-			{
-				for (int sx = -1; sx <= 1; ++sx)
-				{
-					Position neighbor(x + sx, y + sy);
-					if (game->getObjectAtPos(neighbor) != nullptr)
-					{
-						canPlace = false;
-						break;
-					}
-				}
-				if (!canPlace)
-					break;
-			}
-			if (canPlace)
-				game->getObjects().push_back(std::make_unique<Wall>(game->getNextObjectId(), pos));
-		}
-	}
-}
-
-void JigsawWorldGenerator::placeCoreWalls(Game* game)
-{
-	std::vector<MapTemplate> coreWallTemplates;
-	for (const auto &entry : std::filesystem::directory_iterator("./core/src/Config/worldgen/JigsawWorldGenerator/core_wall_templates")) {
-		if (entry.path().extension() == ".txt")
-		{
-			try {
-				coreWallTemplates.emplace_back(entry.path().string());
-			}
-			catch (const std::exception &e) {
-				std::cerr << "Error loading core wall template " << entry.path() << ": " << e.what() << std::endl;
-			}
-		}
-	}
-	if (coreWallTemplates.empty())
-		throw std::runtime_error("No valid core wall templates found in core_wall_template folder.");
-
-	std::uniform_int_distribution<size_t> dist(0, coreWallTemplates.size() - 1);
-	const MapTemplate selectedTemplate = coreWallTemplates[dist(eng_)];
-
-	unsigned int worldWidth = Config::getInstance().width;
-	unsigned int worldHeight = Config::getInstance().height;
-
-	for (const auto &core : game->getCores()) {
-		Position corePos = core.getPosition();
-		bool isLeft = (corePos.x < worldWidth / 2);
-		bool isTop  = (corePos.y < worldHeight / 2);
 		
-		MapTemplate orientedTemplate = selectedTemplate;
-		int placeX = 0;
-		int placeY = 0;
+		if (game->getObjectAtPos(pos) != nullptr)
+			continue;
 
-		if (isTop && isLeft) {
-			placeX = 0;
-			placeY = 0;
-		} else if (isTop && !isLeft) {
-			orientedTemplate = orientedTemplate.rotate90();
-			placeX = worldWidth - orientedTemplate.width;
-			placeY = 0;
-		} else if (!isTop && isLeft) {
-			orientedTemplate = orientedTemplate.rotate90();
-			orientedTemplate = orientedTemplate.rotate90();
-			orientedTemplate = orientedTemplate.rotate90();
-			placeX = 0;
-			placeY = worldHeight - orientedTemplate.height;
-		} else if (!isTop && !isLeft) {
-			orientedTemplate = orientedTemplate.rotate90();
-			orientedTemplate = orientedTemplate.rotate90();
-			placeX = worldWidth - orientedTemplate.width;
-			placeY = worldHeight - orientedTemplate.height;
+		bool nearCore = false;
+		for (const auto & core : game->getCores())
+		{
+			if (core.getPosition().distance(pos) < minCoreDistance_)
+			{
+				nearCore = true;
+				break;
+			}
+		}
+		if (nearCore)
+			continue;
+
+		int adjacentObjects = 0;
+		for (int sy = -1; sy <= 1; ++sy)
+		{
+			for (int sx = -1; sx <= 1; ++sx)
+			{
+				if (sx == 0 && sy == 0)
+					continue;
+				Position neighbor(x + sx, y + sy);
+				if (game->getObjectAtPos(neighbor) != nullptr)
+					adjacentObjects++;
+			}
 		}
 
-		tryPlaceTemplate(game, orientedTemplate, placeX, placeY, true);
-		coreWallRegions_.push_back({ (unsigned int)placeX, (unsigned int)placeY, (unsigned int)orientedTemplate.width, (unsigned int)orientedTemplate.height });
+		if (adjacentObjects >= 4)
+			continue;
+
+		double placementProbability = 0.5;
+		if (adjacentObjects == 0)
+			placementProbability = 1;
+		else if (adjacentObjects == 1)
+			placementProbability = 0.6;
+		else if (adjacentObjects == 2)
+			placementProbability = 0.9;
+		else if (adjacentObjects == 3)
+			placementProbability = 0.2;
+
+		if (probDist(eng_) < placementProbability)
+			game->getObjects().push_back(std::make_unique<Wall>(game->getNextObjectId(), pos));
 	}
 }
 
 void JigsawWorldGenerator::generateWorld(Game* game)
 {
+	Logger::Log(LogLevel::INFO, "Generating world with JigsawWorldGenerator");
+
+	game->visualizeGameState(0);
+
 	unsigned int width = Config::getInstance().width;
 	unsigned int height = Config::getInstance().height;
-
-	placeCoreWalls(game);
 
 	std::uniform_int_distribution<int> distX(0, width - 1);
 	std::uniform_int_distribution<int> distY(0, height - 1);
 	std::uniform_int_distribution<size_t> templateDist(0, templates_.size() - 1);
-	
+
+	Logger::Log(LogLevel::INFO, "Step 1: Placing templates");
 	for (int i = 0; i < 1000; ++i)
 	{
 		const MapTemplate &original = templates_[templateDist(eng_)];
@@ -361,8 +291,17 @@ void JigsawWorldGenerator::generateWorld(Game* game)
 		int posX = distX(eng_);
 		int posY = distY(eng_);
 		if (tryPlaceTemplate(game, temp, posX, posY))
-			std::cout << "Successfully placed a template at (" << posX << ", " << posY << ")\n";
+			std::cout << "Placed a template at (" << posX << ", " << posY << ")\n";
 	}
+	game->visualizeGameState(0);
 
+	Logger::Log(LogLevel::INFO, "Step 2: Placing walls");
+	placeWalls(game);
+	game->visualizeGameState(0);
+
+	Logger::Log(LogLevel::INFO, "Step 3: Balancing resources");
 	balanceResources(game);
+	game->visualizeGameState(0);
+
+	Logger::Log(LogLevel::INFO, "World generation complete");
 }

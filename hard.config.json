@@ -69,5 +69,15 @@
 			"attackReach": 1,
 			"canBuild": true
 		}
+	],
+	"corePositions": [
+		{
+			"x": 0,
+			"y": 0
+		},
+		{
+			"x": 24,
+			"y": 24
+		}
 	]
 }
