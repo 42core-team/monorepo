@@ -213,11 +213,13 @@ void JigsawWorldGenerator::balanceResources(Game* game)
 
 void JigsawWorldGenerator::placeWalls(Game* game)
 {
+	int additionalWallPlaceAttemptCount = Config::getInstance().worldGeneratorConfig.value("additionalWallPlaceAttemptCount", 100);
+
 	std::uniform_int_distribution<int> distX(0, Config::getInstance().width - 1);
 	std::uniform_int_distribution<int> distY(0, Config::getInstance().height - 1);
 	std::uniform_real_distribution<double> probDist(0.0, 1.0);
 
-	for (int i = 0; i < 75; ++i)
+	for (int i = 0; i < additionalWallPlaceAttemptCount; ++i)
 	{
 		int x = distX(eng_);
 		int y = distY(eng_);
@@ -302,6 +304,9 @@ void JigsawWorldGenerator::mirrorWorld(Game* game)
 
 void JigsawWorldGenerator::generateWorld(Game* game)
 {
+	int templatePlaceAttemptCount = Config::getInstance().worldGeneratorConfig.value("templatePlaceAttemptCount", 1000);
+	bool mirrorMap = Config::getInstance().worldGeneratorConfig.value("mirrorMap", true);
+
 	Logger::Log(LogLevel::INFO, "Generating world with JigsawWorldGenerator");
 
 	game->visualizeGameState(0);
@@ -314,7 +319,7 @@ void JigsawWorldGenerator::generateWorld(Game* game)
 	std::uniform_int_distribution<size_t> templateDist(0, templates_.size() - 1);
 
 	Logger::Log(LogLevel::INFO, "Step 1: Placing templates");
-	for (int i = 0; i < 1000; ++i)
+	for (int i = 0; i < templatePlaceAttemptCount; ++i)
 	{
 		const MapTemplate &original = templates_[templateDist(eng_)];
 		MapTemplate temp = original.getTransformedTemplate(eng_);
@@ -333,9 +338,12 @@ void JigsawWorldGenerator::generateWorld(Game* game)
 	balanceResources(game);
 	game->visualizeGameState(0);
 
-	Logger::Log(LogLevel::INFO, "Step 4: Mirroring world");
-	mirrorWorld(game);
-	game->visualizeGameState(0);
+	if (mirrorMap)
+	{
+		Logger::Log(LogLevel::INFO, "Step 4: Mirroring world");
+		mirrorWorld(game);
+		game->visualizeGameState(0);
+	}
 
 	Logger::Log(LogLevel::INFO, "World generation complete");
 }

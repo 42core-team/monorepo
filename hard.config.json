@@ -13,6 +13,11 @@
 	"wallHp": 100,
 	"wallBuildCost": 20,
 	"worldGenerator": "jigsaw",
+	"worldGeneratorConfig": {
+		"templatePlaceAttemptCount": 1000,
+		"additionalWallPlaceAttemptCount": 100,
+		"mirrorMap": true
+	},
 	"units": [
 		{
 			"name": "Warrior",
