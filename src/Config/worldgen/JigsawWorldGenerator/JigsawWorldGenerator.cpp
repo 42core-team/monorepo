@@ -216,6 +216,101 @@ void JigsawWorldGenerator::balanceObjectType(Game* game, ObjectType type, int am
 	}
 }
 
+void JigsawWorldGenerator::clearPathBetweenCores(Game* game)
+{
+	const auto& cores = game->getCores();
+
+	const Position start = cores[0].getPosition();
+	const Position end   = cores[1].getPosition();
+
+	int W = Config::getInstance().width;
+	int H = Config::getInstance().height;
+
+	auto getCost = [game](int x, int y) -> int {
+		Position pos(x, y);
+		Object* obj = game->getObjectAtPos(pos);
+		return (obj == nullptr || obj->getType() == ObjectType::Core) ? 0 : 1;
+	};
+
+	std::vector<int> dist(W * H, INT_MAX);
+	std::vector<std::pair<int, int>> prev(W * H, {-1, -1});
+	auto index = [W](int x, int y) -> int { return y * W + x; };
+
+	struct Node {
+		int x, y, cost;
+	};
+	auto cmp = [](const Node& a, const Node& b) { return a.cost > b.cost; };
+	std::priority_queue<Node, std::vector<Node>, decltype(cmp)> pq(cmp);
+
+	dist[index(start.x, start.y)] = 0;
+	pq.push({start.x, start.y, 0});
+
+	std::vector<std::pair<int, int>> directions = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+
+	bool found = false;
+	while (!pq.empty())
+	{
+		Node cur = pq.top();
+		pq.pop();
+
+		if (cur.x == end.x && cur.y == end.y)
+		{
+			found = true;
+			break;
+		}
+
+		if (cur.cost > dist[index(cur.x, cur.y)])
+			continue;
+
+		for (const auto& d : directions)
+		{
+			int nx = cur.x + d.first;
+			int ny = cur.y + d.second;
+			if (nx < 0 || ny < 0 || nx >= W || ny >= H)
+				continue;
+			int cost = getCost(nx, ny);
+			int newCost = cur.cost + cost;
+			if (newCost < dist[index(nx, ny)])
+			{
+				dist[index(nx, ny)] = newCost;
+				prev[index(nx, ny)] = {cur.x, cur.y};
+				pq.push({nx, ny, newCost});
+			}
+		}
+	}
+
+	if (!found)
+	{
+		Logger::Log(LogLevel::ERROR, "No viable path found between cores.");
+		return;
+	}
+
+	std::vector<Position> path;
+	int cx = end.x, cy = end.y;
+	while (!(cx == start.x && cy == start.y))
+	{
+		path.push_back(Position(cx, cy));
+		auto p = prev[index(cx, cy)];
+		cx = p.first;
+		cy = p.second;
+	}
+	path.push_back(start);
+	std::reverse(path.begin(), path.end());
+
+	for (const auto& pos : path)
+	{
+		Object* obj = game->getObjectAtPos(pos);
+		if (obj != nullptr && obj->getType() != ObjectType::Core)
+		{
+			auto& objects = game->getObjects();
+			objects.erase(std::remove_if(objects.begin(), objects.end(),
+				[&pos](const std::unique_ptr<Object>& o) {
+					return o->getPosition() == pos && o->getType() != ObjectType::Core;
+				}), objects.end());
+		}
+	}
+}
+
 void JigsawWorldGenerator::placeWalls(Game* game)
 {
 	int additionalWallPlaceAttemptCount = Config::getInstance().worldGeneratorConfig.value("additionalWallPlaceAttemptCount", 100);
@@ -361,6 +456,10 @@ void JigsawWorldGenerator::generateWorld(Game* game)
 		mirrorWorld(game);
 		game->visualizeGameState(0);
 	}
+
+	Logger::Log(LogLevel::INFO, "Step 6: Clearing at least 1 path between cores.");
+	clearPathBetweenCores(game);
+	game->visualizeGameState(0);
 
 	Logger::Log(LogLevel::INFO, "World generation complete");
 }

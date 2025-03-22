@@ -9,6 +9,7 @@
 #include <string>
 #include <filesystem>
 #include <cstdlib>
+#include <climits>
 #include <algorithm>
 #include <chrono>
 #include <random>
@@ -36,8 +37,8 @@ class JigsawWorldGenerator : public WorldGenerator {
 		bool tryPlaceTemplate(Game* game, const MapTemplate &temp, int posX, int posY, bool force);
 		bool canPlaceTemplate(Game* game, const MapTemplate &temp, int posX, int posY);
 
-		void balanceResources(Game* game);
 		void balanceObjectType(Game* game, ObjectType type, int amount);
+		void clearPathBetweenCores(Game* game);
 		void placeWalls(Game* game);
 		void mirrorWorld(Game* game);
 };

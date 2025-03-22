@@ -16,8 +16,8 @@
 		"templatePlaceAttemptCount": 1000,
 		"additionalWallPlaceAttemptCount": 100,
 		"mirrorMap": true,
-		"resourceCount": 20,
-		"moneysCount": 35,
+		"resourceCount": 30,
+		"moneysCount": 45,
 		"minTemplateSpacing": 1,
 		"minCoreDistance": 5
 	},
