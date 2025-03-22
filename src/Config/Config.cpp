@@ -26,7 +26,6 @@ GameConfig parseConfig() {
 	config.idleIncomeTimeOut= j.value("idleIncomeTimeOut", 600);
 	config.resourceHp       = j.value("resourceHp", 50);
 	config.resourceIncome   = j.value("resourceIncome", 200);
-	config.resourceCount    = j.value("resourceCount", 50);
 	config.moneyObjIncome   = j.value("moneyObjIncome", 100);
 	config.coreHp           = j.value("coreHp", 350);
 	config.initialBalance   = j.value("initialBalance", 200);

@@ -28,9 +28,6 @@ class JigsawWorldGenerator : public WorldGenerator {
 
 	private:
 		std::vector<MapTemplate> templates_;
-		int minSpacing_ = 1;
-		int expectedResourceCount_ = 20;
-		int minCoreDistance_ = 5;
 
 		std::default_random_engine eng_ = std::default_random_engine(std::chrono::system_clock::now().time_since_epoch().count());
 
@@ -40,6 +37,7 @@ class JigsawWorldGenerator : public WorldGenerator {
 		bool canPlaceTemplate(Game* game, const MapTemplate &temp, int posX, int posY);
 
 		void balanceResources(Game* game);
+		void balanceObjectType(Game* game, ObjectType type, int amount);
 		void placeWalls(Game* game);
 		void mirrorWorld(Game* game);
 };

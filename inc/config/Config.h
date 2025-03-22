@@ -28,7 +28,6 @@ struct GameConfig
 
 	unsigned int resourceHp;
 	unsigned int resourceIncome;
-	unsigned int resourceCount;
 	unsigned int moneyObjIncome;
 
 	unsigned int coreHp;

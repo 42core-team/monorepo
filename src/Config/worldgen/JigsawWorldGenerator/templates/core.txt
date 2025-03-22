@@ -1,7 +1,7 @@
- X           
-X X          
-X X         X
-X          X 
-X X  X  XX XX
-X X X X X  X 
- X   X  X   X
+BtB          
+tCt          
+tCt        Bt
+tBB        tC
+tCt BtB tt tt
+tCt tFt tC tC
+BtB BtB tB Bt

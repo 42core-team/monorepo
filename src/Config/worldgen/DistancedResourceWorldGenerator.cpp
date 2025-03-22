@@ -8,7 +8,7 @@ void DistancedResourceWorldGenerator::generateWorld(Game * game)
 {
 	unsigned int width = Config::getInstance().width;
 	unsigned int height = Config::getInstance().height;
-	int resourceCount = Config::getInstance().resourceCount;
+	int resourceCount = Config::getInstance().worldGeneratorConfig.value("resourceOrMoneyCount", 20);
 
 	for (int i = 0; i < resourceCount; i++)
 	{

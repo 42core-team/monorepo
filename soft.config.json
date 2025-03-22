@@ -14,7 +14,8 @@
 	"wallBuildCost": 20,
 	"worldGenerator": "distanced_resources",
 	"worldGeneratorConfig": {
-		"moneyChance": 4
+		"moneyChance": 4,
+		"resourceOrMoneyCount": 25
 	},
 	"units": [
 		{

@@ -6,8 +6,7 @@
 	"idleIncomeTimeOut": 600,
 	"resourceHp": 50,
 	"resourceIncome": 200,
-	"resourceCount": 50,
-	"moneyObjIncome": 100,
+	"moneyObjIncome": 50,
 	"coreHp": 350,
 	"initialBalance": 300,
 	"wallHp": 100,
@@ -16,7 +15,11 @@
 	"worldGeneratorConfig": {
 		"templatePlaceAttemptCount": 1000,
 		"additionalWallPlaceAttemptCount": 100,
-		"mirrorMap": true
+		"mirrorMap": true,
+		"resourceCount": 20,
+		"moneysCount": 35,
+		"minTemplateSpacing": 1,
+		"minCoreDistance": 5
 	},
 	"units": [
 		{

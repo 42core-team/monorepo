@@ -30,6 +30,9 @@ void JigsawWorldGenerator::loadTemplates()
 
 bool JigsawWorldGenerator::canPlaceTemplate(Game* game, const MapTemplate &temp, int posX, int posY)
 {
+	int minSpacing = Config::getInstance().worldGeneratorConfig.value("minTemplateSpacing", 1);
+	int minCoreDistance = Config::getInstance().worldGeneratorConfig.value("minCoreDistance", 5);
+
 	for (int y = 0; y < temp.height; ++y)
 	{
 		for (int x = 0; x < temp.width; ++x)
@@ -45,9 +48,9 @@ bool JigsawWorldGenerator::canPlaceTemplate(Game* game, const MapTemplate &temp,
 			if (game->getObjectAtPos(targetPos) != nullptr)
 				return false;
 
-			for (int sy = -minSpacing_; sy <= minSpacing_; ++sy)
+			for (int sy = -minSpacing; sy <= minSpacing; ++sy)
 			{
-				for (int sx = -minSpacing_; sx <= minSpacing_; ++sx)
+				for (int sx = -minSpacing; sx <= minSpacing; ++sx)
 				{
 					Position neighbor(targetX + sx, targetY + sy);
 					if (game->getObjectAtPos(neighbor) != nullptr)
@@ -56,7 +59,7 @@ bool JigsawWorldGenerator::canPlaceTemplate(Game* game, const MapTemplate &temp,
 			}
 
 			for (const auto & core : game->getCores())
-				if (core.getPosition().distance(targetPos) < minCoreDistance_)
+				if (core.getPosition().distance(targetPos) < minCoreDistance)
 					return false;
 		}
 	}
@@ -163,21 +166,23 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game* game, const MapTemplate &temp,
 	return true;
 }
 
-void JigsawWorldGenerator::balanceResources(Game* game)
+void JigsawWorldGenerator::balanceObjectType(Game* game, ObjectType type, int amount)
 {
-	std::vector<size_t> resourceIndices;
+	int minCoreDistance = Config::getInstance().worldGeneratorConfig.value("minCoreDistance", 5);
+
+	std::vector<size_t> objectIndices;
 	for (size_t i = 0; i < game->getObjects().size(); ++i)
-		if (game->getObjects()[i]->getType() == ObjectType::Resource)
-			resourceIndices.push_back(i);
-	int currentResources = resourceIndices.size();
+		if (game->getObjects()[i]->getType() == type)
+		objectIndices.push_back(i);
+	int currentResources = objectIndices.size();
 	
-	if (currentResources > expectedResourceCount_)
+	if (currentResources > amount)
 	{
-		int removeCount = currentResources - expectedResourceCount_;
+		int removeCount = currentResources - amount;
 
-		std::shuffle(resourceIndices.begin(), resourceIndices.end(), eng_);
+		std::shuffle(objectIndices.begin(), objectIndices.end(), eng_);
 
-		std::vector<size_t> indicesToRemove(resourceIndices.begin(), resourceIndices.begin() + removeCount);
+		std::vector<size_t> indicesToRemove(objectIndices.begin(), objectIndices.begin() + removeCount);
 		std::sort(indicesToRemove.begin(), indicesToRemove.end(), std::greater<size_t>());
 
 		for (size_t idx : indicesToRemove)
@@ -185,9 +190,9 @@ void JigsawWorldGenerator::balanceResources(Game* game)
 			game->getObjects().erase(game->getObjects().begin() + idx);
 		}
 	}
-	else if (currentResources < expectedResourceCount_)
+	else if (currentResources < amount)
 	{
-		int addCount = expectedResourceCount_ - currentResources;
+		int addCount = amount - currentResources;
 		std::uniform_int_distribution<int> distX(0, Config::getInstance().width - 1);
 		std::uniform_int_distribution<int> distY(0, Config::getInstance().height - 1);
 
@@ -199,7 +204,7 @@ void JigsawWorldGenerator::balanceResources(Game* game)
 			Position pos(x, y);
 
 			for (const auto & core : game->getCores())
-				if (core.getPosition().distance(pos) < minCoreDistance_)
+				if (core.getPosition().distance(pos) < minCoreDistance)
 					continue;
 
 			if (game->getObjectAtPos(pos) == nullptr)
@@ -214,6 +219,7 @@ void JigsawWorldGenerator::balanceResources(Game* game)
 void JigsawWorldGenerator::placeWalls(Game* game)
 {
 	int additionalWallPlaceAttemptCount = Config::getInstance().worldGeneratorConfig.value("additionalWallPlaceAttemptCount", 100);
+	int minCoreDistance = Config::getInstance().worldGeneratorConfig.value("minCoreDistance", 5);
 
 	std::uniform_int_distribution<int> distX(0, Config::getInstance().width - 1);
 	std::uniform_int_distribution<int> distY(0, Config::getInstance().height - 1);
@@ -231,7 +237,7 @@ void JigsawWorldGenerator::placeWalls(Game* game)
 		bool nearCore = false;
 		for (const auto & core : game->getCores())
 		{
-			if (core.getPosition().distance(pos) < minCoreDistance_)
+			if (core.getPosition().distance(pos) < minCoreDistance)
 			{
 				nearCore = true;
 				break;
@@ -288,17 +294,24 @@ void JigsawWorldGenerator::mirrorWorld(Game* game)
 		objects.end()
 	);
 
+	std::vector<Object*> mirrorCandidates;
 	for (const auto& obj : objects)
 	{
 		Position pos = obj->getPosition();
 		double ratio = static_cast<double>(pos.x) / (width - 1) + static_cast<double>(pos.y) / (height - 1);
 		if (ratio < 1.0 && obj->getType() != ObjectType::Core)
 		{
-			int newX = height - 1 - pos.x;
-			int newY = width  - 1 - pos.y;
-			Position newPos(newX, newY);
-			obj->clone(newPos, game);
+			mirrorCandidates.push_back(obj.get());
 		}
+	}
+
+	for (Object* obj : mirrorCandidates)
+	{
+		Position pos = obj->getPosition();
+		int newX = height - 1 - pos.x;
+		int newY = width  - 1 - pos.y;
+		Position newPos(newX, newY);
+		obj->clone(newPos, game);
 	}
 }
 
@@ -335,12 +348,16 @@ void JigsawWorldGenerator::generateWorld(Game* game)
 	game->visualizeGameState(0);
 
 	Logger::Log(LogLevel::INFO, "Step 3: Balancing resources");
-	balanceResources(game);
+	balanceObjectType(game, ObjectType::Resource, Config::getInstance().worldGeneratorConfig.value("resourceCount", 20));
+	game->visualizeGameState(0);
+
+	Logger::Log(LogLevel::INFO, "Step 4: Balancing moneys");
+	balanceObjectType(game, ObjectType::Money, Config::getInstance().worldGeneratorConfig.value("moneysCount", 20));
 	game->visualizeGameState(0);
 
 	if (mirrorMap)
 	{
-		Logger::Log(LogLevel::INFO, "Step 4: Mirroring world");
+		Logger::Log(LogLevel::INFO, "Step 5: Mirroring world");
 		mirrorWorld(game);
 		game->visualizeGameState(0);
 	}

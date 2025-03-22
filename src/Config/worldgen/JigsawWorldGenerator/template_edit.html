@@ -360,6 +360,8 @@
 		let selectedCellPos = { row: null, col: null };
 		let insertionInfo = null;
 
+		let draggedCell = null;
+
 		/******************************************************
 		 * Local Storage Functions - Save & Load Map Data   *
 		 ******************************************************/
@@ -544,6 +546,7 @@
 
 			for (let r = 0; r < dispRows; r++) {
 				for (let c = 0; c < dispCols; c++) {
+					// Border cells: they serve as "plus" buttons for adding rows/columns.
 					if (r === 0 || r === dispRows - 1 || c === 0 || c === dispCols - 1) {
 						const plusDiv = document.createElement("div");
 						plusDiv.className = "cell plus-cell";
@@ -562,10 +565,28 @@
 						cellDiv.dataset.row = r - 1;
 						cellDiv.dataset.col = c - 1;
 
+						// Allow drop by preventing default dragover action.
+						cellDiv.addEventListener("dragover", (e) => {
+							e.preventDefault();
+						});
+
+						// On drop, if a cell was dragged, copy its data into the target cell.
+						cellDiv.addEventListener("drop", (e) => {
+							e.preventDefault();
+							if (draggedCell) {
+								const targetRow = parseInt(cellDiv.dataset.row);
+								const targetCol = parseInt(cellDiv.dataset.col);
+								// Deep copy using JSON methods is acceptable for our simple cell objects.
+								gridData[targetRow][targetCol] = JSON.parse(JSON.stringify(draggedCell));
+								renderGrid();
+								updateTextArea();
+							}
+						});
+
 						if (cell) {
 							cellDiv.style.backgroundColor = getBackgroundColor(cell);
 
-							// Optionally, add overlay icons for cells with chance < 100%
+							// Optionally, add overlay icons for cells with chance < 100%.
 							if (cell.chance < 100) {
 								if (cell.group === "resource-otherwise-money") {
 									const bgSpan = document.createElement("div");
@@ -598,11 +619,32 @@
 							chanceLabel.textContent = cell.chance + "%";
 							cellDiv.appendChild(chanceLabel);
 
+							// Make the cell draggable.
+							cellDiv.draggable = true;
+
+							// On drag start, capture a deep copy of the cell data.
+							cellDiv.addEventListener("dragstart", (e) => {
+								const row = parseInt(cellDiv.dataset.row);
+								const col = parseInt(cellDiv.dataset.col);
+								if (gridData[row][col]) {
+									draggedCell = JSON.parse(JSON.stringify(gridData[row][col]));
+								}
+								// Some browsers require dataTransfer to have some data.
+								e.dataTransfer.setData("text/plain", "dragging");
+							});
+
+							// Once dragging concludes, reset the draggedCell variable.
+							cellDiv.addEventListener("dragend", (e) => {
+								draggedCell = null;
+							});
+
+							// Retain the original click event to open the editor popup.
 							cellDiv.addEventListener("click", (e) => {
 								e.stopPropagation();
 								openEditor(cell, cellDiv);
 							});
 						} else {
+							// For empty cells, simply render an inner plus to allow adding a new cell.
 							const innerPlus = document.createElement("div");
 							innerPlus.className = "inner-plus";
 							innerPlus.textContent = "+";
