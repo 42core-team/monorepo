@@ -175,10 +175,9 @@ void JigsawWorldGenerator::balanceObjectType(Game* game, ObjectType type, int am
 		if (game->getObjects()[i]->getType() == type)
 		objectIndices.push_back(i);
 	int currentObjCount = objectIndices.size();
-	
+
 	if (currentObjCount > amount)
 	{
-		std::cout << "too much money" << std::endl;
 		int removeCount = currentObjCount - amount;
 		
 		std::shuffle(objectIndices.begin(), objectIndices.end(), eng_);
@@ -193,7 +192,6 @@ void JigsawWorldGenerator::balanceObjectType(Game* game, ObjectType type, int am
 	}
 	else if (currentObjCount < amount)
 	{
-		std::cout << "too little money" << std::endl;
 		int addCount = amount - currentObjCount;
 		std::uniform_int_distribution<int> distX(0, Config::getInstance().width - 1);
 		std::uniform_int_distribution<int> distY(0, Config::getInstance().height - 1);
@@ -205,9 +203,17 @@ void JigsawWorldGenerator::balanceObjectType(Game* game, ObjectType type, int am
 			int y = distY(eng_);
 			Position pos(x, y);
 
+			bool nearCore = false;
 			for (const auto & core : game->getCores())
+			{
 				if (core.getPosition().distance(pos) < minCoreDistance)
-					continue;
+				{
+					nearCore = true;
+					break;
+				}
+			}
+			if (nearCore)
+				continue;
 
 			if (game->getObjectAtPos(pos) == nullptr)
 			{
@@ -304,13 +310,22 @@ void JigsawWorldGenerator::clearPathBetweenCores(Game* game)
 
 	for (const auto& pos : path)
 	{
-		Object* obj = game->getObjectAtPos(pos);
-		if (obj != nullptr && obj->getType() != ObjectType::Core)
+		auto& objects = game->getObjects();
+
+		objects.erase(std::remove_if(objects.begin(), objects.end(),
+			[&](const std::unique_ptr<Object>& o) {
+				return o->getPosition() == pos && o->getType() != ObjectType::Core;
+			}), objects.end());
+
+		if (Config::getInstance().worldGeneratorConfig.value("mirrorMap", true))
 		{
-			auto& objects = game->getObjects();
+			int mirrorX = H - 1 - pos.x;
+			int mirrorY = W - 1 - pos.y;
+			Position mirrorPos(mirrorX, mirrorY);
+
 			objects.erase(std::remove_if(objects.begin(), objects.end(),
-				[&pos](const std::unique_ptr<Object>& o) {
-					return o->getPosition() == pos && o->getType() != ObjectType::Core;
+				[&](const std::unique_ptr<Object>& o) {
+					return o->getPosition() == mirrorPos && o->getType() != ObjectType::Core;
 				}), objects.end());
 		}
 	}
