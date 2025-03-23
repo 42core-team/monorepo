@@ -174,25 +174,27 @@ void JigsawWorldGenerator::balanceObjectType(Game* game, ObjectType type, int am
 	for (size_t i = 0; i < game->getObjects().size(); ++i)
 		if (game->getObjects()[i]->getType() == type)
 		objectIndices.push_back(i);
-	int currentResources = objectIndices.size();
+	int currentObjCount = objectIndices.size();
 	
-	if (currentResources > amount)
+	if (currentObjCount > amount)
 	{
-		int removeCount = currentResources - amount;
-
+		std::cout << "too much money" << std::endl;
+		int removeCount = currentObjCount - amount;
+		
 		std::shuffle(objectIndices.begin(), objectIndices.end(), eng_);
-
+		
 		std::vector<size_t> indicesToRemove(objectIndices.begin(), objectIndices.begin() + removeCount);
 		std::sort(indicesToRemove.begin(), indicesToRemove.end(), std::greater<size_t>());
-
+		
 		for (size_t idx : indicesToRemove)
 		{
 			game->getObjects().erase(game->getObjects().begin() + idx);
 		}
 	}
-	else if (currentResources < amount)
+	else if (currentObjCount < amount)
 	{
-		int addCount = amount - currentResources;
+		std::cout << "too little money" << std::endl;
+		int addCount = amount - currentObjCount;
 		std::uniform_int_distribution<int> distX(0, Config::getInstance().width - 1);
 		std::uniform_int_distribution<int> distY(0, Config::getInstance().height - 1);
 
@@ -209,7 +211,10 @@ void JigsawWorldGenerator::balanceObjectType(Game* game, ObjectType type, int am
 
 			if (game->getObjectAtPos(pos) == nullptr)
 			{
-				game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), pos));
+				if (type == ObjectType::Resource)
+					game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), pos));
+				else
+					game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), pos));
 				addCount--;
 			}
 		}
