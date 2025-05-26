@@ -72,10 +72,7 @@ void Game::run()
 	std::cout << "Game over!" << std::endl;
 	json config = Config::encodeConfig();
 	replayEncoder_.includeConfig(config);
-	json replay = replayEncoder_.getReplay();
-	std::ofstream replayFile("replay_" + std::to_string(std::chrono::system_clock::now().time_since_epoch().count()) + ".json");
-	replayFile << replay.dump();
-	replayFile.close();
+	replayEncoder_.saveReplay();
 }
 
 void Game::tick(unsigned long long tick)

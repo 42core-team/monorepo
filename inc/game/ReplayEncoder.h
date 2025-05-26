@@ -4,6 +4,10 @@
 #include "json.hpp"
 using json = nlohmann::ordered_json;
 
+#include "Logger.h"
+
+#include <fstream>
+
 class ReplayEncoder
 {
 public:
@@ -12,7 +16,10 @@ public:
 
 	void addTickState(const json& state);
 	void includeConfig(json& config);
-	json getReplay() const;
+	void saveReplay() const;
+
+	static void setReplaySaveFolder(const std::string& folder);
+	static void verifyReplaySaveFolder();
 
 private:
 	json diffObjects(const json& currentObjects);
@@ -24,6 +31,8 @@ private:
 	std::unordered_map<int, json> previousObjects_;
 
 	unsigned long long lastTickCount_;
+
+	static std::string replaySaveFolder_;
 };
 
 #endif // REPLAY_ENCODER_H

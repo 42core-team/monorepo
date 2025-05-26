@@ -75,6 +75,13 @@ class Config
 
 		static Position & getCorePosition(unsigned int teamId);
 		static UnitConfig & getUnitConfig(unsigned int typeId);
+
+		static void setConfigFilePath(const std::string & path) {
+			configFilePath = path;
+		}
+
+	private:
+		static std::string configFilePath;
 };
 
 #endif // CONFIG_H

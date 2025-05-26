@@ -1,5 +1,7 @@
 #include "Config.h"
 
+std::string Config::configFilePath = "";
+
 #include "JigsawWorldGenerator.h"
 #include "DistancedResourceWorldGenerator.h"
 

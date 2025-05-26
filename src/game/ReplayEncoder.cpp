@@ -1,5 +1,7 @@
 #include "ReplayEncoder.h"
 
+std::string ReplayEncoder::replaySaveFolder_ = "";
+
 json ReplayEncoder::diffObject(const json& currentObj, const json& previousObj)
 {
 	json diff;
@@ -97,11 +99,42 @@ void ReplayEncoder::includeConfig(json& config)
 	config_ = config;
 }
 
-json ReplayEncoder::getReplay() const
+void ReplayEncoder::setReplaySaveFolder(const std::string& folder) {
+	std::string trimmedFolder = folder;
+	while (!trimmedFolder.empty() && trimmedFolder.back() == '/') trimmedFolder.pop_back();
+	replaySaveFolder_ = trimmedFolder;
+}
+void ReplayEncoder::verifyReplaySaveFolder() {
+	if (replaySaveFolder_.empty() || 
+			!std::filesystem::exists(replaySaveFolder_) ||
+			!std::filesystem::is_directory(replaySaveFolder_)) {
+		Logger::Log(LogLevel::ERROR, "Replay save folder is incorrectly set to: " + replaySaveFolder_);
+		exit(1);
+	}
+}
+
+void ReplayEncoder::saveReplay() const
 {
-	json finalReplay;
-	finalReplay["ticks"] = ticks_;
-	finalReplay["config"] = config_;
-	finalReplay["full_tick_amount"] = lastTickCount_;
-	return finalReplay;
+	if (replaySaveFolder_.empty())
+	{
+		Logger::Log(LogLevel::ERROR, "Replay save folder is not set. Cannot save replay.");
+		return;
+	}
+
+	std::string filePath = replaySaveFolder_ + "/replay_" +  std::to_string(std::chrono::system_clock::now().time_since_epoch().count()) + ".json";
+	std::ofstream outFile(filePath);
+	if (!outFile.is_open())
+	{
+		Logger::Log(LogLevel::ERROR, "Could not open replay file for writing: " + filePath);
+		return;
+	}
+
+	json replayData;
+	replayData["ticks"] = ticks_;
+	replayData["config"] = config_;
+	replayData["full_tick_amount"] = lastTickCount_;
+	outFile << replayData.dump(4); // Pretty print with 4 spaces
+	outFile.close();
+
+	Logger::Log("Replay saved to " + filePath);
 }
