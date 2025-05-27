@@ -175,6 +175,11 @@ typedef struct s_action_travel
 	unsigned long id;
 	t_direction direction;
 } t_action_travel;
+typedef struct s_action_attack
+{
+	unsigned long id;
+	t_direction direction;
+} t_action_attack;
 typedef struct s_action_transfer_money
 {
 	unsigned long source_id;
@@ -192,6 +197,8 @@ typedef struct s_actions
 	unsigned int creates_count;
 	t_action_travel *travels;
 	unsigned int travels_count;
+	t_action_attack *attacks;
+	unsigned int attacks_count;
 	t_action_transfer_money *transfer_moneys;
 	unsigned int transfer_moneys_count;
 	t_action_build *builds;

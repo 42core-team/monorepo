@@ -60,17 +60,13 @@ void parse_json_actions(json_node *root)
 					}
 				}
 			}
-			else if (strcmp(type_node->string, "move") == 0)
+			else if (strcmp(type_node->string, "attack") == 0)
 			{
-				// Only trigger unit attack if the move action indicates an attack.
-				// Normal moves are handled by the on_object_pos_change event
-				json_node *attacked_node = json_find(action, "attacked");
-				if (attacked_node && attacked_node->type == JSON_TYPE_BOOL && attacked_node->number)
-				{
-					json_node *unit_node = json_find(action, "unit_id");
-					if (unit_node && event_handler.on_unit_attack)
-						event_handler.on_unit_attack(ft_get_obj_from_id((unsigned long)unit_node->number), 0, 0, user_data);
-				}
+				json_node *unit_node = json_find(action, "unit_id");
+				json_node *target_node = json_find(action, "target_id");
+				json_node *damage_node = json_find(action, "damage");
+				if (unit_node && event_handler.on_unit_attack && target_node && damage_node)
+					event_handler.on_unit_attack(ft_get_obj_from_id((unsigned long)unit_node->number), ft_get_obj_from_id((unsigned long)target_node->number), (unsigned long)damage_node->number, user_data);
 			}
 		}
 	}

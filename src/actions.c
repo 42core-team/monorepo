@@ -67,7 +67,6 @@ void	ft_move(t_obj *unit, t_direction direction)
 	(*actions)[*count].direction = direction;
 	(*count)++;
 }
-
 void	ft_travel_to_pos(t_obj *unit, t_pos pos)
 {
 	bool biggestAxisX = abs(unit->pos.x - pos.x) > abs(unit->pos.y - pos.y);
@@ -85,6 +84,30 @@ void	ft_travel_to_pos(t_obj *unit, t_pos pos)
 		else if (unit->pos.y > pos.y)
 			ft_move(unit, DIR_UP);
 	}
+}
+
+void	ft_attack(t_obj *attacker, t_direction direction)
+{
+	if (!attacker)
+		return;
+	if (attacker->type != OBJ_UNIT)
+		return;
+
+	t_action_attack	**actions = &game.actions.attacks;
+	unsigned int	*count = &game.actions.attacks_count;
+
+	if (!*actions)
+	{
+		*actions = malloc(sizeof(t_action_attack) * 2);
+		*count = 0;
+	}
+	else
+		*actions = realloc(*actions, sizeof(t_action_attack) * (*count + 2));
+	(*actions)[*count + 1].id = 0;
+
+	(*actions)[*count].id = attacker->id;
+	(*actions)[*count].direction = direction;
+	(*count)++;
 }
 
 void	ft_drop_money(t_obj *source, t_pos target_pos, unsigned long amount)
