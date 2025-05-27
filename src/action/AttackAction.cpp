@@ -16,7 +16,14 @@ void AttackAction::decodeJSON(json msg)
 	}
 
 	unit_id_ = msg["unit_id"];
-	target_id_ = msg["target_id"];
+	target_pos_.x = msg["target_pos_x"];
+	target_pos_.y = msg["target_pos_y"];
+
+	if (!target_pos_.isValid(Config::getInstance().width, Config::getInstance().height))
+	{
+		is_valid_ = false;
+		return;
+	}
 }
 json AttackAction::encodeJSON()
 {
@@ -24,7 +31,8 @@ json AttackAction::encodeJSON()
 
 	js["type"] = "move";
 	js["unit_id"] = unit_id_;
-	js["target_id"] = target_id_;
+	js["target_pos_x"] = target_pos_.x;
+	js["target_pos_y"] = target_pos_.y;
 	js["damage"] = damage_;
 
 	return js;
@@ -79,14 +87,29 @@ bool AttackAction::execute(Game *game, Core * core)
 	if (unit->getTeamId() != core->getTeamId())
 		return false;
 
-	Object * obj = game->getObject(target_id_);
-	if (!obj)
-		return false;
+	if (Config::getInstance().units[unit->getTypeId()].attackType == AttackType::DIRECT_HIT)
+	{
+		Object * obj = game->getObjectAtPos(target_pos_);
+		if (!obj)
+			return false;
 
-	if (!attackObj(obj, unit, game))
+		if (!attackObj(obj, unit, game))
+			return false;
+	}
+	else if (Config::getInstance().units[unit->getTypeId()].attackType == AttackType::DROP_BOMB)
+	{
+		Object * obj = game->getObjectAtPos(target_pos_);
+		if (obj)
+			return false;
+
+		game->getObjects().push_back(
+			std::make_unique<Bomb>(game->getNextObjectId(), target_pos_));
+	}
+	else
+	{
+		Logger::Log(LogLevel::WARNING, "Unknown attack type for unit " + std::to_string(unit->getId()) + " of type " + std::to_string(unit->getTypeId()));
 		return false;
-	
-	target_id_ = obj->getId();
+	}
 
 	return true;
 }

@@ -33,6 +33,11 @@ GameConfig parseConfig() {
 	config.initialBalance   = j.value("initialBalance", 200);
 	config.wallHp           = j.value("wallHp", 100);
 	config.wallBuildCost    = j.value("wallBuildCost", 20);
+	config.bombHp           = j.value("bombHp", 100);
+	config.bombCountdown    = j.value("bombCountdown", 25);
+	config.bombThrowCost    = j.value("bombThrowCost", 50);
+	config.bombReach        = j.value("bombReach", 3);
+	config.bombDamage       = j.value("bombDamage", 100);
 
 	std::string wgType = j.value("worldGenerator", "distanced_resources");
 	if (wgType == "jigsaw")
@@ -57,9 +62,9 @@ GameConfig parseConfig() {
 			unit.damageUnit     = unitJson.value("damageUnit", 0);
 			unit.damageResource = unitJson.value("damageResource", 0);
 			unit.damageWall     = unitJson.value("damageWall", 0);
+			unit.damageBomb     = unitJson.value("damageBomb", 0);
 			int attackTypeInt   = unitJson.value("attackType", 0);
 			unit.attackType     = static_cast<AttackType>(attackTypeInt);
-			unit.attackReach    = unitJson.value("attackReach", 0);
 			unit.canBuild       = unitJson.value("canBuild", false);
 
 			config.units.push_back(unit);
@@ -125,6 +130,12 @@ json Config::encodeConfig()
 	configJson["wallHp"] = config.wallHp;
 	configJson["wallBuildCost"] = config.wallBuildCost;
 
+	configJson["bombHp"] = config.bombHp;
+	configJson["bombCountdown"] = config.bombCountdown;
+	configJson["bombThrowCost"] = config.bombThrowCost;
+	configJson["bombReach"] = config.bombReach;
+	configJson["bombDamage"] = config.bombDamage;
+
 	configJson["units"] = json::array();
 	for (auto& unit : config.units)
 	{
@@ -140,8 +151,8 @@ json Config::encodeConfig()
 		u["damageUnit"] = unit.damageUnit;
 		u["damageResource"] = unit.damageResource;
 		u["damageWall"] = unit.damageWall;
+		u["damageBomb"] = unit.damageBomb;
 		u["attackType"] = (int)unit.attackType;
-		u["attackReach"] = unit.attackReach;
 
 		u["canBuild"] = unit.canBuild;
 

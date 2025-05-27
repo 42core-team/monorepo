@@ -9,7 +9,7 @@ class Unit : public Object
 	public:
 		Unit(unsigned int id, unsigned int teamId, Position pos, unsigned int type_id);
 		
-		void tick(unsigned long long tickCount);
+		void tick(unsigned long long tickCount, Game * game);
 		std::unique_ptr<Object> & clone(Position newPos, Game * game) const;
 
 		unsigned int getTypeId() const { return type_id_; }

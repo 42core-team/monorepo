@@ -36,6 +36,12 @@ struct GameConfig
 	unsigned int wallHp;
 	unsigned int wallBuildCost;
 
+	unsigned int bombHp;
+	unsigned int bombCountdown;
+	unsigned int bombThrowCost;
+	unsigned int bombReach;
+	unsigned int bombDamage;
+
 	std::vector<UnitConfig> units;
 
 	// core positions. length defines max supported player count
@@ -60,8 +66,9 @@ struct UnitConfig
 	unsigned int damageUnit;
 	unsigned int damageResource;
 	unsigned int damageWall;
+	unsigned int damageBomb;
+
 	AttackType attackType;
-	unsigned int attackReach;
 
 	bool canBuild;
 };

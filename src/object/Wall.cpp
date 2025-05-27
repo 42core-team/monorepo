@@ -5,9 +5,10 @@
 Wall::Wall(unsigned int id, Position pos)
 	: Object(id, pos, Config::getInstance().wallHp, ObjectType::Wall) {}
 
-void Wall::tick(unsigned long long tickCount)
+void Wall::tick(unsigned long long tickCount, Game * game)
 {
 	(void) tickCount;
+	(void) game;
 }
 
 std::unique_ptr<Object> & Wall::clone(Position newPos, Game * game) const

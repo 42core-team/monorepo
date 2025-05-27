@@ -13,7 +13,7 @@ class Resource : public Object
 		Resource(unsigned int id, Position pos);
 		Resource(unsigned int id, Position pos, unsigned int balance);
 
-		void tick(unsigned long long tickCount);
+		void tick(unsigned long long tickCount, Game * game);
 		std::unique_ptr<Object> & clone(Position newPos, Game * game) const;
 		void getMined(Unit * miner);
 

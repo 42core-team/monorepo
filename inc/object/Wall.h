@@ -9,7 +9,7 @@ class Wall : public Object
 	public:
 		Wall(unsigned int id, Position pos);
 
-		void tick(unsigned long long tickCount);
+		void tick(unsigned long long tickCount, Game * game);
 		std::unique_ptr<Object> & clone(Position newPos, Game * game) const;
 };
 

@@ -11,6 +11,11 @@
 	"initialBalance": 300,
 	"wallHp": 100,
 	"wallBuildCost": 20,
+	"bombHp": 50,
+	"bombCountdown": 25,
+	"bombThrowCost": 50,
+	"bombReach": 3,
+	"bombDamage": 50,
 	"worldGenerator": "jigsaw",
 	"worldGeneratorConfig": {
 		"templatePlaceAttemptCount": 1000,
@@ -32,8 +37,8 @@
 			"damageUnit": 6,
 			"damageResource": 2,
 			"damageWall": 3,
+			"damageBomb": 5,
 			"attackType": 0,
-			"attackReach": 1,
 			"canBuild": false
 		},
 		{
@@ -46,8 +51,8 @@
 			"damageUnit": 2,
 			"damageResource": 10,
 			"damageWall": 5,
+			"damageBomb": 2,
 			"attackType": 0,
-			"attackReach": 1,
 			"canBuild": false
 		},
 		{
@@ -60,8 +65,8 @@
 			"damageUnit": 2,
 			"damageResource": 4,
 			"damageWall": 3,
+			"damageBomb": 1,
 			"attackType": 0,
-			"attackReach": 1,
 			"canBuild": false
 		},
 		{
@@ -74,9 +79,23 @@
 			"damageUnit": 3,
 			"damageResource": 2,
 			"damageWall": 3,
+			"damageBomb": 4,
 			"attackType": 0,
-			"attackReach": 1,
 			"canBuild": true
+		},
+		{
+			"name": "Bomberman",
+			"cost": 200,
+			"hp": 40,
+			"speed": 1,
+			"minSpeed": 10,
+			"damageCore": 20,
+			"damageUnit": 10,
+			"damageResource": 5,
+			"damageWall": 10,
+			"damageBomb": 15,
+			"attackType": 2,
+			"canBuild": false
 		}
 	],
 	"corePositions": [

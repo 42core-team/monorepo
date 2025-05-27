@@ -128,7 +128,7 @@ void Game::tick(unsigned long long tick)
 		}
 		else
 		{
-			obj->tick(tick);
+			obj->tick(tick, this);
 			++it;
 		}
 	}

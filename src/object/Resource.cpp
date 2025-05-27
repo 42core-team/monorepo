@@ -35,9 +35,10 @@ void Resource::getMined(Unit * miner)
 	miner->addBalance(reward);
 }
 
-void Resource::tick(unsigned long long tickCount)
+void Resource::tick(unsigned long long tickCount, Game * game)
 {
 	(void) tickCount;
+	(void) game;
 }
 
 std::unique_ptr<Object> & Resource::clone(Position newPos, Game * game) const

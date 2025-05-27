@@ -10,9 +10,10 @@ Unit::Unit(unsigned int id, unsigned int teamId, Position pos, unsigned int type
 	resetNextMoveOpp();
 }
 
-void Unit::tick(unsigned long long tickCount)
+void Unit::tick(unsigned long long tickCount, Game * game)
 {
 	(void) tickCount;
+	(void) game;
 	if (next_move_opp_ > 0)
 		next_move_opp_--;
 }

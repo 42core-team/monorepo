@@ -9,9 +9,10 @@ Money::Money(unsigned int id, Position pos, unsigned int balance)
 	: Object(id, pos, 1, ObjectType::Money),
 	balance_(balance) {}
 
-void Money::tick(unsigned long long tickCount)
+void Money::tick(unsigned long long tickCount, Game * game)
 {
 	(void) tickCount;
+	(void) game;
 }
 
 std::unique_ptr<Object> & Money::clone(Position newPos, Game * game) const

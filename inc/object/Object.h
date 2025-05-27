@@ -14,7 +14,8 @@ enum class ObjectType
 	Unit,
 	Resource,
 	Wall,
-	Money
+	Money,
+	Bomb
 };
 
 class Object
@@ -24,7 +25,7 @@ class Object
 			: id_(id), position_(pos), hp_(hp), type_(type) {}
 		virtual ~Object() {}
 
-		virtual void tick(unsigned long long tickCount) = 0;
+		virtual void tick(unsigned long long tickCount, Game * game) = 0;
 		virtual std::unique_ptr<Object> & clone(Position newPos, Game * game) const = 0;
 
 		unsigned int getId() const { return id_; };

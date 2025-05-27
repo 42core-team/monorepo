@@ -47,6 +47,10 @@ void Game::visualizeGameState(unsigned long long tick)
 				{
 					std::cout << "$";
 				}
+				else if (obj->getType() == ObjectType::Bomb)
+				{
+					std::cout << "B";
+				}
 			}
 			else
 			{

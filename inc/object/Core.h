@@ -9,7 +9,7 @@ class Core : public Object
 	public:
 		Core(unsigned int id, unsigned int teamId, Position pos);
 
-		void tick(unsigned long long tickCount);
+		void tick(unsigned long long tickCount, Game * game);
 		std::unique_ptr<Object> & clone(Position newPos, Game * game) const;
 
 		unsigned int getBalance() const { return balance_; }
