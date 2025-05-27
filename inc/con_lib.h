@@ -36,14 +36,6 @@ typedef enum e_obj_state
 	STATE_DEAD = 3
 }	t_obj_state;
 
-typedef enum e_direction
-{
-	DIR_UP = 0,
-	DIR_RIGHT = 1,
-	DIR_DOWN = 2,
-	DIR_LEFT = 3
-}	t_direction;
-
 typedef struct s_pos
 {
 	unsigned short x;
@@ -173,12 +165,12 @@ typedef struct s_action_create
 typedef struct s_action_travel
 {
 	unsigned long id;
-	t_direction direction;
+	t_pos target_pos;
 } t_action_travel;
 typedef struct s_action_attack
 {
 	unsigned long id;
-	t_direction direction;
+	unsigned long target_id;
 } t_action_attack;
 typedef struct s_action_transfer_money
 {
@@ -331,9 +323,9 @@ t_obj	*ft_create_unit(t_unit_type type_id);
  * @brief Moves a unit to a specific position.
  * 
  * @param unit The unit that should be moved.
- * @param direction The direction the unit should move.
+ * @param pos The position the unit should move to.
  */
-void	ft_move(t_obj *unit, t_direction direction);
+void	ft_move(t_obj *unit, t_pos pos);
 /**
  * @brief Determines next direction to move to reach goal, then calls ft_move().
  * 
@@ -341,6 +333,13 @@ void	ft_move(t_obj *unit, t_direction direction);
  * @param direction The target position.
  */
 void	ft_travel_to_pos(t_obj *unit, t_pos pos);
+/**
+ * @brief Attacks a target with a unit.
+ * 
+ * @param attacker The unit that should attack.
+ * @param target The target that should be attacked.
+ */
+void	ft_attack(t_obj *attacker, t_obj *target);
 /**
  * @brief Drops money at a specific position.
  * 

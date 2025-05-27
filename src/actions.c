@@ -46,7 +46,7 @@ t_obj	*ft_create_unit(t_unit_type type_id)
 	return newUnit;
 }
 
-void	ft_move(t_obj *unit, t_direction direction)
+void	ft_move(t_obj *unit, t_pos pos)
 {
 	if (unit->s_unit.next_movement_opp != 0)
 		return;
@@ -64,7 +64,7 @@ void	ft_move(t_obj *unit, t_direction direction)
 	(*actions)[*count + 1].id = 0;
 
 	(*actions)[*count].id = unit->id;
-	(*actions)[*count].direction = direction;
+	(*actions)[*count].target_pos = pos;
 	(*count)++;
 }
 void	ft_travel_to_pos(t_obj *unit, t_pos pos)
@@ -73,20 +73,20 @@ void	ft_travel_to_pos(t_obj *unit, t_pos pos)
 	if (biggestAxisX)
 	{
 		if (unit->pos.x < pos.x)
-			ft_move(unit, DIR_RIGHT);
+			ft_move(unit, (t_pos){unit->pos.x - 1, unit->pos.y});
 		else if (unit->pos.x > pos.x)
-			ft_move(unit, DIR_LEFT);
+			ft_move(unit, (t_pos){unit->pos.x + 1, unit->pos.y});
 	}
 	else
 	{
 		if (unit->pos.y < pos.y)
-			ft_move(unit, DIR_DOWN);
+			ft_move(unit, (t_pos){unit->pos.x, unit->pos.y + 1});
 		else if (unit->pos.y > pos.y)
-			ft_move(unit, DIR_UP);
+			ft_move(unit, (t_pos){unit->pos.x, unit->pos.y - 1});
 	}
 }
 
-void	ft_attack(t_obj *attacker, t_direction direction)
+void	ft_attack(t_obj *attacker, t_obj *target)
 {
 	if (!attacker)
 		return;
@@ -106,7 +106,7 @@ void	ft_attack(t_obj *attacker, t_direction direction)
 	(*actions)[*count + 1].id = 0;
 
 	(*actions)[*count].id = attacker->id;
-	(*actions)[*count].direction = direction;
+	(*actions)[*count].target_id = target->id;
 	(*count)++;
 }
 
