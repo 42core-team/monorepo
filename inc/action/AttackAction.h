@@ -1,5 +1,5 @@
-#ifndef MOVE_ACTION_H
-#define MOVE_ACTION_H
+#ifndef ATTACK_ACTION_H
+#define ATTACK_ACTION_H
 
 #include <vector>
 
@@ -12,13 +12,14 @@ class Unit;
 #include "json.hpp"
 using json = nlohmann::ordered_json;
 
-class MoveAction : public Action
+class AttackAction : public Action
 {
 	public:
-		MoveAction(json msg);
-
+		AttackAction(json msg);
 		unsigned int getUnitId() const { return unit_id_; }
 		MovementDirection getDirection() const { return dir_; }
+		unsigned int getTargetId() const { return target_id_; }
+		unsigned int getDamage() const { return damage_; }
 
 		bool execute(Game *game, Core * core);
 		void decodeJSON(json msg);
@@ -27,6 +28,10 @@ class MoveAction : public Action
 	private:
 		unsigned int unit_id_;
 		MovementDirection dir_;
+		unsigned int target_id_;
+		unsigned int damage_;
+
+		bool attackObj(Object *obj, Unit * unit, Game *game);
 };
 
-#endif // MOVE_ACTION_H
+#endif // ATTACK_ACTION_H

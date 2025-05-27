@@ -45,8 +45,7 @@ struct GameConfig
 enum class AttackType
 {
 	DIRECT_HIT,
-	DIRECTION_SHOT,
-	AREA_DAMAGE // not implemented
+	DROP_BOMB
 };
 
 struct UnitConfig
