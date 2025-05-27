@@ -3,14 +3,6 @@
 
 #include <cmath>
 
-enum class MovementDirection
-{
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT
-};
-
 struct Position
 {
 	int x;
@@ -29,26 +21,6 @@ struct Position
 		return x == other.x && y == other.y;
 	}
 
-	Position operator+(const MovementDirection& dir) const
-	{
-		Position newPos = *this;
-		switch (dir)
-		{
-			case MovementDirection::UP:
-				newPos.y--;
-				break;
-			case MovementDirection::DOWN:
-				newPos.y++;
-				break;
-			case MovementDirection::LEFT:
-				newPos.x--;
-				break;
-			case MovementDirection::RIGHT:
-				newPos.x++;
-				break;
-		}
-		return newPos;
-	}
 	Position operator+(const Position& other) const
 	{
 		return {x + other.x, y + other.y};

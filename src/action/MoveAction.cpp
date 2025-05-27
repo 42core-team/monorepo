@@ -9,25 +9,19 @@ MoveAction::MoveAction(json msg) : Action(ActionType::MOVE)
 
 void MoveAction::decodeJSON(json msg)
 {
-	if (!msg.contains("unit_id") || !msg.contains("dir"))
+	if (!msg.contains("unit_id") || !msg.contains("targetX") || !msg.contains("targetY"))
 	{
 		is_valid_ = false;
 		return;
 	}
 
 	unit_id_ = msg["unit_id"];
-
-	std::string dir = msg["dir"];
-	if (dir == "u")
-		dir_ = MovementDirection::UP;
-	else if (dir == "d")
-		dir_ = MovementDirection::DOWN;
-	else if (dir == "l")
-		dir_ = MovementDirection::LEFT;
-	else if (dir == "r")
-		dir_ = MovementDirection::RIGHT;
-	else
+	target_ = Position(msg["targetX"], msg["targetY"]);
+	if (!target_.isValid(Config::getInstance().width, Config::getInstance().height))
+	{
 		is_valid_ = false;
+		return;
+	}
 }
 json MoveAction::encodeJSON()
 {
@@ -35,21 +29,8 @@ json MoveAction::encodeJSON()
 
 	js["type"] = "move";
 	js["unit_id"] = unit_id_;
-	switch (dir_)
-	{
-	case MovementDirection::UP:
-		js["dir"] = "u";
-		break;
-	case MovementDirection::DOWN:
-		js["dir"] = "d";
-		break;
-	case MovementDirection::LEFT:
-		js["dir"] = "l";
-		break;
-	case MovementDirection::RIGHT:
-		js["dir"] = "r";
-		break;
-	}
+	js["targetX"] = target_.x;
+	js["targetY"] = target_.y;
 
 	return js;
 }
@@ -60,25 +41,23 @@ bool MoveAction::execute(Game *game, Core * core)
 		return false;
 
 	Object * unitObj = game->getObject(getUnitId());
-
 	if (!unitObj || unitObj->getType() != ObjectType::Unit)
 		return false;
 	Unit * unit = (Unit *)unitObj;
-	if (!unit->canTravel())
+
+	if (unit->getNextMoveOpp() > 0)
 		return false;
 	if (unit->getTeamId() != core->getTeamId())
 		return false;
 
-	Position unitPos = unit->getPosition();
-	Position newPos = unitPos + getDirection();
-	if (!newPos.isValid(Config::getInstance().width, Config::getInstance().height))
-		return false;
-
-	Object * obj = game->getObjectAtPos(newPos);
+	Object * obj = game->getObjectAtPos(target_);
 	if (obj)
 		return false;
+	if (target_.distance(unit->getPosition()) > 1)
+		return false;
 
-	unit->setPosition(newPos);
+	unit->setPosition(target_);
 	unit->resetNextMoveOpp();
+
 	return true;
 }

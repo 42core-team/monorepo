@@ -12,9 +12,6 @@ class Unit : public Object
 		void tick(unsigned long long tickCount);
 		std::unique_ptr<Object> & clone(Position newPos, Game * game) const;
 
-		void travel(MovementDirection dir);
-		bool canTravel() { return next_move_opp_ == 0; }
-
 		unsigned int getTypeId() const { return type_id_; }
 		unsigned int getTeamId() const { return team_id_; }
 		unsigned int getBalance() const { return balance_; }

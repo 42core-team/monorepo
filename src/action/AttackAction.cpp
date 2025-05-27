@@ -9,25 +9,14 @@ AttackAction::AttackAction(json msg) : Action(ActionType::MOVE)
 
 void AttackAction::decodeJSON(json msg)
 {
-	if (!msg.contains("unit_id") || !msg.contains("dir"))
+	if (!msg.contains("unit_id") || !msg.contains("target_id"))
 	{
 		is_valid_ = false;
 		return;
 	}
 
 	unit_id_ = msg["unit_id"];
-
-	std::string dir = msg["dir"];
-	if (dir == "u")
-		dir_ = MovementDirection::UP;
-	else if (dir == "d")
-		dir_ = MovementDirection::DOWN;
-	else if (dir == "l")
-		dir_ = MovementDirection::LEFT;
-	else if (dir == "r")
-		dir_ = MovementDirection::RIGHT;
-	else
-		is_valid_ = false;
+	target_id_ = msg["target_id"];
 }
 json AttackAction::encodeJSON()
 {
@@ -35,21 +24,6 @@ json AttackAction::encodeJSON()
 
 	js["type"] = "move";
 	js["unit_id"] = unit_id_;
-	switch (dir_)
-	{
-		case MovementDirection::UP:
-			js["dir"] = "u";
-			break;
-		case MovementDirection::DOWN:
-			js["dir"] = "d";
-			break;
-		case MovementDirection::LEFT:
-			js["dir"] = "l";
-			break;
-		case MovementDirection::RIGHT:
-			js["dir"] = "r";
-			break;
-	}
 	js["target_id"] = target_id_;
 	js["damage"] = damage_;
 
@@ -100,17 +74,12 @@ bool AttackAction::execute(Game *game, Core * core)
 	if (!unitObj || unitObj->getType() != ObjectType::Unit)
 		return false;
 	Unit * unit = (Unit *)unitObj;
-	if (!unit->canTravel())
+	if (unit->getNextMoveOpp() > 0)
 		return false;
 	if (unit->getTeamId() != core->getTeamId())
 		return false;
 
-	Position unitPos = unit->getPosition();
-	Position newPos = unitPos + getDirection();
-	if (!newPos.isValid(Config::getInstance().width, Config::getInstance().height))
-		return false;
-
-	Object * obj = game->getObjectAtPos(newPos);
+	Object * obj = game->getObject(target_id_);
 	if (!obj)
 		return false;
 

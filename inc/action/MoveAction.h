@@ -18,7 +18,7 @@ class MoveAction : public Action
 		MoveAction(json msg);
 
 		unsigned int getUnitId() const { return unit_id_; }
-		MovementDirection getDirection() const { return dir_; }
+		Position getTarget() const { return target_; }
 
 		bool execute(Game *game, Core * core);
 		void decodeJSON(json msg);
@@ -26,7 +26,7 @@ class MoveAction : public Action
 	
 	private:
 		unsigned int unit_id_;
-		MovementDirection dir_;
+		Position target_;
 };
 
 #endif // MOVE_ACTION_H
