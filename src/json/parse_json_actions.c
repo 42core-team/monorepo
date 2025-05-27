@@ -63,10 +63,11 @@ void parse_json_actions(json_node *root)
 			else if (strcmp(type_node->string, "attack") == 0)
 			{
 				json_node *unit_node = json_find(action, "unit_id");
-				json_node *target_node = json_find(action, "target_id");
+				json_node *target_node_x = json_find(action, "target_pos_x");
+				json_node *target_node_y = json_find(action, "target_pos_y");
 				json_node *damage_node = json_find(action, "damage");
-				if (unit_node && event_handler.on_unit_attack && target_node && damage_node)
-					event_handler.on_unit_attack(ft_get_obj_from_id((unsigned long)unit_node->number), ft_get_obj_from_id((unsigned long)target_node->number), (unsigned long)damage_node->number, user_data);
+				if (unit_node && event_handler.on_unit_attack && target_node_x && target_node_y && damage_node)
+					event_handler.on_unit_attack(ft_get_obj_from_id((unsigned long)unit_node->number), (t_pos){target_node_x->number, target_node_y->number}, (unsigned long)damage_node->number, user_data);
 			}
 		}
 	}

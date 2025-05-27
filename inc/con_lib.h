@@ -27,7 +27,8 @@ typedef enum e_obj_type
 	OBJ_UNIT,
 	OBJ_RESOURCE,
 	OBJ_WALL,
-	OBJ_MONEY
+	OBJ_MONEY,
+	OBJ_BOMB
 } t_obj_type;
 typedef enum e_obj_state
 {
@@ -93,12 +94,13 @@ typedef enum e_unit_type
 	UNIT_WARRIOR = 0,
 	UNIT_MINER = 1,
 	UNIT_CARRIER = 2,
-	UNIT_BUILDER = 3
+	UNIT_BUILDER = 3,
+	UNIT_BOMBERMAN = 4
 } t_unit_type;
 typedef enum e_attack_type
 {
 	ATTACK_DIRECT_HIT = 0,
-	ATTACK_DIRECTION_SHOT = 1
+	ATTACK_BOMB_DROP = 1
 } t_attack_type;
 
 typedef struct s_unit_config
@@ -119,6 +121,8 @@ typedef struct s_unit_config
 	unsigned long dmg_resource;
 	/// @brief How much damage the unit deals to walls.
 	unsigned long dmg_wall;
+	/// @brief How much damage the unit deals to bombs.
+	unsigned long dmg_bomb;
 	/// @brief The units attack type.
 	t_attack_type attack_type;
 	/// @brief The maximum reach the unit can attack. Unused for direct hit attack type units.
@@ -154,6 +158,16 @@ typedef struct s_config
 	unsigned long wall_hp;
 	/// @brief How much it costs for a builder to build a wall.
 	unsigned long wall_build_cost;
+	/// @brief How much healthpoints a bomb has.
+	unsigned long bomb_hp;
+	/// @brief How many ticks a bomb takes to explode after being thrown.
+	unsigned long bomb_countdown;
+	/// @brief How much it costs to throw a bomb.
+	unsigned long bomb_throw_cost;
+	/// @brief How big the explosion of a bomb is.
+	unsigned long bomb_reach;
+	/// @brief How much damage a bomb does to cores.
+	unsigned long bomb_damage;
 	/// @brief List of all unit types that are available in the game. NULL-terminated.
 	t_unit_config **units;
 } t_config;
@@ -170,7 +184,7 @@ typedef struct s_action_travel
 typedef struct s_action_attack
 {
 	unsigned long id;
-	unsigned long target_id;
+	t_pos target_pos;
 } t_action_attack;
 typedef struct s_action_transfer_money
 {
@@ -235,6 +249,10 @@ typedef struct s_game
 	 * @brief List of all moneys and their informations. NULL-terminated.
 	 */
 	t_obj **moneys;
+	/**
+	 * @brief List of all bombs and their informations. NULL-terminated.
+	 */
+	t_obj **bombs;
 	/**
 	 * @brief List of all actions that will be send to the server when your function ends.
 	 */
@@ -337,9 +355,9 @@ void	ft_travel_to_pos(t_obj *unit, t_pos pos);
  * @brief Attacks a target with a unit.
  * 
  * @param attacker The unit that should attack.
- * @param target The target that should be attacked.
+ * @param pos The position that should be attacked.
  */
-void	ft_attack(t_obj *attacker, t_obj *target);
+void	ft_attack(t_obj *attacker, t_pos pos);
 /**
  * @brief Drops money at a specific position.
  * 

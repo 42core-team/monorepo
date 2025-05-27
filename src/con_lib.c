@@ -133,6 +133,10 @@ void ft_loop(t_event_handler handler, void *custom_data)
 				event_handler.on_object_ticked(game.walls[i], game.elapsed_ticks, custom_data);
 			for (size_t i = 0; game.cores && game.cores[i]; i++)
 				event_handler.on_object_ticked(game.cores[i], game.elapsed_ticks, custom_data);
+			for (size_t i = 0; game.moneys && game.moneys[i]; i++)
+				event_handler.on_object_ticked(game.moneys[i], game.elapsed_ticks, custom_data);
+			for (size_t i = 0; game.bombs && game.bombs[i]; i++)
+				event_handler.on_object_ticked(game.bombs[i], game.elapsed_ticks, custom_data);
 		}
 	}
 

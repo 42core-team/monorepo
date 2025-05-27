@@ -86,7 +86,7 @@ void	ft_travel_to_pos(t_obj *unit, t_pos pos)
 	}
 }
 
-void	ft_attack(t_obj *attacker, t_obj *target)
+void	ft_attack(t_obj *attacker, t_pos target_pos)
 {
 	if (!attacker)
 		return;
@@ -106,7 +106,7 @@ void	ft_attack(t_obj *attacker, t_obj *target)
 	(*actions)[*count + 1].id = 0;
 
 	(*actions)[*count].id = attacker->id;
-	(*actions)[*count].target_id = target->id;
+	(*actions)[*count].target_pos = target_pos;
 	(*count)++;
 }
 

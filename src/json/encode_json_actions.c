@@ -92,8 +92,8 @@ char *ft_all_action_json(void)
 		t_action_attack *actionObj = &game.actions.attacks[i - game.actions.travels_count - game.actions.creates_count];
 
 		json_node *action = create_node(JSON_TYPE_OBJECT);
-		action->array = malloc(sizeof(json_node*) * 4);
-		action->array[3] = NULL;
+		action->array = malloc(sizeof(json_node*) * 5);
+		action->array[4] = NULL;
 
 		json_node *type = create_node(JSON_TYPE_STRING);
 		type->key = strdup("type");
@@ -106,9 +106,14 @@ char *ft_all_action_json(void)
 		action->array[1] = unit_id;
 
 		json_node *target_id = create_node(JSON_TYPE_NUMBER);
-		target_id->key = strdup("target_id");
-		target_id->number = actionObj->target_id;
+		target_id->key = strdup("target_id_x");
+		target_id->number = actionObj->target_pos.x;
 		action->array[2] = target_id;
+
+		json_node *target_y = create_node(JSON_TYPE_NUMBER);
+		target_y->key = strdup("target_id_y");
+		target_y->number = actionObj->target_pos.y;
+		action->array[3] = target_y;
 
 		actions_array->array[i] = action;
 	}

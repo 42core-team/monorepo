@@ -35,7 +35,7 @@ typedef struct s_event_handler {
 	// Called when a unit drops money on the floor
 	void (*on_unit_drop_money)(t_obj *source_unit, t_pos pos, unsigned long amount, void *custom_data);
 	// Called when a unit attacks another object
-	void (*on_unit_attack)(t_obj *attacker_unit, t_obj *target_unit, unsigned long damage, void *custom_data);
+	void (*on_unit_attack)(t_obj *attacker_unit, t_pos target_pos, unsigned long damage, void *custom_data);
 } t_event_handler;
 
 extern t_event_handler event_handler;

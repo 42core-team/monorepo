@@ -31,8 +31,8 @@ static t_unit_config	**ft_parse_unit_config(json_node * root)
 		units[i]->dmg_unit = (long)json_find(unit_node, "damageUnit")->number;
 		units[i]->dmg_resource = (long)json_find(unit_node, "damageResource")->number;
 		units[i]->dmg_wall = (long)json_find(unit_node, "damageWall")->number;
+		units[i]->dmg_bomb = (unsigned long)json_find(unit_node, "attackRange")->number;
 		units[i]->attack_type = (t_attack_type)json_find(unit_node, "attackType")->number;
-		units[i]->attack_reach = (unsigned long)json_find(unit_node, "attackReach")->number;
 		units[i]->can_build = json_find(unit_node, "canBuild")->number;
 	}
 	units[array_size] = NULL;
@@ -55,6 +55,11 @@ void	ft_parse_json_config(char *json)
 	game.config.initial_balance = (unsigned long)json_find(root, "initialBalance")->number;
 	game.config.wall_hp = (unsigned long)json_find(root, "wallHp")->number;
 	game.config.wall_build_cost = (unsigned long)json_find(root, "wallBuildCost")->number;
+	game.config.bomb_hp = (unsigned long)json_find(root, "bombHp")->number;
+	game.config.bomb_countdown = (unsigned long)json_find(root, "bombCountdown")->number;
+	game.config.bomb_throw_cost = (unsigned long)json_find(root, "bombThrowCost")->number;
+	game.config.bomb_reach = (unsigned long)json_find(root, "bombReach")->number;
+	game.config.bomb_damage = (unsigned long)json_find(root, "bombDamage")->number;
 
 	game.config.units = ft_parse_unit_config(root);
 	

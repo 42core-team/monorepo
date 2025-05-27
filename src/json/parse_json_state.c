@@ -226,6 +226,13 @@ void	ft_parse_json_state(char *json)
 			game_arr = &game.walls;
 		else if (readObj.type == OBJ_MONEY)
 			game_arr = &game.moneys;
+		else if (readObj.type == OBJ_BOMB)
+			game_arr = &game.bombs;
+		else
+		{
+			printf("Unknown object type %d with id %lu at pos (%hu, %hu)\n", readObj.type, readObj.id, readObj.pos.x, readObj.pos.y);
+			continue;
+		}
 
 		if (*game_arr == NULL)
 		{
