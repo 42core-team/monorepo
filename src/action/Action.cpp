@@ -1,6 +1,6 @@
 #include "Action.h"
 
-Action::Action(ActionType type) : is_valid_(true), type_(type) { }
+Action::Action(ActionType type) : is_valid_(true), type_(type) {}
 
 std::vector<Action *> Action::parseActions(json msg)
 {
@@ -9,9 +9,9 @@ std::vector<Action *> Action::parseActions(json msg)
 
 	std::vector<Action *> actions;
 
-	for (auto & actionJson : msg["actions"])
+	for (auto &actionJson : msg["actions"])
 	{
-		Action * newAction = nullptr;
+		Action *newAction = nullptr;
 		if (actionJson.contains("type"))
 		{
 			if (actionJson["type"] == "move")
@@ -22,6 +22,8 @@ std::vector<Action *> Action::parseActions(json msg)
 				newAction = new TransferMoneyAction(actionJson);
 			else if (actionJson["type"] == "build")
 				newAction = new BuildAction(actionJson);
+			else if (actionJson["type"] == "attack")
+				newAction = new AttackAction(actionJson);
 			if (newAction && !newAction->is_valid_)
 			{
 				delete newAction;

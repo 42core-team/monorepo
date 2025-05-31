@@ -16,7 +16,7 @@ Game::~Game()
 		delete bridge;
 }
 
-void Game::addBridge(Bridge* bridge)
+void Game::addBridge(Bridge *bridge)
 {
 	bridges_.push_back(bridge);
 }
@@ -57,9 +57,9 @@ void Game::run()
 		tick(tickCount);
 
 		alivePlayers = 0;
-		for (const auto & objPtr : objects_)
+		for (const auto &objPtr : objects_)
 		{
-			const Object & obj = *objPtr;
+			const Object &obj = *objPtr;
 			if (obj.getType() != ObjectType::Core)
 				continue;
 			if (obj.getHP() > 0)
@@ -86,7 +86,7 @@ void Game::tick(unsigned long long tick)
 		json msg;
 		bridge->receiveMessage(msg);
 
-		Core * core = getCore(bridge->getTeamId());
+		Core *core = getCore(bridge->getTeamId());
 
 		if (!core)
 			continue;
@@ -95,7 +95,7 @@ void Game::tick(unsigned long long tick)
 
 		std::vector<Action *> clientActions = Action::parseActions(msg);
 
-		for (Action * action : clientActions)
+		for (Action *action : clientActions)
 			actions.emplace_back(action, *core);
 	}
 
@@ -103,8 +103,8 @@ void Game::tick(unsigned long long tick)
 
 	for (int i = 0; i < (int)actions.size(); i++)
 	{
-		Action * action = actions[i].first;
-		Core & core = actions[i].second;
+		Action *action = actions[i].first;
+		Core &core = actions[i].second;
 
 		if (!action->execute(this, &core))
 		{
@@ -115,15 +115,16 @@ void Game::tick(unsigned long long tick)
 
 	// 2. UPDATE OBJECTS
 
-	for (auto it = objects_.begin(); it != objects_.end(); )
+	for (auto it = objects_.begin(); it != objects_.end();)
 	{
-		Object * obj = it->get();
+		Object *obj = it->get();
 		if (obj->getHP() <= 0)
 		{
 			if (obj->getType() == ObjectType::Unit && ((Unit *)obj)->getBalance() > 0)
 				objects_.push_back(std::make_unique<Money>(getNextObjectId(), obj->getPosition(), ((Unit *)obj)->getBalance())); // drop balance on death
+			if (obj->getType() == ObjectType::Core)
+				teamCount_--;
 			it = objects_.erase(it);
-			teamCount_--;
 			// TODO: handle game over (send message, disconnect bridge, decrease teamCount_)
 		}
 		else
@@ -138,7 +139,7 @@ void Game::tick(unsigned long long tick)
 	sendState(actions, tick);
 	visualizeGameState(tick);
 
-	for (auto& action : actions)
+	for (auto &action : actions)
 	{
 		if (action.first != nullptr)
 			delete action.first;
@@ -152,9 +153,9 @@ void Game::sendState(std::vector<std::pair<Action *, Core &>> actions, unsigned 
 	state["tick"] = tick;
 
 	state["objects"] = json::array();
-	for (auto& objPtr : objects_)
+	for (auto &objPtr : objects_)
 	{
-		Object & obj = *objPtr;
+		Object &obj = *objPtr;
 
 		json o;
 
@@ -186,7 +187,7 @@ void Game::sendState(std::vector<std::pair<Action *, Core &>> actions, unsigned 
 
 	// append all actions that were executed without issues this turn
 	state["actions"] = json::array();
-	for (auto& action : actions)
+	for (auto &action : actions)
 	{
 		if (action.first == nullptr)
 			continue;
@@ -208,14 +209,14 @@ void Game::sendConfig()
 	}
 }
 
-Core * Game::getCore(unsigned int teamId)
+Core *Game::getCore(unsigned int teamId)
 {
-	for (auto& objPtr : objects_)
+	for (auto &objPtr : objects_)
 	{
-		Object & obj = *objPtr;
+		Object &obj = *objPtr;
 		if (obj.getType() != ObjectType::Core)
 			continue;
-		Core & core = (Core &)obj;
+		Core &core = (Core &)obj;
 
 		if (core.getTeamId() == teamId)
 			return &core;
@@ -223,16 +224,17 @@ Core * Game::getCore(unsigned int teamId)
 
 	return nullptr;
 }
+// TODO: Sorta inefficient, use pointers instead of copying
 std::vector<Core> Game::getCores()
 {
 	std::vector<Core> cores;
 	cores.reserve(teamCount_);
-	for (auto& objPtr : objects_)
+	for (auto &objPtr : objects_)
 	{
-		Object & obj = *objPtr;
+		Object &obj = *objPtr;
 		if (obj.getType() != ObjectType::Core)
 			continue;
-		Core & core = (Core &)obj;
+		Core &core = (Core &)obj;
 
 		cores.push_back(core);
 	}
@@ -240,24 +242,24 @@ std::vector<Core> Game::getCores()
 	return cores;
 }
 // TODO: dont use normal c pointers jesus christ
-Object * Game::getObjectAtPos(Position pos)
+Object *Game::getObjectAtPos(Position pos)
 {
 	if (pos.x < 0 || pos.y < 0 || pos.x >= static_cast<int>(Config::getInstance().width) || pos.y >= static_cast<int>(Config::getInstance().height))
 		return nullptr;
-	for (const auto & objPtr : objects_)
+	for (const auto &objPtr : objects_)
 	{
-		Object & obj = *objPtr;
+		Object &obj = *objPtr;
 		if (obj.getPosition() == pos)
 			return &obj;
 	}
 
 	return nullptr;
 }
-Object * Game::getObject(unsigned int id)
+Object *Game::getObject(unsigned int id)
 {
-	for (auto& objPtr : objects_)
+	for (auto &objPtr : objects_)
 	{
-		Object & obj = *objPtr;
+		Object &obj = *objPtr;
 
 		if (obj.getId() == id)
 			return &obj;
@@ -269,7 +271,7 @@ void Game::removeObjectById(unsigned int id)
 {
 	for (auto it = objects_.begin(); it != objects_.end(); ++it)
 	{
-		Object & obj = **it;
+		Object &obj = **it;
 
 		if (obj.getId() == id)
 		{

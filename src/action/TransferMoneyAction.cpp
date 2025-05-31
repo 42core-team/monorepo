@@ -14,8 +14,8 @@ void TransferMoneyAction::decodeJSON(json msg)
 	}
 
 	source_id_ = msg["source_id"];
-	int y = msg["x"];
-	int x = msg["y"];
+	int y = msg["y"];
+	int x = msg["x"];
 	target_ = Position(x, y);
 	amount_ = msg["amount"];
 }
@@ -32,7 +32,7 @@ json TransferMoneyAction::encodeJSON()
 	return js;
 }
 
-bool TransferMoneyAction::dropMoney(Game *game, Core * core, Object *srcObj)
+bool TransferMoneyAction::dropMoney(Game *game, Core *core, Object *srcObj)
 {
 	if (srcObj->getType() != ObjectType::Unit)
 		return false;
@@ -43,7 +43,7 @@ bool TransferMoneyAction::dropMoney(Game *game, Core * core, Object *srcObj)
 	if (srcObj->getPosition() == target_)
 		return false;
 
-	Unit * srcUnit = (Unit *)srcObj;
+	Unit *srcUnit = (Unit *)srcObj;
 	if (srcUnit->getTeamId() != core->getTeamId())
 		return false;
 
@@ -57,16 +57,16 @@ bool TransferMoneyAction::dropMoney(Game *game, Core * core, Object *srcObj)
 	return true;
 }
 
-bool TransferMoneyAction::execute(Game *game, Core * core)
+bool TransferMoneyAction::execute(Game *game, Core *core)
 {
 	if (!is_valid_)
 		return false;
 
-	Object * srcObj = game->getObject(source_id_);
+	Object *srcObj = game->getObject(source_id_);
 	if (!srcObj)
 		return false;
 
-	Object * dstObj = game->getObjectAtPos(target_);
+	Object *dstObj = game->getObjectAtPos(target_);
 	if (!dstObj)
 		return dropMoney(game, core, srcObj);
 
@@ -85,7 +85,7 @@ bool TransferMoneyAction::execute(Game *game, Core * core)
 	// cant transfer someone else's money
 	if (srcObj->getType() == ObjectType::Core)
 	{
-		Core * srcCore = (Core *)srcObj;
+		Core *srcCore = (Core *)srcObj;
 		if (srcCore->getTeamId() != core->getTeamId())
 			return false;
 		if (srcCore->getBalance() < amount)
@@ -94,7 +94,7 @@ bool TransferMoneyAction::execute(Game *game, Core * core)
 	}
 	if (srcObj->getType() == ObjectType::Unit)
 	{
-		Unit * srcUnit = (Unit *)srcObj;
+		Unit *srcUnit = (Unit *)srcObj;
 		if (srcUnit->getTeamId() != core->getTeamId())
 			return false;
 		if (srcUnit->getBalance() < amount)
@@ -104,12 +104,12 @@ bool TransferMoneyAction::execute(Game *game, Core * core)
 
 	if (dstObj->getType() == ObjectType::Core)
 	{
-		Core * dstCore = (Core *)dstObj;
+		Core *dstCore = (Core *)dstObj;
 		dstCore->setBalance(dstCore->getBalance() + amount);
 	}
 	if (dstObj->getType() == ObjectType::Unit)
 	{
-		Unit * dstUnit = (Unit *)dstObj;
+		Unit *dstUnit = (Unit *)dstObj;
 		dstUnit->setBalance(dstUnit->getBalance() + amount);
 	}
 
