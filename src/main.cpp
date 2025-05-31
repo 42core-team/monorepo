@@ -90,10 +90,10 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	Logger::Log("Server listening on port 4242...")
+	Logger::Log("Server listening on port 4242...");
 
-		std::unordered_map<unsigned int, Bridge *>
-			bridges;
+	std::unordered_map<unsigned int, Bridge *>
+		bridges;
 
 	while (bridges.size() < expectedTeamIds.size())
 	{
