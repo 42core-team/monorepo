@@ -5,21 +5,27 @@ void MapTemplate::loadFromFile(const std::string &filepath)
 	std::ifstream infile(filepath);
 	if (!infile)
 		throw std::runtime_error("Unable to open template file: " + filepath);
-	
+
 	std::string line;
+	int maxWidth = 0;
 	while (std::getline(infile, line))
 	{
+		if (!line.empty() && line.back() == '\r')
+			line.pop_back();
 		std::vector<char> row(line.begin(), line.end());
+		maxWidth = std::max(maxWidth, static_cast<int>(row.size()));
 		grid.push_back(row);
 	}
 	if (grid.empty())
 		throw std::runtime_error("Empty template file: " + filepath);
-	
-	height = grid.size();
-	width = grid[0].size();
-	for (const auto &row : grid)
-		if (static_cast<int>(row.size()) != width)
-			throw std::runtime_error("Inconsistent row widths in template: " + filepath);
+
+	for (auto &row : grid)
+	{
+		if (static_cast<int>(row.size()) < maxWidth)
+			row.resize(maxWidth, ' ');
+	}
+	height = static_cast<int>(grid.size());
+	width = maxWidth;
 }
 
 MapTemplate MapTemplate::rotate90() const
@@ -58,7 +64,7 @@ MapTemplate MapTemplate::mirrorVertically() const
 MapTemplate MapTemplate::getTransformedTemplate(std::default_random_engine &eng) const
 {
 	MapTemplate result = *this;
-	
+
 	std::uniform_int_distribution<int> rotationDist(0, 3);
 	int rotations = rotationDist(eng);
 	for (int i = 0; i < rotations; ++i)
@@ -70,6 +76,6 @@ MapTemplate MapTemplate::getTransformedTemplate(std::default_random_engine &eng)
 		result = result.mirrorHorizontally();
 	else if (mirrorType == 2)
 		result = result.mirrorVertically();
-	
+
 	return result;
 }

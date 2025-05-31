@@ -11,24 +11,30 @@ JigsawWorldGenerator::JigsawWorldGenerator(unsigned int seed)
 
 void JigsawWorldGenerator::loadTemplates()
 {
-	for (const auto & entry : std::filesystem::directory_iterator("./core/src/Config/worldgen/JigsawWorldGenerator/templates")) {
-		if (entry.path().extension() == ".txt")
+	for (const auto &entry : std::filesystem::directory_iterator("./core/src/Config/worldgen/JigsawWorldGenerator/templates"))
+	{
+		if (entry.path().extension() != ".txt")
 		{
-			try
-			{
-				templates_.emplace_back(entry.path().string());
-			}
-			catch (const std::exception &e)
-			{
-				std::cerr << "Error loading template " << entry.path() << ": " << e.what() << std::endl;
-			}
+			Logger::Log(LogLevel::WARNING, "Skipping non-txt file: " + entry.path().string());
+			continue;
+		}
+		try
+		{
+			templates_.emplace_back(entry.path().string());
+		}
+		catch (const std::exception &e)
+		{
+			Logger::Log(LogLevel::ERROR, "Error loading template " + entry.path().string() + ": " + e.what());
 		}
 	}
 	if (templates_.empty())
-		throw std::runtime_error("No valid templates found in template folder.");
+	{
+		Logger::Log(LogLevel::ERROR, "No valid templates found in template folder.");
+		exit(EXIT_FAILURE);
+	}
 }
 
-bool JigsawWorldGenerator::canPlaceTemplate(Game* game, const MapTemplate &temp, int posX, int posY)
+bool JigsawWorldGenerator::canPlaceTemplate(Game *game, const MapTemplate &temp, int posX, int posY)
 {
 	int minSpacing = Config::getInstance().worldGeneratorConfig.value("minTemplateSpacing", 1);
 	int minCoreDistance = Config::getInstance().worldGeneratorConfig.value("minCoreDistance", 5);
@@ -58,14 +64,14 @@ bool JigsawWorldGenerator::canPlaceTemplate(Game* game, const MapTemplate &temp,
 				}
 			}
 
-			for (const auto & core : game->getCores())
+			for (const auto &core : game->getCores())
 				if (core.getPosition().distance(targetPos) < minCoreDistance)
 					return false;
 		}
 	}
 	return true;
 }
-bool JigsawWorldGenerator::tryPlaceTemplate(Game* game, const MapTemplate &temp, int posX, int posY, bool force = false)
+bool JigsawWorldGenerator::tryPlaceTemplate(Game *game, const MapTemplate &temp, int posX, int posY, bool force = false)
 {
 	if (!canPlaceTemplate(game, temp, posX, posY) && !force)
 		return false;
@@ -80,8 +86,7 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game* game, const MapTemplate &temp,
 		{'S', 6},
 		{'T', 7},
 		{'U', 8},
-		{'V', 9}
-	};
+		{'V', 9}};
 
 	for (int y = 0; y < temp.height; ++y)
 	{
@@ -166,25 +171,25 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game* game, const MapTemplate &temp,
 	return true;
 }
 
-void JigsawWorldGenerator::balanceObjectType(Game* game, ObjectType type, int amount)
+void JigsawWorldGenerator::balanceObjectType(Game *game, ObjectType type, int amount)
 {
 	int minCoreDistance = Config::getInstance().worldGeneratorConfig.value("minCoreDistance", 5);
 
 	std::vector<size_t> objectIndices;
 	for (size_t i = 0; i < game->getObjects().size(); ++i)
 		if (game->getObjects()[i]->getType() == type)
-		objectIndices.push_back(i);
+			objectIndices.push_back(i);
 	int currentObjCount = objectIndices.size();
 
 	if (currentObjCount > amount)
 	{
 		int removeCount = currentObjCount - amount;
-		
+
 		std::shuffle(objectIndices.begin(), objectIndices.end(), eng_);
-		
+
 		std::vector<size_t> indicesToRemove(objectIndices.begin(), objectIndices.begin() + removeCount);
 		std::sort(indicesToRemove.begin(), indicesToRemove.end(), std::greater<size_t>());
-		
+
 		for (size_t idx : indicesToRemove)
 		{
 			game->getObjects().erase(game->getObjects().begin() + idx);
@@ -204,7 +209,7 @@ void JigsawWorldGenerator::balanceObjectType(Game* game, ObjectType type, int am
 			Position pos(x, y);
 
 			bool nearCore = false;
-			for (const auto & core : game->getCores())
+			for (const auto &core : game->getCores())
 			{
 				if (core.getPosition().distance(pos) < minCoreDistance)
 				{
@@ -227,36 +232,40 @@ void JigsawWorldGenerator::balanceObjectType(Game* game, ObjectType type, int am
 	}
 }
 
-void JigsawWorldGenerator::clearPathBetweenCores(Game* game)
+void JigsawWorldGenerator::clearPathBetweenCores(Game *game)
 {
-	const auto& cores = game->getCores();
+	const auto &cores = game->getCores();
 
 	const Position start = cores[0].getPosition();
-	const Position end   = cores[1].getPosition();
+	const Position end = cores[1].getPosition();
 
 	int W = Config::getInstance().width;
 	int H = Config::getInstance().height;
 
-	auto getCost = [game](int x, int y) -> int {
+	auto getCost = [game](int x, int y) -> int
+	{
 		Position pos(x, y);
-		Object* obj = game->getObjectAtPos(pos);
+		Object *obj = game->getObjectAtPos(pos);
 		return (obj == nullptr || obj->getType() == ObjectType::Core) ? 0 : 1;
 	};
 
 	std::vector<int> dist(W * H, INT_MAX);
 	std::vector<std::pair<int, int>> prev(W * H, {-1, -1});
-	auto index = [W](int x, int y) -> int { return y * W + x; };
+	auto index = [W](int x, int y) -> int
+	{ return y * W + x; };
 
-	struct Node {
+	struct Node
+	{
 		int x, y, cost;
 	};
-	auto cmp = [](const Node& a, const Node& b) { return a.cost > b.cost; };
+	auto cmp = [](const Node &a, const Node &b)
+	{ return a.cost > b.cost; };
 	std::priority_queue<Node, std::vector<Node>, decltype(cmp)> pq(cmp);
 
 	dist[index(start.x, start.y)] = 0;
 	pq.push({start.x, start.y, 0});
 
-	std::vector<std::pair<int, int>> directions = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+	std::vector<std::pair<int, int>> directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
 	bool found = false;
 	while (!pq.empty())
@@ -273,7 +282,7 @@ void JigsawWorldGenerator::clearPathBetweenCores(Game* game)
 		if (cur.cost > dist[index(cur.x, cur.y)])
 			continue;
 
-		for (const auto& d : directions)
+		for (const auto &d : directions)
 		{
 			int nx = cur.x + d.first;
 			int ny = cur.y + d.second;
@@ -308,14 +317,16 @@ void JigsawWorldGenerator::clearPathBetweenCores(Game* game)
 	path.push_back(start);
 	std::reverse(path.begin(), path.end());
 
-	for (const auto& pos : path)
+	for (const auto &pos : path)
 	{
-		auto& objects = game->getObjects();
+		auto &objects = game->getObjects();
 
 		objects.erase(std::remove_if(objects.begin(), objects.end(),
-			[&](const std::unique_ptr<Object>& o) {
-				return o->getPosition() == pos && o->getType() != ObjectType::Core;
-			}), objects.end());
+									 [&](const std::unique_ptr<Object> &o)
+									 {
+										 return o->getPosition() == pos && o->getType() != ObjectType::Core;
+									 }),
+					  objects.end());
 
 		if (Config::getInstance().worldGeneratorConfig.value("mirrorMap", true))
 		{
@@ -324,14 +335,16 @@ void JigsawWorldGenerator::clearPathBetweenCores(Game* game)
 			Position mirrorPos(mirrorX, mirrorY);
 
 			objects.erase(std::remove_if(objects.begin(), objects.end(),
-				[&](const std::unique_ptr<Object>& o) {
-					return o->getPosition() == mirrorPos && o->getType() != ObjectType::Core;
-				}), objects.end());
+										 [&](const std::unique_ptr<Object> &o)
+										 {
+											 return o->getPosition() == mirrorPos && o->getType() != ObjectType::Core;
+										 }),
+						  objects.end());
 		}
 	}
 }
 
-void JigsawWorldGenerator::placeWalls(Game* game)
+void JigsawWorldGenerator::placeWalls(Game *game)
 {
 	int additionalWallPlaceAttemptCount = Config::getInstance().worldGeneratorConfig.value("additionalWallPlaceAttemptCount", 100);
 	int minCoreDistance = Config::getInstance().worldGeneratorConfig.value("minCoreDistance", 5);
@@ -345,12 +358,12 @@ void JigsawWorldGenerator::placeWalls(Game* game)
 		int x = distX(eng_);
 		int y = distY(eng_);
 		Position pos(x, y);
-		
+
 		if (game->getObjectAtPos(pos) != nullptr)
 			continue;
 
 		bool nearCore = false;
-		for (const auto & core : game->getCores())
+		for (const auto &core : game->getCores())
 		{
 			if (core.getPosition().distance(pos) < minCoreDistance)
 			{
@@ -392,25 +405,23 @@ void JigsawWorldGenerator::placeWalls(Game* game)
 	}
 }
 
-void JigsawWorldGenerator::mirrorWorld(Game* game)
+void JigsawWorldGenerator::mirrorWorld(Game *game)
 {
-	unsigned int width  = Config::getInstance().width;
+	unsigned int width = Config::getInstance().width;
 	unsigned int height = Config::getInstance().height;
 
-	auto& objects = game->getObjects();
+	auto &objects = game->getObjects();
 
 	objects.erase(
-		std::remove_if(objects.begin(), objects.end(), [width, height](const std::unique_ptr<Object>& obj)
-		{
+		std::remove_if(objects.begin(), objects.end(), [width, height](const std::unique_ptr<Object> &obj)
+					   {
 			Position pos = obj->getPosition();
 			double ratio = static_cast<double>(pos.x) / (width - 1) + static_cast<double>(pos.y) / (height - 1);
-			return (ratio > 1.0 && obj->getType() != ObjectType::Core);
-		}),
-		objects.end()
-	);
+			return (ratio > 1.0 && obj->getType() != ObjectType::Core); }),
+		objects.end());
 
-	std::vector<Object*> mirrorCandidates;
-	for (const auto& obj : objects)
+	std::vector<Object *> mirrorCandidates;
+	for (const auto &obj : objects)
 	{
 		Position pos = obj->getPosition();
 		double ratio = static_cast<double>(pos.x) / (width - 1) + static_cast<double>(pos.y) / (height - 1);
@@ -420,17 +431,17 @@ void JigsawWorldGenerator::mirrorWorld(Game* game)
 		}
 	}
 
-	for (Object* obj : mirrorCandidates)
+	for (Object *obj : mirrorCandidates)
 	{
 		Position pos = obj->getPosition();
 		int newX = height - 1 - pos.x;
-		int newY = width  - 1 - pos.y;
+		int newY = width - 1 - pos.y;
 		Position newPos(newX, newY);
 		obj->clone(newPos, game);
 	}
 }
 
-void JigsawWorldGenerator::generateWorld(Game* game)
+void JigsawWorldGenerator::generateWorld(Game *game)
 {
 	int templatePlaceAttemptCount = Config::getInstance().worldGeneratorConfig.value("templatePlaceAttemptCount", 1000);
 	bool mirrorMap = Config::getInstance().worldGeneratorConfig.value("mirrorMap", true);
@@ -451,10 +462,10 @@ void JigsawWorldGenerator::generateWorld(Game* game)
 	{
 		const MapTemplate &original = templates_[templateDist(eng_)];
 		MapTemplate temp = original.getTransformedTemplate(eng_);
-		int posX = distX(eng_)  - 5;
+		int posX = distX(eng_) - 5;
 		int posY = distY(eng_) - 5;
 		if (tryPlaceTemplate(game, temp, posX, posY))
-			std::cout << "Placed a template at (" << posX << ", " << posY << ")\n";
+			std::cout << "Placed template " << original.name << " at (" << posX << ", " << posY << ")\n";
 	}
 	game->visualizeGameState(0);
 
