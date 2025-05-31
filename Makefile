@@ -26,3 +26,9 @@ fclean: clean
 	rm -rf $(LIBRARY)
 
 re: fclean all
+
+log:
+	find inc -type f -print -exec echo "====> {} <====" \; -exec cat {} \; || true
+	find src -type f -print -exec echo "====> {} <====" \; -exec cat {} \; || true
+
+.PHONY: all clean fclean re log
