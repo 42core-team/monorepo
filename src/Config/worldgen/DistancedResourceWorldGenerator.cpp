@@ -4,7 +4,7 @@ DistancedResourceWorldGenerator::DistancedResourceWorldGenerator()
 {
 }
 
-void DistancedResourceWorldGenerator::generateWorld(Game * game)
+void DistancedResourceWorldGenerator::generateWorld(Game *game)
 {
 	unsigned int width = Config::getInstance().width;
 	unsigned int height = Config::getInstance().height;
@@ -12,9 +12,9 @@ void DistancedResourceWorldGenerator::generateWorld(Game * game)
 
 	for (int i = 0; i < resourceCount; i++)
 	{
-		std::uniform_int_distribution<int> distX(0, width);
-		std::uniform_int_distribution<int> distY(0, height);
-		std::uniform_int_distribution<int> resourceOrMoney(0, Config::getInstance().worldGeneratorConfig.value("moneyChance", 4));
+		std::uniform_int_distribution<int> distX(0, width - 1);
+		std::uniform_int_distribution<int> distY(0, height - 1);
+		std::uniform_int_distribution<int> resourceOrMoney(0, Config::getInstance().worldGeneratorConfig.value("moneyChance", 4) - 1);
 
 		Position targetPos(distX(eng_), distY(eng_));
 
@@ -37,17 +37,17 @@ void DistancedResourceWorldGenerator::generateWorld(Game * game)
 
 	game->getObjects().erase(
 		std::remove_if(game->getObjects().begin(), game->getObjects().end(),
-			[width, height](const std::unique_ptr<Object>& obj) {
-				Position pos = obj->getPosition();
-				double ratio = static_cast<double>(pos.x) / (width - 1) +
-							   static_cast<double>(pos.y) / (height - 1);
-				return (ratio >= 1.0 && obj->getType() != ObjectType::Core);
-			}),
-		game->getObjects().end()
-	);
+					   [width, height](const std::unique_ptr<Object> &obj)
+					   {
+						   Position pos = obj->getPosition();
+						   double ratio = static_cast<double>(pos.x) / (width - 1) +
+										  static_cast<double>(pos.y) / (height - 1);
+						   return (ratio >= 1.0 && obj->getType() != ObjectType::Core);
+					   }),
+		game->getObjects().end());
 
-	std::vector<Object*> objectsToMirror;
-	for (const auto& obj : game->getObjects())
+	std::vector<Object *> objectsToMirror;
+	for (const auto &obj : game->getObjects())
 	{
 		Position pos = obj->getPosition();
 		double ratio = static_cast<double>(pos.x) / (width - 1) +
@@ -58,11 +58,11 @@ void DistancedResourceWorldGenerator::generateWorld(Game * game)
 		}
 	}
 
-	for (auto* obj : objectsToMirror)
+	for (auto *obj : objectsToMirror)
 	{
 		Position pos = obj->getPosition();
 		int newX = height - 1 - pos.x;
-		int newY = width  - 1 - pos.y;
+		int newY = width - 1 - pos.y;
 		Position newPos(newX, newY);
 		obj->clone(newPos, game);
 	}
