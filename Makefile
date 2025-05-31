@@ -43,7 +43,7 @@ fclean: clean
 logfiles:
 	@echo "📜 Logging all source and include files (excluding submodules)..."
 	@echo "🔍 Scanning source directory..."
-	@find src -type f -not -path "./submodules/*" | sort | while read -r file; do \
+	@find src -type f -not -path "./submodules/*" -not -name "*.txt" -not -name "*.html" | sort | while read -r file; do \
 		echo "Source file: $$file"; \
 		cat $$file; \
 	done

@@ -23,7 +23,7 @@ struct GameConfig
 	unsigned int height;
 	unsigned int tickRate; // ticks per second
 
-	unsigned int idleIncome; // idle income per tick
+	unsigned int idleIncome;		// idle income per tick
 	unsigned int idleIncomeTimeOut; // idle income duration in ticks
 
 	unsigned int resourceHp;
@@ -75,19 +75,21 @@ struct UnitConfig
 
 class Config
 {
-	public:
-		static GameConfig & getInstance();
-		static json encodeConfig();
+public:
+	static GameConfig &getInstance();
+	static json encodeConfig();
 
-		static Position & getCorePosition(unsigned int teamId);
-		static UnitConfig & getUnitConfig(unsigned int typeId);
+	static Position &getCorePosition(unsigned int teamId);
+	static UnitConfig &getUnitConfig(unsigned int typeId);
 
-		static void setConfigFilePath(const std::string & path) {
-			configFilePath = path;
-		}
+	static void setConfigFilePath(const std::string &path)
+	{
+		configFilePath = path;
+	}
+	static std::string getConfigFilePath() { return configFilePath; }
 
-	private:
-		static std::string configFilePath;
+private:
+	static std::string configFilePath;
 };
 
 #endif // CONFIG_H

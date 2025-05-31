@@ -5,39 +5,42 @@ std::string Config::configFilePath = "";
 #include "JigsawWorldGenerator.h"
 #include "DistancedResourceWorldGenerator.h"
 
-namespace {
+namespace
+{
 	std::unique_ptr<GameConfig> configInstance;
 }
 
-GameConfig parseConfig() {
+GameConfig parseConfig()
+{
 	GameConfig config;
 
-	std::ifstream inFile("config.json");
-	if (!inFile) {
-		std::cerr << "Error: Could not open config.json" << std::endl;
+	std::ifstream inFile(Config::getConfigFilePath());
+	if (!inFile)
+	{
+		std::cerr << "Error: Could not open " << Config::getConfigFilePath() << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
 	json j;
 	inFile >> j;
 
-	config.width            = j.value("width", 25);
-	config.height           = j.value("height", 25);
-	config.tickRate         = j.value("tickRate", 5);
-	config.idleIncome       = j.value("idleIncome", 1);
-	config.idleIncomeTimeOut= j.value("idleIncomeTimeOut", 600);
-	config.resourceHp       = j.value("resourceHp", 50);
-	config.resourceIncome   = j.value("resourceIncome", 200);
-	config.moneyObjIncome   = j.value("moneyObjIncome", 100);
-	config.coreHp           = j.value("coreHp", 350);
-	config.initialBalance   = j.value("initialBalance", 200);
-	config.wallHp           = j.value("wallHp", 100);
-	config.wallBuildCost    = j.value("wallBuildCost", 20);
-	config.bombHp           = j.value("bombHp", 100);
-	config.bombCountdown    = j.value("bombCountdown", 25);
-	config.bombThrowCost    = j.value("bombThrowCost", 50);
-	config.bombReach        = j.value("bombReach", 3);
-	config.bombDamage       = j.value("bombDamage", 100);
+	config.width = j.value("width", 25);
+	config.height = j.value("height", 25);
+	config.tickRate = j.value("tickRate", 5);
+	config.idleIncome = j.value("idleIncome", 1);
+	config.idleIncomeTimeOut = j.value("idleIncomeTimeOut", 600);
+	config.resourceHp = j.value("resourceHp", 50);
+	config.resourceIncome = j.value("resourceIncome", 200);
+	config.moneyObjIncome = j.value("moneyObjIncome", 100);
+	config.coreHp = j.value("coreHp", 350);
+	config.initialBalance = j.value("initialBalance", 200);
+	config.wallHp = j.value("wallHp", 100);
+	config.wallBuildCost = j.value("wallBuildCost", 20);
+	config.bombHp = j.value("bombHp", 100);
+	config.bombCountdown = j.value("bombCountdown", 25);
+	config.bombThrowCost = j.value("bombThrowCost", 50);
+	config.bombReach = j.value("bombReach", 3);
+	config.bombDamage = j.value("bombDamage", 100);
 
 	std::string wgType = j.value("worldGenerator", "distanced_resources");
 	if (wgType == "jigsaw")
@@ -53,19 +56,19 @@ GameConfig parseConfig() {
 		for (const auto &unitJson : j["units"])
 		{
 			UnitConfig unit;
-			unit.name           = unitJson.value("name", "Unnamed");
-			unit.cost           = unitJson.value("cost", 0);
-			unit.hp             = unitJson.value("hp", 0);
-			unit.speed          = unitJson.value("speed", 0);
-			unit.minSpeed       = unitJson.value("minSpeed", 0);
-			unit.damageCore     = unitJson.value("damageCore", 0);
-			unit.damageUnit     = unitJson.value("damageUnit", 0);
+			unit.name = unitJson.value("name", "Unnamed");
+			unit.cost = unitJson.value("cost", 0);
+			unit.hp = unitJson.value("hp", 0);
+			unit.speed = unitJson.value("speed", 0);
+			unit.minSpeed = unitJson.value("minSpeed", 0);
+			unit.damageCore = unitJson.value("damageCore", 0);
+			unit.damageUnit = unitJson.value("damageUnit", 0);
 			unit.damageResource = unitJson.value("damageResource", 0);
-			unit.damageWall     = unitJson.value("damageWall", 0);
-			unit.damageBomb     = unitJson.value("damageBomb", 0);
-			int attackTypeInt   = unitJson.value("attackType", 0);
-			unit.attackType     = static_cast<AttackType>(attackTypeInt);
-			unit.canBuild       = unitJson.value("canBuild", false);
+			unit.damageWall = unitJson.value("damageWall", 0);
+			unit.damageBomb = unitJson.value("damageBomb", 0);
+			int attackTypeInt = unitJson.value("attackType", 0);
+			unit.attackType = static_cast<AttackType>(attackTypeInt);
+			unit.canBuild = unitJson.value("canBuild", false);
 
 			config.units.push_back(unit);
 		}
@@ -84,32 +87,32 @@ GameConfig parseConfig() {
 	else
 	{
 		Logger::Log(LogLevel::ERROR, "No core positions found in config. Using default positions. Please fix this.");
-		config.corePositions.push_back({ 0, 0 });
-		config.corePositions.push_back({ static_cast<int>(config.width - 1), static_cast<int>(config.height - 1) });
+		config.corePositions.push_back({0, 0});
+		config.corePositions.push_back({static_cast<int>(config.width - 1), static_cast<int>(config.height - 1)});
 	}
 
 	return config;
 }
 
-GameConfig & Config::getInstance()
+GameConfig &Config::getInstance()
 {
 	if (!configInstance)
 		configInstance = std::make_unique<GameConfig>(parseConfig());
 	return *configInstance;
 }
 
-Position & Config::getCorePosition(unsigned int teamId)
+Position &Config::getCorePosition(unsigned int teamId)
 {
 	return getInstance().corePositions[teamId];
 }
-UnitConfig & Config::getUnitConfig(unsigned int typeId)
+UnitConfig &Config::getUnitConfig(unsigned int typeId)
 {
 	return getInstance().units[typeId];
 }
 
 json Config::encodeConfig()
 {
-	const GameConfig& config = Config::getInstance();
+	const GameConfig &config = Config::getInstance();
 
 	json configJson;
 
@@ -137,7 +140,7 @@ json Config::encodeConfig()
 	configJson["bombDamage"] = config.bombDamage;
 
 	configJson["units"] = json::array();
-	for (auto& unit : config.units)
+	for (auto &unit : config.units)
 	{
 		json u;
 
