@@ -23,15 +23,15 @@ void Logger::Log(LogLevel level, const std::string &message)
 	std::string prefix("\033[1m");
 	switch (level)
 	{
-		case LogLevel::INFO:
-			prefix = "\033[32m" + current_time + "[ INFO ] " + "\033[22m";
-			break;
-		case LogLevel::WARNING:
-			prefix = "\033[33m" + current_time + "[ WARN ] " + "\033[22m";
-			break;
-		case LogLevel::ERROR:
-			prefix = "\033[31m" + current_time + "[ERROR!] " + "\033[22m";
-			break;
+	case LogLevel::INFO:
+		prefix = "\033[32m" + current_time + "[ INFO ] " + "\033[22m";
+		break;
+	case LogLevel::WARNING:
+		prefix = "\033[33m" + current_time + "[ WARN ] " + "\033[22m";
+		break;
+	case LogLevel::ERROR:
+		prefix = "\033[31m" + current_time + "[ERROR!] " + "\033[22m";
+		break;
 	}
 
 	std::string log_msg = prefix + message + "\033[0m";
@@ -41,7 +41,16 @@ void Logger::Log(LogLevel level, const std::string &message)
 	else
 		std::cout << log_msg << std::endl;
 }
+
 void Logger::Log(const std::string &message)
 {
 	Log(LogLevel::INFO, message);
+}
+void Logger::LogWarn(const std::string &message)
+{
+	Log(LogLevel::WARNING, message);
+}
+void Logger::LogErr(const std::string &message)
+{
+	Log(LogLevel::ERROR, message);
 }

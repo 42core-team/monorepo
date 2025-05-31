@@ -17,7 +17,7 @@ GameConfig parseConfig()
 	std::ifstream inFile(Config::getConfigFilePath());
 	if (!inFile)
 	{
-		std::cerr << "Error: Could not open " << Config::getConfigFilePath() << std::endl;
+		Logger::Log(LogLevel::ERROR, "Could not open config file: " + Config::getConfigFilePath());
 		exit(EXIT_FAILURE);
 	}
 

@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 	address.sin_addr.s_addr = INADDR_ANY;
 	address.sin_port = htons(4242);
 
-	if (bind(server_fd, reinterpret_cast<sockaddr*>(&address), sizeof(address)) < 0)
+	if (bind(server_fd, reinterpret_cast<sockaddr *>(&address), sizeof(address)) < 0)
 	{
 		Logger::Log(LogLevel::ERROR, "Could not bind socket.");
 		close(server_fd);
@@ -90,17 +90,16 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	std::cout << "┌────────────────────────────────────┐\n";
-	std::cout << "│   Server listening on port 4242... │\n";
-	std::cout << "└────────────────────────────────────┘\n";
+	Logger::Log("Server listening on port 4242...")
 
-	std::unordered_map<unsigned int, Bridge*> bridges;
+		std::unordered_map<unsigned int, Bridge *>
+			bridges;
 
 	while (bridges.size() < expectedTeamIds.size())
 	{
 		sockaddr_in clientAddress;
 		socklen_t clientLen = sizeof(clientAddress);
-		int client_fd = accept(server_fd, reinterpret_cast<sockaddr*>(&clientAddress), &clientLen);
+		int client_fd = accept(server_fd, reinterpret_cast<sockaddr *>(&clientAddress), &clientLen);
 		if (client_fd < 0)
 		{
 			Logger::Log(LogLevel::WARNING, "accept failed: " + std::string(strerror(errno)));
@@ -108,8 +107,8 @@ int main(int argc, char *argv[])
 		}
 
 		Logger::Log("Accepted connection from " + std::string(inet_ntoa(clientAddress.sin_addr)));
-		
-		Bridge* bridge = new Bridge(client_fd, expectedTeamIds[bridges.size()]);
+
+		Bridge *bridge = new Bridge(client_fd, expectedTeamIds[bridges.size()]);
 		bridge->start();
 
 		json loginMessage;
@@ -148,16 +147,14 @@ int main(int argc, char *argv[])
 	Logger::Log("All expected teams have connected. Preparing to start the game...");
 
 	Game game(expectedTeamIds);
-	
-	for (auto& pair : bridges)
+
+	for (auto &pair : bridges)
 	{
 		game.addBridge(pair.second);
 	}
 
 	std::thread gameThread([&game]()
-	{
-		game.run();
-	});
+						   { game.run(); });
 
 	gameThread.join();
 

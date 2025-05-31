@@ -69,7 +69,7 @@ void Game::run()
 		tickCount++;
 	}
 
-	std::cout << "Game over!" << std::endl;
+	Logger::Log("Game ended! Saving replay...");
 	json config = Config::encodeConfig();
 	replayEncoder_.includeConfig(config);
 	replayEncoder_.saveReplay();

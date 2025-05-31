@@ -4,7 +4,7 @@ JigsawWorldGenerator::JigsawWorldGenerator(unsigned int seed)
 {
 	if (seed == 0)
 		seed = std::chrono::system_clock::now().time_since_epoch().count();
-	Logger::Log(LogLevel::INFO, "JigsawWorldGenerator seed: " + std::to_string(seed));
+	Logger::Log("JigsawWorldGenerator seed: " + std::to_string(seed));
 	eng_ = std::default_random_engine(seed);
 	loadTemplates();
 }
@@ -446,7 +446,7 @@ void JigsawWorldGenerator::generateWorld(Game *game)
 	int templatePlaceAttemptCount = Config::getInstance().worldGeneratorConfig.value("templatePlaceAttemptCount", 1000);
 	bool mirrorMap = Config::getInstance().worldGeneratorConfig.value("mirrorMap", true);
 
-	Logger::Log(LogLevel::INFO, "Generating world with JigsawWorldGenerator");
+	Logger::Log("Generating world with JigsawWorldGenerator");
 
 	game->visualizeGameState(0);
 
@@ -457,7 +457,7 @@ void JigsawWorldGenerator::generateWorld(Game *game)
 	std::uniform_int_distribution<int> distY(0, height + 10);
 	std::uniform_int_distribution<size_t> templateDist(0, templates_.size() - 1);
 
-	Logger::Log(LogLevel::INFO, "Step 1: Placing templates");
+	Logger::Log("Step 1: Placing templates");
 	for (int i = 0; i < templatePlaceAttemptCount; ++i)
 	{
 		const MapTemplate &original = templates_[templateDist(eng_)];
@@ -465,32 +465,32 @@ void JigsawWorldGenerator::generateWorld(Game *game)
 		int posX = distX(eng_) - 5;
 		int posY = distY(eng_) - 5;
 		if (tryPlaceTemplate(game, temp, posX, posY))
-			std::cout << "Placed template " << original.name << " at (" << posX << ", " << posY << ")\n";
+			Logger::Log("Placed template " + original.name + " at (" + std::to_string(posX) + ", " + std::to_string(posY) + ")");
 	}
 	game->visualizeGameState(0);
 
-	Logger::Log(LogLevel::INFO, "Step 2: Placing walls");
+	Logger::Log("Step 2: Placing walls");
 	placeWalls(game);
 	game->visualizeGameState(0);
 
-	Logger::Log(LogLevel::INFO, "Step 3: Balancing resources");
+	Logger::Log("Step 3: Balancing resources");
 	balanceObjectType(game, ObjectType::Resource, Config::getInstance().worldGeneratorConfig.value("resourceCount", 20));
 	game->visualizeGameState(0);
 
-	Logger::Log(LogLevel::INFO, "Step 4: Balancing moneys");
+	Logger::Log("Step 4: Balancing moneys");
 	balanceObjectType(game, ObjectType::Money, Config::getInstance().worldGeneratorConfig.value("moneysCount", 20));
 	game->visualizeGameState(0);
 
 	if (mirrorMap)
 	{
-		Logger::Log(LogLevel::INFO, "Step 5: Mirroring world");
+		Logger::Log("Step 5: Mirroring world");
 		mirrorWorld(game);
 		game->visualizeGameState(0);
 	}
 
-	Logger::Log(LogLevel::INFO, "Step 6: Clearing at least 1 path between cores.");
+	Logger::Log("Step 6: Clearing at least 1 path between cores.");
 	clearPathBetweenCores(game);
 	game->visualizeGameState(0);
 
-	Logger::Log(LogLevel::INFO, "World generation complete");
+	Logger::Log("World generation complete");
 }
