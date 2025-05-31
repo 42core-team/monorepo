@@ -48,7 +48,10 @@ GameConfig parseConfig()
 	else if (wgType == "distanced_resources")
 		config.worldGenerator = std::make_unique<DistancedResourceWorldGenerator>();
 	else
+	{
+		Logger::Log(LogLevel::WARNING, "Unknown world generator type: \"" + wgType + "\". Using jigsaw as default.");
 		config.worldGenerator = std::make_unique<JigsawWorldGenerator>();
+	}
 	config.worldGeneratorConfig = j.value("worldGeneratorConfig", json());
 
 	if (j.contains("units") && j["units"].is_array())
@@ -160,6 +163,15 @@ json Config::encodeConfig()
 		u["canBuild"] = unit.canBuild;
 
 		configJson["units"].push_back(u);
+	}
+
+	configJson["corePositions"] = json::array();
+	for (const auto &pos : config.corePositions)
+	{
+		json posJson;
+		posJson["x"] = pos.x;
+		posJson["y"] = pos.y;
+		configJson["corePositions"].push_back(posJson);
 	}
 
 	return configJson;
