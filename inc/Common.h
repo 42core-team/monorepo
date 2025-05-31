@@ -13,15 +13,15 @@ struct Position
 
 	bool isValid(int maxX, int maxY) const
 	{
-		return x < maxX && y < maxY;
+		return x < maxX && y < maxY && x >= 0 && y >= 0;
 	}
 
-	bool operator==(const Position& other) const
+	bool operator==(const Position &other) const
 	{
 		return x == other.x && y == other.y;
 	}
 
-	Position operator+(const Position& other) const
+	Position operator+(const Position &other) const
 	{
 		return {x + other.x, y + other.y};
 	}
@@ -29,7 +29,7 @@ struct Position
 	{
 		return {x + scalar, y + scalar};
 	}
-	Position operator-(const Position& other) const
+	Position operator-(const Position &other) const
 	{
 		return {x - other.x, y - other.y};
 	}
@@ -38,7 +38,7 @@ struct Position
 		return {x * scalar, y * scalar};
 	}
 
-	double distance(const Position& other) const
+	double distance(const Position &other) const
 	{
 		return std::abs(x - other.x) + std::abs(y - other.y);
 	}
