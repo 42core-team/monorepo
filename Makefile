@@ -5,7 +5,6 @@ CXXFLAGS := -std=c++17 -Wall -Wextra -Werror -pthread -MMD -MP -g
 LDFLAGS := -pthread
 
 INCLUDEDIRS := $(addprefix -I, $(shell find inc -type d))
-DEPENDDIRS := -Isubmodules/json/single_include/nlohmann/
 
 SRCDIR := src
 OBJDIR := obj
@@ -25,7 +24,7 @@ $(TARGET): $(OBJECTS)
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@mkdir -p $(@D)
 	@echo "✂️  Compiling $<..."
-	$(CXX) $(CXXFLAGS) $(INCLUDEDIRS) $(DEPENDDIRS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(INCLUDEDIRS) -c $< -o $@
 
 re: fclean all
 
