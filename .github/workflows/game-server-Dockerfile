@@ -1,0 +1,16 @@
+FROM alpine:latest AS build-game
+RUN apk add build-base
+
+WORKDIR /core
+COPY . .
+
+RUN make re
+
+FROM alpine:latest AS release
+RUN apk add --no-cache libstdc++ libgcc
+WORKDIR /core
+COPY --from=build-game /core/core ./core
+COPY --from=build-game /core/data ./data
+
+ENTRYPOINT [ "./core" ]
+CMD [ "--default-arg" ]
