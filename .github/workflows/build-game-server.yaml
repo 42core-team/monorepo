@@ -12,6 +12,10 @@ on:
 env:
   REGISTRY_IMAGE: ghcr.io/42core-team/game-server
 
+concurrency:
+  group: "${{ github.workflow }} @ ${{ github.ref_name }}"
+  cancel-in-progress: true
+
 jobs:
   build:
     strategy:
@@ -19,7 +23,7 @@ jobs:
       matrix:
         include:
           - platform: linux/amd64
-            runner: amd64
+            runner: x64
           - platform: linux/arm64
             runner: arm64
     runs-on:
