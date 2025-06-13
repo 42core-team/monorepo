@@ -14,11 +14,17 @@ env:
 
 jobs:
   build:
-    runs-on: self-hosted
     strategy:
       fail-fast: false
       matrix:
-        platform: [linux/amd64, linux/arm64]
+        include:
+          - platform: linux/amd64
+            runner: amd64
+          - platform: linux/arm64
+            runner: arm64
+    runs-on:
+      - ${{ matrix.runner }}
+      - self-hosted
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
