@@ -330,14 +330,14 @@ void JigsawWorldGenerator::clearPathBetweenCores(Game *game)
 
 		if (Config::getInstance().worldGeneratorConfig.value("mirrorMap", true))
 		{
-			int mirrorX = H - 1 - pos.x;
-			int mirrorY = W - 1 - pos.y;
-			Position mirrorPos(mirrorX, mirrorY);
-
+			Position mirrorPos(
+				(W - 1) - pos.x,
+				(H - 1) - pos.y);
 			objects.erase(std::remove_if(objects.begin(), objects.end(),
 										 [&](const std::unique_ptr<Object> &o)
 										 {
-											 return o->getPosition() == mirrorPos && o->getType() != ObjectType::Core;
+											 return o->getPosition() == mirrorPos &&
+													o->getType() != ObjectType::Core;
 										 }),
 						  objects.end());
 		}
@@ -407,37 +407,51 @@ void JigsawWorldGenerator::placeWalls(Game *game)
 
 void JigsawWorldGenerator::mirrorWorld(Game *game)
 {
-	unsigned int width = Config::getInstance().width;
-	unsigned int height = Config::getInstance().height;
+	unsigned int W = Config::getInstance().width;
+	unsigned int H = Config::getInstance().height;
 
-	auto &objects = game->getObjects();
+	auto &objs = game->getObjects();
 
-	objects.erase(
-		std::remove_if(objects.begin(), objects.end(), [width, height](const std::unique_ptr<Object> &obj)
-					   {
-			Position pos = obj->getPosition();
-			double ratio = static_cast<double>(pos.x) / (width - 1) + static_cast<double>(pos.y) / (height - 1);
-			return (ratio > 1.0 && obj->getType() != ObjectType::Core); }),
-		objects.end());
+	std::vector<Object *> base;
+	base.reserve(objs.size());
 
-	std::vector<Object *> mirrorCandidates;
-	for (const auto &obj : objects)
+	for (const auto &uptr : objs)
 	{
-		Position pos = obj->getPosition();
-		double ratio = static_cast<double>(pos.x) / (width - 1) + static_cast<double>(pos.y) / (height - 1);
-		if (ratio < 1.0 && obj->getType() != ObjectType::Core)
-		{
-			mirrorCandidates.push_back(obj.get());
-		}
+		Object *o = uptr.get();
+		if (o->getType() == ObjectType::Core)
+			continue; // never mirror cores
+
+		const Position p = o->getPosition();
+		const Position q(W - 1 - p.x, H - 1 - p.y);
+
+		// lexicographic compare: pick the 'smaller' of p and q
+		bool isBase = (p.y < q.y) ||
+					  (p.y == q.y && p.x < q.x);
+		if (isBase)
+			base.push_back(o);
 	}
 
-	for (Object *obj : mirrorCandidates)
+	// 2) Erase every non-core object not in the base set
+	objs.erase(
+		std::remove_if(objs.begin(), objs.end(),
+					   [&](const std::unique_ptr<Object> &uptr)
+					   {
+						   Position p = uptr->getPosition();
+						   Position q(W - 1 - p.x, H - 1 - p.y);
+						   bool isCore = uptr->getType() == ObjectType::Core;
+						   bool isBase =
+							   (p.y < q.y) ||
+							   (p.y == q.y && p.x < q.x);
+						   return (!isCore && !isBase);
+					   }),
+		objs.end());
+
+	// 3) Clone each base object into its 180° partner
+	for (Object *o : base)
 	{
-		Position pos = obj->getPosition();
-		int newX = height - 1 - pos.x;
-		int newY = width - 1 - pos.y;
-		Position newPos(newX, newY);
-		obj->clone(newPos, game);
+		Position p = o->getPosition();
+		Position mirrorPos(W - 1 - p.x, H - 1 - p.y);
+		o->clone(mirrorPos, game);
 	}
 }
 
