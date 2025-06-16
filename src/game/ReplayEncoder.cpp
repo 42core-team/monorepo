@@ -2,7 +2,7 @@
 
 std::string ReplayEncoder::replaySaveFolder_ = "";
 
-json ReplayEncoder::diffObject(const json& currentObj, const json& previousObj)
+json ReplayEncoder::diffObject(const json &currentObj, const json &previousObj)
 {
 	json diff;
 	diff["id"] = currentObj["id"];
@@ -10,7 +10,7 @@ json ReplayEncoder::diffObject(const json& currentObj, const json& previousObj)
 
 	for (auto it = currentObj.begin(); it != currentObj.end(); ++it)
 	{
-		const std::string& key = it.key();
+		const std::string &key = it.key();
 		if (key == "id" || key == "nextMoveOpp")
 			continue;
 
@@ -23,18 +23,18 @@ json ReplayEncoder::diffObject(const json& currentObj, const json& previousObj)
 	return diffFound ? diff : json::object();
 }
 
-json ReplayEncoder::diffObjects(const json& currentObjects)
+json ReplayEncoder::diffObjects(const json &currentObjects)
 {
 	json diffArray = json::array();
 
 	std::unordered_map<int, json> currentMap;
-	for (const auto& obj : currentObjects)
+	for (const auto &obj : currentObjects)
 	{
 		int id = obj["id"];
 		currentMap[id] = obj;
 	}
 
-	for (const auto& [id, currentObj] : currentMap)
+	for (const auto &[id, currentObj] : currentMap)
 	{
 		auto it = previousObjects_.find(id);
 		if (it == previousObjects_.end())
@@ -49,7 +49,7 @@ json ReplayEncoder::diffObjects(const json& currentObjects)
 		}
 	}
 
-	for (const auto& [id, prevObj] : previousObjects_)
+	for (const auto &[id, prevObj] : previousObjects_)
 	{
 		if (currentMap.find(id) == currentMap.end())
 		{
@@ -63,7 +63,7 @@ json ReplayEncoder::diffObjects(const json& currentObjects)
 	return diffArray;
 }
 
-void ReplayEncoder::addTickState(const json& state)
+void ReplayEncoder::addTickState(const json &state)
 {
 	unsigned long long tick = state.value("tick", 0);
 
@@ -75,7 +75,7 @@ void ReplayEncoder::addTickState(const json& state)
 		objectsDiff = diffObjects(currentObjects);
 
 	previousObjects_.clear();
-	for (const auto& obj : currentObjects)
+	for (const auto &obj : currentObjects)
 	{
 		int id = obj["id"];
 		previousObjects_[id] = obj;
@@ -94,20 +94,24 @@ void ReplayEncoder::addTickState(const json& state)
 	lastTickCount_ = tick;
 }
 
-void ReplayEncoder::includeConfig(json& config)
+void ReplayEncoder::includeConfig(json &config)
 {
 	config_ = config;
 }
 
-void ReplayEncoder::setReplaySaveFolder(const std::string& folder) {
+void ReplayEncoder::setReplaySaveFolder(const std::string &folder)
+{
 	std::string trimmedFolder = folder;
-	while (!trimmedFolder.empty() && trimmedFolder.back() == '/') trimmedFolder.pop_back();
+	while (!trimmedFolder.empty() && trimmedFolder.back() == '/')
+		trimmedFolder.pop_back();
 	replaySaveFolder_ = trimmedFolder;
 }
-void ReplayEncoder::verifyReplaySaveFolder() {
-	if (replaySaveFolder_.empty() || 
-			!std::filesystem::exists(replaySaveFolder_) ||
-			!std::filesystem::is_directory(replaySaveFolder_)) {
+void ReplayEncoder::verifyReplaySaveFolder()
+{
+	if (replaySaveFolder_.empty() ||
+		!std::filesystem::exists(replaySaveFolder_) ||
+		!std::filesystem::is_directory(replaySaveFolder_))
+	{
 		Logger::Log(LogLevel::ERROR, "Replay save folder is incorrectly set to: " + replaySaveFolder_);
 		exit(1);
 	}
@@ -121,7 +125,12 @@ void ReplayEncoder::saveReplay() const
 		return;
 	}
 
-	std::string filePath = replaySaveFolder_ + "/replay_" +  std::to_string(std::chrono::system_clock::now().time_since_epoch().count()) + ".json";
+	json replayData;
+	replayData["ticks"] = ticks_;
+	replayData["config"] = config_;
+	replayData["full_tick_amount"] = lastTickCount_;
+
+	std::string filePath = replaySaveFolder_ + "/replay_" + std::to_string(std::chrono::system_clock::now().time_since_epoch().count()) + ".json";
 	std::ofstream outFile(filePath);
 	if (!outFile.is_open())
 	{
@@ -129,12 +138,18 @@ void ReplayEncoder::saveReplay() const
 		return;
 	}
 
-	json replayData;
-	replayData["ticks"] = ticks_;
-	replayData["config"] = config_;
-	replayData["full_tick_amount"] = lastTickCount_;
 	outFile << replayData.dump(4); // Pretty print with 4 spaces
 	outFile.close();
 
-	Logger::Log("Replay saved to " + filePath);
+	std::string filePath = replaySaveFolder_ + "/replay_latest.json";
+	outFile = std::ofstream(filePath);
+	if (!outFile.is_open())
+	{
+		Logger::Log(LogLevel::ERROR, "Could not open latest replay file for writing: " + filePath);
+		return;
+	}
+	outFile << replayData.dump(4); // Pretty print with 4 spaces
+	outFile.close();
+
+	Logger::Log("Replay saved to " + filePath + " and latest replay updated.");
 }
