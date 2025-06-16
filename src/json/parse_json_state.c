@@ -13,7 +13,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	{
 		if ((*arr)[index]->id == obj.id)
 		{
-			t_obj * existingObj = (*arr)[index];
+			t_obj *existingObj = (*arr)[index];
 
 			t_obj_state oldState = existingObj->state;
 			t_pos oldPos = existingObj->pos;
@@ -33,7 +33,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 			existingObj->hp = obj.hp;
 			if ((*arr) == game.units)
 			{
-				existingObj->s_unit.type_id = obj.s_unit.type_id;
+				existingObj->s_unit.unit_type = obj.s_unit.unit_type;
 				existingObj->s_unit.team_id = obj.s_unit.team_id;
 				existingObj->s_unit.balance = obj.s_unit.balance;
 				existingObj->s_unit.next_movement_opp = obj.s_unit.next_movement_opp;
@@ -73,21 +73,21 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 		index++;
 	}
 	if (objInserted)
-		return ;
+		return;
 
 	// 2. LOOP: Placeholder matching
 	index = 0;
 	while ((*arr)[index] != NULL)
 	{
 		bool matches = (*arr)[index]->id == 0;
-		if ((*arr) == game.units && (((*arr)[index]->s_unit.type_id != obj.s_unit.type_id) || ((*arr)[index]->s_unit.team_id != obj.s_unit.team_id)))
+		if ((*arr) == game.units && (((*arr)[index]->s_unit.unit_type != obj.s_unit.unit_type) || ((*arr)[index]->s_unit.team_id != obj.s_unit.team_id)))
 			matches = false;
 		if ((*arr) == game.cores && (*arr)[index]->s_core.team_id != obj.s_core.team_id)
 			matches = false;
 
 		if (matches)
 		{
-			t_obj * existingObj = (*arr)[index];
+			t_obj *existingObj = (*arr)[index];
 			existingObj->type = obj.type;
 			existingObj->state = STATE_ALIVE;
 			existingObj->id = obj.id;
@@ -95,7 +95,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 			existingObj->hp = obj.hp;
 			if ((*arr) == game.units)
 			{
-				existingObj->s_unit.type_id = obj.s_unit.type_id;
+				existingObj->s_unit.unit_type = obj.s_unit.unit_type;
 				existingObj->s_unit.team_id = obj.s_unit.team_id;
 				existingObj->s_unit.balance = obj.s_unit.balance;
 				existingObj->s_unit.next_movement_opp = obj.s_unit.next_movement_opp;
@@ -115,11 +115,11 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 		index++;
 	}
 	if (objInserted)
-		return ;
+		return;
 
 	if ((*arr) == game.units && obj.s_unit.team_id == game.my_team_id)
 	{
-		printf("Error matching team units. This is never supposed to happen. Have you freed something you shouldn't have? Troublemaker: [id %lu, type %lu, team %lu]\n", obj.id, obj.s_unit.type_id, obj.s_unit.team_id);
+		printf("Error matching team units. This is never supposed to happen. Have you freed something you shouldn't have? Troublemaker: [id %lu, unit_type %lu, team %lu]\n", obj.id, obj.s_unit.unit_type, obj.s_unit.team_id);
 	}
 
 	// 3. Add to the back
@@ -129,7 +129,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	(*arr) = realloc((*arr), sizeof(t_obj *) * (arrLen + 2));
 	(*arr)[arrLen + 1] = NULL;
 	(*arr)[arrLen] = malloc(sizeof(t_obj));
-	t_obj * existingObj = (*arr)[arrLen];
+	t_obj *existingObj = (*arr)[arrLen];
 	existingObj->type = obj.type;
 	existingObj->state = STATE_ALIVE;
 	existingObj->id = obj.id;
@@ -138,7 +138,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	existingObj->data = NULL;
 	if ((*arr) == game.units)
 	{
-		existingObj->s_unit.type_id = obj.s_unit.type_id;
+		existingObj->s_unit.unit_type = obj.s_unit.unit_type;
 		existingObj->s_unit.team_id = obj.s_unit.team_id;
 		existingObj->s_unit.balance = obj.s_unit.balance;
 		existingObj->s_unit.next_movement_opp = obj.s_unit.next_movement_opp;
@@ -154,15 +154,15 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	}
 }
 
-void	ft_parse_json_state(char *json)
+void ft_parse_json_state(char *json)
 {
-	json_node * root = string_to_json(json);
+	json_node *root = string_to_json(json);
 
 	parse_json_actions(root);
 
 	game.elapsed_ticks = (unsigned long)json_find(root, "tick")->number;
 
-	json_node * objects = json_find(root, "objects");
+	json_node *objects = json_find(root, "objects");
 
 	if (game.cores != NULL)
 	{
@@ -205,7 +205,7 @@ void	ft_parse_json_state(char *json)
 		}
 		if (readObj.type == OBJ_UNIT)
 		{
-			readObj.s_unit.type_id = (unsigned long)json_find(objects->array[i], "typeId")->number;
+			readObj.s_unit.unit_type = (unsigned long)json_find(objects->array[i], "unit_type")->number;
 			readObj.s_unit.team_id = (unsigned long)json_find(objects->array[i], "teamId")->number;
 			readObj.s_unit.balance = (unsigned long)json_find(objects->array[i], "balance")->number;
 			readObj.s_unit.next_movement_opp = (unsigned long)json_find(objects->array[i], "nextMoveOpp")->number;
@@ -215,7 +215,7 @@ void	ft_parse_json_state(char *json)
 			readObj.s_resource.balance = (unsigned long)json_find(objects->array[i], "balance")->number;
 		}
 
-		t_obj *** game_arr = NULL;
+		t_obj ***game_arr = NULL;
 		if (readObj.type == OBJ_CORE)
 			game_arr = &game.cores;
 		else if (readObj.type == OBJ_UNIT)
@@ -256,7 +256,6 @@ void	ft_parse_json_state(char *json)
 		}
 		game.units[j] = NULL;
 	}
-
 
 	free_json(root);
 }

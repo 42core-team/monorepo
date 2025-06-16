@@ -1,14 +1,14 @@
 #include "parse_json.h"
 #include "string.h"
 
-static t_unit_config	**ft_parse_unit_config(json_node * root)
+static t_unit_config **ft_parse_unit_config(json_node *root)
 {
 	json_node *json = json_find(root, "units");
 
 	int array_size = 0;
 	for (int i = 0; json->array && json->array[i]; i++)
 		array_size++;
-	
+
 	t_unit_config **units = malloc(sizeof(t_unit_config *) * (array_size + 1));
 	if (!units)
 		ft_perror_exit("Failed to allocate memory for unit configs\n");
@@ -22,7 +22,7 @@ static t_unit_config	**ft_parse_unit_config(json_node * root)
 		json_node *unit_node = json->array[i];
 
 		units[i]->name = strdup(json_find(unit_node, "name")->string);
-		units[i]->type_id = i;
+		units[i]->unit_type = i;
 		units[i]->cost = (unsigned long)json_find(unit_node, "cost")->number;
 		units[i]->hp = (unsigned long)json_find(unit_node, "hp")->number;
 		units[i]->speed = (unsigned long)json_find(unit_node, "speed")->number;
@@ -40,9 +40,9 @@ static t_unit_config	**ft_parse_unit_config(json_node * root)
 	return units;
 }
 
-void	ft_parse_json_config(char *json)
+void ft_parse_json_config(char *json)
 {
-	json_node * root = string_to_json(json);
+	json_node *root = string_to_json(json);
 
 	game.config.width = (unsigned long)json_find(root, "width")->number;
 	game.config.height = (unsigned long)json_find(root, "height")->number;
@@ -62,6 +62,6 @@ void	ft_parse_json_config(char *json)
 	game.config.bomb_damage = (unsigned long)json_find(root, "bombDamage")->number;
 
 	game.config.units = ft_parse_unit_config(root);
-	
+
 	free_json(root);
 }

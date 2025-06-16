@@ -1,8 +1,8 @@
 #include "con_lib.h"
 
-void	ft_print_status()
+void ft_print_status()
 {
-	const t_status	*status = &game.status;
+	const t_status *status = &game.status;
 
 	printf("Status: ");
 	if (*status == STATUS_OK)
@@ -17,9 +17,9 @@ void	ft_print_status()
 		printf("UNKNOWN\n");
 }
 
-void	ft_print_cores()
+void ft_print_cores()
 {
-	t_obj	**cores = game.cores;
+	t_obj **cores = game.cores;
 
 	printf("Cores:\n");
 	if (cores == NULL)
@@ -37,9 +37,9 @@ void	ft_print_cores()
 	}
 }
 
-void	ft_print_resources()
+void ft_print_resources()
 {
-	t_obj	**resources = game.resources;
+	t_obj **resources = game.resources;
 
 	printf("Resources:\n");
 	if (resources == NULL)
@@ -57,9 +57,9 @@ void	ft_print_resources()
 	}
 }
 
-void	ft_print_units()
+void ft_print_units()
 {
-	t_obj	**units = game.units;
+	t_obj **units = game.units;
 
 	printf("Units:\n");
 	if (units == NULL)
@@ -72,14 +72,14 @@ void	ft_print_units()
 			state = "DEAD";
 		else if (units[index]->state == STATE_UNINITIALIZED)
 			state = "UNINITIALIZED";
-		printf("- id: %lu type_id: %lu team_id: %lu x: %u y: %u hp: %lu state: %s balance: %lu next_movement_opportunity %lu\n", units[index]->id, units[index]->s_unit.type_id, units[index]->s_unit.team_id, units[index]->pos.x, units[index]->pos.y, units[index]->hp, state, units[index]->s_unit.balance, units[index]->s_unit.next_movement_opp);
+		printf("- id: %lu unit_type: %lu team_id: %lu x: %u y: %u hp: %lu state: %s balance: %lu next_movement_opportunity %lu\n", units[index]->id, units[index]->s_unit.unit_type, units[index]->s_unit.team_id, units[index]->pos.x, units[index]->pos.y, units[index]->hp, state, units[index]->s_unit.balance, units[index]->s_unit.next_movement_opp);
 		index++;
 	}
 }
 
-void	ft_print_walls()
+void ft_print_walls()
 {
-	t_obj	**walls = game.walls;
+	t_obj **walls = game.walls;
 
 	printf("Walls:\n");
 	if (walls == NULL)
@@ -102,7 +102,7 @@ void ft_print_unit_config(const t_unit_config *unit_config)
 	if (unit_config == NULL)
 		return;
 	printf("- Name: %s\n", unit_config->name);
-	printf("  Type ID: %u\n", unit_config->type_id);
+	printf("  Unit Type: %u\n", unit_config->unit_type);
 	printf("  Cost: %lu\n", unit_config->cost);
 	printf("  HP: %lu\n", unit_config->hp);
 	printf("  Damage Core: %ld\n", unit_config->dmg_core);
@@ -112,9 +112,9 @@ void ft_print_unit_config(const t_unit_config *unit_config)
 	printf("  Speed: %lu\n", unit_config->speed);
 }
 
-void	ft_print_game_config()
+void ft_print_game_config()
 {
-	const t_config	*config = &game.config;
+	const t_config *config = &game.config;
 
 	if (config == NULL)
 		return;
@@ -135,7 +135,7 @@ void	ft_print_game_config()
 			ft_print_unit_config(config->units[ind++]);
 }
 
-void	ft_print_all()
+void ft_print_all()
 {
 	ft_print_game_config(&game.config);
 	ft_print_status(game.status);

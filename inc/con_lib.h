@@ -35,57 +35,58 @@ typedef enum e_obj_state
 	STATE_UNINITIALIZED = 1,
 	STATE_ALIVE = 2,
 	STATE_DEAD = 3
-}	t_obj_state;
+} t_obj_state;
 
 typedef struct s_pos
 {
 	unsigned short x;
 	unsigned short y;
-}	t_pos;
+} t_pos;
 
 typedef struct s_obj
 {
 	/// @brief Type of the obj
-	t_obj_type	type;
+	t_obj_type type;
 	/// @brief State of the obj
-	t_obj_state	state;
+	t_obj_state state;
 	/// @brief Custom data, save whatever you want here.
-	void	*data;
+	void *data;
 	/// @brief The id of the obj
 	unsigned long id;
 	/// @brief The position of the obj
 	t_pos pos;
 	/// @brief The current healthpoints of the obj
 	unsigned long hp;
-	union {
+	union
+	{
 		struct
 		{
 			/// @brief The id of the team that owns the core.
 			unsigned long team_id;
 			/// @brief The current balance of the core.
 			unsigned long balance;
-		}	s_core;
+		} s_core;
 		struct
 		{
 			/// @brief Which type of unit this is.
-			unsigned long type_id;
+			unsigned long unit_type;
 			/// @brief The id of the team that owns the unit.
 			unsigned long team_id;
 			/// @brief The amount of money the unit is carrying.
 			unsigned long balance;
 			/// @brief The next time the unit can move, as defined by it's speed & how much it's carrying.
 			unsigned long next_movement_opp;
-		}	s_unit;
+		} s_unit;
 		struct
 		{
 			/// @brief The amount of money the resource is carrying.
 			unsigned long balance;
-		}	s_resource;
+		} s_resource;
 		struct
 		{
 			/// @brief The amount of money.
 			unsigned long balance;
-		}	s_money;
+		} s_money;
 	};
 } t_obj;
 
@@ -107,8 +108,8 @@ typedef struct s_unit_config
 {
 	/// @brief The name of the unit.
 	char *name;
-	/// @brief The type id of the unit.
-	t_unit_type type_id;
+	/// @brief The unit type of the unit.
+	t_unit_type unit_type;
 	/// @brief What the unit costs to create.
 	unsigned long cost;
 	/// @brief How much healthpoints the unit has.
@@ -174,7 +175,7 @@ typedef struct s_config
 
 typedef struct s_action_create
 {
-	unsigned long type_id;
+	unsigned long unit_type;
 } t_action_create;
 typedef struct s_action_travel
 {
@@ -262,7 +263,7 @@ typedef struct s_game
 /**
  * This variable contains all the data about the game.
  * It gets updated every time your function is called.
-*/
+ */
 extern t_game game;
 
 void ft_init_con(char *team_name, int argc, char **argv);
@@ -274,24 +275,24 @@ void ft_loop(t_event_handler handler, void *custom_data);
 /*
  * @brief Get any object based on its id
  */
-t_obj	*ft_get_obj_from_id(unsigned long id);
+t_obj *ft_get_obj_from_id(unsigned long id);
 /*
  * @brief Get the object at a specific position or null
  */
-t_obj	*ft_get_obj_at_pos(t_pos pos);
+t_obj *ft_get_obj_at_pos(t_pos pos);
 // --------------- core getter ---------------
 /**
  * @brief Get my core
  */
-t_obj	*ft_get_my_core(void);
+t_obj *ft_get_my_core(void);
 /**
  * @brief Get the first opponent core
  */
-t_obj	*ft_get_nearest_opponent_core(t_obj *unit);
+t_obj *ft_get_nearest_opponent_core(t_obj *unit);
 /**
  * @brief Get the nearest core to the given obj
  */
-t_obj	*ft_get_nearest_core(t_obj *obj);
+t_obj *ft_get_nearest_core(t_obj *obj);
 // --------------- unit getter ---------------
 /**
  * @brief Returns a pointer array of all units
@@ -300,87 +301,87 @@ t_obj **ft_get_all_units();
 /**
  * @brief Allocates a pointer array of all my units
  */
-t_obj	**ft_get_my_units(void);
+t_obj **ft_get_my_units(void);
 /**
  * @brief Allocates a pointer array of all opponent units
  */
-t_obj	**ft_get_opponent_units(void);
+t_obj **ft_get_opponent_units(void);
 /**
  * @brief Get the nearest unit to the given unit
  */
-t_obj	*ft_get_nearest_unit(t_obj *unit);
+t_obj *ft_get_nearest_unit(t_obj *unit);
 /**
  * @brief Get the nearest opponent unit to the given unit
  */
-t_obj	*ft_get_nearest_opponent_unit(t_obj *unit);
+t_obj *ft_get_nearest_opponent_unit(t_obj *unit);
 /**
  * @brief Get the nearest team unit to the given unit
  */
-t_obj	*ft_get_nearest_team_unit(t_obj *unit);
+t_obj *ft_get_nearest_team_unit(t_obj *unit);
 // --------------- resource getter ---------------
 /**
  * @brief Get the nearest resource to the given unit
  */
-t_obj	*ft_get_nearest_resource(t_obj *unit);
+t_obj *ft_get_nearest_resource(t_obj *unit);
 // --------------- unit config getter ---------------
 /**
- * @brief Get the unit config by type_id
+ * @brief Get the unit config by unit_type
  */
-t_unit_config	*ft_get_unit_config(t_unit_type type);
+t_unit_config *ft_get_unit_config(t_unit_type type);
 // ---------------- get utils ----------------
-double	ft_distance(t_obj *obj1, t_obj *obj2);
+double ft_distance(t_obj *obj1, t_obj *obj2);
 
 // --------------- actions.c ---------------
 /**
  * @brief Creates a unit of a specific type. Same as ft_create, besides that this function takes an id instead of a pointer to a unit.
  *
- * @param type_id Which type of unit should be created.
+ * @param unit_type Which type of unit should be created.
  */
-t_obj	*ft_create_unit(t_unit_type type_id);
+t_obj *ft_create_unit(t_unit_type unit_type);
 /**
  * @brief Moves a unit to a specific position.
- * 
+ *
  * @param unit The unit that should be moved.
  * @param pos The position the unit should move to.
  */
-void	ft_move(t_obj *unit, t_pos pos);
+void ft_move(t_obj *unit, t_pos pos);
 /**
  * @brief Determines next direction to move to reach goal, then calls ft_move().
- * 
+ *
  * @param unit The unit that should be moved.
  * @param direction The target position.
  */
-void	ft_travel_to_pos(t_obj *unit, t_pos pos);
+void ft_travel_to_pos(t_obj *unit, t_pos pos);
 /**
  * @brief Attacks a target with a unit.
- * 
+ *
  * @param attacker The unit that should attack.
  * @param pos The position that should be attacked.
  */
-void	ft_attack(t_obj *attacker, t_pos pos);
+void ft_attack(t_obj *attacker, t_pos pos);
 /**
  * @brief Drops money at a specific position.
- * 
+ *
  * @param source The object that should drop the money.
  * @param target_pos The position where the money should be dropped.
  * @param amount The amount of money that should be dropped.
  */
-void	ft_drop_money(t_obj *source, t_pos target_pos, unsigned long amount);
+void ft_drop_money(t_obj *source, t_pos target_pos, unsigned long amount);
 /**
  * @brief Transfers money from one object to another.
- * 
+ *
  * @param source The object that should transfer the money.
  * @param target The object that should receive the money.
  * @param amount The amount of money that should be transferred.
  */
-void	ft_transfer_money(t_obj *source, t_obj *target, unsigned long amount);
+void ft_transfer_money(t_obj *source, t_obj *target, unsigned long amount);
 /**
  * @brief Builds a wall at a specific position. Won't work if unit isn't a builder.
- * 
+ *
  * @param builder The builder that should build the wall.
  * @param pos The position where the wall should be built.
  */
-void	ft_build(t_obj *builder, t_pos pos);
+void ft_build(t_obj *builder, t_pos pos);
 
 // -------------- print_utils.c --------------
 /**
@@ -398,12 +399,12 @@ void ft_print_cores();
  */
 void ft_print_resources();
 /**
- * @brief Prints the current game units with inforamtion about their id, type_id, team_id, x, y and hp into stdout
+ * @brief Prints the current game units with inforamtion about their id, unit_type, team_id, x, y and hp into stdout
  */
 
 void ft_print_units();
 /**
- * @brief Prints a unit config with inforamtion about their type_id, name, cost, hp, dmg_core, dmg_unit, max_range, min_range and speed into stdout
+ * @brief Prints a unit config with inforamtion about their unit_type, name, cost, hp, dmg_core, dmg_unit, max_range, min_range and speed into stdout
  *
  * @param unit_config Pointer to the unit config
  */
@@ -419,9 +420,9 @@ void ft_print_game_config();
  */
 void ft_print_all();
 
-void	ft_free_all();
-void	ft_free_game();
-void	ft_free_config();
-void	ft_perror_exit(char *msg);
+void ft_free_all();
+void ft_free_game();
+void ft_free_config();
+void ft_perror_exit(char *msg);
 
 #endif

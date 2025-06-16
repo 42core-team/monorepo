@@ -1,6 +1,6 @@
 #include "parse_json.h"
 
-void	ft_reset_actions()
+void ft_reset_actions()
 {
 	if (game.actions.creates != NULL)
 		free(game.actions.creates);
@@ -32,7 +32,7 @@ char *ft_all_action_json(void)
 {
 	json_node *actions_array = create_node(JSON_TYPE_ARRAY);
 	int size = game.actions.travels_count + game.actions.creates_count + game.actions.attacks_count + game.actions.transfer_moneys_count + game.actions.builds_count + 1;
-	actions_array->array = malloc(sizeof(json_node*) * size);
+	actions_array->array = malloc(sizeof(json_node *) * size);
 	actions_array->array[size - 1] = NULL;
 
 	int i;
@@ -40,7 +40,7 @@ char *ft_all_action_json(void)
 	for (i = 0; i < max; i++)
 	{
 		json_node *action = create_node(JSON_TYPE_OBJECT);
-		action->array = malloc(sizeof(json_node*) * 5);
+		action->array = malloc(sizeof(json_node *) * 5);
 		action->array[4] = NULL;
 
 		json_node *type = create_node(JSON_TYPE_STRING);
@@ -71,7 +71,7 @@ char *ft_all_action_json(void)
 		t_action_create *actionObj = &game.actions.creates[i - game.actions.travels_count];
 
 		json_node *action = create_node(JSON_TYPE_OBJECT);
-		action->array = malloc(sizeof(json_node*) * 3);
+		action->array = malloc(sizeof(json_node *) * 3);
 		action->array[2] = NULL;
 
 		json_node *type = create_node(JSON_TYPE_STRING);
@@ -79,10 +79,10 @@ char *ft_all_action_json(void)
 		type->string = strdup("create");
 		action->array[0] = type;
 
-		json_node *type_id = create_node(JSON_TYPE_NUMBER);
-		type_id->key = strdup("type_id");
-		type_id->number = actionObj->type_id;
-		action->array[1] = type_id;
+		json_node *unit_type = create_node(JSON_TYPE_NUMBER);
+		unit_type->key = strdup("unit_type");
+		unit_type->number = actionObj->unit_type;
+		action->array[1] = unit_type;
 
 		actions_array->array[i] = action;
 	}
@@ -92,7 +92,7 @@ char *ft_all_action_json(void)
 		t_action_attack *actionObj = &game.actions.attacks[i - game.actions.travels_count - game.actions.creates_count];
 
 		json_node *action = create_node(JSON_TYPE_OBJECT);
-		action->array = malloc(sizeof(json_node*) * 5);
+		action->array = malloc(sizeof(json_node *) * 5);
 		action->array[4] = NULL;
 
 		json_node *type = create_node(JSON_TYPE_STRING);
@@ -123,7 +123,7 @@ char *ft_all_action_json(void)
 		t_action_transfer_money *actionObj = &game.actions.transfer_moneys[i - game.actions.travels_count - game.actions.creates_count - game.actions.attacks_count];
 
 		json_node *action = create_node(JSON_TYPE_OBJECT);
-		action->array = malloc(sizeof(json_node*) * 6);
+		action->array = malloc(sizeof(json_node *) * 6);
 		action->array[5] = NULL;
 
 		json_node *type = create_node(JSON_TYPE_STRING);
@@ -159,7 +159,7 @@ char *ft_all_action_json(void)
 		t_action_build *actionObj = &game.actions.builds[i - game.actions.travels_count - game.actions.creates_count - game.actions.transfer_moneys_count - game.actions.attacks_count];
 
 		json_node *action = create_node(JSON_TYPE_OBJECT);
-		action->array = malloc(sizeof(json_node*) * 5);
+		action->array = malloc(sizeof(json_node *) * 5);
 		action->array[4] = NULL;
 
 		json_node *type = create_node(JSON_TYPE_STRING);
@@ -167,10 +167,10 @@ char *ft_all_action_json(void)
 		type->string = strdup("build");
 		action->array[0] = type;
 
-		json_node *type_id = create_node(JSON_TYPE_NUMBER);
-		type_id->key = strdup("builder_id");
-		type_id->number = actionObj->id;
-		action->array[1] = type_id;
+		json_node *builder_id = create_node(JSON_TYPE_NUMBER);
+		builder_id->key = strdup("builder_id");
+		builder_id->number = actionObj->id;
+		action->array[1] = builder_id;
 
 		json_node *x = create_node(JSON_TYPE_NUMBER);
 		x->key = strdup("x");
@@ -186,7 +186,7 @@ char *ft_all_action_json(void)
 	}
 
 	json_node *root_obj = create_node(JSON_TYPE_OBJECT);
-	root_obj->array = malloc(sizeof(json_node*) * 2);
+	root_obj->array = malloc(sizeof(json_node *) * 2);
 	root_obj->array[1] = NULL;
 
 	json_node *actions_key = create_node(JSON_TYPE_ARRAY);
