@@ -108,9 +108,9 @@ Position &Config::getCorePosition(unsigned int teamId)
 {
 	return getInstance().corePositions[teamId];
 }
-UnitConfig &Config::getUnitConfig(unsigned int typeId)
+UnitConfig &Config::getUnitConfig(unsigned int unit_type)
 {
-	return getInstance().units[typeId];
+	return getInstance().units[unit_type];
 }
 
 json Config::encodeConfig()

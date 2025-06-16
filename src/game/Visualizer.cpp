@@ -65,7 +65,7 @@ void Game::visualizeGameState(unsigned long long tick)
 			case ObjectType::Unit:
 			{
 				Unit *unit = dynamic_cast<Unit *>(obj);
-				int tid = unit->getTypeId();
+				int tid = unit->getUnitType();
 				int team = unit->getTeamId() % 2;
 				if (tid >= 0 && tid < (int)UNIT_EMOJI.size())
 				{

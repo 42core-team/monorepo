@@ -15,7 +15,7 @@ void BuildAction::decodeJSON(json msg)
 
 	builder_id_ = msg["builder_id"];
 	position_ = Position(msg["x"], msg["y"]);
-	
+
 	if (!position_.isValid(Config::getInstance().width, Config::getInstance().height))
 		is_valid_ = false;
 }
@@ -31,9 +31,9 @@ json BuildAction::encodeJSON()
 	return js;
 }
 
-bool BuildAction::execute(Game *game, Core * core)
+bool BuildAction::execute(Game *game, Core *core)
 {
-	(void) core;
+	(void)core;
 	if (!is_valid_)
 		return false;
 
@@ -41,7 +41,7 @@ bool BuildAction::execute(Game *game, Core * core)
 	if (builderObj == nullptr || builderObj->getType() != ObjectType::Unit)
 		return false;
 	Unit *builder = dynamic_cast<Unit *>(builderObj);
-	if (!Config::getInstance().units[builder->getTypeId()].canBuild)
+	if (!Config::getInstance().units[builder->getUnitType()].canBuild)
 		return false;
 
 	if (game->getObjectAtPos(position_) != nullptr)

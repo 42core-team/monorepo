@@ -173,7 +173,7 @@ void Game::sendState(std::vector<std::pair<Action *, Core &>> actions, unsigned 
 		if (obj.getType() == ObjectType::Unit)
 		{
 			o["teamId"] = ((Unit &)obj).getTeamId();
-			o["typeId"] = ((Unit &)obj).getTypeId();
+			o["unit_type"] = ((Unit &)obj).getUnitType();
 			o["balance"] = ((Unit &)obj).getBalance();
 			o["nextMoveOpp"] = ((Unit &)obj).getNextMoveOpp();
 		}

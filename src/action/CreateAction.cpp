@@ -7,25 +7,25 @@ CreateAction::CreateAction(json msg) : Action(ActionType::CREATE)
 
 void CreateAction::decodeJSON(json msg)
 {
-	if (!msg.contains("type_id"))
+	if (!msg.contains("unit_type"))
 	{
 		is_valid_ = false;
 		return;
 	}
 
-	type_id_ = msg["type_id"];
+	unit_type_ = msg["unit_type"];
 }
 json CreateAction::encodeJSON()
 {
 	json js;
 
 	js["type"] = "create";
-	js["type_id"] = type_id_;
+	js["unit_type"] = unit_type_;
 
 	return js;
 }
 
-bool CreateAction::execute(Game *game, Core * core)
+bool CreateAction::execute(Game *game, Core *core)
 {
 	if (!is_valid_)
 		return false;
@@ -34,15 +34,14 @@ bool CreateAction::execute(Game *game, Core * core)
 	if (!closestEmptyPos.isValid(Config::getInstance().width, Config::getInstance().height))
 		return false;
 
-	unsigned int unitType = getUnitTypeId();
-	if (unitType >= Config::getInstance().units.size())
+	if (unit_type_ >= Config::getInstance().units.size())
 		return false;
 
-	unsigned int unitCost = Config::getUnitConfig(unitType).cost;
+	unsigned int unitCost = Config::getUnitConfig(unit_type_).cost;
 	if (core->getBalance() < unitCost)
 		return false;
 
-	game->getObjects().push_back(std::make_unique<Unit>(game->getNextObjectId(), core->getTeamId(), closestEmptyPos, unitType));
+	game->getObjects().push_back(std::make_unique<Unit>(game->getNextObjectId(), core->getTeamId(), closestEmptyPos, unit_type_));
 	core->setBalance(core->getBalance() - unitCost);
 
 	return true;

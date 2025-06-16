@@ -10,17 +10,17 @@ using json = nlohmann::ordered_json;
 
 class CreateAction : public Action
 {
-	public:
-		CreateAction(json msg);
+public:
+	CreateAction(json msg);
 
-		unsigned int getUnitTypeId() const { return type_id_; }
+	unsigned int getUnitType() const { return unit_type_; }
 
-		bool execute(Game *game, Core * core);
-		void decodeJSON(json msg);
-		json encodeJSON();
-	
-	private:
-		unsigned int type_id_;
+	bool execute(Game *game, Core *core);
+	void decodeJSON(json msg);
+	json encodeJSON();
+
+private:
+	unsigned int unit_type_;
 };
 
 #endif // CREATE_ACTION_H

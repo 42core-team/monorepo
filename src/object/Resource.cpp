@@ -4,16 +4,15 @@
 
 Resource::Resource(unsigned int id, Position pos)
 	: Object(id, pos, Config::getInstance().resourceHp, ObjectType::Resource),
-	balance_(Config::getInstance().resourceIncome) {}
+	  balance_(Config::getInstance().resourceIncome) {}
 Resource::Resource(unsigned int id, Position pos, unsigned int balance)
-	: Object(id, pos, static_cast<unsigned int>( std::round( double(balance) / 
-		Config::getInstance().resourceIncome * Config::getInstance().resourceHp ) ),
-		ObjectType::Resource),
-	balance_(balance) {}
+	: Object(id, pos, static_cast<unsigned int>(std::round(double(balance) / Config::getInstance().resourceIncome * Config::getInstance().resourceHp)),
+			 ObjectType::Resource),
+	  balance_(balance) {}
 
-void Resource::getMined(Unit * miner)
+void Resource::getMined(Unit *miner)
 {
-	unsigned int damage = Config::getInstance().units[miner->getTypeId()].damageResource;
+	unsigned int damage = Config::getInstance().units[miner->getUnitType()].damageResource;
 	if ((int)damage > hp_)
 		damage = hp_;
 
@@ -24,7 +23,7 @@ void Resource::getMined(Unit * miner)
 			reward = balance_;
 		else
 		{
-			reward = static_cast<unsigned int>( std::round( double(damage) * double(balance_) / double(hp_) ) );
+			reward = static_cast<unsigned int>(std::round(double(damage) * double(balance_) / double(hp_)));
 			reward = std::min(reward, balance_);
 		}
 	}
@@ -35,13 +34,13 @@ void Resource::getMined(Unit * miner)
 	miner->addBalance(reward);
 }
 
-void Resource::tick(unsigned long long tickCount, Game * game)
+void Resource::tick(unsigned long long tickCount, Game *game)
 {
-	(void) tickCount;
-	(void) game;
+	(void)tickCount;
+	(void)game;
 }
 
-std::unique_ptr<Object> & Resource::clone(Position newPos, Game * game) const
+std::unique_ptr<Object> &Resource::clone(Position newPos, Game *game) const
 {
 	int nextObjId = game->getNextObjectId();
 	std::unique_ptr<Object> obj = std::make_unique<Resource>(nextObjId, newPos, balance_);
