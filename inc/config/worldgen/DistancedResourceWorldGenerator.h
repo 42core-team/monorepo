@@ -5,6 +5,7 @@
 
 #include <random>
 #include <time.h>
+#include <string.h>
 
 #include "Game.h"
 

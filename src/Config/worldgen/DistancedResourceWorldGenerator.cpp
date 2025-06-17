@@ -6,34 +6,54 @@ DistancedResourceWorldGenerator::DistancedResourceWorldGenerator()
 
 void DistancedResourceWorldGenerator::generateWorld(Game *game)
 {
+	Logger::Log("Generating world of type distanced resources.");
+
 	unsigned int width = Config::getInstance().width;
 	unsigned int height = Config::getInstance().height;
 	int resourceCount = Config::getInstance().worldGeneratorConfig.value("resourceOrMoneyCount", 20);
 
+	// place objects randomly
+
+	const int maxRepeats = 1000;
+	int repeats = 0;
 	for (int i = 0; i < resourceCount; i++)
 	{
-		std::uniform_int_distribution<int> distX(0, width - 1);
-		std::uniform_int_distribution<int> distY(0, height - 1);
-		std::uniform_int_distribution<int> resourceOrMoney(0, Config::getInstance().worldGeneratorConfig.value("moneyChance", 4) - 1);
+		repeats ++;
+		if (repeats > maxRepeats) break;
 
-		Position targetPos(distX(eng_), distY(eng_));
+		Position randPos = Position::random(width, height);
 
-		int adjacentObjects = 0;
-		for (int sy = -1; sy <= 1; sy++)
-			for (int sx = -1; sx <= 1; sx++)
-				if (game->getObjectAtPos(Position(targetPos.x + sx, targetPos.y + sy)) != nullptr)
-					adjacentObjects++;
+		std::cout << "attempting placement at " << randPos.x << " " << randPos.y << std::endl;
 
-		if (adjacentObjects == 0)
+		// verify there aren't any neighbours directly or diagonally to make pathfinding easier
+
+		bool noNeighbours = true;
+		for (int x = -1; x >= 1; x++)
 		{
-			if (resourceOrMoney(eng_) == 0)
-				game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), targetPos));
-			else
-				game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), targetPos));
+			for (int y = -1; y >= 1; y++)
+			{
+				if (game->getObjectAtPos(Position(x, y)))
+				{
+					noNeighbours = false;
+					break;
+				}
+			}
+			if (!noNeighbours) break;
 		}
-		else
+		if (!noNeighbours) {
+			std::cout << "whoops, had neighbours. next!" << std::endl;
 			i--;
+			continue; // repick another position
+		}
+
+		std::uniform_int_distribution<int> resourceOrMoney(0, Config::getInstance().worldGeneratorConfig.value("moneyChance", 4) - 1);
+		if (resourceOrMoney(eng_) == 0)
+			game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), randPos));
+		else
+			game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), randPos));
 	}
+
+	// mirror playing field
 
 	game->getObjects().erase(
 		std::remove_if(game->getObjects().begin(), game->getObjects().end(),
@@ -51,7 +71,7 @@ void DistancedResourceWorldGenerator::generateWorld(Game *game)
 	{
 		Position pos = obj->getPosition();
 		double ratio = static_cast<double>(pos.x) / (width - 1) +
-					   static_cast<double>(pos.y) / (height - 1);
+						static_cast<double>(pos.y) / (height - 1);
 		if (ratio < 1.0 && obj->getType() != ObjectType::Core)
 		{
 			objectsToMirror.push_back(obj.get());

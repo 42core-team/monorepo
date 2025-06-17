@@ -1,65 +1,65 @@
 {
-	"width": 25,
-	"height": 25,
-	"tickRate": 5,
-	"idleIncome": 1,
-	"idleIncomeTimeOut": 600,
-	"resourceHp": 50,
-	"resourceIncome": 200,
-	"resourceCount": 50,
-	"moneyObjIncome": 100,
-	"coreHp": 350,
-	"initialBalance": 400,
-	"wallHp": 100,
-	"wallBuildCost": 20,
-	"bombHp": 50,
-	"bombCountdown": 10,
-	"bombThrowCost": 50,
-	"bombReach": 3,
-	"bombDamage": 50,
-	"worldGenerator": "distanced_resources",
-	"worldGeneratorConfig": {
-		"moneyChance": 4,
-		"resourceOrMoneyCount": 25
-	},
-	"units": [
-		{
-			"name": "Warrior",
-			"cost": 150,
-			"hp": 25,
-			"speed": 3,
-			"minSpeed": 5,
-			"damageCore": 10,
-			"damageUnit": 6,
-			"damageResource": 2,
-			"damageWall": 3,
-			"damageBomb": 5,
-			"attackType": 0,
-			"canBuild": false
-		},
-		{
-			"name": "Miner",
-			"cost": 100,
-			"hp": 15,
-			"speed": 5,
-			"minSpeed": 8,
-			"damageCore": 3,
-			"damageUnit": 2,
-			"damageResource": 10,
-			"damageWall": 5,
-			"damageBomb": 2,
-			"attackType": 0,
-			"canBuild": false
-		}
-	],
-	"corePositions": [
-		{
-			"x": 0,
-			"y": 0
-		},
-		{
-			"x": 24,
-			"y": 24
-		}
-	]
+  "width": 25,
+  "height": 25,
+  "tickRate": 5,
+  "idleIncome": 1,
+  "idleIncomeTimeOut": 600,
+  "resourceHp": 50,
+  "resourceIncome": 200,
+  "resourceCount": 50,
+  "moneyObjIncome": 100,
+  "coreHp": 350,
+  "initialBalance": 400,
+  "wallHp": 100,
+  "wallBuildCost": 20,
+  "bombHp": 50,
+  "bombCountdown": 10,
+  "bombThrowCost": 50,
+  "bombReach": 3,
+  "bombDamage": 50,
+  "worldGenerator": "distanced_resources",
+  "worldGeneratorConfig": {
+    "moneyChance": 4,
+    "resourceOrMoneyCount": 35
+  },
+  "units": [
+    {
+      "name": "Warrior",
+      "cost": 150,
+      "hp": 25,
+      "speed": 3,
+      "minSpeed": 5,
+      "damageCore": 10,
+      "damageUnit": 6,
+      "damageResource": 2,
+      "damageWall": 3,
+      "damageBomb": 5,
+      "attackType": 0,
+      "canBuild": false
+    },
+    {
+      "name": "Miner",
+      "cost": 100,
+      "hp": 15,
+      "speed": 5,
+      "minSpeed": 8,
+      "damageCore": 3,
+      "damageUnit": 2,
+      "damageResource": 10,
+      "damageWall": 5,
+      "damageBomb": 2,
+      "attackType": 0,
+      "canBuild": false
+    }
+  ],
+  "corePositions": [
+    {
+      "x": 0,
+      "y": 0
+    },
+    {
+      "x": 24,
+      "y": 24
+    }
+  ]
 }

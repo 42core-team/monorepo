@@ -2,6 +2,7 @@
 #define COMMON_H
 
 #include <cmath>
+#include <random>
 
 struct Position
 {
@@ -41,6 +42,14 @@ struct Position
 	double distance(const Position &other) const
 	{
 		return std::abs(x - other.x) + std::abs(y - other.y);
+	}
+
+	static Position random(int maxX, int maxY)
+	{
+		static std::default_random_engine eng = std::default_random_engine(time(nullptr));
+		std::uniform_int_distribution<int> posX(0, maxX);
+		std::uniform_int_distribution<int> posY(0, maxY);
+		return Position(posX(eng), posY(eng));
 	}
 };
 
