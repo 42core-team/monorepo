@@ -201,7 +201,7 @@ void JigsawWorldGenerator::balanceObjectType(Game *game, ObjectType type, int am
 		std::uniform_int_distribution<int> distX(0, Config::getInstance().width - 1);
 		std::uniform_int_distribution<int> distY(0, Config::getInstance().height - 1);
 
-		int max_iter = 1000;
+		int max_iter = 10000;
 		while (addCount > 0 && --max_iter > 0)
 		{
 			int x = distX(eng_);
@@ -219,6 +219,31 @@ void JigsawWorldGenerator::balanceObjectType(Game *game, ObjectType type, int am
 			}
 			if (nearCore)
 				continue;
+
+			// likelihood tweaking based on surroundings for more interesting world gen
+			int rerollLikeliness = 100;
+
+			// higher likelihood around walls
+			int wallsCount = 0;
+			for (int xW = -1; xW <= 1; xW++)
+				for (int yW = -1; yW <= 1; yW++)
+					if (game->getObjectAtPos(Position(x + xW, y + yW)) != nullptr && \
+						game->getObjectAtPos(Position(x + xW, y + yW))->getType() == ObjectType::Wall)
+						wallsCount++;
+			rerollLikeliness -= wallsCount * 5;
+
+			// higher likelihood near non-core corners
+			int bottomLeftDistance = pos.distance(Position(0, Config::getInstance().height));
+			int topRightDistance = pos.distance(Position(Config::getInstance().width, 0));
+			int cornerDist = bottomLeftDistance < topRightDistance ? bottomLeftDistance : topRightDistance;
+			rerollLikeliness -= Config::getInstance().width - cornerDist;
+
+			if (rerollLikeliness < 0)
+				rerollLikeliness = 0;
+
+			std::uniform_int_distribution<int> pick(0, 100);
+			if (pick(eng_) < rerollLikeliness)
+				continue ;
 
 			if (game->getObjectAtPos(pos) == nullptr)
 			{

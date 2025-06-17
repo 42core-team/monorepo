@@ -23,8 +23,6 @@ void DistancedResourceWorldGenerator::generateWorld(Game *game)
 
 		Position randPos = Position::random(width, height);
 
-		std::cout << "attempting placement at " << randPos.x << " " << randPos.y << std::endl;
-
 		// verify there aren't any neighbours directly or diagonally to make pathfinding easier
 
 		bool noNeighbours = true;
@@ -41,7 +39,6 @@ void DistancedResourceWorldGenerator::generateWorld(Game *game)
 			if (!noNeighbours) break;
 		}
 		if (!noNeighbours) {
-			std::cout << "whoops, had neighbours. next!" << std::endl;
 			i--;
 			continue; // repick another position
 		}
