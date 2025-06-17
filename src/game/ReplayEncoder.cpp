@@ -141,11 +141,11 @@ void ReplayEncoder::saveReplay() const
 	outFile << replayData.dump(4); // Pretty print with 4 spaces
 	outFile.close();
 
-	std::string filePath = replaySaveFolder_ + "/replay_latest.json";
-	outFile = std::ofstream(filePath);
+	std::string latestPath = replaySaveFolder_ + "/replay_latest.json";
+	outFile = std::ofstream(latestPath);
 	if (!outFile.is_open())
 	{
-		Logger::Log(LogLevel::ERROR, "Could not open latest replay file for writing: " + filePath);
+		Logger::Log(LogLevel::ERROR, "Could not open latest replay file for writing: " + latestPath);
 		return;
 	}
 	outFile << replayData.dump(4); // Pretty print with 4 spaces
