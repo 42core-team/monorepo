@@ -181,6 +181,10 @@ void Game::sendState(std::vector<std::pair<Action *, Core &>> actions, unsigned 
 		{
 			o["balance"] = ((Resource &)obj).getBalance();
 		}
+		if (obj.getType() == ObjectType::Bomb)
+		{
+			o["countdown"] = ((Bomb &)obj).getCountdown();
+		}
 
 		state["objects"].push_back(o);
 	}
