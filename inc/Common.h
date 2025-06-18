@@ -2,6 +2,7 @@
 #define COMMON_H
 
 #include <cmath>
+#include <time.h>
 #include <random>
 
 struct Position
