@@ -81,12 +81,12 @@ typedef struct s_obj
 		{
 			/// @brief The amount of money the resource is carrying.
 			unsigned long balance;
-		} s_resource;
+		} s_resource_money;
 		struct
 		{
-			/// @brief The amount of money.
-			unsigned long balance;
-		} s_money;
+			/// @brief How much longer the bomb will take to explode.
+			unsigned long countdown;
+		} s_bomb;
 	};
 } t_obj;
 

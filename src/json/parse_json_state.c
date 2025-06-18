@@ -24,7 +24,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 			if ((*arr) == game.cores)
 				oldBalance = existingObj->s_core.balance;
 			if ((*arr) == game.resources)
-				oldBalance = existingObj->s_resource.balance;
+				oldBalance = existingObj->s_resource_money.balance;
 
 			existingObj->type = obj.type;
 			existingObj->state = STATE_ALIVE;
@@ -45,7 +45,11 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 			}
 			if ((*arr) == game.resources)
 			{
-				existingObj->s_resource.balance = obj.s_resource.balance;
+				existingObj->s_resource_money.balance = obj.s_resource_money.balance;
+			}
+			if ((*arr) == game.bombs)
+			{
+				existingObj->s_bomb.countdown = obj.s_bomb.countdown;
 			}
 
 			if (event_handler.on_object_state_change && oldState != existingObj->state)
@@ -62,7 +66,7 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 				else if ((*arr) == game.cores)
 					new_balance = existingObj->s_core.balance;
 				else if ((*arr) == game.resources)
-					new_balance = existingObj->s_resource.balance;
+					new_balance = existingObj->s_resource_money.balance;
 				if (oldBalance != new_balance)
 					event_handler.on_object_balance_change(existingObj, oldBalance, new_balance, user_data);
 			}
@@ -107,7 +111,11 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 			}
 			if ((*arr) == game.resources)
 			{
-				existingObj->s_resource.balance = obj.s_resource.balance;
+				existingObj->s_resource_money.balance = obj.s_resource_money.balance;
+			}
+			if ((*arr) == game.bombs)
+			{
+				existingObj->s_bomb.countdown = obj.s_bomb.countdown;
 			}
 			objInserted = true;
 			break;
@@ -150,7 +158,11 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	}
 	if ((*arr) == game.resources)
 	{
-		existingObj->s_resource.balance = obj.s_resource.balance;
+		existingObj->s_resource_money.balance = obj.s_resource_money.balance;
+	}
+	if ((*arr) == game.bombs)
+	{
+		existingObj->s_bomb.countdown = obj.s_bomb.countdown;
 	}
 }
 
@@ -210,9 +222,13 @@ void ft_parse_json_state(char *json)
 			readObj.s_unit.balance = (unsigned long)json_find(objects->array[i], "balance")->number;
 			readObj.s_unit.next_movement_opp = (unsigned long)json_find(objects->array[i], "nextMoveOpp")->number;
 		}
-		if (readObj.type == OBJ_RESOURCE)
+		if (readObj.type == OBJ_RESOURCE || readObj.type == OBJ_MONEY)
 		{
-			readObj.s_resource.balance = (unsigned long)json_find(objects->array[i], "balance")->number;
+			readObj.s_resource_money.balance = (unsigned long)json_find(objects->array[i], "balance")->number;
+		}
+		if (readObj.type == OBJ_BOMB)
+		{
+			readObj.s_bomb.countdown = (unsigned long)json_find(objects->array[i], "countdown")->number;
 		}
 
 		t_obj ***game_arr = NULL;

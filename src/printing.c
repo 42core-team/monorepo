@@ -17,6 +17,8 @@ void ft_print_status()
 		printf("UNKNOWN\n");
 }
 
+// TODO: ft print moneys & ft print bombs
+
 void ft_print_cores()
 {
 	t_obj **cores = game.cores;
@@ -52,7 +54,7 @@ void ft_print_resources()
 			state = "DEAD";
 		else if (resources[index]->state == STATE_UNINITIALIZED)
 			state = "UNINITIALIZED";
-		printf("- id: %lu x: %u y: %u hp: %lu state: %s balance: %lu\n", resources[index]->id, resources[index]->pos.x, resources[index]->pos.y, resources[index]->hp, state, resources[index]->s_resource.balance);
+		printf("- id: %lu x: %u y: %u hp: %lu state: %s balance: %lu\n", resources[index]->id, resources[index]->pos.x, resources[index]->pos.y, resources[index]->hp, state, resources[index]->s_resource_money.balance);
 		index++;
 	}
 }
