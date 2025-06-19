@@ -1,12 +1,12 @@
 #include "Game.h"
 
-Game::Game(std::vector<unsigned int> team_ids) : teamCount_(team_ids.size()), nextObjectId_(1)
+Game::Game(std::vector<unsigned int> team_ids)
+	: teamCount_(team_ids.size()), nextObjectId_(1), board_(Config::getInstance().width, Config::getInstance().height)
 {
-	objects_.reserve(team_ids.size());
 	std::vector<unsigned int> team_ids_double = team_ids;
 	shuffle_vector(team_ids_double); // randomly assign core positions to ensure fairness
 	for (unsigned int i = 0; i < team_ids.size(); ++i)
-		objects_.push_back(std::make_unique<Core>(getNextObjectId(), team_ids_double[i], Config::getCorePosition(i)));
+		board_.addObject(Core(board_.getNextObjectId(), team_ids_double[i], Config::getCorePosition(i)), true);
 	Config::getInstance().worldGenerator->generateWorld(this);
 	Logger::Log("Game created with " + std::to_string(team_ids.size()) + " teams.");
 }
@@ -57,9 +57,8 @@ void Game::run()
 		tick(tickCount);
 
 		alivePlayers = 0;
-		for (const auto &objPtr : objects_)
+		for (const auto &obj : board_)
 		{
-			const Object &obj = *objPtr;
 			if (obj.getType() != ObjectType::Core)
 				continue;
 			if (obj.getHP() > 0)
@@ -86,7 +85,7 @@ void Game::tick(unsigned long long tick)
 		json msg;
 		bridge->receiveMessage(msg);
 
-		Core *core = getCore(bridge->getTeamId());
+		Core *core = board_.getCoreByTeamId(bridge->getTeamId());
 
 		if (!core)
 			continue;
@@ -115,22 +114,30 @@ void Game::tick(unsigned long long tick)
 
 	// 2. UPDATE OBJECTS
 
-	for (auto it = objects_.begin(); it != objects_.end();)
+	for (auto &obj : board_)
 	{
-		Object *obj = it->get();
-		if (obj->getHP() <= 0)
+		if (obj.getHP() <= 0)
 		{
-			if (obj->getType() == ObjectType::Unit && ((Unit *)obj)->getBalance() > 0)
-				objects_.push_back(std::make_unique<Money>(getNextObjectId(), obj->getPosition(), ((Unit *)obj)->getBalance())); // drop balance on death
-			if (obj->getType() == ObjectType::Core)
+			if (obj.getType() == ObjectType::Unit && ((Unit &)obj).getBalance() > 0)
+			{
+				Position objPos = obj.getPosition();
+				unsigned int unitBalance = ((Unit &)obj).getBalance();
+				board_.removeObjectById(obj.getId());
+				board_.addObject(Money(board_.getNextObjectId(), objPos, unitBalance));
+			}
+			else if (obj.getType() == ObjectType::Core)
+			{
 				teamCount_--;
-			it = objects_.erase(it);
+			}
+			else
+			{
+				board_.removeObjectById(obj.getId());
+			}
 			// TODO: handle game over (send message, disconnect bridge, decrease teamCount_)
 		}
 		else
 		{
-			obj->tick(tick, this);
-			++it;
+			obj.tick(tick, this);
 		}
 	}
 
@@ -148,58 +155,10 @@ void Game::tick(unsigned long long tick)
 
 void Game::sendState(std::vector<std::pair<Action *, Core &>> actions, unsigned long long tick)
 {
-	json state;
-
-	state["tick"] = tick;
-
-	state["objects"] = json::array();
-	for (auto &objPtr : objects_)
-	{
-		Object &obj = *objPtr;
-
-		json o;
-
-		o["id"] = obj.getId();
-		o["type"] = (int)obj.getType();
-		o["x"] = obj.getPosition().x;
-		o["y"] = obj.getPosition().y;
-		o["hp"] = obj.getHP();
-
-		if (obj.getType() == ObjectType::Core)
-		{
-			o["teamId"] = ((Core &)obj).getTeamId();
-			o["balance"] = ((Core &)obj).getBalance();
-		}
-		if (obj.getType() == ObjectType::Unit)
-		{
-			o["teamId"] = ((Unit &)obj).getTeamId();
-			o["unit_type"] = ((Unit &)obj).getUnitType();
-			o["balance"] = ((Unit &)obj).getBalance();
-			o["nextMoveOpp"] = ((Unit &)obj).getNextMoveOpp();
-		}
-		if (obj.getType() == ObjectType::Resource || obj.getType() == ObjectType::Money)
-		{
-			o["balance"] = ((Resource &)obj).getBalance();
-		}
-		if (obj.getType() == ObjectType::Bomb)
-		{
-			o["countdown"] = ((Bomb &)obj).getCountdown();
-		}
-
-		state["objects"].push_back(o);
-	}
-
-	// append all actions that were executed without issues this turn
-	state["actions"] = json::array();
-	for (auto &action : actions)
-	{
-		if (action.first == nullptr)
-			continue;
-
-		state["actions"].push_back(action.first->encodeJSON());
-	}
+	json state = encodeState(actions, tick);
 
 	replayEncoder_.addTickState(state);
+
 	for (auto bridge : bridges_)
 		bridge->sendMessage(state);
 }
@@ -210,77 +169,5 @@ void Game::sendConfig()
 	for (auto bridge : bridges_)
 	{
 		bridge->sendMessage(config);
-	}
-}
-
-Core *Game::getCore(unsigned int teamId)
-{
-	for (auto &objPtr : objects_)
-	{
-		Object &obj = *objPtr;
-		if (obj.getType() != ObjectType::Core)
-			continue;
-		Core &core = (Core &)obj;
-
-		if (core.getTeamId() == teamId)
-			return &core;
-	}
-
-	return nullptr;
-}
-// TODO: Sorta inefficient, use pointers instead of copying
-std::vector<Core> Game::getCores()
-{
-	std::vector<Core> cores;
-	cores.reserve(teamCount_);
-	for (auto &objPtr : objects_)
-	{
-		Object &obj = *objPtr;
-		if (obj.getType() != ObjectType::Core)
-			continue;
-		Core &core = (Core &)obj;
-
-		cores.push_back(core);
-	}
-
-	return cores;
-}
-// TODO: dont use normal c pointers jesus christ
-Object *Game::getObjectAtPos(Position pos)
-{
-	if (pos.x < 0 || pos.y < 0 || pos.x >= static_cast<int>(Config::getInstance().width) || pos.y >= static_cast<int>(Config::getInstance().height))
-		return nullptr;
-	for (const auto &objPtr : objects_)
-	{
-		Object &obj = *objPtr;
-		if (obj.getPosition() == pos)
-			return &obj;
-	}
-
-	return nullptr;
-}
-Object *Game::getObject(unsigned int id)
-{
-	for (auto &objPtr : objects_)
-	{
-		Object &obj = *objPtr;
-
-		if (obj.getId() == id)
-			return &obj;
-	}
-
-	return nullptr;
-}
-void Game::removeObjectById(unsigned int id)
-{
-	for (auto it = objects_.begin(); it != objects_.end(); ++it)
-	{
-		Object &obj = **it;
-
-		if (obj.getId() == id)
-		{
-			it = objects_.erase(it);
-			return;
-		}
 	}
 }
