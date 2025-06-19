@@ -30,7 +30,7 @@ void DistancedResourceWorldGenerator::generateWorld(Game *game)
 		{
 			for (int y = -1; y >= 1; y++)
 			{
-				if (game->getObjectAtPos(Position(x, y)))
+				if (game->board_.getObjectAtPos(Position(x, y)))
 				{
 					noNeighbours = false;
 					break;
@@ -45,42 +45,30 @@ void DistancedResourceWorldGenerator::generateWorld(Game *game)
 
 		std::uniform_int_distribution<int> resourceOrMoney(0, Config::getInstance().worldGeneratorConfig.value("moneyChance", 4) - 1);
 		if (resourceOrMoney(eng_) == 0)
-			game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), randPos));
-		else
-			game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), randPos));
+			game->board_.addObject(Money(game->board_.getNextObjectId(), randPos));
+			else
+			game->board_.addObject(Resource(game->board_.getNextObjectId(), randPos));
 	}
 
 	// mirror playing field
 
-	game->getObjects().erase(
-		std::remove_if(game->getObjects().begin(), game->getObjects().end(),
-					   [width, height](const std::unique_ptr<Object> &obj)
-					   {
-						   Position pos = obj->getPosition();
-						   double ratio = static_cast<double>(pos.x) / (width - 1) +
-										  static_cast<double>(pos.y) / (height - 1);
-						   return (ratio >= 1.0 && obj->getType() != ObjectType::Core);
-					   }),
-		game->getObjects().end());
-
-	std::vector<Object *> objectsToMirror;
-	for (const auto &obj : game->getObjects())
+	for (auto &obj : game->board_)
 	{
-		Position pos = obj->getPosition();
+		Position pos = obj.getPosition();
 		double ratio = static_cast<double>(pos.x) / (width - 1) +
 						static_cast<double>(pos.y) / (height - 1);
-		if (ratio < 1.0 && obj->getType() != ObjectType::Core)
-		{
-			objectsToMirror.push_back(obj.get());
-		}
+		if (ratio >= 1.0 && obj.getType() != ObjectType::Core)
+			game->board_.removeObjectById(obj.getId());
 	}
 
-	for (auto *obj : objectsToMirror)
+	for (auto &obj : game->board_)
 	{
-		Position pos = obj->getPosition();
+		if (obj.getType() == ObjectType::Core)
+			continue;
+		Position pos = obj.getPosition();
 		int newX = height - 1 - pos.x;
 		int newY = width - 1 - pos.y;
 		Position newPos(newX, newY);
-		obj->clone(newPos, game);
+		obj.clone(newPos, game);
 	}
 }
