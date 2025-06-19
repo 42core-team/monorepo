@@ -51,7 +51,7 @@ bool JigsawWorldGenerator::canPlaceTemplate(Game *game, const MapTemplate &temp,
 			int targetY = posY + y;
 			Position targetPos(targetX, targetY);
 
-			if (game->getObjectAtPos(targetPos) != nullptr)
+			if (game->board_.getObjectAtPos(targetPos) != nullptr)
 				return false;
 
 			for (int sy = -minSpacing; sy <= minSpacing; ++sy)
@@ -59,13 +59,13 @@ bool JigsawWorldGenerator::canPlaceTemplate(Game *game, const MapTemplate &temp,
 				for (int sx = -minSpacing; sx <= minSpacing; ++sx)
 				{
 					Position neighbor(targetX + sx, targetY + sy);
-					if (game->getObjectAtPos(neighbor) != nullptr)
+					if (game->board_.getObjectAtPos(neighbor) != nullptr)
 						return false;
 				}
 			}
 
-			for (const auto &core : game->getCores())
-				if (core.getPosition().distance(targetPos) < minCoreDistance)
+			for (const auto &obj : game->board_)
+				if (obj.getType() == ObjectType::Core && ((Core &)obj).getPosition().distance(targetPos) < minCoreDistance)
 					return false;
 		}
 	}
@@ -101,40 +101,40 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game *game, const MapTemplate &temp,
 
 			Position targetPos(posX + x, posY + y);
 			if (cell == 'X')
-				game->getObjects().push_back(std::make_unique<Wall>(game->getNextObjectId(), targetPos));
+				game->board_.addObject(Wall(game->board_.getNextObjectId(), targetPos));
 			else if (cell == 'R')
-				game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), targetPos));
+				game->board_.addObject(Resource(game->board_.getNextObjectId(), targetPos));
 			else if (cell == 'M')
-				game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), targetPos));
+				game->board_.addObject(Money(game->board_.getNextObjectId(), targetPos));
 			else if (std::string("0123456789").find(cell) != std::string::npos)
 			{
 				int wallLikelihood = cell - '0';
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < wallLikelihood)
-					game->getObjects().push_back(std::make_unique<Wall>(game->getNextObjectId(), targetPos));
+					game->board_.addObject(Wall(game->board_.getNextObjectId(), targetPos));
 			}
 			else if (std::string("abcdefghij").find(cell) != std::string::npos)
 			{
 				int resourceLikelihood = cell - 'a';
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < resourceLikelihood)
-					game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), targetPos));
+					game->board_.addObject(Resource(game->board_.getNextObjectId(), targetPos));
 			}
 			else if (std::string("ABCDEFGHIJ").find(cell) != std::string::npos)
 			{
 				int moneyLikelihood = cell - 'A';
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < moneyLikelihood)
-					game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), targetPos));
+					game->board_.addObject(Money(game->board_.getNextObjectId(), targetPos));
 			}
 			else if (std::string("klmnopqrst").find(cell) != std::string::npos)
 			{
 				int wallLikelihood = cell - 'k';
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < wallLikelihood)
-					game->getObjects().push_back(std::make_unique<Wall>(game->getNextObjectId(), targetPos));
+					game->board_.addObject(Wall(game->board_.getNextObjectId(), targetPos));
 				else
-					game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), targetPos));
+					game->board_.addObject(Resource(game->board_.getNextObjectId(), targetPos));
 			}
 			else if (std::string("uvwxyz!/$%").find(cell) != std::string::npos)
 			{
@@ -149,9 +149,9 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game *game, const MapTemplate &temp,
 					moneyLikelihood = 9;
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < moneyLikelihood)
-					game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), targetPos));
+					game->board_.addObject(Money(game->board_.getNextObjectId(), targetPos));
 				else
-					game->getObjects().push_back(std::make_unique<Wall>(game->getNextObjectId(), targetPos));
+					game->board_.addObject(Wall(game->board_.getNextObjectId(), targetPos));
 			}
 			else if (std::string("KLNOPQSTUV").find(cell) != std::string::npos)
 			{
@@ -161,9 +161,9 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game *game, const MapTemplate &temp,
 					int moneyLikelihood = it->second;
 					std::uniform_int_distribution<int> dist(0, 9);
 					if (dist(eng_) < moneyLikelihood)
-						game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), targetPos));
+						game->board_.addObject(Money(game->board_.getNextObjectId(), targetPos));
 					else
-						game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), targetPos));
+						game->board_.addObject(Resource(game->board_.getNextObjectId(), targetPos));
 				}
 			}
 		}
@@ -171,29 +171,23 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game *game, const MapTemplate &temp,
 	return true;
 }
 
+// TODO: Make this a template function. the if statement down there is painful
 void JigsawWorldGenerator::balanceObjectType(Game *game, ObjectType type, int amount)
 {
 	int minCoreDistance = Config::getInstance().worldGeneratorConfig.value("minCoreDistance", 5);
 
-	std::vector<size_t> objectIndices;
-	for (size_t i = 0; i < game->getObjects().size(); ++i)
-		if (game->getObjects()[i]->getType() == type)
-			objectIndices.push_back(i);
-	int currentObjCount = objectIndices.size();
+	std::vector<Object &> typeObjects;
+	for (auto & obj : game->board_)
+		if (obj.getType() == type)
+		typeObjects.push_back(obj);
+	int currentObjCount = typeObjects.size();
 
 	if (currentObjCount > amount)
 	{
 		int removeCount = currentObjCount - amount;
-
-		std::shuffle(objectIndices.begin(), objectIndices.end(), eng_);
-
-		std::vector<size_t> indicesToRemove(objectIndices.begin(), objectIndices.begin() + removeCount);
-		std::sort(indicesToRemove.begin(), indicesToRemove.end(), std::greater<size_t>());
-
-		for (size_t idx : indicesToRemove)
-		{
-			game->getObjects().erase(game->getObjects().begin() + idx);
-		}
+		std::shuffle(typeObjects.begin(), typeObjects.end(), eng_);
+		for (Object & obj : typeObjects)
+			game->board_.removeObjectById(obj.getId());
 	}
 	else if (currentObjCount < amount)
 	{
@@ -209,9 +203,9 @@ void JigsawWorldGenerator::balanceObjectType(Game *game, ObjectType type, int am
 			Position pos(x, y);
 
 			bool nearCore = false;
-			for (const auto &core : game->getCores())
+			for (const Object & obj : game->board_)
 			{
-				if (core.getPosition().distance(pos) < minCoreDistance)
+				if (obj.getType() == ObjectType::Core && ((Core &)obj).getPosition().distance(pos) < minCoreDistance)
 				{
 					nearCore = true;
 					break;
@@ -227,8 +221,8 @@ void JigsawWorldGenerator::balanceObjectType(Game *game, ObjectType type, int am
 			int wallsCount = 0;
 			for (int xW = -1; xW <= 1; xW++)
 				for (int yW = -1; yW <= 1; yW++)
-					if (game->getObjectAtPos(Position(x + xW, y + yW)) != nullptr && \
-						game->getObjectAtPos(Position(x + xW, y + yW))->getType() == ObjectType::Wall)
+					if (game->board_.getObjectAtPos(Position(x + xW, y + yW)) != nullptr && \
+						game->board_.getObjectAtPos(Position(x + xW, y + yW))->getType() == ObjectType::Wall)
 						wallsCount++;
 			rerollLikeliness -= wallsCount * 5;
 
@@ -245,12 +239,12 @@ void JigsawWorldGenerator::balanceObjectType(Game *game, ObjectType type, int am
 			if (pick(eng_) < rerollLikeliness)
 				continue ;
 
-			if (game->getObjectAtPos(pos) == nullptr)
+			if (game->board_.getObjectAtPos(pos) == nullptr)
 			{
 				if (type == ObjectType::Resource)
-					game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), pos));
+					game->board_.addObject(Resource(game->board_.getNextObjectId(), pos));
 				else
-					game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), pos));
+					game->board_.addObject(Money(game->board_.getNextObjectId(), pos));
 				addCount--;
 			}
 		}
@@ -259,10 +253,19 @@ void JigsawWorldGenerator::balanceObjectType(Game *game, ObjectType type, int am
 
 void JigsawWorldGenerator::clearPathBetweenCores(Game *game)
 {
-	const auto &cores = game->getCores();
+	Position start;
+	Position end;
 
-	const Position start = cores[0].getPosition();
-	const Position end = cores[1].getPosition();
+	unsigned short coreNbr = 0;
+	for (const Object & obj : game->board_)
+	{
+		if (obj.getType() != ObjectType::Core)
+			continue;
+		if (coreNbr == 0)
+			start = obj.getPosition();
+		else
+			end = obj.getPosition();
+	}
 
 	int W = Config::getInstance().width;
 	int H = Config::getInstance().height;
@@ -270,7 +273,7 @@ void JigsawWorldGenerator::clearPathBetweenCores(Game *game)
 	auto getCost = [game](int x, int y) -> int
 	{
 		Position pos(x, y);
-		Object *obj = game->getObjectAtPos(pos);
+		Object *obj = game->board_.getObjectAtPos(pos);
 		return (obj == nullptr || obj->getType() == ObjectType::Core) ? 0 : 1;
 	};
 
@@ -344,28 +347,17 @@ void JigsawWorldGenerator::clearPathBetweenCores(Game *game)
 
 	for (const auto &pos : path)
 	{
-		auto &objects = game->getObjects();
+		for (const Object & obj : game->board_)
+			if (obj.getPosition() == pos && obj.getType() != ObjectType::Core)
+				game->board_.removeObjectById(obj.getId());
 
-		objects.erase(std::remove_if(objects.begin(), objects.end(),
-									 [&](const std::unique_ptr<Object> &o)
-									 {
-										 return o->getPosition() == pos && o->getType() != ObjectType::Core;
-									 }),
-					  objects.end());
+		if (!Config::getInstance().worldGeneratorConfig.value("mirrorMap", true))
+			continue;
 
-		if (Config::getInstance().worldGeneratorConfig.value("mirrorMap", true))
-		{
-			Position mirrorPos(
-				(W - 1) - pos.x,
-				(H - 1) - pos.y);
-			objects.erase(std::remove_if(objects.begin(), objects.end(),
-										 [&](const std::unique_ptr<Object> &o)
-										 {
-											 return o->getPosition() == mirrorPos &&
-													o->getType() != ObjectType::Core;
-										 }),
-						  objects.end());
-		}
+		Position mirrorPos((W - 1) - pos.x, (H - 1) - pos.y);
+		for (const Object & obj : game->board_)
+			if (obj.getPosition() == mirrorPos && obj.getType() != ObjectType::Core)
+				game->board_.removeObjectById(obj.getId());
 	}
 }
 
@@ -384,13 +376,13 @@ void JigsawWorldGenerator::placeWalls(Game *game)
 		int y = distY(eng_);
 		Position pos(x, y);
 
-		if (game->getObjectAtPos(pos) != nullptr)
+		if (game->board_.getObjectAtPos(pos) != nullptr)
 			continue;
 
 		bool nearCore = false;
-		for (const auto &core : game->getCores())
+		for (const Object & obj : game->board_)
 		{
-			if (core.getPosition().distance(pos) < minCoreDistance)
+			if (obj.getType() == ObjectType::Core && ((Core &)obj).getPosition().distance(pos) < minCoreDistance)
 			{
 				nearCore = true;
 				break;
@@ -407,7 +399,7 @@ void JigsawWorldGenerator::placeWalls(Game *game)
 				if (sx == 0 && sy == 0)
 					continue;
 				Position neighbor(x + sx, y + sy);
-				if (game->getObjectAtPos(neighbor) != nullptr)
+				if (game->board_.getObjectAtPos(neighbor) != nullptr)
 					adjacentObjects++;
 			}
 		}
@@ -426,7 +418,7 @@ void JigsawWorldGenerator::placeWalls(Game *game)
 			placementProbability = 0.2;
 
 		if (probDist(eng_) < placementProbability)
-			game->getObjects().push_back(std::make_unique<Wall>(game->getNextObjectId(), pos));
+			game->board_.addObject(Wall(game->board_.getNextObjectId(), pos));
 	}
 }
 
@@ -435,41 +427,35 @@ void JigsawWorldGenerator::mirrorWorld(Game *game)
 	unsigned int W = Config::getInstance().width;
 	unsigned int H = Config::getInstance().height;
 
-	auto &objs = game->getObjects();
+	std::vector<Object &> base;
 
-	std::vector<Object *> base;
-	base.reserve(objs.size());
-
-	for (const auto &uptr : objs)
+	for (Object & obj : game->board_)
 	{
-		Object *o = uptr.get();
-		if (o->getType() == ObjectType::Core)
+		if (obj.getType() == ObjectType::Core)
 			continue; // never mirror cores
 
-		const Position p = o->getPosition();
+		const Position p = obj.getPosition();
 		const Position q(W - 1 - p.x, H - 1 - p.y);
 
 		// lexicographic compare: pick the 'smaller' of p and q
 		bool isBase = (p.y < q.y) ||
 					  (p.y == q.y && p.x < q.x);
 		if (isBase)
-			base.push_back(o);
+			base.push_back(obj);
 	}
 
 	// 2) Erase every non-core object not in the base set
-	objs.erase(
-		std::remove_if(objs.begin(), objs.end(),
-					   [&](const std::unique_ptr<Object> &uptr)
-					   {
-						   Position p = uptr->getPosition();
-						   Position q(W - 1 - p.x, H - 1 - p.y);
-						   bool isCore = uptr->getType() == ObjectType::Core;
-						   bool isBase =
-							   (p.y < q.y) ||
-							   (p.y == q.y && p.x < q.x);
-						   return (!isCore && !isBase);
-					   }),
-		objs.end());
+	for (const Object & obj : game->board_)
+	{
+		Position p = obj.getPosition();
+		Position q(W - 1 - p.x, H - 1 - p.y);
+		bool isCore = obj.getType() == ObjectType::Core;
+		bool isBase =
+			(p.y < q.y) ||
+			(p.y == q.y && p.x < q.x);
+		if (!isCore && !isBase)
+			game->board_.removeObjectById(obj.getId());
+	}
 
 	// 3) Clone each base object into its 180° partner
 	for (Object *o : base)

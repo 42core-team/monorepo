@@ -8,6 +8,9 @@
 #include "Core.h"
 
 // TODO: instead of clone, use builtin copy constructor functionality
+// TODO: remove auto usage until very necessary, its just unclear
+// TODO: can you somehow configure the board iterator to skip stuff conditionally, to only loop over objects with certain type for example?
+// TODO: rework getnextobjectid to not have to be called manually from outside the function all the time
 
 class Board
 {
