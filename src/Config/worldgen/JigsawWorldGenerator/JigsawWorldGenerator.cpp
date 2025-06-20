@@ -176,18 +176,22 @@ void JigsawWorldGenerator::balanceObjectType(Game *game, ObjectType type, int am
 {
 	int minCoreDistance = Config::getInstance().worldGeneratorConfig.value("minCoreDistance", 5);
 
-	std::vector<Object &> typeObjects;
+	std::vector<unsigned int> typeObjectIds;
 	for (auto & obj : game->board_)
 		if (obj.getType() == type)
-		typeObjects.push_back(obj);
-	int currentObjCount = typeObjects.size();
+			typeObjectIds.push_back(obj.getId());
+	int currentObjCount = typeObjectIds.size();
 
 	if (currentObjCount > amount)
 	{
 		int removeCount = currentObjCount - amount;
-		std::shuffle(typeObjects.begin(), typeObjects.end(), eng_);
-		for (Object & obj : typeObjects)
-			game->board_.removeObjectById(obj.getId());
+		std::shuffle(typeObjectIds.begin(), typeObjectIds.end(), eng_);
+		for (unsigned int id : typeObjectIds)
+		{
+			if (removeCount-- <= 0)
+				break;
+			game->board_.removeObjectById(id);
+		}
 	}
 	else if (currentObjCount < amount)
 	{
@@ -427,42 +431,30 @@ void JigsawWorldGenerator::mirrorWorld(Game *game)
 	unsigned int W = Config::getInstance().width;
 	unsigned int H = Config::getInstance().height;
 
-	std::vector<Object &> base;
-
-	for (Object & obj : game->board_)
-	{
-		if (obj.getType() == ObjectType::Core)
-			continue; // never mirror cores
-
-		const Position p = obj.getPosition();
-		const Position q(W - 1 - p.x, H - 1 - p.y);
-
-		// lexicographic compare: pick the 'smaller' of p and q
-		bool isBase = (p.y < q.y) ||
-					  (p.y == q.y && p.x < q.x);
-		if (isBase)
-			base.push_back(obj);
-	}
-
-	// 2) Erase every non-core object not in the base set
 	for (const Object & obj : game->board_)
 	{
+		if (obj.getType() == ObjectType::Core)
+			continue;
 		Position p = obj.getPosition();
 		Position q(W - 1 - p.x, H - 1 - p.y);
-		bool isCore = obj.getType() == ObjectType::Core;
 		bool isBase =
 			(p.y < q.y) ||
 			(p.y == q.y && p.x < q.x);
-		if (!isCore && !isBase)
+		if (!isBase)
 			game->board_.removeObjectById(obj.getId());
 	}
-
-	// 3) Clone each base object into its 180° partner
-	for (Object *o : base)
+	for (const Object & obj : game->board_)
 	{
-		Position p = o->getPosition();
-		Position mirrorPos(W - 1 - p.x, H - 1 - p.y);
-		o->clone(mirrorPos, game);
+		if (obj.getType() == ObjectType::Core)
+			continue;
+		Position p = obj.getPosition();
+		Position q(W - 1 - p.x, H - 1 - p.y);
+		bool isBase =
+			(p.y < q.y) ||
+			(p.y == q.y && p.x < q.x);
+		if (isBase)
+			continue;
+		game->board_.removeObjectById(obj.getId());
 	}
 }
 
