@@ -40,7 +40,7 @@ bool MoveAction::execute(Game *game, Core * core)
 	if (!is_valid_)
 		return false;
 
-	Object * unitObj = game->getObject(getUnitId());
+	Object * unitObj = game->board_.getObjectById(getUnitId());
 	if (!unitObj || unitObj->getType() != ObjectType::Unit)
 		return false;
 	Unit * unit = (Unit *)unitObj;
@@ -50,7 +50,7 @@ bool MoveAction::execute(Game *game, Core * core)
 	if (unit->getTeamId() != core->getTeamId())
 		return false;
 
-	Object * obj = game->getObjectAtPos(target_);
+	Object * obj = game->board_.getObjectAtPos(target_);
 	if (obj)
 		return false;
 	if (target_.distance(unit->getPosition()) > 1)

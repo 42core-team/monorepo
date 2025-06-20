@@ -15,7 +15,7 @@ void Bomb::tick(unsigned long long tickCount, Game *game)
 		int bombReach = Config::getInstance().bombReach;
 		for (int i = 0; i < bombReach; i++) // pos X
 		{
-			Object *obj = game->getObjectAtPos(Position(position_.x + i, position_.y));
+			Object *obj = game->board_.getObjectAtPos(Position(position_.x + i, position_.y));
 			if (!obj)
 				continue;
 			if (obj->getType() == ObjectType::Wall)
@@ -24,7 +24,7 @@ void Bomb::tick(unsigned long long tickCount, Game *game)
 		}
 		for (int i = 0; i < bombReach; i++) // pos Y
 		{
-			Object *obj = game->getObjectAtPos(Position(position_.x, position_.y + i));
+			Object *obj = game->board_.getObjectAtPos(Position(position_.x, position_.y + i));
 			if (!obj)
 				continue;
 			if (obj->getType() == ObjectType::Wall)
@@ -33,7 +33,7 @@ void Bomb::tick(unsigned long long tickCount, Game *game)
 		}
 		for (int i = 0; i < bombReach; i++) // neg X
 		{
-			Object *obj = game->getObjectAtPos(Position(position_.x - i, position_.y));
+			Object *obj = game->board_.getObjectAtPos(Position(position_.x - i, position_.y));
 			if (!obj)
 				continue;
 			if (obj->getType() == ObjectType::Wall)
@@ -42,13 +42,13 @@ void Bomb::tick(unsigned long long tickCount, Game *game)
 		}
 		for (int i = 0; i < bombReach; i++) // neg Y
 		{
-			Object *obj = game->getObjectAtPos(Position(position_.x, position_.y - i));
+			Object *obj = game->board_.getObjectAtPos(Position(position_.x, position_.y - i));
 			if (!obj)
 				continue;
 			if (obj->getType() == ObjectType::Wall)
 				break;
 			obj->setHP(obj->getHP() - Config::getInstance().bombDamage);
 		}
-		game->removeObjectById(this->getId());
+		game->board_.removeObjectById(this->getId());
 	}
 }

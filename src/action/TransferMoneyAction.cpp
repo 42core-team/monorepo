@@ -52,7 +52,7 @@ bool TransferMoneyAction::dropMoney(Game *game, Core *core, Object *srcObj)
 	srcUnit->setBalance(srcUnit->getBalance() - amount_);
 
 	Position pos = srcUnit->getPosition();
-	game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), pos, amount_));
+	game->board_.addObject<Money>(Money(game->board_.getNextObjectId(), pos, amount_));
 
 	return true;
 }
@@ -62,11 +62,11 @@ bool TransferMoneyAction::execute(Game *game, Core *core)
 	if (!is_valid_)
 		return false;
 
-	Object *srcObj = game->getObject(source_id_);
+	Object *srcObj = game->board_.getObjectById(source_id_);
 	if (!srcObj)
 		return false;
 
-	Object *dstObj = game->getObjectAtPos(target_);
+	Object *dstObj = game->board_.getObjectAtPos(target_);
 	if (!dstObj)
 		return dropMoney(game, core, srcObj);
 

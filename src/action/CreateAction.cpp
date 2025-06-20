@@ -41,7 +41,7 @@ bool CreateAction::execute(Game *game, Core *core)
 	if (core->getBalance() < unitCost)
 		return false;
 
-	game->getObjects().push_back(std::make_unique<Unit>(game->getNextObjectId(), core->getTeamId(), closestEmptyPos, unit_type_));
+	game->board_.addObject<Unit>(Unit(game->board_.getNextObjectId(), core->getTeamId(), closestEmptyPos, unit_type_));
 	core->setBalance(core->getBalance() - unitCost);
 
 	return true;

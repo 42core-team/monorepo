@@ -19,7 +19,15 @@ class Board
 		~Board() = default;
 
 		template <typename T>
-		bool			addObject(const Object & object, bool force = false);
+		bool			addObject(const Object & object, bool force = false)
+		{
+			static_assert(std::is_base_of<Object, T>::value, "T must be a subclass of Object");
+			unsigned int vecPos = gridPosToVecPos(object.getPosition());
+			if (vecPos < 0 || (objects_[vecPos] != nullptr && !force))
+				return false;
+			objects_[vecPos] = std::make_unique<T>(object);
+			return true;
+		}
 		bool			removeObjectById(unsigned int id);
 		bool			removeObjectAtPos(const Position & pos);
 

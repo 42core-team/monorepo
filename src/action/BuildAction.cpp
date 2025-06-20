@@ -37,14 +37,14 @@ bool BuildAction::execute(Game *game, Core *core)
 	if (!is_valid_)
 		return false;
 
-	Object *builderObj = game->getObject(builder_id_);
+	Object *builderObj = game->board_.getObjectById(builder_id_);
 	if (builderObj == nullptr || builderObj->getType() != ObjectType::Unit)
 		return false;
 	Unit *builder = dynamic_cast<Unit *>(builderObj);
 	if (!Config::getInstance().units[builder->getUnitType()].canBuild)
 		return false;
 
-	if (game->getObjectAtPos(position_) != nullptr)
+	if (game->board_.getObjectAtPos(position_) != nullptr)
 		return false;
 
 	if (position_.distance(builder->getPosition()) > 1)
@@ -54,7 +54,7 @@ bool BuildAction::execute(Game *game, Core *core)
 		return false;
 	builder->setBalance(builder->getBalance() - Config::getInstance().wallBuildCost);
 
-	game->getObjects().push_back(std::make_unique<Wall>(game->getNextObjectId(), position_));
+	game->board_.addObject<Wall>(Wall(game->board_.getNextObjectId(), position_));
 
 	return true;
 }

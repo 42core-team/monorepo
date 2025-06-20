@@ -65,7 +65,7 @@ bool AttackAction::attackObj(Object *obj, Unit *unit, Game *game) // returns obj
 	else if (obj->getType() == ObjectType::Money)
 	{
 		unit->setBalance(unit->getBalance() + ((Money *)obj)->getBalance());
-		game->removeObjectById(obj->getId());
+		game->board_.removeObjectById(obj->getId());
 		damage_ = 1;
 	}
 
@@ -77,7 +77,7 @@ bool AttackAction::execute(Game *game, Core *core)
 	if (!is_valid_)
 		return false;
 
-	Object *unitObj = game->getObject(getUnitId());
+	Object *unitObj = game->board_.getObjectById(getUnitId());
 
 	if (!unitObj || unitObj->getType() != ObjectType::Unit)
 		return false;
@@ -89,7 +89,7 @@ bool AttackAction::execute(Game *game, Core *core)
 
 	if (Config::getInstance().units[unit->getUnitType()].attackType == AttackType::DIRECT_HIT)
 	{
-		Object *obj = game->getObjectAtPos(target_pos_);
+		Object *obj = game->board_.getObjectAtPos(target_pos_);
 		if (!obj)
 			return false;
 
@@ -98,12 +98,11 @@ bool AttackAction::execute(Game *game, Core *core)
 	}
 	else if (Config::getInstance().units[unit->getUnitType()].attackType == AttackType::DROP_BOMB)
 	{
-		Object *obj = game->getObjectAtPos(target_pos_);
+		Object *obj = game->board_.getObjectAtPos(target_pos_);
 		if (obj)
 			return false;
 
-		game->getObjects().push_back(
-			std::make_unique<Bomb>(game->getNextObjectId(), target_pos_));
+		game->board_.addObject<Bomb>(Bomb(game->board_.getNextObjectId(), target_pos_));
 	}
 	else
 	{

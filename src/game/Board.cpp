@@ -6,19 +6,6 @@ Board::Board(unsigned int grid_width, unsigned int grid_height)
 	objects_.reserve(grid_width * grid_height);
 }
 
-// @brief Adds object to board, if no object already at pos
-// @param `force` set to true will overwrite object if already present at pos
-// @return true if object was added sucessfully
-template <typename T>
-bool Board::addObject(const Object & object, bool force)
-{
-	static_assert(std::is_base_of<Object, T>::value, "T must be a subclass of Object");
-	unsigned int vecPos = gridPosToVecPos(object.getPosition());
-	if (vecPos < 0 || (objects_[vecPos] != nullptr && !force))
-		return false;
-	objects_[vecPos] = std::make_unique<T>(object);
-	return true;
-}
 // @return true if object was removed successfully
 bool Board::removeObjectById(unsigned int id)
 {
