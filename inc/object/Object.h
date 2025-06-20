@@ -26,7 +26,6 @@ class Object
 		virtual ~Object() {}
 
 		virtual void tick(unsigned long long tickCount, Game * game) = 0;
-		virtual std::unique_ptr<Object> & clone(Position newPos, Game * game) const = 0;
 
 		unsigned int getId() const { return id_; };
 		Position getPosition() const { return position_; };

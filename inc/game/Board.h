@@ -18,6 +18,7 @@ class Board
 		Board(unsigned int grid_width, unsigned int grid_height);
 		~Board() = default;
 
+		template <typename T>
 		bool			addObject(const Object & object, bool force = false);
 		bool			removeObjectById(unsigned int id);
 		bool			removeObjectAtPos(const Position & pos);

@@ -1,12 +1,12 @@
 #include "Game.h"
 
 Game::Game(std::vector<unsigned int> team_ids)
-	: teamCount_(team_ids.size()), nextObjectId_(1), board_(Config::getInstance().width, Config::getInstance().height)
+	: board_(Config::getInstance().width, Config::getInstance().height), teamCount_(team_ids.size()), nextObjectId_(1)
 {
 	std::vector<unsigned int> team_ids_double = team_ids;
 	shuffle_vector(team_ids_double); // randomly assign core positions to ensure fairness
 	for (unsigned int i = 0; i < team_ids.size(); ++i)
-		board_.addObject(Core(board_.getNextObjectId(), team_ids_double[i], Config::getCorePosition(i)), true);
+		board_.addObject<Core>(Core(board_.getNextObjectId(), team_ids_double[i], Config::getCorePosition(i)), true);
 	Config::getInstance().worldGenerator->generateWorld(this);
 	Logger::Log("Game created with " + std::to_string(team_ids.size()) + " teams.");
 }
@@ -123,7 +123,7 @@ void Game::tick(unsigned long long tick)
 				Position objPos = obj.getPosition();
 				unsigned int unitBalance = ((Unit &)obj).getBalance();
 				board_.removeObjectById(obj.getId());
-				board_.addObject(Money(board_.getNextObjectId(), objPos, unitBalance));
+				board_.addObject<Money>(Money(board_.getNextObjectId(), objPos, unitBalance));
 			}
 			else if (obj.getType() == ObjectType::Core)
 			{

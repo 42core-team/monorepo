@@ -45,9 +45,9 @@ void DistancedResourceWorldGenerator::generateWorld(Game *game)
 
 		std::uniform_int_distribution<int> resourceOrMoney(0, Config::getInstance().worldGeneratorConfig.value("moneyChance", 4) - 1);
 		if (resourceOrMoney(eng_) == 0)
-			game->board_.addObject(Money(game->board_.getNextObjectId(), randPos));
+			game->board_.addObject<Money>(Money(game->board_.getNextObjectId(), randPos));
 			else
-			game->board_.addObject(Resource(game->board_.getNextObjectId(), randPos));
+			game->board_.addObject<Resource>(Resource(game->board_.getNextObjectId(), randPos));
 	}
 
 	// mirror playing field
@@ -66,9 +66,18 @@ void DistancedResourceWorldGenerator::generateWorld(Game *game)
 		if (obj.getType() == ObjectType::Core)
 			continue;
 		Position pos = obj.getPosition();
-		int newX = height - 1 - pos.x;
-		int newY = width - 1 - pos.y;
-		Position newPos(newX, newY);
-		obj.clone(newPos, game);
+		Position newPos(height - 1 - pos.x, width - 1 - pos.y);
+		switch (obj.getType())
+		{
+			case ObjectType::Resource:
+				game->board_.addObject<Resource>(Resource(obj.getId(), newPos));
+				break;
+			case ObjectType::Money:
+				game->board_.addObject<Money>(Money(obj.getId(), newPos));
+				break;
+			default:
+				Logger::Log("Unknown object type while mirroring: " + std::to_string(static_cast<int>(obj.getType())));
+				break;
+		}
 	}
 }

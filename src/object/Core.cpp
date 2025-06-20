@@ -13,12 +13,3 @@ void Core::tick(unsigned long long tickCount, Game * game)
 	if (tickCount < Config::getInstance().idleIncomeTimeOut)
 		setBalance(getBalance() + Config::getInstance().idleIncome);
 }
-
-std::unique_ptr<Object> & Core::clone(Position newPos, Game * game) const
-{
-	(void)newPos;
-	(void)game;
-	assert(false && "Core::clone() should never be called for Core objects");
-	static std::unique_ptr<Object> dummy;
-	return dummy;
-}

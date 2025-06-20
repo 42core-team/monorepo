@@ -14,12 +14,3 @@ void Money::tick(unsigned long long tickCount, Game * game)
 	(void) tickCount;
 	(void) game;
 }
-
-std::unique_ptr<Object> & Money::clone(Position newPos, Game * game) const
-{
-	int nextObjId = game->getNextObjectId();
-	std::unique_ptr<Object> obj = std::make_unique<Money>(nextObjId, newPos, balance_);
-	obj->setHP(this->getHP());
-	game->getObjects().push_back(std::move(obj));
-	return game->getObjects().back();
-}

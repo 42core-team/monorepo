@@ -10,7 +10,6 @@ class Bomb : public Object
 		Bomb(unsigned int id, Position pos);
 
 		void tick(unsigned long long tickCount, Game * game);
-		std::unique_ptr<Object> & clone(Position newPos, Game * game) const;
 
 		Position getPos() const { return pos_; }
 		unsigned int getCountdown() const { return countdown_; }

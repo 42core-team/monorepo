@@ -101,40 +101,40 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game *game, const MapTemplate &temp,
 
 			Position targetPos(posX + x, posY + y);
 			if (cell == 'X')
-				game->board_.addObject(Wall(game->board_.getNextObjectId(), targetPos));
+				game->board_.addObject<Wall>(Wall(game->board_.getNextObjectId(), targetPos));
 			else if (cell == 'R')
-				game->board_.addObject(Resource(game->board_.getNextObjectId(), targetPos));
+				game->board_.addObject<Resource>(Resource(game->board_.getNextObjectId(), targetPos));
 			else if (cell == 'M')
-				game->board_.addObject(Money(game->board_.getNextObjectId(), targetPos));
+				game->board_.addObject<Money>(Money(game->board_.getNextObjectId(), targetPos));
 			else if (std::string("0123456789").find(cell) != std::string::npos)
 			{
 				int wallLikelihood = cell - '0';
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < wallLikelihood)
-					game->board_.addObject(Wall(game->board_.getNextObjectId(), targetPos));
+					game->board_.addObject<Wall>(Wall(game->board_.getNextObjectId(), targetPos));
 			}
 			else if (std::string("abcdefghij").find(cell) != std::string::npos)
 			{
 				int resourceLikelihood = cell - 'a';
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < resourceLikelihood)
-					game->board_.addObject(Resource(game->board_.getNextObjectId(), targetPos));
+					game->board_.addObject<Resource>(Resource(game->board_.getNextObjectId(), targetPos));
 			}
 			else if (std::string("ABCDEFGHIJ").find(cell) != std::string::npos)
 			{
 				int moneyLikelihood = cell - 'A';
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < moneyLikelihood)
-					game->board_.addObject(Money(game->board_.getNextObjectId(), targetPos));
+					game->board_.addObject<Money>(Money(game->board_.getNextObjectId(), targetPos));
 			}
 			else if (std::string("klmnopqrst").find(cell) != std::string::npos)
 			{
 				int wallLikelihood = cell - 'k';
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < wallLikelihood)
-					game->board_.addObject(Wall(game->board_.getNextObjectId(), targetPos));
+					game->board_.addObject<Wall>(Wall(game->board_.getNextObjectId(), targetPos));
 				else
-					game->board_.addObject(Resource(game->board_.getNextObjectId(), targetPos));
+					game->board_.addObject<Resource>(Resource(game->board_.getNextObjectId(), targetPos));
 			}
 			else if (std::string("uvwxyz!/$%").find(cell) != std::string::npos)
 			{
@@ -149,9 +149,9 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game *game, const MapTemplate &temp,
 					moneyLikelihood = 9;
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < moneyLikelihood)
-					game->board_.addObject(Money(game->board_.getNextObjectId(), targetPos));
+					game->board_.addObject<Money>(Money(game->board_.getNextObjectId(), targetPos));
 				else
-					game->board_.addObject(Wall(game->board_.getNextObjectId(), targetPos));
+					game->board_.addObject<Wall>(Wall(game->board_.getNextObjectId(), targetPos));
 			}
 			else if (std::string("KLNOPQSTUV").find(cell) != std::string::npos)
 			{
@@ -161,9 +161,9 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game *game, const MapTemplate &temp,
 					int moneyLikelihood = it->second;
 					std::uniform_int_distribution<int> dist(0, 9);
 					if (dist(eng_) < moneyLikelihood)
-						game->board_.addObject(Money(game->board_.getNextObjectId(), targetPos));
+						game->board_.addObject<Money>(Money(game->board_.getNextObjectId(), targetPos));
 					else
-						game->board_.addObject(Resource(game->board_.getNextObjectId(), targetPos));
+						game->board_.addObject<Resource>(Resource(game->board_.getNextObjectId(), targetPos));
 				}
 			}
 		}
@@ -246,9 +246,9 @@ void JigsawWorldGenerator::balanceObjectType(Game *game, ObjectType type, int am
 			if (game->board_.getObjectAtPos(pos) == nullptr)
 			{
 				if (type == ObjectType::Resource)
-					game->board_.addObject(Resource(game->board_.getNextObjectId(), pos));
+					game->board_.addObject<Resource>(Resource(game->board_.getNextObjectId(), pos));
 				else
-					game->board_.addObject(Money(game->board_.getNextObjectId(), pos));
+					game->board_.addObject<Money>(Money(game->board_.getNextObjectId(), pos));
 				addCount--;
 			}
 		}
@@ -422,7 +422,7 @@ void JigsawWorldGenerator::placeWalls(Game *game)
 			placementProbability = 0.2;
 
 		if (probDist(eng_) < placementProbability)
-			game->board_.addObject(Wall(game->board_.getNextObjectId(), pos));
+			game->board_.addObject<Wall>(Wall(game->board_.getNextObjectId(), pos));
 	}
 }
 

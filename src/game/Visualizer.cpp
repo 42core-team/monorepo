@@ -45,7 +45,7 @@ void Game::visualizeGameState(unsigned long long tick)
 		for (int x = 0; x < W; ++x)
 		{
 			auto pos = Position(x, y);
-			Object *obj = getObjectAtPos(pos);
+			Object *obj = board_.getObjectAtPos(pos);
 			if (!obj)
 			{
 				std::cout << EMPTY_CELL;

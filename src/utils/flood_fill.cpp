@@ -26,7 +26,7 @@ Position findFirstEmptyGridCell(Game* game, Position startPos) // bfs / flood fi
 		if ((int)cur.x < 0 || (int)cur.x >= width || (int)cur.y < 0 || (int)cur.y >= height)
 			continue;
 
-		if (game->getObjectAtPos(cur) == nullptr)
+		if (game->board_.getObjectAtPos(cur) == nullptr)
 			return cur;
 
 		for (int i = 0; i < 4; i++)

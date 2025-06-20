@@ -34,12 +34,3 @@ unsigned int Unit::calcNextMovementOpp()
 
 	return speed;
 }
-
-std::unique_ptr<Object> &Unit::clone(Position newPos, Game *game) const
-{
-	(void)newPos;
-	(void)game;
-	assert(false && "Unit::clone() should never be called for Core objects");
-	static std::unique_ptr<Object> dummy;
-	return dummy;
-}

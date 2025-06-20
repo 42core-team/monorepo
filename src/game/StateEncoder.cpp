@@ -7,10 +7,8 @@ json Game::encodeState(std::vector<std::pair<Action *, Core &>> actions, unsigne
 	state["tick"] = tick;
 
 	state["objects"] = json::array();
-	for (auto &objPtr : objects_)
+	for (const Object & obj : board_)
 	{
-		Object &obj = *objPtr;
-
 		json o;
 
 		o["id"] = obj.getId();
