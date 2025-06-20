@@ -12,6 +12,8 @@ class Resource : public Object
 	public:
 		Resource(unsigned int id, Position pos);
 		Resource(unsigned int id, Position pos, unsigned int balance);
+		Resource(const Resource &other)
+			: Object(other), balance_(other.balance_) {}
 
 		void tick(unsigned long long tickCount, Game * game);
 		void getMined(Unit * miner);

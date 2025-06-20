@@ -12,6 +12,8 @@ class Money : public Object
 	public:
 		Money(unsigned int id, Position pos);
 		Money(unsigned int id, Position pos, unsigned int balance);
+		Money(const Money & other)
+			: Object(other), balance_(other.balance_) {}
 
 		void tick(unsigned long long tickCount, Game * game);
 

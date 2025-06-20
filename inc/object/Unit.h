@@ -8,6 +8,9 @@ class Unit : public Object
 {
 public:
 	Unit(unsigned int id, unsigned int teamId, Position pos, unsigned int unit_type);
+	Unit(const Unit &other)
+		: Object(other), unit_type_(other.unit_type_), team_id_(other.team_id_),
+		  balance_(other.balance_), next_move_opp_(other.next_move_opp_) {}
 
 	void tick(unsigned long long tickCount, Game *game);
 

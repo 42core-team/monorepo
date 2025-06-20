@@ -8,6 +8,8 @@ class Wall : public Object
 {
 	public:
 		Wall(unsigned int id, Position pos);
+		Wall(const Wall &other)
+			: Object(other) {}
 
 		void tick(unsigned long long tickCount, Game * game);
 };

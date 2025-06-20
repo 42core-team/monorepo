@@ -19,7 +19,7 @@ class Board
 		~Board() = default;
 
 		template <typename T>
-		bool			addObject(const Object & object, bool force = false)
+		bool			addObject(const T &object, bool force = false)
 		{
 			static_assert(std::is_base_of<Object, T>::value, "T must be a subclass of Object");
 			unsigned int vecPos = gridPosToVecPos(object.getPosition());

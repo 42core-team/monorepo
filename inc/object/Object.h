@@ -23,6 +23,8 @@ class Object
 	public:
 		Object(unsigned int id, Position pos, int hp, ObjectType type)
 			: id_(id), position_(pos), hp_(hp), type_(type) {}
+		Object(const Object &other)
+			: id_(other.id_), position_(other.position_), hp_(other.hp_), type_(other.type_) {}
 		virtual ~Object() {}
 
 		virtual void tick(unsigned long long tickCount, Game * game) = 0;

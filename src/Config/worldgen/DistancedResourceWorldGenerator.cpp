@@ -46,7 +46,7 @@ void DistancedResourceWorldGenerator::generateWorld(Game *game)
 		std::uniform_int_distribution<int> resourceOrMoney(0, Config::getInstance().worldGeneratorConfig.value("moneyChance", 4) - 1);
 		if (resourceOrMoney(eng_) == 0)
 			game->board_.addObject<Money>(Money(game->board_.getNextObjectId(), randPos));
-			else
+		else
 			game->board_.addObject<Resource>(Resource(game->board_.getNextObjectId(), randPos));
 	}
 
