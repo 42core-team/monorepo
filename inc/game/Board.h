@@ -35,6 +35,8 @@ class Board
 		Object			*getObjectAtPos(const Position & pos) const;
 		Core			*getCoreByTeamId(unsigned int team_id) const;
 
+		bool			moveObjectById(unsigned int id, const Position & newPos);
+
 		Position		vecPosToGridPos(unsigned int vecPos) const;
 		unsigned int	gridPosToVecPos(const Position & gridPos) const;
 

@@ -56,6 +56,7 @@ bool MoveAction::execute(Game *game, Core * core)
 	if (target_.distance(unit->getPosition()) > 1)
 		return false;
 
+	game->board_.moveObjectById(unit->getId(), target_);
 	unit->setPosition(target_);
 	unit->resetNextMoveOpp();
 

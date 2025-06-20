@@ -4,6 +4,8 @@ Board::Board(unsigned int grid_width, unsigned int grid_height)
 	: grid_width_(grid_width), grid_height_(grid_height)
 {
 	objects_.reserve(grid_width * grid_height);
+	for (unsigned int i = 0; i < grid_width * grid_height; ++i)
+		objects_.emplace_back(nullptr);
 }
 
 // @return true if object was removed successfully
@@ -13,7 +15,7 @@ bool Board::removeObjectById(unsigned int id)
 	{
 		if (objects_[i] != nullptr && objects_[i]->getId() == id)
 		{
-			objects_[i].reset();
+			objects_[i] = nullptr;
 			return true;
 		}
 	}
@@ -25,9 +27,9 @@ bool Board::removeObjectAtPos(const Position & pos)
 	if (!pos.isValid(grid_width_, grid_height_))
 		return false;
 	unsigned int vecPos = gridPosToVecPos(pos);
-	if (vecPos < 0)
+	if (vecPos < 0 || objects_[vecPos] == nullptr)
 		return false;
-	objects_[vecPos].reset();
+	objects_[vecPos] = nullptr;
 	return true;
 }
 
@@ -56,6 +58,22 @@ Core *Board::getCoreByTeamId(unsigned int team_id) const
 		if (obj->getType() == ObjectType::Core && ((Core *)obj.get())->getTeamId() == team_id)
 			return (Core *)obj.get();
 	return nullptr;
+}
+
+bool Board::moveObjectById(unsigned int id, const Position & newPos)
+{
+	Object *obj = getObjectById(id);
+	if (!obj || !newPos.isValid(grid_width_, grid_height_))
+		return false;
+
+	unsigned int vecPos = gridPosToVecPos(newPos);
+	if (vecPos < 0 || objects_[vecPos] != nullptr)
+		return false;
+
+	objects_[vecPos] = std::move(objects_[gridPosToVecPos(obj->getPosition())]);
+	objects_[gridPosToVecPos(obj->getPosition())] = nullptr;
+	obj->setPosition(newPos);
+	return true;
 }
 
 Position Board::vecPosToGridPos(unsigned int vecPos) const
