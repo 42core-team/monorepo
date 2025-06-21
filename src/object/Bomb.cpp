@@ -1,7 +1,7 @@
 #include "Bomb.h"
 
-Bomb::Bomb(unsigned int id, Position pos)
-	: Object(id, pos, Config::instance().bombHp, ObjectType::Bomb), countdown_(Config::instance().bombCountdown) {}
+Bomb::Bomb(unsigned int id)
+	: Object(id, Config::instance().bombHp, ObjectType::Bomb), countdown_(Config::instance().bombCountdown) {}
 
 void Bomb::tick(unsigned long long tickCount)
 {
@@ -11,9 +11,10 @@ void Bomb::tick(unsigned long long tickCount)
 	if (countdown_ == 0)
 	{
 		int bombReach = Config::instance().bombReach;
+		Position bombPos = Board::instance().getObjectPositionById(this->getId());
 		for (int i = 0; i < bombReach; i++) // pos X
 		{
-			Object *obj = Board::instance().getObjectAtPos(Position(position_.x + i, position_.y));
+			Object *obj = Board::instance().getObjectAtPos(Position(bombPos.x + i, bombPos.y));
 			if (!obj)
 				continue;
 			if (obj->getType() == ObjectType::Wall)
@@ -22,7 +23,7 @@ void Bomb::tick(unsigned long long tickCount)
 		}
 		for (int i = 0; i < bombReach; i++) // pos Y
 		{
-			Object *obj = Board::instance().getObjectAtPos(Position(position_.x, position_.y + i));
+			Object *obj = Board::instance().getObjectAtPos(Position(bombPos.x, bombPos.y + i));
 			if (!obj)
 				continue;
 			if (obj->getType() == ObjectType::Wall)
@@ -31,7 +32,7 @@ void Bomb::tick(unsigned long long tickCount)
 		}
 		for (int i = 0; i < bombReach; i++) // neg X
 		{
-			Object *obj = Board::instance().getObjectAtPos(Position(position_.x - i, position_.y));
+			Object *obj = Board::instance().getObjectAtPos(Position(bombPos.x - i, bombPos.y));
 			if (!obj)
 				continue;
 			if (obj->getType() == ObjectType::Wall)
@@ -40,7 +41,7 @@ void Bomb::tick(unsigned long long tickCount)
 		}
 		for (int i = 0; i < bombReach; i++) // neg Y
 		{
-			Object *obj = Board::instance().getObjectAtPos(Position(position_.x, position_.y - i));
+			Object *obj = Board::instance().getObjectAtPos(Position(bombPos.x, bombPos.y - i));
 			if (!obj)
 				continue;
 			if (obj->getType() == ObjectType::Wall)

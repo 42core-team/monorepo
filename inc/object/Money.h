@@ -11,8 +11,8 @@
 class Money : public Object
 {
 	public:
-		Money(unsigned int id, Position pos);
-		Money(unsigned int id, Position pos, unsigned int balance);
+		Money(unsigned int id);
+		Money(unsigned int id, unsigned int balance);
 		Money(const Money & other)
 			: Object(other), balance_(other.balance_) {}
 

@@ -11,8 +11,8 @@
 class Resource : public Object
 {
 	public:
-		Resource(unsigned int id, Position pos);
-		Resource(unsigned int id, Position pos, unsigned int balance);
+		Resource(unsigned int id);
+		Resource(unsigned int id, unsigned int balance);
 		Resource(const Resource &other)
 			: Object(other), balance_(other.balance_) {}
 

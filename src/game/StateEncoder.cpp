@@ -13,8 +13,8 @@ json Game::encodeState(std::vector<std::pair<Action *, Core &>> actions, unsigne
 
 		o["id"] = obj.getId();
 		o["type"] = (int)obj.getType();
-		o["x"] = obj.getPosition().x;
-		o["y"] = obj.getPosition().y;
+		o["x"] = Board::instance().getObjectPositionById(obj.getId()).x;
+		o["y"] = Board::instance().getObjectPositionById(obj.getId()).y;
 		o["hp"] = obj.getHP();
 
 		if (obj.getType() == ObjectType::Core)

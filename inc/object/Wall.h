@@ -8,7 +8,7 @@
 class Wall : public Object
 {
 	public:
-		Wall(unsigned int id, Position pos);
+		Wall(unsigned int id);
 		Wall(const Wall &other)
 			: Object(other) {}
 

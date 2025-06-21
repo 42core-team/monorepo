@@ -3,12 +3,12 @@
 
 #include <vector>
 #include <iterator>
+#include <limits>
 
 #include "Object.h"
 #include "Core.h"
 #include "Config.h"
 
-// TODO: instead of local object-specific position data, make board a singleton and access position data from there
 // TODO: remove auto usage until very necessary, its just unclear
 // TODO: can you somehow configure the board iterator to skip stuff conditionally, to only loop over objects with certain type for example?
 // TODO: rework getnextobjectid to not have to be called manually from outside the function all the time
@@ -25,10 +25,10 @@ class Board
 		}
 
 		template <typename T>
-		bool			addObject(const T &object, bool force = false)
+		bool			addObject(const T &object, Position pos, bool force = false)
 		{
 			static_assert(std::is_base_of<Object, T>::value, "T must be a subclass of Object");
-			unsigned int vecPos = gridPosToVecPos(object.getPosition());
+			unsigned int vecPos = gridPosToVecPos(pos);
 			if (vecPos < 0 || (objects_[vecPos] != nullptr && !force))
 				return false;
 			objects_[vecPos] = std::make_unique<T>(object);
@@ -40,6 +40,7 @@ class Board
 		Object			*getObjectById(unsigned int id) const;
 		Object			*getObjectAtPos(const Position & pos) const;
 		Core			*getCoreByTeamId(unsigned int team_id) const;
+		Position		getObjectPositionById(unsigned int id) const;
 
 		bool			moveObjectById(unsigned int id, const Position & newPos);
 

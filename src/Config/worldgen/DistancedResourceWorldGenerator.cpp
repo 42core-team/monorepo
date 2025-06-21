@@ -45,16 +45,16 @@ void DistancedResourceWorldGenerator::generateWorld()
 
 		std::uniform_int_distribution<int> resourceOrMoney(0, Config::instance().worldGeneratorConfig.value("moneyChance", 4) - 1);
 		if (resourceOrMoney(eng_) == 0)
-			Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), randPos));
+			Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), randPos);
 		else
-			Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId(), randPos));
+			Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), randPos);
 	}
 
 	// mirror playing field
 
 	for (auto &obj : Board::instance())
 	{
-		Position pos = obj.getPosition();
+		Position pos = Board::instance().getObjectPositionById(obj.getId());
 		double ratio = static_cast<double>(pos.x) / (width - 1) +
 						static_cast<double>(pos.y) / (height - 1);
 		if (ratio >= 1.0 && obj.getType() != ObjectType::Core)
@@ -65,15 +65,15 @@ void DistancedResourceWorldGenerator::generateWorld()
 	{
 		if (obj.getType() == ObjectType::Core)
 			continue;
-		Position pos = obj.getPosition();
+		Position pos = Board::instance().getObjectPositionById(obj.getId());
 		Position newPos(height - 1 - pos.x, width - 1 - pos.y);
 		switch (obj.getType())
 		{
 			case ObjectType::Resource:
-				Board::instance().addObject<Resource>(Resource(obj.getId(), newPos));
+				Board::instance().addObject<Resource>(Resource(obj.getId()), newPos);
 				break;
 			case ObjectType::Money:
-				Board::instance().addObject<Money>(Money(obj.getId(), newPos));
+				Board::instance().addObject<Money>(Money(obj.getId()), newPos);
 				break;
 			default:
 				Logger::Log("Unknown object type while mirroring: " + std::to_string(static_cast<int>(obj.getType())));

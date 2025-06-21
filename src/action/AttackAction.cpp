@@ -102,7 +102,7 @@ bool AttackAction::execute(Core *core)
 		if (obj)
 			return false;
 
-		Board::instance().addObject<Bomb>(Bomb(Board::instance().getNextObjectId(), target_pos_));
+		Board::instance().addObject<Bomb>(Bomb(Board::instance().getNextObjectId()), target_pos_);
 	}
 	else
 	{

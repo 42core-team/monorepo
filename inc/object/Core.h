@@ -8,7 +8,7 @@
 class Core : public Object
 {
 	public:
-		Core(unsigned int id, unsigned int teamId, Position pos);
+		Core(unsigned int id, unsigned int teamId);
 		Core (const Core & other)
 			: Object(other), balance_(other.balance_), team_id_(other.team_id_) {}
 		Core& operator=(const Core& other) {

@@ -37,10 +37,10 @@ bool TransferMoneyAction::dropMoney(Core *core, Object *srcObj)
 	if (srcObj->getType() != ObjectType::Unit)
 		return false;
 
-	if (srcObj->getPosition().distance(target_) > 1)
+	if (Board::instance().getObjectPositionById(srcObj->getId()).distance(target_) > 1)
 		return false;
 
-	if (srcObj->getPosition() == target_)
+	if (Board::instance().getObjectPositionById(srcObj->getId()) == target_)
 		return false;
 
 	Unit *srcUnit = (Unit *)srcObj;
@@ -51,8 +51,8 @@ bool TransferMoneyAction::dropMoney(Core *core, Object *srcObj)
 		amount_ = srcUnit->getBalance();
 	srcUnit->setBalance(srcUnit->getBalance() - amount_);
 
-	Position pos = srcUnit->getPosition();
-	Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), pos, amount_));
+	Position pos = Board::instance().getObjectPositionById(srcObj->getId());
+	Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), amount_), pos);
 
 	return true;
 }
@@ -77,7 +77,9 @@ bool TransferMoneyAction::execute(Core *core)
 		return false;
 
 	// only adjacent objects can transfer money
-	if (srcObj->getPosition().distance(dstObj->getPosition()) > 1)
+	Position srcPos = Board::instance().getObjectPositionById(srcObj->getId());
+	Position dstPos = Board::instance().getObjectPositionById(dstObj->getId());
+	if (srcPos.distance(dstPos) > 1)
 		return false;
 
 	unsigned int amount = amount_;

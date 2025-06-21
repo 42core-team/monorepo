@@ -47,14 +47,14 @@ bool BuildAction::execute(Core *core)
 	if (Board::instance().getObjectAtPos(position_) != nullptr)
 		return false;
 
-	if (position_.distance(builder->getPosition()) > 1)
+	if (position_.distance(Board::instance().getObjectPositionById(builder->getId())) > 1)
 		return false;
 
 	if (builder->getBalance() < Config::instance().wallBuildCost)
 		return false;
 	builder->setBalance(builder->getBalance() - Config::instance().wallBuildCost);
 
-	Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId(), position_));
+	Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), position_);
 
 	return true;
 }

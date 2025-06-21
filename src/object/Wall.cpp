@@ -1,7 +1,7 @@
 #include "Wall.h"
 
-Wall::Wall(unsigned int id, Position pos)
-	: Object(id, pos, Config::instance().wallHp, ObjectType::Wall) {}
+Wall::Wall(unsigned int id)
+	: Object(id, Config::instance().wallHp, ObjectType::Wall) {}
 
 void Wall::tick(unsigned long long tickCount)
 {

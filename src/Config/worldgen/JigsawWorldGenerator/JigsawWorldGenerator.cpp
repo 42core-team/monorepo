@@ -65,7 +65,7 @@ bool JigsawWorldGenerator::canPlaceTemplate(const MapTemplate &temp, int posX, i
 			}
 
 			for (const auto &obj : Board::instance())
-				if (obj.getType() == ObjectType::Core && ((Core &)obj).getPosition().distance(targetPos) < minCoreDistance)
+				if (obj.getType() == ObjectType::Core && Board::instance().getObjectPositionById(obj.getId()).distance(targetPos) < minCoreDistance)
 					return false;
 		}
 	}
@@ -101,40 +101,40 @@ bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, i
 
 			Position targetPos(posX + x, posY + y);
 			if (cell == 'X')
-				Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId(), targetPos));
+				Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), targetPos);
 			else if (cell == 'R')
-				Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId(), targetPos));
+				Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), targetPos);
 			else if (cell == 'M')
-				Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), targetPos));
+				Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), targetPos);
 			else if (std::string("0123456789").find(cell) != std::string::npos)
 			{
 				int wallLikelihood = cell - '0';
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < wallLikelihood)
-					Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId(), targetPos));
+					Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), targetPos);
 			}
 			else if (std::string("abcdefghij").find(cell) != std::string::npos)
 			{
 				int resourceLikelihood = cell - 'a';
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < resourceLikelihood)
-					Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId(), targetPos));
+					Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), targetPos);
 			}
 			else if (std::string("ABCDEFGHIJ").find(cell) != std::string::npos)
 			{
 				int moneyLikelihood = cell - 'A';
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < moneyLikelihood)
-					Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), targetPos));
+					Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), targetPos);
 			}
 			else if (std::string("klmnopqrst").find(cell) != std::string::npos)
 			{
 				int wallLikelihood = cell - 'k';
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < wallLikelihood)
-					Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId(), targetPos));
+					Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), targetPos);
 				else
-					Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId(), targetPos));
+					Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), targetPos);
 			}
 			else if (std::string("uvwxyz!/$%").find(cell) != std::string::npos)
 			{
@@ -149,9 +149,9 @@ bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, i
 					moneyLikelihood = 9;
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < moneyLikelihood)
-					Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), targetPos));
+					Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), targetPos);
 				else
-					Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId(), targetPos));
+					Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), targetPos);
 			}
 			else if (std::string("KLNOPQSTUV").find(cell) != std::string::npos)
 			{
@@ -161,9 +161,9 @@ bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, i
 					int moneyLikelihood = it->second;
 					std::uniform_int_distribution<int> dist(0, 9);
 					if (dist(eng_) < moneyLikelihood)
-						Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), targetPos));
+						Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), targetPos);
 					else
-						Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId(), targetPos));
+						Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), targetPos);
 				}
 			}
 		}
@@ -209,7 +209,7 @@ void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 			bool nearCore = false;
 			for (const Object & obj : Board::instance())
 			{
-				if (obj.getType() == ObjectType::Core && ((Core &)obj).getPosition().distance(pos) < minCoreDistance)
+				if (obj.getType() == ObjectType::Core && Board::instance().getObjectPositionById(obj.getId()).distance(pos) < minCoreDistance)
 				{
 					nearCore = true;
 					break;
@@ -246,9 +246,9 @@ void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 			if (Board::instance().getObjectAtPos(pos) == nullptr)
 			{
 				if (type == ObjectType::Resource)
-					Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId(), pos));
+					Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), pos);
 				else
-					Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), pos));
+					Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), pos);
 				addCount--;
 			}
 		}
@@ -266,9 +266,9 @@ void JigsawWorldGenerator::clearPathBetweenCores()
 		if (obj.getType() != ObjectType::Core)
 			continue;
 		if (coreNbr == 0)
-			start = obj.getPosition();
+			start = Board::instance().getObjectPositionById(obj.getId());
 		else
-			end = obj.getPosition();
+			end = Board::instance().getObjectPositionById(obj.getId());
 	}
 
 	int W = Config::instance().width;
@@ -352,7 +352,7 @@ void JigsawWorldGenerator::clearPathBetweenCores()
 	for (const auto &pos : path)
 	{
 		for (const Object & obj : Board::instance())
-			if (obj.getPosition() == pos && obj.getType() != ObjectType::Core)
+			if (Board::instance().getObjectPositionById(obj.getId()) == pos && obj.getType() != ObjectType::Core)
 				Board::instance().removeObjectById(obj.getId());
 
 		if (!Config::instance().worldGeneratorConfig.value("mirrorMap", true))
@@ -360,7 +360,7 @@ void JigsawWorldGenerator::clearPathBetweenCores()
 
 		Position mirrorPos((W - 1) - pos.x, (H - 1) - pos.y);
 		for (const Object & obj : Board::instance())
-			if (obj.getPosition() == mirrorPos && obj.getType() != ObjectType::Core)
+			if (Board::instance().getObjectPositionById(obj.getId()) == mirrorPos && obj.getType() != ObjectType::Core)
 				Board::instance().removeObjectById(obj.getId());
 	}
 }
@@ -386,7 +386,7 @@ void JigsawWorldGenerator::placeWalls()
 		bool nearCore = false;
 		for (const Object & obj : Board::instance())
 		{
-			if (obj.getType() == ObjectType::Core && ((Core &)obj).getPosition().distance(pos) < minCoreDistance)
+			if (obj.getType() == ObjectType::Core && Board::instance().getObjectPositionById(obj.getId()).distance(pos) < minCoreDistance)
 			{
 				nearCore = true;
 				break;
@@ -422,7 +422,7 @@ void JigsawWorldGenerator::placeWalls()
 			placementProbability = 0.2;
 
 		if (probDist(eng_) < placementProbability)
-			Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId(), pos));
+			Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), pos);
 	}
 }
 
@@ -435,7 +435,7 @@ void JigsawWorldGenerator::mirrorWorld()
 	{
 		if (obj.getType() == ObjectType::Core)
 			continue;
-		Position p = obj.getPosition();
+		Position p = Board::instance().getObjectPositionById(obj.getId());
 		Position q(W - 1 - p.x, H - 1 - p.y);
 		bool isBase =
 			(p.y < q.y) ||
@@ -447,7 +447,7 @@ void JigsawWorldGenerator::mirrorWorld()
 	{
 		if (obj.getType() == ObjectType::Core)
 			continue;
-		Position p = obj.getPosition();
+		Position p = Board::instance().getObjectPositionById(obj.getId());
 		Position q(W - 1 - p.x, H - 1 - p.y);
 		bool isBase =
 			(p.y < q.y) ||

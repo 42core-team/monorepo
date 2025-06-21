@@ -53,11 +53,10 @@ bool MoveAction::execute(Core * core)
 	Object * obj = Board::instance().getObjectAtPos(target_);
 	if (obj)
 		return false;
-	if (target_.distance(unit->getPosition()) > 1)
+	if (target_.distance(Board::instance().getObjectPositionById(obj->getId())) > 1)
 		return false;
 
 	Board::instance().moveObjectById(unit->getId(), target_);
-	unit->setPosition(target_);
 	unit->resetNextMoveOpp();
 
 	return true;

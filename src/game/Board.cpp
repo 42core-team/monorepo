@@ -59,20 +59,39 @@ Core *Board::getCoreByTeamId(unsigned int team_id) const
 			return (Core *)obj.get();
 	return nullptr;
 }
+Position Board::getObjectPositionById(unsigned int id) const
+{
+	for (unsigned int idx = 0; idx < objects_.size(); ++idx)
+	{
+		if (!objects_[idx]) 
+			continue;
+		if (objects_[idx]->getId() == id)
+			return vecPosToGridPos(idx);
+	}
+	return Position(-1, -1);
+}
 
 bool Board::moveObjectById(unsigned int id, const Position & newPos)
 {
-	Object *obj = getObjectById(id);
-	if (!obj || !newPos.isValid(grid_width_, grid_height_))
+	if (!newPos.isValid(grid_width_, grid_height_))
+		return false;
+	unsigned int destIdx = gridPosToVecPos(newPos);
+	if (destIdx >= objects_.size() || objects_[destIdx])
+		return false;
+	unsigned int srcIdx = std::numeric_limits<unsigned int>::max();
+	for (unsigned int idx = 0; idx < objects_.size(); ++idx)
+	{
+		if (objects_[idx] && objects_[idx]->getId() == id)
+		{
+			srcIdx = idx;
+			break;
+		}
+	}
+	if (srcIdx == std::numeric_limits<unsigned int>::max())
 		return false;
 
-	unsigned int vecPos = gridPosToVecPos(newPos);
-	if (vecPos < 0 || objects_[vecPos] != nullptr)
-		return false;
-
-	objects_[vecPos] = std::move(objects_[gridPosToVecPos(obj->getPosition())]);
-	objects_[gridPosToVecPos(obj->getPosition())] = nullptr;
-	obj->setPosition(newPos);
+	objects_[destIdx] = std::move(objects_[srcIdx]);
+	objects_[srcIdx] = nullptr;
 	return true;
 }
 

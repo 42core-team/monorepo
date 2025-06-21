@@ -30,7 +30,7 @@ bool CreateAction::execute(Core *core)
 	if (!is_valid_)
 		return false;
 
-	Position closestEmptyPos = findFirstEmptyGridCell(core->getPosition());
+	Position closestEmptyPos = findFirstEmptyGridCell(Board::instance().getObjectPositionById(core->getId()));
 	if (!closestEmptyPos.isValid(Config::instance().width, Config::instance().height))
 		return false;
 
@@ -41,7 +41,7 @@ bool CreateAction::execute(Core *core)
 	if (core->getBalance() < unitCost)
 		return false;
 
-	Board::instance().addObject<Unit>(Unit(Board::instance().getNextObjectId(), core->getTeamId(), closestEmptyPos, unit_type_));
+	Board::instance().addObject<Unit>(Unit(Board::instance().getNextObjectId(), core->getTeamId(), unit_type_), closestEmptyPos);
 	core->setBalance(core->getBalance() - unitCost);
 
 	return true;

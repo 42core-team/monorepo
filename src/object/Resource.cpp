@@ -1,10 +1,10 @@
 #include "Resource.h"
 
-Resource::Resource(unsigned int id, Position pos)
-	: Object(id, pos, Config::instance().resourceHp, ObjectType::Resource),
+Resource::Resource(unsigned int id)
+	: Object(id, Config::instance().resourceHp, ObjectType::Resource),
 	  balance_(Config::instance().resourceIncome) {}
-Resource::Resource(unsigned int id, Position pos, unsigned int balance)
-	: Object(id, pos, static_cast<unsigned int>(std::round(double(balance) / Config::instance().resourceIncome * Config::instance().resourceHp)),
+Resource::Resource(unsigned int id, unsigned int balance)
+	: Object(id, static_cast<unsigned int>(std::round(double(balance) / Config::instance().resourceIncome * Config::instance().resourceHp)),
 			 ObjectType::Resource),
 	  balance_(balance) {}
 
