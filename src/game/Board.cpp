@@ -37,8 +37,9 @@ bool Board::removeObjectAtPos(const Position & pos)
 Object *Board::getObjectById(unsigned int id) const
 {
 	for (const auto &obj : objects_)
-		if (obj->getId() == id)
-			return obj.get();
+		if (obj != nullptr)
+			if (obj->getId() == id)
+				return obj.get();
 	return nullptr;
 }
 // @return nullptr if no object at given position
@@ -55,8 +56,9 @@ Object *Board::getObjectAtPos(const Position & pos) const
 Core *Board::getCoreByTeamId(unsigned int team_id) const
 {
 	for (const auto &obj : objects_)
-		if (obj->getType() == ObjectType::Core && ((Core *)obj.get())->getTeamId() == team_id)
-			return (Core *)obj.get();
+		if (obj != nullptr)
+			if (obj->getType() == ObjectType::Core && ((Core *)obj.get())->getTeamId() == team_id)
+				return (Core *)obj.get();
 	return nullptr;
 }
 Position Board::getObjectPositionById(unsigned int id) const
