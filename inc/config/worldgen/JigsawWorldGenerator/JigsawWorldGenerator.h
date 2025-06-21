@@ -1,13 +1,20 @@
 #pragma once
 
-#include "Game.h"
 #include "Config.h"
 #include "MapTemplate.h"
 #include "WorldGenerator.h"
+#include "Logger.h"
+#include "Object.h"
+#include "Wall.h"
+#include "Resource.h"
+#include "Money.h"
+#include "Board.h"
+#include "Visualizer.h"
 
 #include <vector>
 #include <string>
 #include <filesystem>
+#include <queue>
 #include <cstdlib>
 #include <climits>
 #include <algorithm>
@@ -25,7 +32,7 @@ class JigsawWorldGenerator : public WorldGenerator {
 	public:
 		JigsawWorldGenerator(unsigned int seed = 0);
 
-		void generateWorld(Game* game);
+		void generateWorld();
 
 	private:
 		std::vector<MapTemplate> templates_;
@@ -34,11 +41,11 @@ class JigsawWorldGenerator : public WorldGenerator {
 
 		void loadTemplates();
 
-		bool tryPlaceTemplate(Game* game, const MapTemplate &temp, int posX, int posY, bool force);
-		bool canPlaceTemplate(Game* game, const MapTemplate &temp, int posX, int posY);
+		bool tryPlaceTemplate(const MapTemplate &temp, int posX, int posY, bool force);
+		bool canPlaceTemplate(const MapTemplate &temp, int posX, int posY);
 
-		void balanceObjectType(Game* game, ObjectType type, int amount);
-		void clearPathBetweenCores(Game* game);
-		void placeWalls(Game* game);
-		void mirrorWorld(Game* game);
+		void balanceObjectType(ObjectType type, int amount);
+		void clearPathBetweenCores();
+		void placeWalls();
+		void mirrorWorld();
 };

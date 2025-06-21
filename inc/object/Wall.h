@@ -3,6 +3,7 @@
 
 #include "Object.h"
 #include "Common.h"
+#include "Config.h"
 
 class Wall : public Object
 {
@@ -11,7 +12,7 @@ class Wall : public Object
 		Wall(const Wall &other)
 			: Object(other) {}
 
-		void tick(unsigned long long tickCount, Game * game);
+		void tick(unsigned long long tickCount);
 };
 
 #endif // WALL_H

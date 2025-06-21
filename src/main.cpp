@@ -28,12 +28,12 @@ int main(int argc, char *argv[])
 	}
 
 	Config::setConfigFilePath(argv[1]);
-	Config::getInstance(); // Would exit if config file is invalid
+	Config::instance(); // Would exit if config file is invalid & initializes config
 
 	ReplayEncoder::setReplaySaveFolder(argv[2]);
 	ReplayEncoder::verifyReplaySaveFolder();
 
-	if (argc - 3 > (int)Config::getInstance().corePositions.size())
+	if (argc - 3 > (int)Config::instance().corePositions.size())
 	{
 		Logger::Log(LogLevel::ERROR, "Too many team IDs for Core Locations specified.");
 		return 1;

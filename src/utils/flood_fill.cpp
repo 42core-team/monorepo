@@ -1,10 +1,10 @@
 #include "Utils.h"
 
-Position findFirstEmptyGridCell(Game* game, Position startPos) // bfs / flood fill
+Position findFirstEmptyGridCell(Position startPos) // bfs / flood fill
 {
-	Position errorPos = {static_cast<int>(Config::getInstance().width), static_cast<int>(Config::getInstance().height)};
-	const int width  = Config::getInstance().width;
-	const int height = Config::getInstance().height;
+	Position errorPos = {static_cast<int>(Config::instance().width), static_cast<int>(Config::instance().height)};
+	const int width  = Config::instance().width;
+	const int height = Config::instance().height;
 	
 	if ((int)startPos.x < 0 || (int)startPos.x >= width || (int)startPos.y < 0 || (int)startPos.y >= height)
 		return errorPos;
@@ -26,7 +26,7 @@ Position findFirstEmptyGridCell(Game* game, Position startPos) // bfs / flood fi
 		if ((int)cur.x < 0 || (int)cur.x >= width || (int)cur.y < 0 || (int)cur.y >= height)
 			continue;
 
-		if (game->board_.getObjectAtPos(cur) == nullptr)
+		if (Board::instance().getObjectAtPos(cur) == nullptr)
 			return cur;
 
 		for (int i = 0; i < 4; i++)

@@ -1,13 +1,13 @@
 #include "Game.h"
 
 Game::Game(std::vector<unsigned int> team_ids)
-	: board_(Config::getInstance().width, Config::getInstance().height), teamCount_(team_ids.size()), nextObjectId_(1)
+	: teamCount_(team_ids.size()), nextObjectId_(1)
 {
 	std::vector<unsigned int> team_ids_double = team_ids;
 	shuffle_vector(team_ids_double); // randomly assign core positions to ensure fairness
 	for (unsigned int i = 0; i < team_ids.size(); ++i)
-		board_.addObject<Core>(Core(board_.getNextObjectId(), team_ids_double[i], Config::getCorePosition(i)), true);
-	Config::getInstance().worldGenerator->generateWorld(this);
+		Board::instance().addObject<Core>(Core(Board::instance().getNextObjectId(), team_ids_double[i], Config::getCorePosition(i)), true);
+	Config::instance().worldGenerator->generateWorld();
 	Logger::Log("Game created with " + std::to_string(team_ids.size()) + " teams.");
 }
 Game::~Game()
@@ -26,7 +26,7 @@ void Game::run()
 	sendConfig();
 
 	using clock = std::chrono::steady_clock;
-	unsigned int ticksPerSecond = Config::getInstance().tickRate;
+	unsigned int ticksPerSecond = Config::instance().tickRate;
 	auto tickInterval = std::chrono::nanoseconds(1000000000 / ticksPerSecond);
 
 	auto startTime = clock::now();
@@ -57,7 +57,7 @@ void Game::run()
 		tick(tickCount);
 
 		alivePlayers = 0;
-		for (const auto &obj : board_)
+		for (const auto &obj : Board::instance())
 		{
 			if (obj.getType() != ObjectType::Core)
 				continue;
@@ -85,7 +85,7 @@ void Game::tick(unsigned long long tick)
 		json msg;
 		bridge->receiveMessage(msg);
 
-		Core *core = board_.getCoreByTeamId(bridge->getTeamId());
+		Core *core = Board::instance().getCoreByTeamId(bridge->getTeamId());
 
 		if (!core)
 			continue;
@@ -105,7 +105,7 @@ void Game::tick(unsigned long long tick)
 		Action *action = actions[i].first;
 		Core &core = actions[i].second;
 
-		if (!action->execute(this, &core))
+		if (!action->execute(&core))
 		{
 			delete action;
 			actions[i].first = nullptr;
@@ -114,7 +114,7 @@ void Game::tick(unsigned long long tick)
 
 	// 2. UPDATE OBJECTS
 
-	for (auto &obj : board_)
+	for (auto &obj : Board::instance())
 	{
 		if (obj.getHP() <= 0)
 		{
@@ -122,8 +122,8 @@ void Game::tick(unsigned long long tick)
 			{
 				Position objPos = obj.getPosition();
 				unsigned int unitBalance = ((Unit &)obj).getBalance();
-				board_.removeObjectById(obj.getId());
-				board_.addObject<Money>(Money(board_.getNextObjectId(), objPos, unitBalance));
+				Board::instance().removeObjectById(obj.getId());
+				Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), objPos, unitBalance));
 			}
 			else if (obj.getType() == ObjectType::Core)
 			{
@@ -131,20 +131,20 @@ void Game::tick(unsigned long long tick)
 			}
 			else
 			{
-				board_.removeObjectById(obj.getId());
+				Board::instance().removeObjectById(obj.getId());
 			}
 			// TODO: handle game over (send message, disconnect bridge, decrease teamCount_)
 		}
 		else
 		{
-			obj.tick(tick, this);
+			obj.tick(tick);
 		}
 	}
 
 	// 3. SEND STATE
 
 	sendState(actions, tick);
-	visualizeGameState(tick);
+	Visualizer::visualizeGameState(tick);
 
 	for (auto &action : actions)
 	{

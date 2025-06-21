@@ -4,6 +4,7 @@
 #include "Object.h"
 #include "Common.h"
 #include "Unit.h"
+#include "Config.h"
 
 #include <cmath>
 
@@ -15,7 +16,7 @@ class Resource : public Object
 		Resource(const Resource &other)
 			: Object(other), balance_(other.balance_) {}
 
-		void tick(unsigned long long tickCount, Game * game);
+		void tick(unsigned long long tickCount);
 		void getMined(Unit * miner);
 
 		unsigned int getBalance() const { return balance_; }

@@ -25,23 +25,23 @@ json CreateAction::encodeJSON()
 	return js;
 }
 
-bool CreateAction::execute(Game *game, Core *core)
+bool CreateAction::execute(Core *core)
 {
 	if (!is_valid_)
 		return false;
 
-	Position closestEmptyPos = findFirstEmptyGridCell(game, core->getPosition());
-	if (!closestEmptyPos.isValid(Config::getInstance().width, Config::getInstance().height))
+	Position closestEmptyPos = findFirstEmptyGridCell(core->getPosition());
+	if (!closestEmptyPos.isValid(Config::instance().width, Config::instance().height))
 		return false;
 
-	if (unit_type_ >= Config::getInstance().units.size())
+	if (unit_type_ >= Config::instance().units.size())
 		return false;
 
 	unsigned int unitCost = Config::getUnitConfig(unit_type_).cost;
 	if (core->getBalance() < unitCost)
 		return false;
 
-	game->board_.addObject<Unit>(Unit(game->board_.getNextObjectId(), core->getTeamId(), closestEmptyPos, unit_type_));
+	Board::instance().addObject<Unit>(Unit(Board::instance().getNextObjectId(), core->getTeamId(), closestEmptyPos, unit_type_));
 	core->setBalance(core->getBalance() - unitCost);
 
 	return true;

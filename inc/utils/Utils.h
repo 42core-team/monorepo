@@ -9,7 +9,7 @@ class Game;
 #include <random>
 #include <algorithm>
 
-Position findFirstEmptyGridCell(Game* game, Position startPos);
+Position findFirstEmptyGridCell(Position startPos);
 
 template <typename T>
 void shuffle_vector(std::vector<T> & vec)

@@ -15,6 +15,7 @@
 #include "Utils.h"
 #include "ReplayEncoder.h"
 #include "Board.h"
+#include "Visualizer.h"
 
 #include "json.hpp"
 using json = nlohmann::ordered_json;
@@ -29,10 +30,6 @@ class Game
 		void addBridge(Bridge* bridge);
 
 		void run();
-
-		void visualizeGameState(unsigned long long tick);
-
-		Board board_;
 
 	private:
 		void tick(unsigned long long tick);

@@ -8,6 +8,9 @@
 #include "Money.h"
 #include "Bomb.h"
 
+#include "Resource.h"
+#include "Board.h"
+
 class Unit;
 
 #include "json.hpp"
@@ -21,7 +24,7 @@ class AttackAction : public Action
 		Position getTargetPos() const { return target_pos_; }
 		unsigned int getDamage() const { return damage_; }
 
-		bool execute(Game *game, Core * core);
+		bool execute(Core * core);
 		void decodeJSON(json msg);
 		json encodeJSON();
 	
@@ -30,7 +33,7 @@ class AttackAction : public Action
 		Position target_pos_;
 		unsigned int damage_;
 
-		bool attackObj(Object *obj, Unit * unit, Game *game);
+		bool attackObj(Object *obj, Unit * unit);
 };
 
 #endif // ATTACK_ACTION_H

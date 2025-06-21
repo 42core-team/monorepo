@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Action.h"
+#include "Wall.h"
 
 #include "json.hpp"
 using json = nlohmann::ordered_json;
@@ -13,7 +14,7 @@ class BuildAction : public Action
 	public:
 		BuildAction(json msg);
 
-		bool execute(Game *game, Core * core);
+		bool execute(Core * core);
 		void decodeJSON(json msg);
 		json encodeJSON();
 

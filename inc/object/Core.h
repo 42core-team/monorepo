@@ -3,6 +3,7 @@
 
 #include "Object.h"
 #include "Common.h"
+#include "Config.h"
 
 class Core : public Object
 {
@@ -19,7 +20,7 @@ class Core : public Object
 			return *this;
 		}
 
-		void tick(unsigned long long tickCount, Game * game);
+		void tick(unsigned long long tickCount);
 
 		unsigned int getBalance() const { return balance_; }
 		void setBalance(unsigned int balance) { balance_ = balance; }

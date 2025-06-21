@@ -6,8 +6,9 @@
 
 #include "Object.h"
 #include "Core.h"
+#include "Config.h"
 
-// TODO: instead of clone, use builtin copy constructor functionality
+// TODO: instead of local object-specific position data, make board a singleton and access position data from there
 // TODO: remove auto usage until very necessary, its just unclear
 // TODO: can you somehow configure the board iterator to skip stuff conditionally, to only loop over objects with certain type for example?
 // TODO: rework getnextobjectid to not have to be called manually from outside the function all the time
@@ -17,6 +18,11 @@ class Board
 	public:
 		Board(unsigned int grid_width, unsigned int grid_height);
 		~Board() = default;
+
+		static Board& instance() {
+			static Board _instance(Config::instance().width, Config::instance().height);
+			return _instance;
+		}
 
 		template <typename T>
 		bool			addObject(const T &object, bool force = false)

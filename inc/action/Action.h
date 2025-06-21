@@ -11,7 +11,6 @@ class MoveAction;
 class TransferMoneyAction;
 class BuildAction;
 class AttackAction;
-class Game;
 
 #include "json.hpp"
 using json = nlohmann::ordered_json;
@@ -35,7 +34,7 @@ public:
 
 	static std::vector<Action *> parseActions(json msg);
 
-	virtual bool execute(Game *game, Core *core) = 0;
+	virtual bool execute(Core *core) = 0;
 	virtual void decodeJSON(json msg) = 0;
 	virtual json encodeJSON() = 0;
 
@@ -50,6 +49,5 @@ protected:
 #include "TransferMoneyAction.h"
 #include "BuildAction.h"
 #include "AttackAction.h"
-#include "Game.h"
 
 #endif // ACTION_H

@@ -1,15 +1,10 @@
 #include "Core.h"
 
-#include "Game.h"
-
-#include <cassert>
-
 Core::Core(unsigned int id, unsigned int teamId, Position pos)
-	: Object(id, pos, Config::getInstance().coreHp, ObjectType::Core), balance_(Config::getInstance().initialBalance), team_id_(teamId) {}
+	: Object(id, pos, Config::instance().coreHp, ObjectType::Core), balance_(Config::instance().initialBalance), team_id_(teamId) {}
 
-void Core::tick(unsigned long long tickCount, Game * game)
+void Core::tick(unsigned long long tickCount)
 {
-	(void) game;
-	if (tickCount < Config::getInstance().idleIncomeTimeOut)
-		setBalance(getBalance() + Config::getInstance().idleIncome);
+	if (tickCount < Config::instance().idleIncomeTimeOut)
+		setBalance(getBalance() + Config::instance().idleIncome);
 }

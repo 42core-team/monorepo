@@ -75,21 +75,21 @@ struct UnitConfig
 
 class Config
 {
-public:
-	static GameConfig &getInstance();
-	static json encodeConfig();
+	public:
+		static GameConfig &instance();
+		static json encodeConfig();
 
-	static Position &getCorePosition(unsigned int teamId);
-	static UnitConfig &getUnitConfig(unsigned int typeId);
+		static Position &getCorePosition(unsigned int teamId);
+		static UnitConfig &getUnitConfig(unsigned int typeId);
 
-	static void setConfigFilePath(const std::string &path)
-	{
-		configFilePath = path;
-	}
-	static std::string getConfigFilePath() { return configFilePath; }
+		static void setConfigFilePath(const std::string &path)
+		{
+			configFilePath = path;
+		}
+		static std::string getConfigFilePath() { return configFilePath; }
 
-private:
-	static std::string configFilePath;
+	private:
+		static std::string configFilePath;
 };
 
 #endif // CONFIG_H

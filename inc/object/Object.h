@@ -2,10 +2,6 @@
 #define OBJECT_H
 
 #include "Common.h"
-#include "Config.h"
-#include "Logger.h"
-
-class Game;
 
 // must be in same order as t_obj_type in connection lib
 enum class ObjectType
@@ -27,7 +23,7 @@ class Object
 			: id_(other.id_), position_(other.position_), hp_(other.hp_), type_(other.type_) {}
 		virtual ~Object() {}
 
-		virtual void tick(unsigned long long tickCount, Game * game) = 0;
+		virtual void tick(unsigned long long tickCount) = 0;
 
 		unsigned int getId() const { return id_; };
 		Position getPosition() const { return position_; };

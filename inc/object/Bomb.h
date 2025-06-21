@@ -3,6 +3,8 @@
 
 #include "Object.h"
 #include "Common.h"
+#include "Config.h"
+#include "Board.h"
 
 class Bomb : public Object
 {
@@ -11,7 +13,7 @@ class Bomb : public Object
 		Bomb(const Bomb &other)
 			: Object(other), countdown_(other.countdown_) {}
 
-		void tick(unsigned long long tickCount, Game * game);
+		void tick(unsigned long long tickCount);
 
 		unsigned int getCountdown() const { return countdown_; }
 

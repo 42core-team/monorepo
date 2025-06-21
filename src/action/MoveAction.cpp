@@ -17,7 +17,7 @@ void MoveAction::decodeJSON(json msg)
 
 	unit_id_ = msg["unit_id"];
 	target_ = Position(msg["targetX"], msg["targetY"]);
-	if (!target_.isValid(Config::getInstance().width, Config::getInstance().height))
+	if (!target_.isValid(Config::instance().width, Config::instance().height))
 	{
 		is_valid_ = false;
 		return;
@@ -35,12 +35,12 @@ json MoveAction::encodeJSON()
 	return js;
 }
 
-bool MoveAction::execute(Game *game, Core * core)
+bool MoveAction::execute(Core * core)
 {
 	if (!is_valid_)
 		return false;
 
-	Object * unitObj = game->board_.getObjectById(getUnitId());
+	Object * unitObj = Board::instance().getObjectById(getUnitId());
 	if (!unitObj || unitObj->getType() != ObjectType::Unit)
 		return false;
 	Unit * unit = (Unit *)unitObj;
@@ -50,13 +50,13 @@ bool MoveAction::execute(Game *game, Core * core)
 	if (unit->getTeamId() != core->getTeamId())
 		return false;
 
-	Object * obj = game->board_.getObjectAtPos(target_);
+	Object * obj = Board::instance().getObjectAtPos(target_);
 	if (obj)
 		return false;
 	if (target_.distance(unit->getPosition()) > 1)
 		return false;
 
-	game->board_.moveObjectById(unit->getId(), target_);
+	Board::instance().moveObjectById(unit->getId(), target_);
 	unit->setPosition(target_);
 	unit->resetNextMoveOpp();
 

@@ -1,10 +1,11 @@
-#include "Game.h"
+#include "Visualizer.h"
+
 #include <iostream>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
-void Game::visualizeGameState(unsigned long long tick)
+void Visualizer::visualizeGameState(unsigned long long tick)
 {
 	std::cout << "Tick: " << tick << std::endl;
 
@@ -31,8 +32,8 @@ void Game::visualizeGameState(unsigned long long tick)
 
 	static const std::string EMPTY_CELL = u8"\u3000";
 
-	int H = Config::getInstance().height;
-	int W = Config::getInstance().width;
+	int H = Config::instance().height;
+	int W = Config::instance().width;
 
 	std::cout << u8"╔";
 	for (int x = 0; x < W; ++x)
@@ -45,7 +46,7 @@ void Game::visualizeGameState(unsigned long long tick)
 		for (int x = 0; x < W; ++x)
 		{
 			auto pos = Position(x, y);
-			Object *obj = board_.getObjectAtPos(pos);
+			Object *obj = Board::instance().getObjectAtPos(pos);
 			if (!obj)
 			{
 				std::cout << EMPTY_CELL;
