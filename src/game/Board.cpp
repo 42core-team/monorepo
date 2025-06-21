@@ -27,7 +27,7 @@ bool Board::removeObjectAtPos(const Position & pos)
 	if (!pos.isValid(grid_width_, grid_height_))
 		return false;
 	unsigned int vecPos = gridPosToVecPos(pos);
-	if (vecPos < 0 || objects_[vecPos] == nullptr)
+	if (vecPos > grid_height_ * grid_width_ || objects_[vecPos] == nullptr)
 		return false;
 	objects_[vecPos] = nullptr;
 	return true;
@@ -107,6 +107,6 @@ Position Board::vecPosToGridPos(unsigned int vecPos) const
 unsigned int Board::gridPosToVecPos(const Position & gridPos) const
 {
 	if (!gridPos.isValid(grid_width_, grid_height_))
-		return -1;
+		return -1; // purposeful overflow, max val to indicate invalidity
 	return gridPos.y * grid_width_ + gridPos.x;
 }
