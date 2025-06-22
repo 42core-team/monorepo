@@ -269,6 +269,7 @@ void JigsawWorldGenerator::clearPathBetweenCores()
 			start = Board::instance().getObjectPositionById(obj.getId());
 		else
 			end = Board::instance().getObjectPositionById(obj.getId());
+		coreNbr++;
 	}
 
 	int W = Config::instance().width;
@@ -449,12 +450,22 @@ void JigsawWorldGenerator::mirrorWorld()
 			continue;
 		Position p = Board::instance().getObjectPositionById(obj.getId());
 		Position q(W - 1 - p.x, H - 1 - p.y);
-		bool isBase =
-			(p.y < q.y) ||
-			(p.y == q.y && p.x < q.x);
-		if (isBase)
+		if (Board::instance().getObjectAtPos(q) != nullptr)
 			continue;
-		Board::instance().removeObjectById(obj.getId());
+		switch (obj.getType())
+		{
+			case ObjectType::Wall:
+				Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), q);
+				break;
+			case ObjectType::Resource:
+				Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), q);
+				break;
+			case ObjectType::Money:
+				Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), q);
+				break;
+			default:
+				Logger::Log(LogLevel::WARNING, "Unexpected object type during mirroring: " + std::to_string(static_cast<int>(obj.getType())));
+		}
 	}
 }
 
