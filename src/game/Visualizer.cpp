@@ -21,7 +21,7 @@ static const std::unordered_map<ObjectType, char> OBJ_SYMBOL = {
 
 static constexpr char EMPTY_CELL = '.';
 
-void Game::visualizeGameState(unsigned long long tick)
+void Visualizer::visualizeGameState(unsigned long long tick)
 {
 	std::cout << "Tick: " << tick << "\n\n";
 
@@ -48,13 +48,19 @@ void Game::visualizeGameState(unsigned long long tick)
 	int H = Config::instance().height;
 	int W = Config::instance().width;
 
-	std::cout << "╔";
+	std::cout << "  ";
+	for (int i = 0; i < W; ++i)
+		std::cout << i % 10;
+	std::cout << "\n";
+
+	std::cout << " ╔";
 	for (int x = 0; x < W; ++x)
 		std::cout << "═";
 	std::cout << "╗\n";
 
 	for (int y = 0; y < H; ++y)
 	{
+		std::cout << y % 10;
 		std::cout << "║";
 		for (int x = 0; x < W; ++x)
 		{
@@ -122,7 +128,7 @@ void Game::visualizeGameState(unsigned long long tick)
 		std::cout << "║\n";
 	}
 
-	std::cout << "╚";
+	std::cout << " ╚";
 	for (int x = 0; x < W; ++x)
 		std::cout << "═";
 	std::cout << "╝\n\n";
