@@ -1,5 +1,5 @@
 FROM alpine:latest AS build-game
-RUN apk add build-base
+RUN apk add build-base clang
 
 WORKDIR /core
 COPY . .
