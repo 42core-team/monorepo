@@ -3,14 +3,16 @@
 
 #include "Object.h"
 #include "Common.h"
+#include "Config.h"
 
 class Wall : public Object
 {
 	public:
-		Wall(unsigned int id, Position pos);
+		Wall(unsigned int id);
+		Wall(const Wall &other)
+			: Object(other) {}
 
-		void tick(unsigned long long tickCount, Game * game);
-		std::unique_ptr<Object> & clone(Position newPos, Game * game) const;
+		void tick(unsigned long long tickCount);
 };
 
 #endif // WALL_H

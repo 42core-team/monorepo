@@ -4,17 +4,19 @@
 #include "Object.h"
 #include "Common.h"
 #include "Unit.h"
+#include "Config.h"
 
 #include <cmath>
 
 class Money : public Object
 {
 	public:
-		Money(unsigned int id, Position pos);
-		Money(unsigned int id, Position pos, unsigned int balance);
+		Money(unsigned int id);
+		Money(unsigned int id, unsigned int balance);
+		Money(const Money & other)
+			: Object(other), balance_(other.balance_) {}
 
-		void tick(unsigned long long tickCount, Game * game);
-		std::unique_ptr<Object> & clone(Position newPos, Game * game) const;
+		void tick(unsigned long long tickCount);
 
 		unsigned int getBalance() const { return balance_; }
 

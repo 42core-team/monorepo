@@ -3,14 +3,17 @@
 
 #include "Object.h"
 #include "Common.h"
+#include "Config.h"
 
 class Unit : public Object
 {
 public:
-	Unit(unsigned int id, unsigned int teamId, Position pos, unsigned int unit_type);
+	Unit(unsigned int id, unsigned int teamId, unsigned int unit_type);
+	Unit(const Unit &other)
+		: Object(other), unit_type_(other.unit_type_), team_id_(other.team_id_),
+		  balance_(other.balance_), next_move_opp_(other.next_move_opp_) {}
 
-	void tick(unsigned long long tickCount, Game *game);
-	std::unique_ptr<Object> &clone(Position newPos, Game *game) const;
+	void tick(unsigned long long tickCount);
 
 	unsigned int getUnitType() const { return unit_type_; }
 	unsigned int getTeamId() const { return team_id_; }

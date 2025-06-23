@@ -32,15 +32,15 @@ json TransferMoneyAction::encodeJSON()
 	return js;
 }
 
-bool TransferMoneyAction::dropMoney(Game *game, Core *core, Object *srcObj)
+bool TransferMoneyAction::dropMoney(Core *core, Object *srcObj)
 {
 	if (srcObj->getType() != ObjectType::Unit)
 		return false;
 
-	if (srcObj->getPosition().distance(target_) > 1)
+	if (Board::instance().getObjectPositionById(srcObj->getId()).distance(target_) > 1)
 		return false;
 
-	if (srcObj->getPosition() == target_)
+	if (Board::instance().getObjectPositionById(srcObj->getId()) == target_)
 		return false;
 
 	Unit *srcUnit = (Unit *)srcObj;
@@ -51,24 +51,24 @@ bool TransferMoneyAction::dropMoney(Game *game, Core *core, Object *srcObj)
 		amount_ = srcUnit->getBalance();
 	srcUnit->setBalance(srcUnit->getBalance() - amount_);
 
-	Position pos = srcUnit->getPosition();
-	game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), pos, amount_));
+	Position pos = Board::instance().getObjectPositionById(srcObj->getId());
+	Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), amount_), pos);
 
 	return true;
 }
 
-bool TransferMoneyAction::execute(Game *game, Core *core)
+bool TransferMoneyAction::execute(Core *core)
 {
 	if (!is_valid_)
 		return false;
 
-	Object *srcObj = game->getObject(source_id_);
+	Object *srcObj = Board::instance().getObjectById(source_id_);
 	if (!srcObj)
 		return false;
 
-	Object *dstObj = game->getObjectAtPos(target_);
+	Object *dstObj = Board::instance().getObjectAtPos(target_);
 	if (!dstObj)
-		return dropMoney(game, core, srcObj);
+		return dropMoney(core, srcObj);
 
 	// only active objects can transfer money
 	if (srcObj->getType() != ObjectType::Core && srcObj->getType() != ObjectType::Unit)
@@ -77,7 +77,9 @@ bool TransferMoneyAction::execute(Game *game, Core *core)
 		return false;
 
 	// only adjacent objects can transfer money
-	if (srcObj->getPosition().distance(dstObj->getPosition()) > 1)
+	Position srcPos = Board::instance().getObjectPositionById(srcObj->getId());
+	Position dstPos = Board::instance().getObjectPositionById(dstObj->getId());
+	if (srcPos.distance(dstPos) > 1)
 		return false;
 
 	unsigned int amount = amount_;

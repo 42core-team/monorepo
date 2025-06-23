@@ -34,10 +34,10 @@ void JigsawWorldGenerator::loadTemplates()
 	}
 }
 
-bool JigsawWorldGenerator::canPlaceTemplate(Game *game, const MapTemplate &temp, int posX, int posY)
+bool JigsawWorldGenerator::canPlaceTemplate(const MapTemplate &temp, int posX, int posY)
 {
-	int minSpacing = Config::getInstance().worldGeneratorConfig.value("minTemplateSpacing", 1);
-	int minCoreDistance = Config::getInstance().worldGeneratorConfig.value("minCoreDistance", 5);
+	int minSpacing = Config::instance().worldGeneratorConfig.value("minTemplateSpacing", 1);
+	int minCoreDistance = Config::instance().worldGeneratorConfig.value("minCoreDistance", 5);
 
 	for (int y = 0; y < temp.height; ++y)
 	{
@@ -51,7 +51,7 @@ bool JigsawWorldGenerator::canPlaceTemplate(Game *game, const MapTemplate &temp,
 			int targetY = posY + y;
 			Position targetPos(targetX, targetY);
 
-			if (game->getObjectAtPos(targetPos) != nullptr)
+			if (Board::instance().getObjectAtPos(targetPos) != nullptr)
 				return false;
 
 			for (int sy = -minSpacing; sy <= minSpacing; ++sy)
@@ -59,21 +59,21 @@ bool JigsawWorldGenerator::canPlaceTemplate(Game *game, const MapTemplate &temp,
 				for (int sx = -minSpacing; sx <= minSpacing; ++sx)
 				{
 					Position neighbor(targetX + sx, targetY + sy);
-					if (game->getObjectAtPos(neighbor) != nullptr)
+					if (Board::instance().getObjectAtPos(neighbor) != nullptr)
 						return false;
 				}
 			}
 
-			for (const auto &core : game->getCores())
-				if (core.getPosition().distance(targetPos) < minCoreDistance)
+			for (const auto &obj : Board::instance())
+				if (obj.getType() == ObjectType::Core && Board::instance().getObjectPositionById(obj.getId()).distance(targetPos) < minCoreDistance)
 					return false;
 		}
 	}
 	return true;
 }
-bool JigsawWorldGenerator::tryPlaceTemplate(Game *game, const MapTemplate &temp, int posX, int posY, bool force = false)
+bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, int posY, bool force = false)
 {
-	if (!canPlaceTemplate(game, temp, posX, posY) && !force)
+	if (!canPlaceTemplate(temp, posX, posY) && !force)
 		return false;
 
 	const std::unordered_map<char, int> moneyLikelihoodMap = {
@@ -96,45 +96,45 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game *game, const MapTemplate &temp,
 			if (cell == ' ')
 				continue;
 
-			if (posX + x < 0 || posX + x >= (int)Config::getInstance().width || posY + y < 0 || posY + y >= (int)Config::getInstance().height)
+			if (posX + x < 0 || posX + x >= (int)Config::instance().width || posY + y < 0 || posY + y >= (int)Config::instance().height)
 				continue;
 
 			Position targetPos(posX + x, posY + y);
 			if (cell == 'X')
-				game->getObjects().push_back(std::make_unique<Wall>(game->getNextObjectId(), targetPos));
+				Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), targetPos);
 			else if (cell == 'R')
-				game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), targetPos));
+				Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), targetPos);
 			else if (cell == 'M')
-				game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), targetPos));
+				Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), targetPos);
 			else if (std::string("0123456789").find(cell) != std::string::npos)
 			{
 				int wallLikelihood = cell - '0';
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < wallLikelihood)
-					game->getObjects().push_back(std::make_unique<Wall>(game->getNextObjectId(), targetPos));
+					Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), targetPos);
 			}
 			else if (std::string("abcdefghij").find(cell) != std::string::npos)
 			{
 				int resourceLikelihood = cell - 'a';
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < resourceLikelihood)
-					game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), targetPos));
+					Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), targetPos);
 			}
 			else if (std::string("ABCDEFGHIJ").find(cell) != std::string::npos)
 			{
 				int moneyLikelihood = cell - 'A';
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < moneyLikelihood)
-					game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), targetPos));
+					Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), targetPos);
 			}
 			else if (std::string("klmnopqrst").find(cell) != std::string::npos)
 			{
 				int wallLikelihood = cell - 'k';
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < wallLikelihood)
-					game->getObjects().push_back(std::make_unique<Wall>(game->getNextObjectId(), targetPos));
+					Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), targetPos);
 				else
-					game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), targetPos));
+					Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), targetPos);
 			}
 			else if (std::string("uvwxyz!/$%").find(cell) != std::string::npos)
 			{
@@ -149,9 +149,9 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game *game, const MapTemplate &temp,
 					moneyLikelihood = 9;
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < moneyLikelihood)
-					game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), targetPos));
+					Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), targetPos);
 				else
-					game->getObjects().push_back(std::make_unique<Wall>(game->getNextObjectId(), targetPos));
+					Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), targetPos);
 			}
 			else if (std::string("KLNOPQSTUV").find(cell) != std::string::npos)
 			{
@@ -161,9 +161,9 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game *game, const MapTemplate &temp,
 					int moneyLikelihood = it->second;
 					std::uniform_int_distribution<int> dist(0, 9);
 					if (dist(eng_) < moneyLikelihood)
-						game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), targetPos));
+						Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), targetPos);
 					else
-						game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), targetPos));
+						Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), targetPos);
 				}
 			}
 		}
@@ -171,35 +171,33 @@ bool JigsawWorldGenerator::tryPlaceTemplate(Game *game, const MapTemplate &temp,
 	return true;
 }
 
-void JigsawWorldGenerator::balanceObjectType(Game *game, ObjectType type, int amount)
+// TODO: Make this a template function. the if statement down there is painful
+void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 {
-	int minCoreDistance = Config::getInstance().worldGeneratorConfig.value("minCoreDistance", 5);
+	int minCoreDistance = Config::instance().worldGeneratorConfig.value("minCoreDistance", 5);
 
-	std::vector<size_t> objectIndices;
-	for (size_t i = 0; i < game->getObjects().size(); ++i)
-		if (game->getObjects()[i]->getType() == type)
-			objectIndices.push_back(i);
-	int currentObjCount = objectIndices.size();
+	std::vector<unsigned int> typeObjectIds;
+	for (auto & obj : Board::instance())
+		if (obj.getType() == type)
+			typeObjectIds.push_back(obj.getId());
+	int currentObjCount = typeObjectIds.size();
 
 	if (currentObjCount > amount)
 	{
 		int removeCount = currentObjCount - amount;
-
-		std::shuffle(objectIndices.begin(), objectIndices.end(), eng_);
-
-		std::vector<size_t> indicesToRemove(objectIndices.begin(), objectIndices.begin() + removeCount);
-		std::sort(indicesToRemove.begin(), indicesToRemove.end(), std::greater<size_t>());
-
-		for (size_t idx : indicesToRemove)
+		std::shuffle(typeObjectIds.begin(), typeObjectIds.end(), eng_);
+		for (unsigned int id : typeObjectIds)
 		{
-			game->getObjects().erase(game->getObjects().begin() + idx);
+			if (removeCount-- <= 0)
+				break;
+			Board::instance().removeObjectById(id);
 		}
 	}
 	else if (currentObjCount < amount)
 	{
 		int addCount = amount - currentObjCount;
-		std::uniform_int_distribution<int> distX(0, Config::getInstance().width - 1);
-		std::uniform_int_distribution<int> distY(0, Config::getInstance().height - 1);
+		std::uniform_int_distribution<int> distX(0, Config::instance().width - 1);
+		std::uniform_int_distribution<int> distY(0, Config::instance().height - 1);
 
 		int max_iter = 10000;
 		while (addCount > 0 && --max_iter > 0)
@@ -209,9 +207,9 @@ void JigsawWorldGenerator::balanceObjectType(Game *game, ObjectType type, int am
 			Position pos(x, y);
 
 			bool nearCore = false;
-			for (const auto &core : game->getCores())
+			for (const Object & obj : Board::instance())
 			{
-				if (core.getPosition().distance(pos) < minCoreDistance)
+				if (obj.getType() == ObjectType::Core && Board::instance().getObjectPositionById(obj.getId()).distance(pos) < minCoreDistance)
 				{
 					nearCore = true;
 					break;
@@ -227,16 +225,16 @@ void JigsawWorldGenerator::balanceObjectType(Game *game, ObjectType type, int am
 			int wallsCount = 0;
 			for (int xW = -1; xW <= 1; xW++)
 				for (int yW = -1; yW <= 1; yW++)
-					if (game->getObjectAtPos(Position(x + xW, y + yW)) != nullptr && \
-						game->getObjectAtPos(Position(x + xW, y + yW))->getType() == ObjectType::Wall)
+					if (Board::instance().getObjectAtPos(Position(x + xW, y + yW)) != nullptr && \
+						Board::instance().getObjectAtPos(Position(x + xW, y + yW))->getType() == ObjectType::Wall)
 						wallsCount++;
 			rerollLikeliness -= wallsCount * 5;
 
 			// higher likelihood near non-core corners
-			int bottomLeftDistance = pos.distance(Position(0, Config::getInstance().height));
-			int topRightDistance = pos.distance(Position(Config::getInstance().width, 0));
+			int bottomLeftDistance = pos.distance(Position(0, Config::instance().height));
+			int topRightDistance = pos.distance(Position(Config::instance().width, 0));
 			int cornerDist = bottomLeftDistance < topRightDistance ? bottomLeftDistance : topRightDistance;
-			rerollLikeliness -= Config::getInstance().width - cornerDist;
+			rerollLikeliness -= Config::instance().width - cornerDist;
 
 			if (rerollLikeliness < 0)
 				rerollLikeliness = 0;
@@ -245,32 +243,42 @@ void JigsawWorldGenerator::balanceObjectType(Game *game, ObjectType type, int am
 			if (pick(eng_) < rerollLikeliness)
 				continue ;
 
-			if (game->getObjectAtPos(pos) == nullptr)
+			if (Board::instance().getObjectAtPos(pos) == nullptr)
 			{
 				if (type == ObjectType::Resource)
-					game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), pos));
+					Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), pos);
 				else
-					game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), pos));
+					Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), pos);
 				addCount--;
 			}
 		}
 	}
 }
 
-void JigsawWorldGenerator::clearPathBetweenCores(Game *game)
+void JigsawWorldGenerator::clearPathBetweenCores()
 {
-	const auto &cores = game->getCores();
+	Position start;
+	Position end;
 
-	const Position start = cores[0].getPosition();
-	const Position end = cores[1].getPosition();
+	unsigned short coreNbr = 0;
+	for (const Object & obj :Board::instance())
+	{
+		if (obj.getType() != ObjectType::Core)
+			continue;
+		if (coreNbr == 0)
+			start = Board::instance().getObjectPositionById(obj.getId());
+		else
+			end = Board::instance().getObjectPositionById(obj.getId());
+		coreNbr++;
+	}
 
-	int W = Config::getInstance().width;
-	int H = Config::getInstance().height;
+	int W = Config::instance().width;
+	int H = Config::instance().height;
 
-	auto getCost = [game](int x, int y) -> int
+	auto getCost = [](int x, int y) -> int
 	{
 		Position pos(x, y);
-		Object *obj = game->getObjectAtPos(pos);
+		Object *obj = Board::instance().getObjectAtPos(pos);
 		return (obj == nullptr || obj->getType() == ObjectType::Core) ? 0 : 1;
 	};
 
@@ -325,10 +333,8 @@ void JigsawWorldGenerator::clearPathBetweenCores(Game *game)
 	}
 
 	if (!found)
-	{
-		Logger::Log(LogLevel::ERROR, "No viable path found between cores.");
-		return;
-	}
+		Logger::Log(LogLevel::WARNING, "No viable path found between cores. Carving a new one.");
+	
 
 	std::vector<Position> path;
 	int cx = end.x, cy = end.y;
@@ -344,38 +350,27 @@ void JigsawWorldGenerator::clearPathBetweenCores(Game *game)
 
 	for (const auto &pos : path)
 	{
-		auto &objects = game->getObjects();
+		for (const Object & obj : Board::instance())
+			if (Board::instance().getObjectPositionById(obj.getId()) == pos && obj.getType() != ObjectType::Core)
+				Board::instance().removeObjectById(obj.getId());
 
-		objects.erase(std::remove_if(objects.begin(), objects.end(),
-									 [&](const std::unique_ptr<Object> &o)
-									 {
-										 return o->getPosition() == pos && o->getType() != ObjectType::Core;
-									 }),
-					  objects.end());
+		if (!Config::instance().worldGeneratorConfig.value("mirrorMap", true))
+			continue;
 
-		if (Config::getInstance().worldGeneratorConfig.value("mirrorMap", true))
-		{
-			Position mirrorPos(
-				(W - 1) - pos.x,
-				(H - 1) - pos.y);
-			objects.erase(std::remove_if(objects.begin(), objects.end(),
-										 [&](const std::unique_ptr<Object> &o)
-										 {
-											 return o->getPosition() == mirrorPos &&
-													o->getType() != ObjectType::Core;
-										 }),
-						  objects.end());
-		}
+		Position mirrorPos((W - 1) - pos.x, (H - 1) - pos.y);
+		for (const Object & obj : Board::instance())
+			if (Board::instance().getObjectPositionById(obj.getId()) == mirrorPos && obj.getType() != ObjectType::Core)
+				Board::instance().removeObjectById(obj.getId());
 	}
 }
 
-void JigsawWorldGenerator::placeWalls(Game *game)
+void JigsawWorldGenerator::placeWalls()
 {
-	int additionalWallPlaceAttemptCount = Config::getInstance().worldGeneratorConfig.value("additionalWallPlaceAttemptCount", 100);
-	int minCoreDistance = Config::getInstance().worldGeneratorConfig.value("minCoreDistance", 5);
+	int additionalWallPlaceAttemptCount = Config::instance().worldGeneratorConfig.value("additionalWallPlaceAttemptCount", 100);
+	int minCoreDistance = Config::instance().worldGeneratorConfig.value("minCoreDistance", 5);
 
-	std::uniform_int_distribution<int> distX(0, Config::getInstance().width - 1);
-	std::uniform_int_distribution<int> distY(0, Config::getInstance().height - 1);
+	std::uniform_int_distribution<int> distX(0, Config::instance().width - 1);
+	std::uniform_int_distribution<int> distY(0, Config::instance().height - 1);
 	std::uniform_real_distribution<double> probDist(0.0, 1.0);
 
 	for (int i = 0; i < additionalWallPlaceAttemptCount; ++i)
@@ -384,13 +379,13 @@ void JigsawWorldGenerator::placeWalls(Game *game)
 		int y = distY(eng_);
 		Position pos(x, y);
 
-		if (game->getObjectAtPos(pos) != nullptr)
+		if (Board::instance().getObjectAtPos(pos) != nullptr)
 			continue;
 
 		bool nearCore = false;
-		for (const auto &core : game->getCores())
+		for (const Object & obj : Board::instance())
 		{
-			if (core.getPosition().distance(pos) < minCoreDistance)
+			if (obj.getType() == ObjectType::Core && Board::instance().getObjectPositionById(obj.getId()).distance(pos) < minCoreDistance)
 			{
 				nearCore = true;
 				break;
@@ -407,7 +402,7 @@ void JigsawWorldGenerator::placeWalls(Game *game)
 				if (sx == 0 && sy == 0)
 					continue;
 				Position neighbor(x + sx, y + sy);
-				if (game->getObjectAtPos(neighbor) != nullptr)
+				if (Board::instance().getObjectAtPos(neighbor) != nullptr)
 					adjacentObjects++;
 			}
 		}
@@ -426,71 +421,63 @@ void JigsawWorldGenerator::placeWalls(Game *game)
 			placementProbability = 0.2;
 
 		if (probDist(eng_) < placementProbability)
-			game->getObjects().push_back(std::make_unique<Wall>(game->getNextObjectId(), pos));
+			Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), pos);
 	}
 }
 
-void JigsawWorldGenerator::mirrorWorld(Game *game)
+void JigsawWorldGenerator::mirrorWorld()
 {
-	unsigned int W = Config::getInstance().width;
-	unsigned int H = Config::getInstance().height;
+	unsigned int W = Config::instance().width;
+	unsigned int H = Config::instance().height;
 
-	auto &objs = game->getObjects();
-
-	std::vector<Object *> base;
-	base.reserve(objs.size());
-
-	for (const auto &uptr : objs)
+	for (const Object & obj : Board::instance())
 	{
-		Object *o = uptr.get();
-		if (o->getType() == ObjectType::Core)
-			continue; // never mirror cores
-
-		const Position p = o->getPosition();
-		const Position q(W - 1 - p.x, H - 1 - p.y);
-
-		// lexicographic compare: pick the 'smaller' of p and q
-		bool isBase = (p.y < q.y) ||
-					  (p.y == q.y && p.x < q.x);
-		if (isBase)
-			base.push_back(o);
+		if (obj.getType() == ObjectType::Core)
+			continue;
+		Position p = Board::instance().getObjectPositionById(obj.getId());
+		Position q(W - 1 - p.x, H - 1 - p.y);
+		bool isBase =
+			(p.y < q.y) ||
+			(p.y == q.y && p.x < q.x);
+		if (!isBase)
+			Board::instance().removeObjectById(obj.getId());
 	}
-
-	// 2) Erase every non-core object not in the base set
-	objs.erase(
-		std::remove_if(objs.begin(), objs.end(),
-					   [&](const std::unique_ptr<Object> &uptr)
-					   {
-						   Position p = uptr->getPosition();
-						   Position q(W - 1 - p.x, H - 1 - p.y);
-						   bool isCore = uptr->getType() == ObjectType::Core;
-						   bool isBase =
-							   (p.y < q.y) ||
-							   (p.y == q.y && p.x < q.x);
-						   return (!isCore && !isBase);
-					   }),
-		objs.end());
-
-	// 3) Clone each base object into its 180° partner
-	for (Object *o : base)
+	for (const Object & obj : Board::instance())
 	{
-		Position p = o->getPosition();
-		Position mirrorPos(W - 1 - p.x, H - 1 - p.y);
-		o->clone(mirrorPos, game);
+		if (obj.getType() == ObjectType::Core)
+			continue;
+		Position p = Board::instance().getObjectPositionById(obj.getId());
+		Position q(W - 1 - p.x, H - 1 - p.y);
+		if (Board::instance().getObjectAtPos(q) != nullptr)
+			continue;
+		switch (obj.getType())
+		{
+			case ObjectType::Wall:
+				Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), q);
+				break;
+			case ObjectType::Resource:
+				Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), q);
+				break;
+			case ObjectType::Money:
+				Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), q);
+				break;
+			default:
+				Logger::Log(LogLevel::WARNING, "Unexpected object type during mirroring: " + std::to_string(static_cast<int>(obj.getType())));
+		}
 	}
 }
 
-void JigsawWorldGenerator::generateWorld(Game *game)
+void JigsawWorldGenerator::generateWorld()
 {
-	int templatePlaceAttemptCount = Config::getInstance().worldGeneratorConfig.value("templatePlaceAttemptCount", 1000);
-	bool mirrorMap = Config::getInstance().worldGeneratorConfig.value("mirrorMap", true);
+	int templatePlaceAttemptCount = Config::instance().worldGeneratorConfig.value("templatePlaceAttemptCount", 1000);
+	bool mirrorMap = Config::instance().worldGeneratorConfig.value("mirrorMap", true);
 
 	Logger::Log("Generating world with JigsawWorldGenerator");
 
-	game->visualizeGameState(0);
+	Visualizer::visualizeGameState(0);
 
-	unsigned int width = Config::getInstance().width;
-	unsigned int height = Config::getInstance().height;
+	unsigned int width = Config::instance().width;
+	unsigned int height = Config::instance().height;
 
 	std::uniform_int_distribution<int> distX(0, width + 10);
 	std::uniform_int_distribution<int> distY(0, height + 10);
@@ -503,33 +490,33 @@ void JigsawWorldGenerator::generateWorld(Game *game)
 		MapTemplate temp = original.getTransformedTemplate(eng_);
 		int posX = distX(eng_) - 5;
 		int posY = distY(eng_) - 5;
-		if (tryPlaceTemplate(game, temp, posX, posY))
+		if (tryPlaceTemplate(temp, posX, posY))
 			Logger::Log("Placed template " + original.name + " at (" + std::to_string(posX) + ", " + std::to_string(posY) + ")");
 	}
-	game->visualizeGameState(0);
+	Visualizer::visualizeGameState(0);
 
 	Logger::Log("Step 2: Placing walls");
-	placeWalls(game);
-	game->visualizeGameState(0);
+	placeWalls();
+	Visualizer::visualizeGameState(0);
 
 	Logger::Log("Step 3: Balancing resources");
-	balanceObjectType(game, ObjectType::Resource, Config::getInstance().worldGeneratorConfig.value("resourceCount", 20));
-	game->visualizeGameState(0);
+	balanceObjectType(ObjectType::Resource, Config::instance().worldGeneratorConfig.value("resourceCount", 20));
+	Visualizer::visualizeGameState(0);
 
 	Logger::Log("Step 4: Balancing moneys");
-	balanceObjectType(game, ObjectType::Money, Config::getInstance().worldGeneratorConfig.value("moneysCount", 20));
-	game->visualizeGameState(0);
+	balanceObjectType(ObjectType::Money, Config::instance().worldGeneratorConfig.value("moneysCount", 20));
+	Visualizer::visualizeGameState(0);
 
 	if (mirrorMap)
 	{
 		Logger::Log("Step 5: Mirroring world");
-		mirrorWorld(game);
-		game->visualizeGameState(0);
+		mirrorWorld();
+		Visualizer::visualizeGameState(0);
 	}
 
 	Logger::Log("Step 6: Clearing at least 1 path between cores.");
-	clearPathBetweenCores(game);
-	game->visualizeGameState(0);
+	clearPathBetweenCores();
+	Visualizer::visualizeGameState(0);
 
 	Logger::Log("World generation complete");
 }

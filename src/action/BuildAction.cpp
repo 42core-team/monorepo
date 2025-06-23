@@ -16,7 +16,7 @@ void BuildAction::decodeJSON(json msg)
 	builder_id_ = msg["builder_id"];
 	position_ = Position(msg["x"], msg["y"]);
 
-	if (!position_.isValid(Config::getInstance().width, Config::getInstance().height))
+	if (!position_.isValid(Config::instance().width, Config::instance().height))
 		is_valid_ = false;
 }
 json BuildAction::encodeJSON()
@@ -31,30 +31,30 @@ json BuildAction::encodeJSON()
 	return js;
 }
 
-bool BuildAction::execute(Game *game, Core *core)
+bool BuildAction::execute(Core *core)
 {
 	(void)core;
 	if (!is_valid_)
 		return false;
 
-	Object *builderObj = game->getObject(builder_id_);
+	Object *builderObj = Board::instance().getObjectById(builder_id_);
 	if (builderObj == nullptr || builderObj->getType() != ObjectType::Unit)
 		return false;
 	Unit *builder = dynamic_cast<Unit *>(builderObj);
-	if (!Config::getInstance().units[builder->getUnitType()].canBuild)
+	if (!Config::instance().units[builder->getUnitType()].canBuild)
 		return false;
 
-	if (game->getObjectAtPos(position_) != nullptr)
+	if (Board::instance().getObjectAtPos(position_) != nullptr)
 		return false;
 
-	if (position_.distance(builder->getPosition()) > 1)
+	if (position_.distance(Board::instance().getObjectPositionById(builder->getId())) > 1)
 		return false;
 
-	if (builder->getBalance() < Config::getInstance().wallBuildCost)
+	if (builder->getBalance() < Config::instance().wallBuildCost)
 		return false;
-	builder->setBalance(builder->getBalance() - Config::getInstance().wallBuildCost);
+	builder->setBalance(builder->getBalance() - Config::instance().wallBuildCost);
 
-	game->getObjects().push_back(std::make_unique<Wall>(game->getNextObjectId(), position_));
+	Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), position_);
 
 	return true;
 }

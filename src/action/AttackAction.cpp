@@ -19,7 +19,7 @@ void AttackAction::decodeJSON(json msg)
 	target_pos_.x = msg["target_pos_x"];
 	target_pos_.y = msg["target_pos_y"];
 
-	if (!target_pos_.isValid(Config::getInstance().width, Config::getInstance().height))
+	if (!target_pos_.isValid(Config::instance().width, Config::instance().height))
 	{
 		is_valid_ = false;
 		return;
@@ -38,46 +38,46 @@ json AttackAction::encodeJSON()
 	return js;
 }
 
-bool AttackAction::attackObj(Object *obj, Unit *unit, Game *game) // returns object new hp, 1 if no object present
+bool AttackAction::attackObj(Object *obj, Unit *unit) // returns object new hp, 1 if no object present
 {
 	if (!obj)
 		return false;
 	if (obj->getType() == ObjectType::Unit)
 	{
-		obj->setHP(obj->getHP() - Config::getInstance().units[unit->getUnitType()].damageUnit);
-		damage_ = Config::getInstance().units[unit->getUnitType()].damageUnit;
+		obj->setHP(obj->getHP() - Config::instance().units[unit->getUnitType()].damageUnit);
+		damage_ = Config::instance().units[unit->getUnitType()].damageUnit;
 	}
 	else if (obj->getType() == ObjectType::Core)
 	{
-		obj->setHP(obj->getHP() - Config::getInstance().units[unit->getUnitType()].damageCore);
-		damage_ = Config::getInstance().units[unit->getUnitType()].damageCore;
+		obj->setHP(obj->getHP() - Config::instance().units[unit->getUnitType()].damageCore);
+		damage_ = Config::instance().units[unit->getUnitType()].damageCore;
 	}
 	else if (obj->getType() == ObjectType::Resource)
 	{
 		((Resource *)obj)->getMined(unit);
-		damage_ = Config::getInstance().units[unit->getUnitType()].damageResource;
+		damage_ = Config::instance().units[unit->getUnitType()].damageResource;
 	}
 	else if (obj->getType() == ObjectType::Wall)
 	{
-		obj->setHP(obj->getHP() - Config::getInstance().units[unit->getUnitType()].damageWall);
-		damage_ = Config::getInstance().units[unit->getUnitType()].damageWall;
+		obj->setHP(obj->getHP() - Config::instance().units[unit->getUnitType()].damageWall);
+		damage_ = Config::instance().units[unit->getUnitType()].damageWall;
 	}
 	else if (obj->getType() == ObjectType::Money)
 	{
 		unit->setBalance(unit->getBalance() + ((Money *)obj)->getBalance());
-		game->removeObjectById(obj->getId());
+		Board::instance().removeObjectById(obj->getId());
 		damage_ = 1;
 	}
 
 	return true;
 }
 
-bool AttackAction::execute(Game *game, Core *core)
+bool AttackAction::execute(Core *core)
 {
 	if (!is_valid_)
 		return false;
 
-	Object *unitObj = game->getObject(getUnitId());
+	Object *unitObj = Board::instance().getObjectById(getUnitId());
 
 	if (!unitObj || unitObj->getType() != ObjectType::Unit)
 		return false;
@@ -87,23 +87,22 @@ bool AttackAction::execute(Game *game, Core *core)
 	if (unit->getTeamId() != core->getTeamId())
 		return false;
 
-	if (Config::getInstance().units[unit->getUnitType()].attackType == AttackType::DIRECT_HIT)
+	if (Config::instance().units[unit->getUnitType()].attackType == AttackType::DIRECT_HIT)
 	{
-		Object *obj = game->getObjectAtPos(target_pos_);
+		Object *obj = Board::instance().getObjectAtPos(target_pos_);
 		if (!obj)
 			return false;
 
-		if (!attackObj(obj, unit, game))
+		if (!attackObj(obj, unit))
 			return false;
 	}
-	else if (Config::getInstance().units[unit->getUnitType()].attackType == AttackType::DROP_BOMB)
+	else if (Config::instance().units[unit->getUnitType()].attackType == AttackType::DROP_BOMB)
 	{
-		Object *obj = game->getObjectAtPos(target_pos_);
+		Object *obj = Board::instance().getObjectAtPos(target_pos_);
 		if (obj)
 			return false;
 
-		game->getObjects().push_back(
-			std::make_unique<Bomb>(game->getNextObjectId(), target_pos_));
+		Board::instance().addObject<Bomb>(Bomb(Board::instance().getNextObjectId()), target_pos_);
 	}
 	else
 	{

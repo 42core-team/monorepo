@@ -1,4 +1,5 @@
-#include "Game.h"
+#include "Visualizer.h"
+
 #include <iostream>
 #include <string>
 #include <unordered_map>
@@ -44,8 +45,8 @@ void Game::visualizeGameState(unsigned long long tick)
 			  << "    Bomb     = '" << OBJ_SYMBOL.at(ObjectType::Bomb) << "'\n"
 			  << "    Empty    = '" << EMPTY_CELL << "'\n\n";
 
-	int H = Config::getInstance().height;
-	int W = Config::getInstance().width;
+	int H = Config::instance().height;
+	int W = Config::instance().width;
 
 	std::cout << "╔";
 	for (int x = 0; x < W; ++x)
@@ -58,7 +59,12 @@ void Game::visualizeGameState(unsigned long long tick)
 		for (int x = 0; x < W; ++x)
 		{
 			auto pos = Position(x, y);
-			Object *obj = getObjectAtPos(pos);
+			Object *obj = Board::instance().getObjectAtPos(pos);
+			if (!obj)
+			{
+				std::cout << EMPTY_CELL;
+				continue;
+			}
 
 			char symbol = EMPTY_CELL;
 			if (obj)

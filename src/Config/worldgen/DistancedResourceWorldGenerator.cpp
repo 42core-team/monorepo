@@ -4,13 +4,13 @@ DistancedResourceWorldGenerator::DistancedResourceWorldGenerator()
 {
 }
 
-void DistancedResourceWorldGenerator::generateWorld(Game *game)
+void DistancedResourceWorldGenerator::generateWorld()
 {
 	Logger::Log("Generating world of type distanced resources.");
 
-	unsigned int width = Config::getInstance().width;
-	unsigned int height = Config::getInstance().height;
-	int resourceCount = Config::getInstance().worldGeneratorConfig.value("resourceOrMoneyCount", 20);
+	unsigned int width = Config::instance().width;
+	unsigned int height = Config::instance().height;
+	int resourceCount = Config::instance().worldGeneratorConfig.value("resourceOrMoneyCount", 20);
 
 	// place objects randomly
 
@@ -30,7 +30,7 @@ void DistancedResourceWorldGenerator::generateWorld(Game *game)
 		{
 			for (int y = -1; y >= 1; y++)
 			{
-				if (game->getObjectAtPos(Position(x, y)))
+				if (Board::instance().getObjectAtPos(Position(x, y)))
 				{
 					noNeighbours = false;
 					break;
@@ -43,44 +43,41 @@ void DistancedResourceWorldGenerator::generateWorld(Game *game)
 			continue; // repick another position
 		}
 
-		std::uniform_int_distribution<int> resourceOrMoney(0, Config::getInstance().worldGeneratorConfig.value("moneyChance", 4) - 1);
+		std::uniform_int_distribution<int> resourceOrMoney(0, Config::instance().worldGeneratorConfig.value("moneyChance", 4) - 1);
 		if (resourceOrMoney(eng_) == 0)
-			game->getObjects().push_back(std::make_unique<Money>(game->getNextObjectId(), randPos));
+			Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), randPos);
 		else
-			game->getObjects().push_back(std::make_unique<Resource>(game->getNextObjectId(), randPos));
+			Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), randPos);
 	}
 
 	// mirror playing field
 
-	game->getObjects().erase(
-		std::remove_if(game->getObjects().begin(), game->getObjects().end(),
-					   [width, height](const std::unique_ptr<Object> &obj)
-					   {
-						   Position pos = obj->getPosition();
-						   double ratio = static_cast<double>(pos.x) / (width - 1) +
-										  static_cast<double>(pos.y) / (height - 1);
-						   return (ratio >= 1.0 && obj->getType() != ObjectType::Core);
-					   }),
-		game->getObjects().end());
-
-	std::vector<Object *> objectsToMirror;
-	for (const auto &obj : game->getObjects())
+	for (auto &obj : Board::instance())
 	{
-		Position pos = obj->getPosition();
+		Position pos = Board::instance().getObjectPositionById(obj.getId());
 		double ratio = static_cast<double>(pos.x) / (width - 1) +
 						static_cast<double>(pos.y) / (height - 1);
-		if (ratio < 1.0 && obj->getType() != ObjectType::Core)
-		{
-			objectsToMirror.push_back(obj.get());
-		}
+		if (ratio >= 1.0 && obj.getType() != ObjectType::Core)
+			Board::instance().removeObjectById(obj.getId());
 	}
 
-	for (auto *obj : objectsToMirror)
+	for (auto &obj : Board::instance())
 	{
-		Position pos = obj->getPosition();
-		int newX = height - 1 - pos.x;
-		int newY = width - 1 - pos.y;
-		Position newPos(newX, newY);
-		obj->clone(newPos, game);
+		if (obj.getType() == ObjectType::Core)
+			continue;
+		Position pos = Board::instance().getObjectPositionById(obj.getId());
+		Position newPos(height - 1 - pos.x, width - 1 - pos.y);
+		switch (obj.getType())
+		{
+			case ObjectType::Resource:
+				Board::instance().addObject<Resource>(Resource(obj.getId()), newPos);
+				break;
+			case ObjectType::Money:
+				Board::instance().addObject<Money>(Money(obj.getId()), newPos);
+				break;
+			default:
+				Logger::Log("Unknown object type while mirroring: " + std::to_string(static_cast<int>(obj.getType())));
+				break;
+		}
 	}
 }

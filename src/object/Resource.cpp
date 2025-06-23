@@ -1,18 +1,16 @@
 #include "Resource.h"
 
-#include "Game.h"
-
-Resource::Resource(unsigned int id, Position pos)
-	: Object(id, pos, Config::getInstance().resourceHp, ObjectType::Resource),
-	  balance_(Config::getInstance().resourceIncome) {}
-Resource::Resource(unsigned int id, Position pos, unsigned int balance)
-	: Object(id, pos, static_cast<unsigned int>(std::round(double(balance) / Config::getInstance().resourceIncome * Config::getInstance().resourceHp)),
+Resource::Resource(unsigned int id)
+	: Object(id, Config::instance().resourceHp, ObjectType::Resource),
+	  balance_(Config::instance().resourceIncome) {}
+Resource::Resource(unsigned int id, unsigned int balance)
+	: Object(id, static_cast<unsigned int>(std::round(double(balance) / Config::instance().resourceIncome * Config::instance().resourceHp)),
 			 ObjectType::Resource),
 	  balance_(balance) {}
 
 void Resource::getMined(Unit *miner)
 {
-	unsigned int damage = Config::getInstance().units[miner->getUnitType()].damageResource;
+	unsigned int damage = Config::instance().units[miner->getUnitType()].damageResource;
 	if ((int)damage > hp_)
 		damage = hp_;
 
@@ -34,17 +32,7 @@ void Resource::getMined(Unit *miner)
 	miner->addBalance(reward);
 }
 
-void Resource::tick(unsigned long long tickCount, Game *game)
+void Resource::tick(unsigned long long tickCount)
 {
 	(void)tickCount;
-	(void)game;
-}
-
-std::unique_ptr<Object> &Resource::clone(Position newPos, Game *game) const
-{
-	int nextObjId = game->getNextObjectId();
-	std::unique_ptr<Object> obj = std::make_unique<Resource>(nextObjId, newPos, balance_);
-	obj->setHP(this->getHP());
-	game->getObjects().push_back(std::move(obj));
-	return game->getObjects().back();
 }

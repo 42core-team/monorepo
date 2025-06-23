@@ -14,6 +14,8 @@
 #include "Action.h"
 #include "Utils.h"
 #include "ReplayEncoder.h"
+#include "Board.h"
+#include "Visualizer.h"
 
 #include "json.hpp"
 using json = nlohmann::ordered_json;
@@ -29,26 +31,15 @@ class Game
 
 		void run();
 
-		Core * getCore(unsigned int teamId);
-		std::vector<Core> getCores();
-		Object * getObject(unsigned int id);
-		std::vector<std::unique_ptr<Object>> & getObjects() { return objects_; }
-
-		Object * getObjectAtPos(Position pos);
-		void removeObjectById(unsigned int id);
-
-		unsigned int getNextObjectId() { return nextObjectId_++; }
-
-		void visualizeGameState(unsigned long long tick);
-
 	private:
 		void tick(unsigned long long tick);
+
+		json encodeState(std::vector<std::pair<Action *, Core &>> actions, unsigned long long tick);
 		void sendState(std::vector<std::pair<Action *, Core &>> actions, unsigned long long tick);
 		void sendConfig();
 
 		unsigned int teamCount_;
 		unsigned int nextObjectId_;
-		std::vector<std::unique_ptr<Object>> objects_;
 		std::vector<Bridge*> bridges_;
 
 		ReplayEncoder replayEncoder_;

@@ -5,11 +5,6 @@ std::string Config::configFilePath = "";
 #include "JigsawWorldGenerator.h"
 #include "DistancedResourceWorldGenerator.h"
 
-namespace
-{
-	std::unique_ptr<GameConfig> configInstance;
-}
-
 GameConfig parseConfig()
 {
 	GameConfig config;
@@ -21,8 +16,7 @@ GameConfig parseConfig()
 		exit(EXIT_FAILURE);
 	}
 
-	json j;
-	inFile >> j;
+	json j = json::parse(inFile);
 
 	config.width = j.value("width", 25);
 	config.height = j.value("height", 25);
@@ -97,25 +91,24 @@ GameConfig parseConfig()
 	return config;
 }
 
-GameConfig &Config::getInstance()
+GameConfig &Config::instance()
 {
-	if (!configInstance)
-		configInstance = std::make_unique<GameConfig>(parseConfig());
-	return *configInstance;
+	static GameConfig configInstance = parseConfig();
+	return configInstance;
 }
 
 Position &Config::getCorePosition(unsigned int teamId)
 {
-	return getInstance().corePositions[teamId];
+	return instance().corePositions[teamId];
 }
 UnitConfig &Config::getUnitConfig(unsigned int unit_type)
 {
-	return getInstance().units[unit_type];
+	return instance().units[unit_type];
 }
 
 json Config::encodeConfig()
 {
-	const GameConfig &config = Config::getInstance();
+	const GameConfig &config = Config::instance();
 
 	json configJson;
 

@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Action.h"
+#include "Utils.h"
 
 #include "json.hpp"
 using json = nlohmann::ordered_json;
@@ -15,7 +16,7 @@ public:
 
 	unsigned int getUnitType() const { return unit_type_; }
 
-	bool execute(Game *game, Core *core);
+	bool execute(Core *core);
 	void decodeJSON(json msg);
 	json encodeJSON();
 

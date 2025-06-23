@@ -3,20 +3,21 @@
 
 #include "Object.h"
 #include "Common.h"
+#include "Config.h"
+#include "Board.h"
 
 class Bomb : public Object
 {
 	public:
-		Bomb(unsigned int id, Position pos);
+		Bomb(unsigned int id);
+		Bomb(const Bomb &other)
+			: Object(other), countdown_(other.countdown_) {}
 
-		void tick(unsigned long long tickCount, Game * game);
-		std::unique_ptr<Object> & clone(Position newPos, Game * game) const;
+		void tick(unsigned long long tickCount);
 
-		Position getPos() const { return pos_; }
 		unsigned int getCountdown() const { return countdown_; }
 
 	private:
-		Position pos_;
 		unsigned int countdown_ = 0; // Countdown for the bomb to explode
 };
 
