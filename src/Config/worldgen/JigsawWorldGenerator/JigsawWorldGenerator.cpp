@@ -333,10 +333,8 @@ void JigsawWorldGenerator::clearPathBetweenCores()
 	}
 
 	if (!found)
-	{
-		Logger::Log(LogLevel::ERROR, "No viable path found between cores.");
-		return;
-	}
+		Logger::Log(LogLevel::WARNING, "No viable path found between cores. Carving a new one.");
+	
 
 	std::vector<Position> path;
 	int cx = end.x, cy = end.y;

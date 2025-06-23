@@ -13,6 +13,8 @@ class Board
 {
 	public:
 		Board(unsigned int grid_width, unsigned int grid_height);
+		Board(const Board&) = delete;
+		Board& operator=(const Board&) = delete;
 		~Board() = default;
 
 		static Board& instance() {

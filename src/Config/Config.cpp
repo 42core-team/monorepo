@@ -16,8 +16,7 @@ GameConfig parseConfig()
 		exit(EXIT_FAILURE);
 	}
 
-	json j;
-	inFile >> j;
+	json j = json::parse(inFile);
 
 	config.width = j.value("width", 25);
 	config.height = j.value("height", 25);
