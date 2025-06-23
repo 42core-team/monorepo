@@ -45,6 +45,13 @@ void Visualizer::visualizeGameState(unsigned long long tick)
 			  << "    Bomb     = '" << OBJ_SYMBOL.at(ObjectType::Bomb) << "'\n"
 			  << "    Empty    = '" << EMPTY_CELL << "'\n\n";
 
+	Core * core0 = Board::instance().getCoreByTeamId(1);
+	Core * core1 = Board::instance().getCoreByTeamId(2);
+	if (core0)
+		std::cout << "Core H Health: " << core0->getHP() << std::endl;
+	if (core1)
+		std::cout << "Core h Health: " << core1->getHP() << std::endl;
+
 	int H = Config::instance().height;
 	int W = Config::instance().width;
 

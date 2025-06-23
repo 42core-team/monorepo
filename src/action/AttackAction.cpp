@@ -9,7 +9,7 @@ AttackAction::AttackAction(json msg) : Action(ActionType::MOVE)
 
 void AttackAction::decodeJSON(json msg)
 {
-	if (!msg.contains("unit_id") || !msg.contains("target_id"))
+	if (!msg.contains("unit_id") || !msg.contains("target_pos_x") || !msg.contains("target_pos_y"))
 	{
 		is_valid_ = false;
 		return;
