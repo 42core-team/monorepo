@@ -106,12 +106,12 @@ char *ft_all_action_json(void)
 		action->array[1] = unit_id;
 
 		json_node *target_id = create_node(JSON_TYPE_NUMBER);
-		target_id->key = strdup("target_id_x");
+		target_id->key = strdup("target_pos_x");
 		target_id->number = actionObj->target_pos.x;
 		action->array[2] = target_id;
 
 		json_node *target_y = create_node(JSON_TYPE_NUMBER);
-		target_y->key = strdup("target_id_y");
+		target_y->key = strdup("target_pos_y");
 		target_y->number = actionObj->target_pos.y;
 		action->array[3] = target_y;
 
