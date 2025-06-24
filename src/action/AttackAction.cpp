@@ -42,6 +42,7 @@ bool AttackAction::attackObj(Object *obj, Unit *unit) // returns object new hp, 
 {
 	if (!obj)
 		return false;
+	unit->resetNextMoveOpp();
 	if (obj->getType() == ObjectType::Unit)
 	{
 		obj->setHP(obj->getHP() - Config::instance().units[unit->getUnitType()].damageUnit);

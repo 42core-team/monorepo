@@ -45,6 +45,31 @@ void Visualizer::visualizeGameState(unsigned long long tick)
 			  << "    Bomb     = '" << OBJ_SYMBOL.at(ObjectType::Bomb) << "'\n"
 			  << "    Empty    = '" << EMPTY_CELL << "'\n\n";
 
+	for (const Object & obj : Board::instance())
+	{
+		ObjectType type = obj.getType();
+		if (type == ObjectType::Bomb || type == ObjectType::Money || type == ObjectType::Resource || type == ObjectType::Wall)
+			continue;
+		std::cout << "ID: " << obj.getId() << " HP: " << obj.getHP();
+		if (obj.getType() == ObjectType::Core)
+		{
+			const Core &core = dynamic_cast<const Core &>(obj);
+			std::cout << " Type: Core";
+			std::cout << " Team: " << core.getTeamId();
+			std::cout << " Balance: " << core.getBalance();
+		}
+		if  (obj.getType() == ObjectType::Unit)
+		{
+			const Unit &unit = dynamic_cast<const Unit &>(obj);
+			std::cout << " Type: Unit";
+			std::cout << " Team: " << unit.getTeamId();
+			std::cout << " Type: " << unit.getUnitType();
+			std::cout << " Balance: " << unit.getBalance();
+			std::cout << " Next Move Opp: " << unit.getNextMoveOpp();
+		}
+		std::cout << std::endl;
+	}
+
 	Core * core0 = Board::instance().getCoreByTeamId(1);
 	Core * core1 = Board::instance().getCoreByTeamId(2);
 	if (core0)
