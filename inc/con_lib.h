@@ -330,6 +330,7 @@ t_obj *ft_get_nearest_resource(t_obj *unit);
 t_unit_config *ft_get_unit_config(t_unit_type type);
 // ---------------- get utils ----------------
 double ft_distance(t_obj *obj1, t_obj *obj2);
+int	ft_distance_pos(t_pos pos1, t_pos pos2);
 
 // --------------- actions.c ---------------
 /**
