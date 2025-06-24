@@ -1,4 +1,5 @@
 #include "Game.h"
+#include <memory>
 
 Game::Game(std::vector<unsigned int> team_ids)
 	: teamCount_(team_ids.size()), nextObjectId_(1)
@@ -10,15 +11,11 @@ Game::Game(std::vector<unsigned int> team_ids)
 	Config::instance().worldGenerator->generateWorld();
 	Logger::Log("Game created with " + std::to_string(team_ids.size()) + " teams.");
 }
-Game::~Game()
-{
-	for (auto bridge : bridges_)
-		delete bridge;
-}
+Game::~Game() {}
 
-void Game::addBridge(Bridge *bridge)
+void Game::addBridge(std::unique_ptr<Bridge> bridge)
 {
-	bridges_.push_back(bridge);
+	bridges_.emplace_back(std::move(bridge));
 }
 
 void Game::run()
@@ -80,7 +77,7 @@ void Game::tick(unsigned long long tick)
 
 	std::vector<std::pair<Action *, Core &>> actions; // action, team id
 
-	for (auto bridge : bridges_)
+	for (auto& bridge : bridges_)
 	{
 		json msg;
 		bridge->receiveMessage(msg);
@@ -159,14 +156,14 @@ void Game::sendState(std::vector<std::pair<Action *, Core &>> actions, unsigned 
 
 	replayEncoder_.addTickState(state);
 
-	for (auto bridge : bridges_)
+	for (auto& bridge : bridges_)
 		bridge->sendMessage(state);
 }
 void Game::sendConfig()
 {
 	json config = Config::encodeConfig();
 
-	for (auto bridge : bridges_)
+	for (auto& bridge : bridges_)
 	{
 		bridge->sendMessage(config);
 	}

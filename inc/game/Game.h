@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <memory>
 #include <vector>
 #include <chrono>
 #include <iostream>
@@ -27,7 +28,7 @@ class Game
 	public:
 		Game(std::vector<unsigned int> team_ids);
 		~Game();
-		void addBridge(Bridge* bridge);
+		void addBridge(std::unique_ptr<Bridge> bridge);
 
 		void run();
 
@@ -40,7 +41,7 @@ class Game
 
 		unsigned int teamCount_;
 		unsigned int nextObjectId_;
-		std::vector<Bridge*> bridges_;
+		std::vector<std::unique_ptr<Bridge>> bridges_;
 
 		ReplayEncoder replayEncoder_;
 };
