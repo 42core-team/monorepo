@@ -17,6 +17,7 @@
 #include "Game.h"
 #include "Config.h"
 #include "Logger.h"
+#include "Server.h"
 
 #include "json.hpp"
 using json = nlohmann::ordered_json;
@@ -68,55 +69,22 @@ int main(int argc, char *argv[])
 		teamIdsStr += std::to_string(teamId) + " ";
 	Logger::Log(teamIdsStr);
 
-	int server_fd = socket(AF_INET, SOCK_STREAM, 0);
-	if (server_fd < 0)
-	{
-		Logger::Log(LogLevel::ERROR, "Could not create socket.");
-		return 1;
-	}
-	int opt = 1;
-	if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
-	{
-		Logger::Log(LogLevel::ERROR, "Could not set socket options.");
-		close(server_fd);
-		return 1;
-	}
-
-	struct sockaddr_in address;
-	address.sin_family = AF_INET;
-	address.sin_addr.s_addr = INADDR_ANY;
-	address.sin_port = htons(4242);
-
-	if (bind(server_fd, reinterpret_cast<sockaddr *>(&address), sizeof(address)) < 0)
-	{
-		Logger::Log(LogLevel::ERROR, "Could not bind socket.");
-		close(server_fd);
-		return 1;
-	}
-
-	if (listen(server_fd, SOMAXCONN) < 0)
-	{
-		Logger::Log(LogLevel::ERROR, "Could not listen on socket.");
-		close(server_fd);
-		return 1;
-	}
-
-	Logger::Log("Server listening on port 4242...");
+	// will throw a runtime error if something fails
+	Server server{};
 
 	std::unordered_map<unsigned int, std::unique_ptr<Bridge>> bridges{};
 
 	while (bridges.size() < expectedTeamIds.size())
 	{
-		sockaddr_in clientAddress;
-		socklen_t clientLen = sizeof(clientAddress);
-		int client_fd = accept(server_fd, reinterpret_cast<sockaddr *>(&clientAddress), &clientLen);
+		std::string client_addr;
+		int client_fd = server.acceptClient(client_addr);
 		if (client_fd < 0)
 		{
 			Logger::Log(LogLevel::WARNING, "accept failed: " + std::string(strerror(errno)));
 			continue;
 		}
 
-		Logger::Log("Accepted connection from " + std::string(inet_ntoa(clientAddress.sin_addr)));
+		Logger::Log("Accepted connection from " + client_addr);
 
 		std::unique_ptr<Bridge> bridge = std::make_unique<Bridge>(client_fd, expectedTeamIds[bridges.size()]);
 		bridge->start();
@@ -164,7 +132,6 @@ int main(int argc, char *argv[])
 
 	gameThread.join();
 
-	close(server_fd);
 	curl_global_cleanup();
 
 	return 0;
