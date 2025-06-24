@@ -10,7 +10,11 @@ void Unit::tick(unsigned long long tickCount)
 {
 	(void)tickCount;
 	if (next_move_opp_ > 0)
+	{
 		next_move_opp_--;
+		if (calcNextMovementOpp() < next_move_opp_)
+			next_move_opp_ = calcNextMovementOpp();
+	}
 }
 
 unsigned int Unit::calcNextMovementOpp()
