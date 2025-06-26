@@ -1,38 +1,36 @@
 #include "Action.h"
+#include <memory>
 
 Action::Action(ActionType type) : is_valid_(true), type_(type) {}
 
-std::vector<Action *> Action::parseActions(json msg)
+std::vector<std::unique_ptr<Action>> Action::parseActions(json msg)
 {
 	if (!msg.contains("actions"))
-		return std::vector<Action *>();
+		return std::vector<std::unique_ptr<Action>>();
 
-	std::vector<Action *> actions;
+	std::vector<std::unique_ptr<Action>> actions;
 
 	for (auto &actionJson : msg["actions"])
 	{
-		Action *newAction = nullptr;
+		std::unique_ptr<Action> newAction;
 		if (actionJson.contains("type"))
 		{
 			if (actionJson["type"] == "move")
-				newAction = new MoveAction(actionJson);
+				newAction = std::make_unique<MoveAction>(actionJson);
 			else if (actionJson["type"] == "create")
-				newAction = new CreateAction(actionJson);
+				newAction = std::make_unique<CreateAction>(actionJson);
 			else if (actionJson["type"] == "transfer_money")
-				newAction = new TransferMoneyAction(actionJson);
+				newAction = std::make_unique<TransferMoneyAction>(actionJson);
 			else if (actionJson["type"] == "build")
-				newAction = new BuildAction(actionJson);
+				newAction = std::make_unique<BuildAction>(actionJson);
 			else if (actionJson["type"] == "attack")
-				newAction = new AttackAction(actionJson);
+				newAction = std::make_unique<AttackAction>(actionJson);
 			if (newAction && !newAction->is_valid_)
-			{
-				delete newAction;
 				newAction = nullptr;
-			}
 		}
 
 		if (newAction != nullptr)
-			actions.push_back(newAction);
+			actions.emplace_back(std::move(newAction));
 	}
 
 	return actions;

@@ -75,7 +75,7 @@ void Game::tick(unsigned long long tick)
 {
 	// 1. COMPUTE ACTIONS
 
-	std::vector<std::pair<Action *, Core &>> actions; // action, team id
+	std::vector<std::pair<std::unique_ptr<Action>, Core &>> actions; // action, team id
 
 	for (auto& bridge : bridges_)
 	{
@@ -89,24 +89,20 @@ void Game::tick(unsigned long long tick)
 		if (core->getHP() <= 0)
 			continue;
 
-		std::vector<Action *> clientActions = Action::parseActions(msg);
+		std::vector<std::unique_ptr<Action>> clientActions = Action::parseActions(msg);
 
-		for (Action *action : clientActions)
-			actions.emplace_back(action, *core);
+		for (auto& action : clientActions)
+			actions.emplace_back(std::move(action), *core);
 	}
 
 	shuffle_vector(actions); // shuffle action execution order to ensure fairness
 
-	for (int i = 0; i < (int)actions.size(); i++)
-	{
-		Action *action = actions[i].first;
-		Core &core = actions[i].second;
+	for (auto& ele : actions) {
+		auto& action = ele.first;
+		Core& core = ele.second;
 
 		if (!action->execute(&core))
-		{
-			delete action;
-			actions[i].first = nullptr;
-		}
+			action = nullptr;
 	}
 
 	// 2. UPDATE OBJECTS
@@ -142,15 +138,9 @@ void Game::tick(unsigned long long tick)
 
 	sendState(actions, tick);
 	Visualizer::visualizeGameState(tick);
-
-	for (auto &action : actions)
-	{
-		if (action.first != nullptr)
-			delete action.first;
-	}
 }
 
-void Game::sendState(std::vector<std::pair<Action *, Core &>> actions, unsigned long long tick)
+void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core &>> &actions, unsigned long long tick)
 {
 	json state = encodeState(actions, tick);
 
