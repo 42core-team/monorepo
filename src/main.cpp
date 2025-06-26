@@ -1,3 +1,4 @@
+#include <memory>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -92,8 +93,7 @@ int main(int argc, char *argv[])
 
 	Logger::Log("Server listening on port 4242...");
 
-	std::unordered_map<unsigned int, Bridge *>
-		bridges;
+	std::unordered_map<unsigned int, std::unique_ptr<Bridge>> bridges{};
 
 	while (bridges.size() < expectedTeamIds.size())
 	{
@@ -108,20 +108,18 @@ int main(int argc, char *argv[])
 
 		Logger::Log("Accepted connection from " + std::string(inet_ntoa(clientAddress.sin_addr)));
 
-		Bridge *bridge = new Bridge(client_fd, expectedTeamIds[bridges.size()]);
+		std::unique_ptr<Bridge> bridge = std::make_unique<Bridge>(client_fd, expectedTeamIds[bridges.size()]);
 		bridge->start();
 
 		json loginMessage;
 		if (!bridge->receiveMessage(loginMessage))
 		{
 			Logger::Log(LogLevel::WARNING, "Did not receive a login message from the client.");
-			delete bridge;
 			continue;
 		}
 		if (!loginMessage.contains("password") || loginMessage["password"] != "42") // very important and secure authentication
 		{
 			Logger::Log(LogLevel::WARNING, "Incorrect password.");
-			delete bridge;
 			continue;
 		}
 		unsigned int teamId = loginMessage["id"];
@@ -130,17 +128,15 @@ int main(int argc, char *argv[])
 		if (std::find(expectedTeamIds.begin(), expectedTeamIds.end(), teamId) == expectedTeamIds.end())
 		{
 			Logger::Log(LogLevel::WARNING, "Received unexpected team ID " + std::to_string(teamId));
-			delete bridge;
 			continue;
 		}
 		if (bridges.find(teamId) != bridges.end())
 		{
 			Logger::Log(LogLevel::WARNING, "Duplicate connection for team ID " + std::to_string(teamId));
-			delete bridge;
 			continue;
 		}
 
-		bridges[teamId] = bridge;
+		bridges[teamId] = std::move(bridge);
 		Logger::Log("Accepted team " + std::to_string(teamId));
 	}
 
@@ -148,10 +144,8 @@ int main(int argc, char *argv[])
 
 	Game game(expectedTeamIds);
 
-	for (auto &pair : bridges)
-	{
-		game.addBridge(pair.second);
-	}
+	for (auto& pair : bridges)
+		game.addBridge(std::move(pair.second));
 
 	std::thread gameThread([&game]()
 						   { game.run(); });

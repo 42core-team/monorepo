@@ -1,4 +1,5 @@
 #include "Game.h"
+#include <memory>
 
 Game::Game(std::vector<unsigned int> team_ids)
 	: teamCount_(team_ids.size()), nextObjectId_(1)
@@ -10,15 +11,11 @@ Game::Game(std::vector<unsigned int> team_ids)
 	Config::instance().worldGenerator->generateWorld();
 	Logger::Log("Game created with " + std::to_string(team_ids.size()) + " teams.");
 }
-Game::~Game()
-{
-	for (auto bridge : bridges_)
-		delete bridge;
-}
+Game::~Game() {}
 
-void Game::addBridge(Bridge *bridge)
+void Game::addBridge(std::unique_ptr<Bridge> bridge)
 {
-	bridges_.push_back(bridge);
+	bridges_.emplace_back(std::move(bridge));
 }
 
 void Game::run()
@@ -78,9 +75,9 @@ void Game::tick(unsigned long long tick)
 {
 	// 1. COMPUTE ACTIONS
 
-	std::vector<std::pair<Action *, Core &>> actions; // action, team id
+	std::vector<std::pair<std::unique_ptr<Action>, Core &>> actions; // action, team id
 
-	for (auto bridge : bridges_)
+	for (auto& bridge : bridges_)
 	{
 		json msg;
 		bridge->receiveMessage(msg);
@@ -92,24 +89,20 @@ void Game::tick(unsigned long long tick)
 		if (core->getHP() <= 0)
 			continue;
 
-		std::vector<Action *> clientActions = Action::parseActions(msg);
+		std::vector<std::unique_ptr<Action>> clientActions = Action::parseActions(msg);
 
-		for (Action *action : clientActions)
-			actions.emplace_back(action, *core);
+		for (auto& action : clientActions)
+			actions.emplace_back(std::move(action), *core);
 	}
 
 	shuffle_vector(actions); // shuffle action execution order to ensure fairness
 
-	for (int i = 0; i < (int)actions.size(); i++)
-	{
-		Action *action = actions[i].first;
-		Core &core = actions[i].second;
+	for (auto& ele : actions) {
+		auto& action = ele.first;
+		Core& core = ele.second;
 
 		if (!action->execute(&core))
-		{
-			delete action;
-			actions[i].first = nullptr;
-		}
+			action = nullptr;
 	}
 
 	// 2. UPDATE OBJECTS
@@ -145,28 +138,22 @@ void Game::tick(unsigned long long tick)
 
 	sendState(actions, tick);
 	Visualizer::visualizeGameState(tick);
-
-	for (auto &action : actions)
-	{
-		if (action.first != nullptr)
-			delete action.first;
-	}
 }
 
-void Game::sendState(std::vector<std::pair<Action *, Core &>> actions, unsigned long long tick)
+void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core &>> &actions, unsigned long long tick)
 {
 	json state = encodeState(actions, tick);
 
 	replayEncoder_.addTickState(state);
 
-	for (auto bridge : bridges_)
+	for (auto& bridge : bridges_)
 		bridge->sendMessage(state);
 }
 void Game::sendConfig()
 {
 	json config = Config::encodeConfig();
 
-	for (auto bridge : bridges_)
+	for (auto& bridge : bridges_)
 	{
 		bridge->sendMessage(config);
 	}

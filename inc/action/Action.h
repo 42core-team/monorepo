@@ -1,6 +1,7 @@
 #ifndef ACTION_H
 #define ACTION_H
 
+#include <memory>
 #include <vector>
 
 #include "Config.h"
@@ -32,7 +33,7 @@ public:
 	bool isValid() const { return is_valid_; }
 	ActionType getActionType() const { return type_; }
 
-	static std::vector<Action *> parseActions(json msg);
+	static std::vector<std::unique_ptr<Action>> parseActions(json msg);
 
 	virtual bool execute(Core *core) = 0;
 	virtual void decodeJSON(json msg) = 0;
