@@ -1,22 +1,5 @@
 #include "con_lib.h"
 
-void ft_print_status()
-{
-	const t_status *status = &game.status;
-
-	printf("Status: ");
-	if (*status == STATUS_OK)
-		printf("STATUS_OK\n");
-	else if (*status == STATUS_PAUSED)
-		printf("STATUS_PAUSED\n");
-	else if (*status == STATUS_END)
-		printf("STATUS_END\n");
-	else if (*status == STATUS_WAIT_FOR_CLIENTS)
-		printf("STATUS_WAIT_FOR_CLIENTS\n");
-	else
-		printf("UNKNOWN\n");
-}
-
 // TODO: ft print moneys & ft print bombs
 
 void ft_print_cores()
@@ -140,7 +123,6 @@ void ft_print_game_config()
 void ft_print_all()
 {
 	ft_print_game_config(&game.config);
-	ft_print_status(game.status);
 	ft_print_cores(game.cores);
 	ft_print_resources(game.resources);
 	ft_print_walls(game.walls);

@@ -197,6 +197,7 @@ char *ft_all_action_json(void)
 
 	char *json = json_to_string(root_obj);
 	free_json(root_obj);
+	free(actions_array);
 
 	int json_len = strlen(json);
 	json = realloc(json, json_len + 2);

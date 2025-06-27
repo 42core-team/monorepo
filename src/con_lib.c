@@ -94,8 +94,11 @@ void ft_loop(t_event_handler handler, void *custom_data)
 	if (event_handler.on_start)
 		event_handler.on_start(custom_data);
 
-	while (game.status != STATUS_END)
+	bool first_tick = true;
+	while ((ft_get_my_core() != NULL && ft_get_my_core()->hp > 0) || first_tick)
 	{
+		first_tick = false;
+
 		actions = ft_all_action_json();
 		ft_reset_actions();
 		if (debug)
@@ -106,8 +109,8 @@ void ft_loop(t_event_handler handler, void *custom_data)
 		msg = ft_read_socket(socket_fd);
 		if (!msg)
 		{
-			printf("Something went very awry and there was no json received.\n");
-			continue;
+			printf("The connection was closed by the server. Bye, bye!\n");
+			break;
 		}
 		if (debug)
 		{
@@ -118,8 +121,6 @@ void ft_loop(t_event_handler handler, void *custom_data)
 
 		ft_parse_json_state(msg);
 		free(msg);
-		if (game.status == STATUS_END)
-			break;
 
 		if (event_handler.on_tick)
 			event_handler.on_tick(game.elapsed_ticks, custom_data);
@@ -143,7 +144,7 @@ void ft_loop(t_event_handler handler, void *custom_data)
 	if (event_handler.on_exit)
 		event_handler.on_exit(custom_data);
 
-	if (ft_get_my_core())
+	if (ft_get_my_core() && ft_get_my_core()->hp > 0)
 		printf("Game over! You won!\n");
 	else
 		printf("Game over! You lost!\n");
