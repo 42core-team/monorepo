@@ -98,11 +98,12 @@ typedef enum e_unit_type
 	UNIT_BUILDER = 3,
 	UNIT_BOMBERMAN = 4
 } t_unit_type;
-typedef enum e_attack_type
+typedef enum e_build_type
 {
-	ATTACK_DIRECT_HIT = 0,
-	ATTACK_BOMB_DROP = 1
-} t_attack_type;
+	BUILD_TYPE_NONE = 0,
+	BUILD_TYPE_WALL = 1,
+	BUILD_TYPE_BOMB = 2
+} t_build_type;
 
 typedef struct s_unit_config
 {
@@ -124,8 +125,8 @@ typedef struct s_unit_config
 	unsigned long dmg_wall;
 	/// @brief How much damage the unit deals to bombs.
 	unsigned long dmg_bomb;
-	/// @brief The units attack type.
-	t_attack_type attack_type;
+	/// @brief The units build type.
+	t_build_type build_type;
 	/// @brief The maximum reach the unit can attack. Unused for direct hit attack type units.
 	unsigned long attack_reach;
 	/// @brief The time a unit waits between moves.
