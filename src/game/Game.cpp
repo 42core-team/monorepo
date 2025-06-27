@@ -2,7 +2,7 @@
 #include <memory>
 
 Game::Game(std::vector<unsigned int> team_ids)
-	: teamCount_(team_ids.size()), nextObjectId_(1)
+	: nextObjectId_(1)
 {
 	std::vector<unsigned int> team_ids_double = team_ids;
 	shuffle_vector(team_ids_double); // randomly assign core positions to ensure fairness
@@ -29,9 +29,7 @@ void Game::run()
 	auto startTime = clock::now();
 	unsigned long long tickCount = 0;
 
-	int alivePlayers = teamCount_;
-
-	while (alivePlayers > 1) // CORE GAMELOOP
+	while (Board::instance().getCoreCount() > 1) // CORE GAMELOOP
 	{
 		auto now = clock::now();
 		auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - startTime);
@@ -53,15 +51,6 @@ void Game::run()
 
 		tick(tickCount);
 
-		alivePlayers = 0;
-		for (const auto &obj : Board::instance())
-		{
-			if (obj.getType() != ObjectType::Core)
-				continue;
-			if (obj.getHP() > 0)
-				alivePlayers++;
-		}
-
 		tickCount++;
 	}
 
@@ -73,6 +62,14 @@ void Game::run()
 
 void Game::tick(unsigned long long tick)
 {
+	// print brdiges and ids for debug
+	for (const auto& bridge : bridges_)
+	{
+		Logger::Log("Bridge for team " + std::to_string(bridge->getTeamId()) + " is connected.");
+	}
+	Logger::Log("Tick " + std::to_string(tick) + " started.");
+
+
 	// 1. COMPUTE ACTIONS
 
 	std::vector<std::pair<std::unique_ptr<Action>, Core &>> actions; // action, team id
@@ -118,11 +115,7 @@ void Game::tick(unsigned long long tick)
 				Board::instance().removeObjectById(obj.getId());
 				Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), unitBalance), objPos);
 			}
-			else if (obj.getType() == ObjectType::Core)
-			{
-				teamCount_--;
-			}
-			else
+			else if (obj.getType() != ObjectType::Core)
 			{
 				Board::instance().removeObjectById(obj.getId());
 			}
@@ -138,6 +131,28 @@ void Game::tick(unsigned long long tick)
 
 	sendState(actions, tick);
 	Visualizer::visualizeGameState(tick);
+
+	// 4. REMOVE CORES
+	// connection libs must receive one final state json with their core at 0 hp to realize they lost
+	for (auto &obj : Board::instance())
+	{
+		if (obj.getType() == ObjectType::Core && obj.getHP() <= 0)
+		{
+			Core &core = (Core &)obj;
+			for (auto &bridge : bridges_)
+			{
+				if (!bridge->isDisconnected() && bridge->getTeamId() == core.getTeamId())
+				{
+					bridges_.erase(std::remove(bridges_.begin(), bridges_.end(), bridge), bridges_.end());
+					break;
+				}
+			}
+			
+			// remove core from board
+			Logger::Log("Core of team " + std::to_string(core.getTeamId()) + " has been destroyed.");
+			Board::instance().removeObjectById(obj.getId());
+		}
+	}
 }
 
 void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core &>> &actions, unsigned long long tick)

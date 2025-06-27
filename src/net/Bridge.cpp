@@ -82,7 +82,7 @@ void Bridge::readLoop()
 		while (!disconnected_)
 		{
 			ssize_t n = ::read(socket_fd_, buffer, buffer_size);
-			if (n <= 0)
+			if (n < 0)
 			{
 				if (errno == EAGAIN || errno == EWOULDBLOCK)
 				{
@@ -95,6 +95,12 @@ void Bridge::readLoop()
 					disconnected_ = true;
 					break;
 				}
+			}
+			else if (n == 0)
+			{
+				Logger::Log(LogLevel::WARNING, "Connection closed by peer. Disconnecting " + std::to_string(team_id_) + ".");
+				disconnected_ = true;
+				break;
 			}
 			data.append(buffer, n);
 
