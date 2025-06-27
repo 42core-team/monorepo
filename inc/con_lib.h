@@ -9,18 +9,6 @@
 #include <math.h>
 #include <stdio.h>
 
-typedef enum e_status
-{
-	/// @brief The game is running.
-	STATUS_OK = 0,
-	/// @brief The game is paused.
-	STATUS_PAUSED = 1,
-	/// @brief The game is over.
-	STATUS_END = 2,
-	/// @brief The game is waiting for clients to connect.
-	STATUS_WAIT_FOR_CLIENTS = 3
-} t_status;
-
 typedef enum e_obj_type
 {
 	OBJ_CORE,
@@ -215,10 +203,6 @@ typedef struct s_actions
 
 typedef struct s_game
 {
-	/**
-	 * @brief The status of the game. Can be OK, PAUSED, END or WAIT_FOR_CLIENTS.
-	 */
-	t_status status;
 	/**
 	 * @brief The elapsed ticks since the game started.
 	 */
