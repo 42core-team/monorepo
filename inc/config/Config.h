@@ -48,10 +48,11 @@ struct GameConfig
 	std::vector<Position> corePositions;
 };
 
-enum class AttackType
+enum class BuildType
 {
-	DIRECT_HIT,
-	DROP_BOMB
+	NONE,
+	BOMB,
+	WALL
 };
 
 struct UnitConfig
@@ -68,9 +69,7 @@ struct UnitConfig
 	unsigned int damageWall;
 	unsigned int damageBomb;
 
-	AttackType attackType;
-
-	bool canBuild;
+	BuildType buildType;
 };
 
 class Config

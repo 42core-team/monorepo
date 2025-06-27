@@ -41,7 +41,8 @@ bool BuildAction::execute(Core *core)
 	if (builderObj == nullptr || builderObj->getType() != ObjectType::Unit)
 		return false;
 	Unit *builder = dynamic_cast<Unit *>(builderObj);
-	if (!Config::instance().units[builder->getUnitType()].canBuild)
+	BuildType buildType = Config::instance().units[builder->getUnitType()].buildType;
+	if (buildType == BuildType::NONE)
 		return false;
 
 	if (Board::instance().getObjectAtPos(position_) != nullptr)
@@ -50,11 +51,20 @@ bool BuildAction::execute(Core *core)
 	if (position_.distance(Board::instance().getObjectPositionById(builder->getId())) > 1)
 		return false;
 
-	if (builder->getBalance() < Config::instance().wallBuildCost)
+	if (buildType == BuildType::WALL)
+	{
+		if (builder->getBalance() < Config::instance().wallBuildCost)
+			return false;
+		builder->setBalance(builder->getBalance() - Config::instance().wallBuildCost);
+		Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), position_);
+	}
+	else if (buildType == BuildType::BOMB)
+	{
+		if (builder->getBalance() < Config::instance().bombThrowCost)
 		return false;
-	builder->setBalance(builder->getBalance() - Config::instance().wallBuildCost);
-
-	Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), position_);
+		builder->setBalance(builder->getBalance() - Config::instance().bombThrowCost);
+		Board::instance().addObject<Bomb>(Bomb(Board::instance().getNextObjectId()), position_);
+	}
 
 	return true;
 }
