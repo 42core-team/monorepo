@@ -39,7 +39,6 @@ class Game
 		void sendState(std::vector<std::pair<std::unique_ptr<Action>, Core &>> &actions, unsigned long long tick);
 		void sendConfig();
 
-		unsigned int teamCount_;
 		unsigned int nextObjectId_;
 		std::vector<std::unique_ptr<Bridge>> bridges_;
 

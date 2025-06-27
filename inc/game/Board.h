@@ -39,6 +39,7 @@ class Board
 		Object			*getObjectAtPos(const Position & pos) const;
 		Core			*getCoreByTeamId(unsigned int team_id) const;
 		Position		getObjectPositionById(unsigned int id) const;
+		int				getCoreCount();
 
 		bool			moveObjectById(unsigned int id, const Position & newPos);
 

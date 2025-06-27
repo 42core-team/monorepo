@@ -72,6 +72,16 @@ Position Board::getObjectPositionById(unsigned int id) const
 	}
 	return Position(-1, -1);
 }
+int Board::getCoreCount()
+{
+	int count = 0;
+	for (const auto &obj : objects_)
+	{
+		if (obj && obj->getType() == ObjectType::Core)
+			++count;
+	}
+	return count;
+}
 
 bool Board::moveObjectById(unsigned int id, const Position & newPos)
 {
