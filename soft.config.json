@@ -34,8 +34,7 @@
       "damageResource": 2,
       "damageWall": 3,
       "damageBomb": 5,
-      "attackType": 0,
-      "canBuild": false
+      "buildType": 0
     },
     {
       "name": "Miner",
@@ -48,8 +47,7 @@
       "damageResource": 10,
       "damageWall": 5,
       "damageBomb": 2,
-      "attackType": 0,
-      "canBuild": false
+      "buildType": 0
     }
   ],
   "corePositions": [

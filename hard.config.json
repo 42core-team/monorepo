@@ -1,111 +1,106 @@
 {
-	"width": 30,
-	"height": 30,
-	"tickRate": 5,
-	"idleIncome": 0,
-	"idleIncomeTimeOut": 600,
-	"resourceHp": 50,
-	"resourceIncome": 200,
-	"moneyObjIncome": 75,
-	"coreHp": 350,
-	"initialBalance": 300,
-	"wallHp": 100,
-	"wallBuildCost": 20,
-	"bombHp": 50,
-	"bombCountdown": 25,
-	"bombThrowCost": 50,
-	"bombReach": 3,
-	"bombDamage": 50,
-	"worldGenerator": "jigsaw",
-	"worldGeneratorConfig": {
-		"templatePlaceAttemptCount": 1000,
-		"additionalWallPlaceAttemptCount": 50,
-		"mirrorMap": true,
-		"resourceCount": 35,
-		"moneysCount": 25,
-		"minTemplateSpacing": 1,
-		"minCoreDistance": 5
-	},
-	"units": [
-		{
-			"name": "Warrior",
-			"cost": 150,
-			"hp": 25,
-			"speed": 3,
-			"minSpeed": 12,
-			"damageCore": 10,
-			"damageUnit": 6,
-			"damageResource": 2,
-			"damageWall": 3,
-			"damageBomb": 5,
-			"attackType": 0,
-			"canBuild": false
-		},
-		{
-			"name": "Miner",
-			"cost": 100,
-			"hp": 15,
-			"speed": 5,
-			"minSpeed": 15,
-			"damageCore": 3,
-			"damageUnit": 2,
-			"damageResource": 10,
-			"damageWall": 5,
-			"damageBomb": 2,
-			"attackType": 0,
-			"canBuild": false
-		},
-		{
-			"name": "Carrier",
-			"cost": 125,
-			"hp": 20,
-			"speed": 3,
-			"minSpeed": 5,
-			"damageCore": 3,
-			"damageUnit": 2,
-			"damageResource": 4,
-			"damageWall": 3,
-			"damageBomb": 1,
-			"attackType": 0,
-			"canBuild": false
-		},
-		{
-			"name": "Builder",
-			"cost": 300,
-			"hp": 30,
-			"speed": 2,
-			"minSpeed": 8,
-			"damageCore": 5,
-			"damageUnit": 3,
-			"damageResource": 2,
-			"damageWall": 3,
-			"damageBomb": 4,
-			"attackType": 0,
-			"canBuild": true
-		},
-		{
-			"name": "Bomberman",
-			"cost": 200,
-			"hp": 40,
-			"speed": 1,
-			"minSpeed": 10,
-			"damageCore": 20,
-			"damageUnit": 10,
-			"damageResource": 5,
-			"damageWall": 10,
-			"damageBomb": 15,
-			"attackType": 2,
-			"canBuild": false
-		}
-	],
-	"corePositions": [
-		{
-			"x": 0,
-			"y": 0
-		},
-		{
-			"x": 29,
-			"y": 29
-		}
-	]
+  "width": 30,
+  "height": 30,
+  "tickRate": 5,
+  "idleIncome": 0,
+  "idleIncomeTimeOut": 600,
+  "resourceHp": 50,
+  "resourceIncome": 200,
+  "moneyObjIncome": 75,
+  "coreHp": 350,
+  "initialBalance": 300,
+  "wallHp": 100,
+  "wallBuildCost": 20,
+  "bombHp": 50,
+  "bombCountdown": 25,
+  "bombThrowCost": 50,
+  "bombReach": 3,
+  "bombDamage": 50,
+  "worldGenerator": "jigsaw",
+  "worldGeneratorConfig": {
+    "templatePlaceAttemptCount": 1000,
+    "additionalWallPlaceAttemptCount": 50,
+    "mirrorMap": true,
+    "resourceCount": 35,
+    "moneysCount": 25,
+    "minTemplateSpacing": 1,
+    "minCoreDistance": 5
+  },
+  "units": [
+    {
+      "name": "Warrior",
+      "cost": 150,
+      "hp": 25,
+      "speed": 3,
+      "minSpeed": 12,
+      "damageCore": 10,
+      "damageUnit": 6,
+      "damageResource": 2,
+      "damageWall": 3,
+      "damageBomb": 5,
+      "buildType": 0
+    },
+    {
+      "name": "Miner",
+      "cost": 100,
+      "hp": 15,
+      "speed": 5,
+      "minSpeed": 15,
+      "damageCore": 3,
+      "damageUnit": 2,
+      "damageResource": 10,
+      "damageWall": 5,
+      "damageBomb": 2,
+      "buildType": 0
+    },
+    {
+      "name": "Carrier",
+      "cost": 125,
+      "hp": 20,
+      "speed": 3,
+      "minSpeed": 5,
+      "damageCore": 3,
+      "damageUnit": 2,
+      "damageResource": 4,
+      "damageWall": 3,
+      "damageBomb": 1,
+      "buildType": 0
+    },
+    {
+      "name": "Builder",
+      "cost": 300,
+      "hp": 30,
+      "speed": 2,
+      "minSpeed": 8,
+      "damageCore": 5,
+      "damageUnit": 3,
+      "damageResource": 2,
+      "damageWall": 3,
+      "damageBomb": 4,
+      "buildType": 1
+    },
+    {
+      "name": "Bomberman",
+      "cost": 200,
+      "hp": 40,
+      "speed": 1,
+      "minSpeed": 10,
+      "damageCore": 20,
+      "damageUnit": 10,
+      "damageResource": 5,
+      "damageWall": 10,
+      "damageBomb": 15,
+      "buildType": 2
+    }
+  ],
+  "corePositions": [
+    {
+      "x": 0,
+      "y": 0
+    },
+    {
+      "x": 29,
+      "y": 29
+    }
+  ]
 }

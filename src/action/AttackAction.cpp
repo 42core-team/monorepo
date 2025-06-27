@@ -69,6 +69,12 @@ bool AttackAction::attackObj(Object *obj, Unit *unit) // returns object new hp, 
 		Board::instance().removeObjectById(obj->getId());
 		damage_ = 1;
 	}
+	else if (obj->getType() == ObjectType::Bomb)
+	{
+		Bomb *bomb = (Bomb *)obj;
+		bomb->explode();
+		damage_ = Config::instance().units[unit->getUnitType()].damageBomb;
+	}
 
 	return true;
 }
@@ -88,28 +94,12 @@ bool AttackAction::execute(Core *core)
 	if (unit->getTeamId() != core->getTeamId())
 		return false;
 
-	if (Config::instance().units[unit->getUnitType()].attackType == AttackType::DIRECT_HIT)
-	{
-		Object *obj = Board::instance().getObjectAtPos(target_pos_);
-		if (!obj)
-			return false;
-
-		if (!attackObj(obj, unit))
-			return false;
-	}
-	else if (Config::instance().units[unit->getUnitType()].attackType == AttackType::DROP_BOMB)
-	{
-		Object *obj = Board::instance().getObjectAtPos(target_pos_);
-		if (obj)
-			return false;
-
-		Board::instance().addObject<Bomb>(Bomb(Board::instance().getNextObjectId()), target_pos_);
-	}
-	else
-	{
-		Logger::Log(LogLevel::WARNING, "Unknown attack type for unit " + std::to_string(unit->getId()) + " of type " + std::to_string(unit->getUnitType()));
+	Object *obj = Board::instance().getObjectAtPos(target_pos_);
+	if (!obj)
 		return false;
-	}
+
+	if (!attackObj(obj, unit))
+		return false;
 
 	return true;
 }

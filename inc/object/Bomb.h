@@ -13,6 +13,7 @@ class Bomb : public Object
 		Bomb(const Bomb &other)
 			: Object(other), countdown_(other.countdown_) {}
 
+		void explode();
 		void tick(unsigned long long tickCount);
 
 		unsigned int getCountdown() const { return countdown_; }
