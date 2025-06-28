@@ -1,5 +1,5 @@
 FROM alpine:latest AS build-game
-RUN apk add build-base clang libcurl4-openssl-dev
+RUN apk add build-base clang curl-dev
 
 WORKDIR /core
 COPY . .
