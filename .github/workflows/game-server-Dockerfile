@@ -1,5 +1,5 @@
 FROM alpine:latest AS build-game
-RUN apk add build-base clang
+RUN apk add build-base clang curl-dev
 
 WORKDIR /core
 COPY . .
@@ -7,7 +7,7 @@ COPY . .
 RUN make re
 
 FROM alpine:latest AS release
-RUN apk add --no-cache libstdc++ libgcc
+RUN apk add --no-cache libstdc++ libgcc curl-dev
 WORKDIR /core
 COPY --from=build-game /core/core ./core
 COPY --from=build-game /core/data ./data

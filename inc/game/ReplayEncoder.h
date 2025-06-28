@@ -7,6 +7,7 @@ using json = nlohmann::ordered_json;
 #include "Logger.h"
 
 #include <fstream>
+#include <curl/curl.h>
 
 typedef struct team_data_s {
 	unsigned int teamId;
@@ -32,7 +33,10 @@ public:
 	void addTeamScore(unsigned int teamId, const std::string& teamName, unsigned int place);
 	void setGameEndReason(game_end_reason_t reason) { gameEndReason_ = reason; }
 	void includeConfig(json& config);
-	void saveReplay() const;
+
+	void exportReplay() const;
+	void saveReplay(const json &replayData) const;
+	void postReplay(const json &replayData) const;
 
 	static void setReplaySaveFolder(const std::string& folder);
 	static void verifyReplaySaveFolder();

@@ -118,8 +118,17 @@ void ReplayEncoder::setReplaySaveFolder(const std::string &folder)
 }
 void ReplayEncoder::verifyReplaySaveFolder()
 {
-	if (replaySaveFolder_.empty() ||
-		!std::filesystem::exists(replaySaveFolder_) ||
+	if (replaySaveFolder_.empty())
+	{
+		Logger::Log(LogLevel::ERROR, "Replay save folder is not set.");
+		std::exit(1);
+	}
+
+	if (replaySaveFolder_.rfind("http://", 0) == 0 ||
+			replaySaveFolder_.rfind("https://", 0) == 0)
+		return;
+
+	if (!std::filesystem::exists(replaySaveFolder_) ||
 		!std::filesystem::is_directory(replaySaveFolder_))
 	{
 		Logger::Log(LogLevel::ERROR, "Replay save folder is incorrectly set to: " + replaySaveFolder_);
@@ -143,7 +152,7 @@ json ReplayEncoder::encodeMiscSection() const
 	return miscSection;
 }
 
-void ReplayEncoder::saveReplay() const
+void ReplayEncoder::exportReplay() const
 {
 	if (replaySaveFolder_.empty())
 	{
@@ -157,6 +166,18 @@ void ReplayEncoder::saveReplay() const
 	replayData["config"] = config_;
 	replayData["full_tick_amount"] = lastTickCount_;
 
+	if (replaySaveFolder_.rfind("http://", 0) == 0 ||
+		replaySaveFolder_.rfind("https://", 0) == 0)
+	{
+		postReplay(replayData);
+	}
+	else
+	{
+		saveReplay(replayData);
+	}
+}
+void ReplayEncoder::saveReplay(const json &replayData) const
+{
 	std::string filePath = replaySaveFolder_ + "/replay_" + std::to_string(std::chrono::system_clock::now().time_since_epoch().count()) + ".json";
 	std::ofstream outFile(filePath);
 	if (!outFile.is_open())
@@ -179,4 +200,35 @@ void ReplayEncoder::saveReplay() const
 	outFile.close();
 
 	Logger::Log("Replay saved to " + filePath + " and latest replay updated.");
+}
+void ReplayEncoder::postReplay(const json &replayData) const
+{
+	CURL *curl = curl_easy_init();
+	if (!curl)
+	{
+		Logger::Log(LogLevel::ERROR, "Failed to initialize CURL for posting replay.");
+		return;
+	}
+
+	curl_easy_setopt(curl, CURLOPT_URL, replaySaveFolder_.c_str());
+	curl_easy_setopt(curl, CURLOPT_POST, 1L);
+	std::string payload = replayData.dump();
+	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload.c_str());
+	curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, payload.size());
+
+	struct curl_slist *headers = nullptr;
+	headers = curl_slist_append(headers, "Content-Type: application/json");
+	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+	char errbuf[CURL_ERROR_SIZE] = {0};
+	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errbuf);
+
+	CURLcode res = curl_easy_perform(curl);
+	if (res != CURLE_OK)
+		Logger::Log(LogLevel::ERROR, std::string("Replay upload failed: ") + curl_easy_strerror(res) + " - " + (errbuf[0] ? errbuf : "No error message"));
+	else
+		Logger::Log("Replay successfully uploaded to " + replaySaveFolder_);
+
+	curl_slist_free_all(headers);
+	curl_easy_cleanup(curl);
 }
