@@ -139,6 +139,7 @@ json ReplayEncoder::encodeMiscSection() const
 		teamJson["place"] = team.place;
 		miscSection["team_results"].push_back(teamJson);
 	}
+	miscSection["game_end_reason"] = static_cast<int>(gameEndReason_);
 	return miscSection;
 }
 

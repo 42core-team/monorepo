@@ -35,6 +35,8 @@ class Game
 	private:
 		void tick(unsigned long long tick);
 
+		void handleTimeout();
+
 		json encodeState(std::vector<std::pair<std::unique_ptr<Action>, Core &>> &actions, unsigned long long tick);
 		void sendState(std::vector<std::pair<std::unique_ptr<Action>, Core &>> &actions, unsigned long long tick);
 		void sendConfig();

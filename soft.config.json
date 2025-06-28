@@ -2,6 +2,7 @@
   "width": 25,
   "height": 25,
   "tickRate": 5,
+  "timeout": 3000,
   "idleIncome": 1,
   "idleIncomeTimeOut": 600,
   "resourceHp": 50,
