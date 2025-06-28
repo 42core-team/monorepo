@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <csignal>
 #include <cerrno>
+#include <curl/curl.h>
 
 #include "Bridge.h"
 #include "Game.h"
@@ -40,7 +41,16 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	// init srand
 	srand(time(nullptr));
+
+	// init curl
+	CURLcode gres = curl_global_init(CURL_GLOBAL_DEFAULT);
+	if (gres != CURLE_OK)
+	{
+		Logger::Log(LogLevel::ERROR, std::string("curl_global_init failed: ") + curl_easy_strerror(gres));
+		return 1;
+	}
 
 	std::vector<unsigned int> expectedTeamIds;
 	for (int i = 3; i < argc; i++)
@@ -155,5 +165,7 @@ int main(int argc, char *argv[])
 	gameThread.join();
 
 	close(server_fd);
+	curl_global_cleanup();
+
 	return 0;
 }

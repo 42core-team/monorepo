@@ -67,7 +67,7 @@ void Game::run()
 	Logger::Log("Game ended! Saving replay...");
 	json config = Config::encodeConfig();
 	replayEncoder_.includeConfig(config);
-	replayEncoder_.saveReplay();
+	replayEncoder_.exportReplay();
 }
 
 void Game::tick(unsigned long long tick)
