@@ -77,7 +77,7 @@ int Board::getCoreCount()
 	int count = 0;
 	for (const auto &obj : objects_)
 	{
-		if (obj && obj->getType() == ObjectType::Core)
+		if (obj && obj->getType() == ObjectType::Core && obj->getHP() > 0)
 			++count;
 	}
 	return count;

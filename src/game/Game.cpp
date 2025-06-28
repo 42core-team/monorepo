@@ -72,14 +72,6 @@ void Game::run()
 
 void Game::tick(unsigned long long tick)
 {
-	// print brdiges and ids for debug
-	for (const auto& bridge : bridges_)
-	{
-		Logger::Log("Bridge for team " + std::to_string(bridge->getTeamId()) + " is connected.");
-	}
-	Logger::Log("Tick " + std::to_string(tick) + " started.");
-
-
 	// 1. COMPUTE ACTIONS
 
 	std::vector<std::pair<std::unique_ptr<Action>, Core &>> actions; // action, team id
@@ -140,7 +132,7 @@ void Game::tick(unsigned long long tick)
 	// 3. CHECK TIMEOUT
 
 	if (tick >= Config::instance().timeout)
-		handleTimeout();
+		killWorstPlayerOnTimeout();
 
 	// 4. SEND STATE
 
@@ -171,107 +163,104 @@ void Game::tick(unsigned long long tick)
 	}
 }
 
-void Game::handleTimeout()
+void Game::killWorstPlayerOnTimeout()
 {
 	if (Board::instance().getCoreCount() <= 1)
 		return;
 
 	// determine winner: go to next number if still no clear winner
-	// 1. more core hp
-	// 2. more unit hp total
-	// 3. more money in core total
-	// 4. random
 
-	Logger::Log(LogLevel::ERROR, "Game timed out after " + std::to_string(Config::instance().timeout) + " ticks. Ending game.");
-
-	// 1. find core with least hp, kill it
-	Core* weakestCore = nullptr;
-	for (auto& obj : Board::instance())
+	// 1. Least core hp
 	{
-		if (obj.getType() == ObjectType::Core)
+		Core *weakest = nullptr;
+		bool tie = false;
+		for (auto& obj : Board::instance())
 		{
+			if (obj.getType() != ObjectType::Core)
+				continue;
 			Core& core = (Core&)obj;
-			if (!weakestCore || core.getHP() < weakestCore->getHP())
+			if (!weakest || core.getHP() < weakest->getHP())
 			{
-				weakestCore = &core;
+				weakest = &core;
+				tie = false;
+			}
+			else if (core.getHP() == weakest->getHP())
+			{
+				tie = true;
 			}
 		}
-	}
-	if (weakestCore)
-	{
-		Logger::Log("Killing core of team " + std::to_string(weakestCore->getTeamId()) + " due to timeout.");
-		weakestCore->setHP(0);
-		replayEncoder_.setGameEndReason(GER_CORE_HP);
-		for (auto& bridge : bridges_)
+		if (weakest && !tie)
 		{
-			if (bridge->getTeamId() == weakestCore->getTeamId())
+			Logger::Log("Killing core of team " + std::to_string(weakest->getTeamId()) + " due to timeout (least core hp).");
+			weakest->setHP(0);
+			replayEncoder_.setGameEndReason(GER_CORE_HP);
+			return ;
+		}
+	}
+
+	// 2. Least unit hp total
+	{
+		unsigned int minUnitHp = std::numeric_limits<unsigned int>::max();
+		Core *minUnitHpCore = nullptr;
+		bool tie = false;
+		for (auto& obj : Board::instance())
+		{
+			if (obj.getType() != ObjectType::Core)
+				continue;
+			Core& core = (Core&)obj;
+			unsigned int teamId = core.getTeamId();
+			unsigned int totalUnitHp = 0;
+
+			for (auto& obj2 : Board::instance())
+				if (obj2.getType() == ObjectType::Unit && ((Unit&)obj2).getTeamId() == teamId)
+					totalUnitHp += obj2.getHP();
+
+			if (totalUnitHp < minUnitHp)
 			{
-				replayEncoder_.addTeamScore(bridge->getTeamId(), bridge->getTeamName(), Board::instance().getCoreCount() - 1);
-				bridges_.erase(std::remove(bridges_.begin(), bridges_.end(), bridge), bridges_.end());
+				minUnitHp = totalUnitHp;
+				minUnitHpCore = &core;
+			}
+			else if (totalUnitHp == minUnitHp && minUnitHpCore)
+			{
+				tie = true;
+			}
+		}
+		if (minUnitHpCore && !tie)
+		{
+			Logger::Log("Killing core of team " + std::to_string(minUnitHpCore->getTeamId()) + " due to timeout (least unit hp total).");
+			replayEncoder_.setGameEndReason(GER_UNIT_HP);
+			minUnitHpCore->setHP(0);
+			return ;
+		}
+	}
+
+	// 3. Random pick
+	{
+		unsigned int remainingCores = Board::instance().getCoreCount();
+		unsigned int randomIndex = rand() % remainingCores;
+		Object * randomCore = nullptr;
+		for (auto& obj : Board::instance())
+		{
+			if (randomIndex == 0)
+			{
+				randomCore = &obj;
 				break;
 			}
+			if (obj.getType() == ObjectType::Core && obj.getHP() > 0)
+				randomIndex--;
 		}
-	}
-	if (Board::instance().getCoreCount() <= 1)
-		return;
-
-	// if there are still cores left, pick core with least unit hp total
-	unsigned int minUnitHp = std::numeric_limits<unsigned int>::max();
-	unsigned int teamIdWithMinUnitHp = std::numeric_limits<unsigned int>::max();
-	for (auto& bridge : bridges_)
-	{
-		unsigned int teamId = bridge->getTeamId();
-		unsigned int totalUnitHp = 0;
-		
-		for (auto& obj : Board::instance())
-			if (obj.getType() == ObjectType::Unit && ((Unit&)obj).getTeamId() == teamId)
-				totalUnitHp += obj.getHP();
-
-		if (totalUnitHp < minUnitHp)
+		if (randomCore)
 		{
-			minUnitHp = totalUnitHp;
-			teamIdWithMinUnitHp = teamId;
+			unsigned int teamId = ((Core*)randomCore)->getTeamId();
+			Logger::Log("Killing core of team " + std::to_string(teamId) + " due to timeout (random pick).");
+			replayEncoder_.setGameEndReason(GER_RANDOM);
+			randomCore->setHP(0);
+			return ;
 		}
-	}
-	if (teamIdWithMinUnitHp != std::numeric_limits<unsigned int>::max())
-	{
-		Logger::Log("Killing core of team " + std::to_string(teamIdWithMinUnitHp) + " due to timeout.");
-		replayEncoder_.setGameEndReason(GER_UNIT_HP);
-		for (auto& bridge : bridges_)
+		else
 		{
-			if (bridge->getTeamId() == teamIdWithMinUnitHp)
-			{
-				replayEncoder_.addTeamScore(bridge->getTeamId(), bridge->getTeamName(), Board::instance().getCoreCount() - 1);
-				bridges_.erase(std::remove(bridges_.begin(), bridges_.end(), bridge), bridges_.end());
-				break;
-			}
-		}
-		for (auto& obj : Board::instance())
-			if (obj.getType() == ObjectType::Core && ((Core&)obj).getTeamId() == teamIdWithMinUnitHp)
-				((Core&)obj).setHP(0);
-	}
-	if (Board::instance().getCoreCount() <= 1)
-		return;
-
-	// determine winner randomly
-	replayEncoder_.setGameEndReason(GER_RANDOM);
-	while (Board::instance().getCoreCount() > 1)
-	{
-		unsigned int randomIndex = rand() % bridges_.size();
-		auto it = bridges_.begin() + randomIndex;
-		if (it != bridges_.end())
-		{
-			replayEncoder_.addTeamScore((*it)->getTeamId(), (*it)->getTeamName(), Board::instance().getCoreCount() - 1);
-			Logger::Log("Killing core of team " + std::to_string((*it)->getTeamId()) + " due to timeout.");
-			for (auto& obj : Board::instance())
-			{
-				if (obj.getType() == ObjectType::Core && ((Core&)obj).getTeamId() == (*it)->getTeamId())
-				{
-					((Core&)obj).setHP(0);
-					break;
-				}
-			}
-			bridges_.erase(it);
+			Logger::Log(LogLevel::ERROR, "No core found for random pick on timeout. This should not happen.");
+			return;
 		}
 	}
 }
