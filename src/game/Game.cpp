@@ -171,102 +171,96 @@ void Game::killWorstPlayerOnTimeout()
 	// determine winner: go to next number if still no clear winner
 
 	// 1. Least core hp
+	Core *weakest = nullptr;
+	bool tie = false;
+	for (auto& obj : Board::instance())
 	{
-		Core *weakest = nullptr;
-		bool tie = false;
-		for (auto& obj : Board::instance())
+		if (obj.getType() != ObjectType::Core)
+			continue;
+		Core& core = (Core&)obj;
+		if (!weakest || core.getHP() < weakest->getHP())
 		{
-			if (obj.getType() != ObjectType::Core)
-				continue;
-			Core& core = (Core&)obj;
-			if (!weakest || core.getHP() < weakest->getHP())
-			{
-				weakest = &core;
-				tie = false;
-			}
-			else if (core.getHP() == weakest->getHP())
-			{
-				tie = true;
-			}
+			weakest = &core;
+			tie = false;
 		}
-		if (weakest && !tie)
+		else if (core.getHP() == weakest->getHP())
 		{
-			Logger::Log("Killing core of team " + std::to_string(weakest->getTeamId()) + " due to timeout (least core hp).");
-			weakest->setHP(0);
-			replayEncoder_.setGameEndReason(GER_CORE_HP);
-			return ;
+			tie = true;
 		}
+	}
+	if (weakest && !tie)
+	{
+		Logger::Log("Killing core of team " + std::to_string(weakest->getTeamId()) + " due to timeout (least core hp).");
+		weakest->setHP(0);
+		replayEncoder_.setGameEndReason(GER_CORE_HP);
+		return ;
 	}
 
 	// 2. Least unit hp total
+	unsigned int minUnitHp = std::numeric_limits<unsigned int>::max();
+	Core *minUnitHpCore = nullptr;
+	tie = false;
+	for (auto& obj : Board::instance())
 	{
-		unsigned int minUnitHp = std::numeric_limits<unsigned int>::max();
-		Core *minUnitHpCore = nullptr;
-		bool tie = false;
-		for (auto& obj : Board::instance())
-		{
-			if (obj.getType() != ObjectType::Core)
-				continue;
-			Core& core = (Core&)obj;
-			unsigned int teamId = core.getTeamId();
-			unsigned int totalUnitHp = 0;
+		if (obj.getType() != ObjectType::Core)
+			continue;
+		Core& core = (Core&)obj;
+		unsigned int teamId = core.getTeamId();
+		unsigned int totalUnitHp = 0;
 
-			for (auto& obj2 : Board::instance())
-				if (obj2.getType() == ObjectType::Unit && ((Unit&)obj2).getTeamId() == teamId)
-					totalUnitHp += obj2.getHP();
+		for (auto& unit : Board::instance())
+			if (unit.getType() == ObjectType::Unit && ((Unit&)unit).getTeamId() == teamId)
+				totalUnitHp += unit.getHP();
 
-			if (totalUnitHp < minUnitHp)
-			{
-				minUnitHp = totalUnitHp;
-				minUnitHpCore = &core;
-				tie = false;
-			}
-			else if (totalUnitHp == minUnitHp && minUnitHpCore)
-			{
-				tie = true;
-			}
-		}
-		if (minUnitHpCore && !tie)
+		if (totalUnitHp < minUnitHp)
 		{
-			Logger::Log("Killing core of team " + std::to_string(minUnitHpCore->getTeamId()) + " due to timeout (least unit hp total).");
-			replayEncoder_.setGameEndReason(GER_UNIT_HP);
-			minUnitHpCore->setHP(0);
-			return ;
+			minUnitHp = totalUnitHp;
+			minUnitHpCore = &core;
+			tie = false;
 		}
+		else if (totalUnitHp == minUnitHp && minUnitHpCore)
+		{
+			tie = true;
+		}
+	}
+	if (minUnitHpCore && !tie)
+	{
+		Logger::Log("Killing core of team " + std::to_string(minUnitHpCore->getTeamId()) + " due to timeout (least unit hp total).");
+		replayEncoder_.setGameEndReason(GER_UNIT_HP);
+		minUnitHpCore->setHP(0);
+		return ;
 	}
 
 	// 3. Random pick
+	unsigned int remainingCores = Board::instance().getCoreCount();
+	std::uniform_int_distribution<unsigned> dist(0, remainingCores - 1);
+	unsigned int randomIndex = dist(rng_);
+	Object * randomCore = nullptr;
+	for (auto& obj : Board::instance())
 	{
-		unsigned int remainingCores = Board::instance().getCoreCount();
-		std::uniform_int_distribution<unsigned> dist(0, remainingCores - 1);
-		unsigned int randomIndex = dist(rng_);
-		Object * randomCore = nullptr;
-		for (auto& obj : Board::instance())
+		if (obj.getType() == ObjectType::Core && obj.getHP() > 0)
 		{
-			if (obj.getType() == ObjectType::Core && obj.getHP() > 0)
+			if (randomIndex == 0)
 			{
-				if (randomIndex == 0)
-				{
-					randomCore = &obj;
-					break;
-				}
-				else
-					randomIndex--;
+				randomCore = &obj;
+				break;
 			}
+			else
+				randomIndex--;
 		}
-		if (randomCore)
-		{
-			unsigned int teamId = ((Core*)randomCore)->getTeamId();
-			Logger::Log("Killing core of team " + std::to_string(teamId) + " due to timeout (random pick).");
-			replayEncoder_.setGameEndReason(GER_RANDOM);
-			randomCore->setHP(0);
-			return ;
-		}
-		else
-		{
-			Logger::Log(LogLevel::ERROR, "No core found for random pick on timeout. This should not happen.");
-			return;
-		}
+	}
+	if (randomCore)
+	{
+		unsigned int teamId = ((Core*)randomCore)->getTeamId();
+		Logger::Log("Killing core of team " + std::to_string(teamId) + " due to timeout (random pick).");
+		replayEncoder_.setGameEndReason(GER_RANDOM);
+		randomCore->setHP(0);
+		return ;
+	}
+	else
+	{
+		Logger::Log(LogLevel::ERROR, "No core found for random pick on timeout. This should not happen.");
+		return;
 	}
 }
 
