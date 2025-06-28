@@ -29,12 +29,16 @@ class Bridge
 		unsigned int getTeamId() const { return team_id_; }
 		void setTeamId(unsigned int teamId) { team_id_ = teamId; }
 
+		const std::string& getTeamName() const { return team_name_; }
+		void setTeamName(const std::string& teamName) { team_name_ = teamName; }
+
 	private:
 		void readLoop();
 		void writeLoop();
 
 		int socket_fd_;
 		unsigned int team_id_;
+		std::string team_name_;
 		std::thread readThread_;
 		std::thread writeThread_;
 

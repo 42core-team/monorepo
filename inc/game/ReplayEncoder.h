@@ -8,6 +8,12 @@ using json = nlohmann::ordered_json;
 
 #include <fstream>
 
+typedef struct team_data_s {
+	unsigned int teamId;
+	std::string teamName;
+	unsigned int place; // 0 = won
+}	team_data_t;
+
 class ReplayEncoder
 {
 public:
@@ -15,6 +21,7 @@ public:
 	~ReplayEncoder() = default;
 
 	void addTickState(const json& state);
+	void addTeamScore(unsigned int teamId, const std::string& teamName, unsigned int place);
 	void includeConfig(json& config);
 	void saveReplay() const;
 
@@ -25,12 +32,14 @@ private:
 	json diffObjects(const json& currentObjects);
 	json diffObject(const json& currentObj, const json& previousObj);
 
+	json encodeMiscSection() const;
+
 	json ticks_;
 	json config_;
 
 	std::unordered_map<int, json> previousObjects_;
-
 	unsigned long long lastTickCount_;
+	std::vector<team_data_t> teamData_;
 
 	static std::string replaySaveFolder_;
 };

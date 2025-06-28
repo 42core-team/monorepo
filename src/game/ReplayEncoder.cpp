@@ -94,6 +94,16 @@ void ReplayEncoder::addTickState(const json &state)
 	lastTickCount_ = tick;
 }
 
+void ReplayEncoder::addTeamScore(unsigned int teamId, const std::string &teamName, unsigned int place)
+{
+	team_data_t teamData;
+	teamData.teamId = teamId;
+	teamData.teamName = teamName;
+	teamData.place = place;
+
+	teamData_.push_back(teamData);
+}
+
 void ReplayEncoder::includeConfig(json &config)
 {
 	config_ = config;
@@ -117,6 +127,21 @@ void ReplayEncoder::verifyReplaySaveFolder()
 	}
 }
 
+json ReplayEncoder::encodeMiscSection() const
+{
+	json miscSection;
+	miscSection["team_results"] = json::array();
+	for (const auto &team : teamData_)
+	{
+		json teamJson;
+		teamJson["id"] = team.teamId;
+		teamJson["name"] = team.teamName;
+		teamJson["place"] = team.place;
+		miscSection["team_results"].push_back(teamJson);
+	}
+	return miscSection;
+}
+
 void ReplayEncoder::saveReplay() const
 {
 	if (replaySaveFolder_.empty())
@@ -126,6 +151,7 @@ void ReplayEncoder::saveReplay() const
 	}
 
 	json replayData;
+	replayData["misc"] = encodeMiscSection();
 	replayData["ticks"] = ticks_;
 	replayData["config"] = config_;
 	replayData["full_tick_amount"] = lastTickCount_;

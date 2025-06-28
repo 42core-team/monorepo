@@ -54,6 +54,16 @@ void Game::run()
 		tickCount++;
 	}
 
+	// determine winner
+	for (const auto& bridge : bridges_)
+	{
+		if (!bridge->isDisconnected())
+		{
+			replayEncoder_.addTeamScore(bridge->getTeamId(), bridge->getTeamName(), 0); // 0 = won
+			Logger::Log("Team " + std::to_string(bridge->getTeamId()) + " (" + bridge->getTeamName() + ") won the game!");
+		}
+	}
+
 	Logger::Log("Game ended! Saving replay...");
 	json config = Config::encodeConfig();
 	replayEncoder_.includeConfig(config);
@@ -143,6 +153,7 @@ void Game::tick(unsigned long long tick)
 			{
 				if (!bridge->isDisconnected() && bridge->getTeamId() == core.getTeamId())
 				{
+					replayEncoder_.addTeamScore(bridge->getTeamId(), bridge->getTeamName(), Board::instance().getCoreCount() - 1);
 					bridges_.erase(std::remove(bridges_.begin(), bridges_.end(), bridge), bridges_.end());
 					break;
 				}
