@@ -219,6 +219,7 @@ void Game::killWorstPlayerOnTimeout()
 			{
 				minUnitHp = totalUnitHp;
 				minUnitHpCore = &core;
+				tie = false;
 			}
 			else if (totalUnitHp == minUnitHp && minUnitHpCore)
 			{
@@ -237,17 +238,21 @@ void Game::killWorstPlayerOnTimeout()
 	// 3. Random pick
 	{
 		unsigned int remainingCores = Board::instance().getCoreCount();
-		unsigned int randomIndex = rand() % remainingCores;
+		std::uniform_int_distribution<unsigned> dist(0, remainingCores - 1);
+		unsigned int randomIndex = dist(rng_);
 		Object * randomCore = nullptr;
 		for (auto& obj : Board::instance())
 		{
-			if (randomIndex == 0)
-			{
-				randomCore = &obj;
-				break;
-			}
 			if (obj.getType() == ObjectType::Core && obj.getHP() > 0)
-				randomIndex--;
+			{
+				if (randomIndex == 0)
+				{
+					randomCore = &obj;
+					break;
+				}
+				else
+					randomIndex--;
+			}
 		}
 		if (randomCore)
 		{

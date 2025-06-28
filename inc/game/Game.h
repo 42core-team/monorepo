@@ -44,6 +44,8 @@ class Game
 		unsigned int nextObjectId_;
 		std::vector<std::unique_ptr<Bridge>> bridges_;
 
+		std::mt19937 rng_;
+
 		ReplayEncoder replayEncoder_;
 };
 
