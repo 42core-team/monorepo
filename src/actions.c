@@ -34,12 +34,12 @@ t_obj *ft_create_unit(t_unit_type unit_type)
 	newUnit->state = STATE_UNINITIALIZED;
 	newUnit->data = NULL;
 
-	int unitsLen = 0;
-	while (game.units && game.units[unitsLen])
-		unitsLen++;
-	game.units = realloc(game.units, sizeof(t_obj *) * (unitsLen + 2));
-	game.units[unitsLen] = newUnit;
-	game.units[unitsLen + 1] = NULL;
+	int objLen = 0;
+	while (game.objects && game.objects[objLen])
+		objLen++;
+	game.objects = realloc(game.objects, sizeof(t_obj *) * (objLen + 2));
+	game.objects[objLen] = newUnit;
+	game.objects[objLen + 1] = NULL;
 
 	ft_get_my_core()->s_core.balance -= game.config.units[unit_type]->cost;
 

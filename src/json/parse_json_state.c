@@ -1,7 +1,7 @@
 #include "parse_json.h"
 #include "event_handler.h"
 
-static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
+static void apply_obj_to_arr(t_obj obj)
 {
 	bool objInserted = false;
 
@@ -9,21 +9,21 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 
 	// 1. LOOP: Id Matching
 	size_t index = 0;
-	while ((*arr)[index] != NULL)
+	while (game.objects[index] != NULL)
 	{
-		if ((*arr)[index]->id == obj.id)
+		if (game.objects[index]->id == obj.id)
 		{
-			t_obj *existingObj = (*arr)[index];
+			t_obj *existingObj = game.objects[index];
 
 			t_obj_state oldState = existingObj->state;
 			t_pos oldPos = existingObj->pos;
 			unsigned long oldHp = existingObj->hp;
 			unsigned long oldBalance = 0;
-			if ((*arr) == game.units)
+			if (obj.type == OBJ_UNIT)
 				oldBalance = existingObj->s_unit.balance;
-			if ((*arr) == game.cores)
+			if (obj.type == OBJ_CORE)
 				oldBalance = existingObj->s_core.balance;
-			if ((*arr) == game.resources)
+			if (obj.type == OBJ_RESOURCE || obj.type == OBJ_MONEY)
 				oldBalance = existingObj->s_resource_money.balance;
 
 			existingObj->type = obj.type;
@@ -31,23 +31,23 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 			existingObj->id = obj.id;
 			existingObj->pos = obj.pos;
 			existingObj->hp = obj.hp;
-			if ((*arr) == game.units)
+			if (obj.type == OBJ_UNIT)
 			{
 				existingObj->s_unit.unit_type = obj.s_unit.unit_type;
 				existingObj->s_unit.team_id = obj.s_unit.team_id;
 				existingObj->s_unit.balance = obj.s_unit.balance;
 				existingObj->s_unit.next_movement_opp = obj.s_unit.next_movement_opp;
 			}
-			if ((*arr) == game.cores)
+			if (obj.type == OBJ_CORE)
 			{
 				existingObj->s_core.team_id = obj.s_core.team_id;
 				existingObj->s_core.balance = obj.s_core.balance;
 			}
-			if ((*arr) == game.resources)
+			if (obj.type == OBJ_RESOURCE || obj.type == OBJ_MONEY)
 			{
 				existingObj->s_resource_money.balance = obj.s_resource_money.balance;
 			}
-			if ((*arr) == game.bombs)
+			if (obj.type == OBJ_BOMB)
 			{
 				existingObj->s_bomb.countdown = obj.s_bomb.countdown;
 			}
@@ -61,11 +61,11 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 			if (event_handler.on_object_balance_change)
 			{
 				unsigned long new_balance = 0;
-				if ((*arr) == game.units)
+				if (obj.type == OBJ_UNIT)
 					new_balance = existingObj->s_unit.balance;
-				else if ((*arr) == game.cores)
+				else if (obj.type == OBJ_CORE)
 					new_balance = existingObj->s_core.balance;
-				else if ((*arr) == game.resources)
+				else if (obj.type == OBJ_RESOURCE || obj.type == OBJ_MONEY)
 					new_balance = existingObj->s_resource_money.balance;
 				if (oldBalance != new_balance)
 					event_handler.on_object_balance_change(existingObj, oldBalance, new_balance, user_data);
@@ -81,39 +81,39 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 
 	// 2. LOOP: Placeholder matching
 	index = 0;
-	while ((*arr)[index] != NULL)
+	while (game.objects[index] != NULL)
 	{
-		bool matches = (*arr)[index]->id == 0;
-		if ((*arr) == game.units && (((*arr)[index]->s_unit.unit_type != obj.s_unit.unit_type) || ((*arr)[index]->s_unit.team_id != obj.s_unit.team_id)))
+		bool matches = game.objects[index]->id == 0;
+		if (obj.type == OBJ_UNIT && ((game.objects[index]->s_unit.unit_type != obj.s_unit.unit_type) || (game.objects[index]->s_unit.team_id != obj.s_unit.team_id)))
 			matches = false;
-		if ((*arr) == game.cores && (*arr)[index]->s_core.team_id != obj.s_core.team_id)
+		if (obj.type == OBJ_CORE && game.objects[index]->s_core.team_id != obj.s_core.team_id)
 			matches = false;
 
 		if (matches)
 		{
-			t_obj *existingObj = (*arr)[index];
+			t_obj *existingObj = game.objects[index];
 			existingObj->type = obj.type;
 			existingObj->state = STATE_ALIVE;
 			existingObj->id = obj.id;
 			existingObj->pos = obj.pos;
 			existingObj->hp = obj.hp;
-			if ((*arr) == game.units)
+			if (obj.type == OBJ_UNIT)
 			{
 				existingObj->s_unit.unit_type = obj.s_unit.unit_type;
 				existingObj->s_unit.team_id = obj.s_unit.team_id;
 				existingObj->s_unit.balance = obj.s_unit.balance;
 				existingObj->s_unit.next_movement_opp = obj.s_unit.next_movement_opp;
 			}
-			if ((*arr) == game.cores)
+			if (obj.type == OBJ_CORE)
 			{
 				existingObj->s_core.team_id = obj.s_core.team_id;
 				existingObj->s_core.balance = obj.s_core.balance;
 			}
-			if ((*arr) == game.resources)
+			if (obj.type == OBJ_RESOURCE || obj.type == OBJ_MONEY)
 			{
 				existingObj->s_resource_money.balance = obj.s_resource_money.balance;
 			}
-			if ((*arr) == game.bombs)
+			if (obj.type == OBJ_BOMB)
 			{
 				existingObj->s_bomb.countdown = obj.s_bomb.countdown;
 			}
@@ -125,42 +125,42 @@ static void apply_obj_to_arr(t_obj obj, t_obj ***arr)
 	if (objInserted)
 		return;
 
-	if ((*arr) == game.units && obj.s_unit.team_id == game.my_team_id)
+	if (obj.type == OBJ_UNIT && obj.s_unit.team_id == game.my_team_id)
 	{
 		printf("Error matching team units. This is never supposed to happen. Have you freed something you shouldn't have? Troublemaker: [id %lu, unit_type %lu, team %lu]\n", obj.id, obj.s_unit.unit_type, obj.s_unit.team_id);
 	}
 
 	// 3. Add to the back
 	size_t arrLen = 0;
-	while ((*arr)[arrLen] != NULL)
+	while (game.objects[arrLen] != NULL)
 		arrLen++;
-	(*arr) = realloc((*arr), sizeof(t_obj *) * (arrLen + 2));
-	(*arr)[arrLen + 1] = NULL;
-	(*arr)[arrLen] = malloc(sizeof(t_obj));
-	t_obj *existingObj = (*arr)[arrLen];
+	game.objects = realloc(game.objects, sizeof(t_obj *) * (arrLen + 2));
+	game.objects[arrLen + 1] = NULL;
+	game.objects[arrLen] = malloc(sizeof(t_obj));
+	t_obj *existingObj = game.objects[arrLen];
 	existingObj->type = obj.type;
 	existingObj->state = STATE_ALIVE;
 	existingObj->id = obj.id;
 	existingObj->pos = obj.pos;
 	existingObj->hp = obj.hp;
 	existingObj->data = NULL;
-	if ((*arr) == game.units)
+	if (obj.type == OBJ_UNIT)
 	{
 		existingObj->s_unit.unit_type = obj.s_unit.unit_type;
 		existingObj->s_unit.team_id = obj.s_unit.team_id;
 		existingObj->s_unit.balance = obj.s_unit.balance;
 		existingObj->s_unit.next_movement_opp = obj.s_unit.next_movement_opp;
 	}
-	if ((*arr) == game.cores)
+	if (obj.type == OBJ_CORE)
 	{
 		existingObj->s_core.team_id = obj.s_core.team_id;
 		existingObj->s_core.balance = obj.s_core.balance;
 	}
-	if ((*arr) == game.resources)
+	if (obj.type == OBJ_RESOURCE || obj.type == OBJ_MONEY)
 	{
 		existingObj->s_resource_money.balance = obj.s_resource_money.balance;
 	}
-	if ((*arr) == game.bombs)
+	if (obj.type == OBJ_BOMB)
 	{
 		existingObj->s_bomb.countdown = obj.s_bomb.countdown;
 	}
@@ -176,29 +176,12 @@ void ft_parse_json_state(char *json)
 
 	json_node *objects = json_find(root, "objects");
 
-	if (game.cores != NULL)
+	if (game.objects != NULL)
 	{
-		for (size_t i = 0; game.cores[i] != NULL; i++)
-			if (game.cores[i]->state == STATE_ALIVE)
-				game.cores[i]->state = STATE_DEAD;
-	}
-	if (game.units != NULL)
-	{
-		for (size_t i = 0; game.units[i] != NULL; i++)
-			if (game.units[i]->state == STATE_ALIVE)
-				game.units[i]->state = STATE_DEAD;
-	}
-	if (game.resources != NULL)
-	{
-		for (size_t i = 0; game.resources[i] != NULL; i++)
-			if (game.resources[i]->state == STATE_ALIVE)
-				game.resources[i]->state = STATE_DEAD;
-	}
-	if (game.walls != NULL)
-	{
-		for (size_t i = 0; game.walls[i] != NULL; i++)
-			if (game.walls[i]->state == STATE_ALIVE)
-				game.walls[i]->state = STATE_DEAD;
+		for (int i = 0; game.objects[i] != NULL; i++)
+			free(game.objects[i]);
+		free(game.objects);
+		game.objects = NULL;
 	}
 
 	for (int i = 0; objects->array != NULL && objects->array[i] != NULL; i++)
@@ -210,6 +193,7 @@ void ft_parse_json_state(char *json)
 		readObj.pos.y = (unsigned short)json_find(objects->array[i], "y")->number;
 		readObj.hp = (unsigned long)json_find(objects->array[i], "hp")->number;
 
+		// object-specific fields (wall doesn't have any)
 		if (readObj.type == OBJ_CORE)
 		{
 			readObj.s_core.team_id = (unsigned long)json_find(objects->array[i], "teamId")->number;
@@ -231,46 +215,23 @@ void ft_parse_json_state(char *json)
 			readObj.s_bomb.countdown = (unsigned long)json_find(objects->array[i], "countdown")->number;
 		}
 
-		t_obj ***game_arr = NULL;
-		if (readObj.type == OBJ_CORE)
-			game_arr = &game.cores;
-		else if (readObj.type == OBJ_UNIT)
-			game_arr = &game.units;
-		else if (readObj.type == OBJ_RESOURCE)
-			game_arr = &game.resources;
-		else if (readObj.type == OBJ_WALL)
-			game_arr = &game.walls;
-		else if (readObj.type == OBJ_MONEY)
-			game_arr = &game.moneys;
-		else if (readObj.type == OBJ_BOMB)
-			game_arr = &game.bombs;
-		else
-		{
-			printf("Unknown object type %d with id %lu at pos (%hu, %hu)\n", readObj.type, readObj.id, readObj.pos.x, readObj.pos.y);
-			continue;
-		}
-
-		if (*game_arr == NULL)
-		{
-			*game_arr = malloc(sizeof(t_obj *) * 1);
-			(*game_arr)[0] = NULL;
-		}
-
-		apply_obj_to_arr(readObj, game_arr);
+		apply_obj_to_arr(readObj);
 	}
 
 	// clean uninitialized units, as the server did not send them
-	if (game.units && game.units[0])
+	if (game.objects && game.objects[0])
 	{
 		int j = 0;
-		for (size_t i = 0; game.units[i] != NULL; i++)
+		for (size_t i = 0; game.objects[i] != NULL; i++)
 		{
-			if (game.units[i]->state != STATE_UNINITIALIZED)
-				game.units[j++] = game.units[i];
+			if (game.objects[i]->type != OBJ_UNIT)
+				continue;
+			if (game.objects[i]->state != STATE_UNINITIALIZED)
+				game.objects[j++] = game.objects[i];
 			else
-				free(game.units[i]);
+				free(game.objects[i]);
 		}
-		game.units[j] = NULL;
+		game.objects[j] = NULL;
 	}
 
 	free_json(root);

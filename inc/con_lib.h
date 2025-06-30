@@ -349,46 +349,7 @@ void ft_transfer_money(t_obj *source, t_obj *target, unsigned long amount);
  */
 void ft_build(t_obj *builder, t_pos pos);
 
-// -------------- print_utils.c --------------
-/**
- * @brief Prints the current game status into stdout
- */
-void ft_print_status();
-/**
- * @brief Prints the current game cores with inforamtion about their id, team_id, x, y and hp into stdout
- *
- */
-void ft_print_cores();
-/**
- * @brief Prints the current game resources with inforamtion about their id, value, x, y and hp into stdout
- *
- */
-void ft_print_resources();
-/**
- * @brief Prints the current game units with inforamtion about their id, unit_type, team_id, x, y and hp into stdout
- */
-
-void ft_print_units();
-/**
- * @brief Prints a unit config with inforamtion about their unit_type, name, cost, hp, dmg_core, dmg_unit, max_range, min_range and speed into stdout
- *
- * @param unit_config Pointer to the unit config
- */
-void ft_print_unit_config(const t_unit_config *unit_config);
-/**
- * @brief Prints the current game config with inforamtion about their height, width, idle_income, core_hp, teams and units into stdout
- *
- */
-void ft_print_game_config();
-/**
- * @brief Prints every info about the gameconfig, status, teams, cores, resources and units into stdout.
- *
- */
-void ft_print_all();
-
-void ft_free_all();
 void ft_free_game();
-void ft_free_config();
 void ft_perror_exit(char *msg);
 
 #endif

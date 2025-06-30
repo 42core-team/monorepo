@@ -68,7 +68,7 @@ void	ft_init_con(char *team_name, int argc, char **argv)
 void	ft_close_con()
 {
 	close(socket_fd);
-	ft_free_all();
+	ft_free_game();
 }
 
 /// @brief Enables debug mode, which prints all sent and received messages.
@@ -125,20 +125,8 @@ void ft_loop(t_event_handler handler, void *custom_data)
 		if (event_handler.on_tick)
 			event_handler.on_tick(game.elapsed_ticks, custom_data);
 		if (event_handler.on_object_ticked)
-		{
-			for (size_t i = 0; game.resources && game.resources[i]; i++)
-				event_handler.on_object_ticked(game.resources[i], game.elapsed_ticks, custom_data);
-			for (size_t i = 0; game.units && game.units[i]; i++)
-				event_handler.on_object_ticked(game.units[i], game.elapsed_ticks, custom_data);
-			for (size_t i = 0; game.walls && game.walls[i]; i++)
-				event_handler.on_object_ticked(game.walls[i], game.elapsed_ticks, custom_data);
-			for (size_t i = 0; game.cores && game.cores[i]; i++)
-				event_handler.on_object_ticked(game.cores[i], game.elapsed_ticks, custom_data);
-			for (size_t i = 0; game.moneys && game.moneys[i]; i++)
-				event_handler.on_object_ticked(game.moneys[i], game.elapsed_ticks, custom_data);
-			for (size_t i = 0; game.bombs && game.bombs[i]; i++)
-				event_handler.on_object_ticked(game.bombs[i], game.elapsed_ticks, custom_data);
-		}
+			for (size_t i = 0; game.objects && game.objects[i]; i++)
+				event_handler.on_object_ticked(game.objects[i], game.elapsed_ticks, custom_data);
 	}
 
 	if (event_handler.on_exit)
