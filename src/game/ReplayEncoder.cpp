@@ -1,5 +1,7 @@
 #include "ReplayEncoder.h"
 
+#define REPLAY_VERSION std::string("1.0.0")
+
 std::string ReplayEncoder::replaySaveFolder_ = "";
 
 json ReplayEncoder::diffObject(const json &currentObj, const json &previousObj)
@@ -125,7 +127,7 @@ void ReplayEncoder::verifyReplaySaveFolder()
 	}
 
 	if (replaySaveFolder_.rfind("http://", 0) == 0 ||
-			replaySaveFolder_.rfind("https://", 0) == 0)
+		replaySaveFolder_.rfind("https://", 0) == 0)
 		return;
 
 	if (!std::filesystem::exists(replaySaveFolder_) ||
@@ -149,6 +151,7 @@ json ReplayEncoder::encodeMiscSection() const
 		miscSection["team_results"].push_back(teamJson);
 	}
 	miscSection["game_end_reason"] = static_cast<int>(gameEndReason_);
+	miscSection["version"] = REPLAY_VERSION;
 	return miscSection;
 }
 
