@@ -216,29 +216,9 @@ typedef struct s_game
 	 */
 	unsigned long my_team_id;
 	/**
-	 * @brief List of all cores and their informations. NULL-terminated.
+	 * @brief List of all objects (units, cores, resources, etc.) and their informations. NULL-terminated.
 	 */
-	t_obj **cores;
-	/**
-	 * @brief List of all resources and their informations. NULL-terminated.
-	 */
-	t_obj **resources;
-	/**
-	 * @brief List of all walls and their informations. NULL-terminated.
-	 */
-	t_obj **walls;
-	/**
-	 * @brief List of all units and their informations. NULL-terminated.
-	 */
-	t_obj **units;
-	/**
-	 * @brief List of all moneys and their informations. NULL-terminated.
-	 */
-	t_obj **moneys;
-	/**
-	 * @brief List of all bombs and their informations. NULL-terminated.
-	 */
-	t_obj **bombs;
+	t_obj **objects;
 	/**
 	 * @brief List of all actions that will be send to the server when your function ends.
 	 */
