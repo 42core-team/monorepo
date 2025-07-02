@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include <stdio.h>
+#include <limits.h>
 
 typedef enum e_obj_type
 {
@@ -240,49 +241,52 @@ void ft_loop(t_event_handler handler, void *custom_data);
 /*
  * @brief Get any object based on its id
  */
-t_obj *ft_get_obj_from_id(unsigned long id);
+t_obj *core_get_obj_from_id(unsigned long id);
 /*
  * @brief Get the object at a specific position or null
  */
-t_obj *ft_get_obj_at_pos(t_pos pos);
+t_obj *core_get_obj_from_pos(t_pos pos);
+/*
+ * @brief Get all objects that match a custom condition
+ * @param condition A function pointer that takes a t_obj pointer and returns a bool indicating if the object matches the condition
+ * @return An array of pointers to t_obj that match the condition, NULL-terminated
+ */
+t_obj **core_get_obj_customCondition(bool (*condition)(t_obj *));
+/*
+ * @brief Get the first object that matches a custom condition
+ * @param condition A function pointer that takes a t_obj pointer and returns a bool indicating if the object matches the condition
+ * @return The first object that matches the condition or NULL if no such object exists or no condition is provided
+ */
+t_obj *core_get_obj_customCondition_first(bool (*condition)(t_obj *));
+/*
+ * @brief Get the nearest object to the given position that matches a custom condition
+ * @param pos The position to search from
+ * @param condition A function pointer that takes a t_obj pointer and returns a bool indicating if the object matches the condition
+ * @return The nearest object that matches the condition or NULL if no such object exists or no condition is provided
+ */
+t_obj *core_get_obj_customCondition_nearest(t_pos pos, bool (*condition)(t_obj *));
 // --------------- core getter ---------------
 /**
  * @brief Get my core
  */
-t_obj *ft_get_my_core(void);
+t_obj *core_get_core_own(void);
 /**
  * @brief Get the first opponent core
  */
-t_obj *ft_get_nearest_opponent_core(t_obj *unit);
-/**
- * @brief Get the nearest core to the given obj
- */
-t_obj *ft_get_nearest_core(t_obj *obj);
+t_obj *core_get_core_opponent(void);
 // --------------- unit getter ---------------
-/**
- * @brief Returns a pointer array of all units
- */
-t_obj **ft_get_all_units();
 /**
  * @brief Allocates a pointer array of all my units
  */
-t_obj **ft_get_my_units(void);
+t_obj **core_get_units_own(void);
 /**
  * @brief Allocates a pointer array of all opponent units
  */
-t_obj **ft_get_opponent_units(void);
+t_obj **core_get_units_opponent(void);
 /**
- * @brief Get the nearest unit to the given unit
+ * @brief Get the nearest opponent unit to the given position
  */
-t_obj *ft_get_nearest_unit(t_obj *unit);
-/**
- * @brief Get the nearest opponent unit to the given unit
- */
-t_obj *ft_get_nearest_opponent_unit(t_obj *unit);
-/**
- * @brief Get the nearest team unit to the given unit
- */
-t_obj *ft_get_nearest_team_unit(t_obj *unit);
+t_obj *core_get_units_opponent_nearest(t_pos pos);
 // --------------- resource getter ---------------
 /**
  * @brief Get the nearest resource to the given unit
@@ -292,10 +296,9 @@ t_obj *ft_get_nearest_resource(t_obj *unit);
 /**
  * @brief Get the unit config by unit_type
  */
-t_unit_config *ft_get_unit_config(t_unit_type type);
-// ---------------- get utils ----------------
-double ft_distance(t_obj *obj1, t_obj *obj2);
-int	ft_distance_pos(t_pos pos1, t_pos pos2);
+t_unit_config *core_get_unitconfig(t_unit_type type);
+// --------------------- utils ----------------
+int core_util_distance(t_pos pos1, t_pos pos2);
 
 // --------------- actions.c ---------------
 /**
