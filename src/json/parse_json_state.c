@@ -1,5 +1,4 @@
 #include "parse_json.h"
-#include "event_handler.h"
 
 static void apply_obj_to_arr(t_obj obj)
 {
@@ -50,25 +49,6 @@ static void apply_obj_to_arr(t_obj obj)
 			if (obj.type == OBJ_BOMB)
 			{
 				existingObj->s_bomb.countdown = obj.s_bomb.countdown;
-			}
-
-			if (event_handler.on_object_state_change && oldState != existingObj->state)
-				event_handler.on_object_state_change(existingObj, oldState, existingObj->state, user_data);
-			if (event_handler.on_object_pos_change && (oldPos.x != existingObj->pos.x || oldPos.y != existingObj->pos.y))
-				event_handler.on_object_pos_change(existingObj, oldPos, existingObj->pos, user_data);
-			if (event_handler.on_object_health_change && oldHp != existingObj->hp)
-				event_handler.on_object_health_change(existingObj, oldHp, existingObj->hp, user_data);
-			if (event_handler.on_object_balance_change)
-			{
-				unsigned long new_balance = 0;
-				if (obj.type == OBJ_UNIT)
-					new_balance = existingObj->s_unit.balance;
-				else if (obj.type == OBJ_CORE)
-					new_balance = existingObj->s_core.balance;
-				else if (obj.type == OBJ_RESOURCE || obj.type == OBJ_MONEY)
-					new_balance = existingObj->s_resource_money.balance;
-				if (oldBalance != new_balance)
-					event_handler.on_object_balance_change(existingObj, oldBalance, new_balance, user_data);
 			}
 
 			objInserted = true;

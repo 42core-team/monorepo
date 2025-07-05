@@ -1,8 +1,6 @@
 #ifndef CON_LIB_H
 #define CON_LIB_H
 
-#include "event_handler.h"
-
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdbool.h>
@@ -232,10 +230,7 @@ typedef struct s_game
  */
 extern t_game game;
 
-void ft_init_con(char *team_name, int argc, char **argv);
-void ft_close_con();
-void ft_enable_debug();
-void ft_loop(t_event_handler handler, void *custom_data);
+int ft_game_start(char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug);
 
 // ------------------ getter -----------------
 /*
