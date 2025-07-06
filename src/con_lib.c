@@ -7,7 +7,7 @@ static bool is_my_core(t_obj *obj)
 {
 	if (!obj || obj->type != OBJ_CORE)
 		return false;
-	return (obj->id == game.my_team_id);
+	return (obj->s_core.team_id == game.my_team_id);
 }
 
 /**
@@ -21,17 +21,11 @@ static bool is_my_core(t_obj *obj)
  */
 int	ft_game_start(char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug)
 {
-	// clean structs
-	memset(&game, 0, sizeof(t_game));
-	memset(&game.config, 0, sizeof(t_config));
-	memset(&game.actions, 0, sizeof(t_actions));
-	ft_reset_actions();
-
 	// setup socket
 	const char *env_ip = getenv("SERVER_IP");
 	const char *env_port = getenv("SERVER_PORT");
 	const int port = env_port ? atoi(env_port) : 4242;
-	game.my_team_id = argv[1] ? atoi(argv[1]) : 0;
+	game.my_team_id = argv[1] ? atoi(argv[1]) : printf("No team id provided, using 0.\n");
 	int socket_fd = ft_init_socket(ft_init_addr(env_ip ? env_ip : "127.0.0.1", port));
 
 	// send login message
@@ -56,11 +50,10 @@ int	ft_game_start(char *team_name, int argc, char **argv, void (*tick_callback)(
 	ft_parse_json_config(conf);
 	free(conf);
 
-	
 	// run game loop
 	printf("Game started! Your id: %ld\n", game.my_team_id);
 	bool first_tick = true;
-	t_obj *my_core = core_get_obj_customCondition_first(is_my_core);
+	t_obj *my_core = NULL;
 	while ((my_core != NULL && my_core->hp > 0) || first_tick)
 	{
 		first_tick = false;
@@ -88,6 +81,7 @@ int	ft_game_start(char *team_name, int argc, char **argv, void (*tick_callback)(
 		}
 		ft_parse_json_state(msg);
 		free(msg);
+		my_core = core_get_obj_customCondition_first(is_my_core);
 
 		// execute user code
 		if (tick_callback)

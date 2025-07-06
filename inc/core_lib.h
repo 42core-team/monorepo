@@ -320,6 +320,8 @@ void ft_transfer_money(t_obj *source, t_obj *target, unsigned long amount);
  */
 void ft_build(t_obj *builder, t_pos pos);
 
+void core_util_print_object();
+
 void ft_free_game();
 void ft_perror_exit(char *msg);
 

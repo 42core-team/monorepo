@@ -127,12 +127,9 @@ void ft_parse_json_state(char *json)
 	json_node *objects = json_find(root, "objects");
 
 	if (game.objects != NULL)
-	{
-		for (int i = 0; game.objects[i] != NULL; i++)
-			free(game.objects[i]);
-		free(game.objects);
-		game.objects = NULL;
-	}
+		for (size_t i = 0; game.objects[i] != NULL; i++)
+			if (game.objects[i]->state == STATE_ALIVE)
+				game.objects[i]->state = STATE_DEAD;
 
 	for (int i = 0; objects->array != NULL && objects->array[i] != NULL; i++)
 	{
@@ -174,12 +171,12 @@ void ft_parse_json_state(char *json)
 		int j = 0;
 		for (size_t i = 0; game.objects[i] != NULL; i++)
 		{
-			if (game.objects[i]->type != OBJ_UNIT)
+			t_obj *obj = game.objects[i];
+			if (obj->type == OBJ_UNIT && obj->state == STATE_UNINITIALIZED) {
+				free(obj);
 				continue;
-			if (game.objects[i]->state != STATE_UNINITIALIZED)
-				game.objects[j++] = game.objects[i];
-			else
-				free(game.objects[i]);
+			}
+			game.objects[j++] = obj;
 		}
 		game.objects[j] = NULL;
 	}
