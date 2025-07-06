@@ -1,5 +1,5 @@
-#ifndef CON_LIB_H
-#define CON_LIB_H
+#ifndef CORE_LIB_H
+#define CORE_LIB_H
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -323,4 +323,4 @@ void ft_build(t_obj *builder, t_pos pos);
 void ft_free_game();
 void ft_perror_exit(char *msg);
 
-#endif
+#endif // CORE_LIB_H

@@ -1,4 +1,4 @@
-#include "con_lib.h"
+#include "core_lib.h"
 
 int core_util_distance(t_pos pos1, t_pos pos2)
 {
