@@ -3,6 +3,13 @@
 
 t_game	game = {0};
 
+static bool is_my_core(t_obj *obj)
+{
+	if (!obj || obj->type != OBJ_CORE)
+		return false;
+	return (obj->id == game.my_team_id);
+}
+
 /**
  * @brief Starts the connection to the server. This function should be called before any other function from this library.
  *
@@ -53,7 +60,8 @@ int	ft_game_start(char *team_name, int argc, char **argv, void (*tick_callback)(
 	// run game loop
 	printf("Game started! Your id: %ld\n", game.my_team_id);
 	bool first_tick = true;
-	while ((ft_get_my_core() != NULL && ft_get_my_core()->hp > 0) || first_tick)
+	t_obj *my_core = core_get_obj_customCondition_first(is_my_core);
+	while ((my_core != NULL && my_core->hp > 0) || first_tick)
 	{
 		first_tick = false;
 
@@ -87,7 +95,7 @@ int	ft_game_start(char *team_name, int argc, char **argv, void (*tick_callback)(
 	}
 
 	// handle game end
-	if (ft_get_my_core() && ft_get_my_core()->hp > 0)
+	if (my_core && my_core->hp > 0)
 		printf("Game over! You won!\n");
 	else
 		printf("Game over! You lost!\n");
@@ -95,4 +103,6 @@ int	ft_game_start(char *team_name, int argc, char **argv, void (*tick_callback)(
 	// clean up
 	close(socket_fd);
 	ft_free_game();
+
+	return 0;
 }

@@ -1,5 +1,14 @@
 #include "parse_json.h"
 
+static bool is_my_core(t_obj *obj)
+{
+	return obj && obj->type == OBJ_CORE && obj->s_core.team_id == game.my_team_id;
+}
+static t_obj *ft_get_my_core(void)
+{
+	return core_get_obj_customCondition_first(is_my_core);
+}
+
 t_obj *ft_create_unit(t_unit_type unit_type)
 {
 	int unit_count = 0;

@@ -1,5 +1,7 @@
 #include "socket.h"
 
+void	ft_perror_exit(char *msg);
+
 static FILE  *sock_stream = NULL;
 
 int ft_init_socket(struct sockaddr_in addr)

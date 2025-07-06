@@ -260,38 +260,11 @@ t_obj *core_get_obj_customCondition_first(bool (*condition)(t_obj *));
  * @return The nearest object that matches the condition or NULL if no such object exists or no condition is provided
  */
 t_obj *core_get_obj_customCondition_nearest(t_pos pos, bool (*condition)(t_obj *));
-// --------------- core getter ---------------
-/**
- * @brief Get my core
- */
-t_obj *core_get_core_own(void);
-/**
- * @brief Get the first opponent core
- */
-t_obj *core_get_core_opponent(void);
-// --------------- unit getter ---------------
-/**
- * @brief Allocates a pointer array of all my units
- */
-t_obj **core_get_units_own(void);
-/**
- * @brief Allocates a pointer array of all opponent units
- */
-t_obj **core_get_units_opponent(void);
-/**
- * @brief Get the nearest opponent unit to the given position
- */
-t_obj *core_get_units_opponent_nearest(t_pos pos);
-// --------------- resource getter ---------------
-/**
- * @brief Get the nearest resource to the given unit
- */
-t_obj *ft_get_nearest_resource(t_obj *unit);
 // --------------- unit config getter ---------------
 /**
  * @brief Get the unit config by unit_type
  */
-t_unit_config *core_get_unitconfig(t_unit_type type);
+t_unit_config *core_get_unitConfig(t_unit_type type);
 // --------------------- utils ----------------
 int core_util_distance(t_pos pos1, t_pos pos2);
 

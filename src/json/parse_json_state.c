@@ -14,17 +14,6 @@ static void apply_obj_to_arr(t_obj obj)
 		{
 			t_obj *existingObj = game.objects[index];
 
-			t_obj_state oldState = existingObj->state;
-			t_pos oldPos = existingObj->pos;
-			unsigned long oldHp = existingObj->hp;
-			unsigned long oldBalance = 0;
-			if (obj.type == OBJ_UNIT)
-				oldBalance = existingObj->s_unit.balance;
-			if (obj.type == OBJ_CORE)
-				oldBalance = existingObj->s_core.balance;
-			if (obj.type == OBJ_RESOURCE || obj.type == OBJ_MONEY)
-				oldBalance = existingObj->s_resource_money.balance;
-
 			existingObj->type = obj.type;
 			existingObj->state = STATE_ALIVE;
 			existingObj->id = obj.id;
@@ -149,8 +138,6 @@ static void apply_obj_to_arr(t_obj obj)
 void ft_parse_json_state(char *json)
 {
 	json_node *root = string_to_json(json);
-
-	parse_json_actions(root);
 
 	game.elapsed_ticks = (unsigned long)json_find(root, "tick")->number;
 

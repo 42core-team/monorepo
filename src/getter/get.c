@@ -18,6 +18,24 @@ t_obj *core_get_obj_from_pos(t_pos pos)
 	return (NULL);
 }
 
+// -
+
+t_unit_config *core_get_unitConfig(t_unit_type unit_type)
+{
+	int ind = 0;
+
+	while (game.config.units[ind] != NULL)
+	{
+		if (game.config.units[ind]->unit_type == unit_type)
+			return (game.config.units[ind]);
+		ind++;
+	}
+
+	return (NULL);
+}
+
+// -
+
 t_obj **core_get_obj_customCondition(bool (*condition)(t_obj *))
 {
 	if (!condition)

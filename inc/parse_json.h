@@ -12,10 +12,6 @@ void	ft_parse_json_state(char *json);
 //parse_json_config.c
 void	ft_parse_json_config(char *json);
 
-//parse_json_actions.c
-void	parse_json_actions(json_node *root);
-
-
 
 //encode_json_actions.c
 char	*ft_all_action_json();
