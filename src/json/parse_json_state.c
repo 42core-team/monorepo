@@ -2,6 +2,17 @@
 
 static void apply_obj_to_arr(t_obj obj)
 {
+	if (game.objects == NULL)
+	{
+		game.objects = malloc(sizeof(t_obj *) * 1);
+		if (!game.objects)
+		{
+			perror("malloc");
+			exit(EXIT_FAILURE);
+		}
+		game.objects[0] = NULL;
+	}
+
 	bool objInserted = false;
 
 	obj.state = STATE_ALIVE;
@@ -19,25 +30,23 @@ static void apply_obj_to_arr(t_obj obj)
 			existingObj->id = obj.id;
 			existingObj->pos = obj.pos;
 			existingObj->hp = obj.hp;
-			if (obj.type == OBJ_UNIT)
+			switch (obj.type)
 			{
-				existingObj->s_unit.unit_type = obj.s_unit.unit_type;
-				existingObj->s_unit.team_id = obj.s_unit.team_id;
-				existingObj->s_unit.balance = obj.s_unit.balance;
-				existingObj->s_unit.next_movement_opp = obj.s_unit.next_movement_opp;
-			}
-			if (obj.type == OBJ_CORE)
-			{
-				existingObj->s_core.team_id = obj.s_core.team_id;
-				existingObj->s_core.balance = obj.s_core.balance;
-			}
-			if (obj.type == OBJ_RESOURCE || obj.type == OBJ_MONEY)
-			{
-				existingObj->s_resource_money.balance = obj.s_resource_money.balance;
-			}
-			if (obj.type == OBJ_BOMB)
-			{
-				existingObj->s_bomb.countdown = obj.s_bomb.countdown;
+				case OBJ_UNIT:
+					existingObj->s_unit = obj.s_unit;
+					break;
+				case OBJ_CORE:
+					existingObj->s_core = obj.s_core;
+					break;
+				case OBJ_RESOURCE:
+				case OBJ_MONEY:
+					existingObj->s_resource_money = obj.s_resource_money;
+					break;
+				case OBJ_BOMB:
+					existingObj->s_bomb = obj.s_bomb;
+					break;
+				default:
+					break;
 			}
 
 			objInserted = true;
@@ -66,25 +75,23 @@ static void apply_obj_to_arr(t_obj obj)
 			existingObj->id = obj.id;
 			existingObj->pos = obj.pos;
 			existingObj->hp = obj.hp;
-			if (obj.type == OBJ_UNIT)
+			switch (obj.type)
 			{
-				existingObj->s_unit.unit_type = obj.s_unit.unit_type;
-				existingObj->s_unit.team_id = obj.s_unit.team_id;
-				existingObj->s_unit.balance = obj.s_unit.balance;
-				existingObj->s_unit.next_movement_opp = obj.s_unit.next_movement_opp;
-			}
-			if (obj.type == OBJ_CORE)
-			{
-				existingObj->s_core.team_id = obj.s_core.team_id;
-				existingObj->s_core.balance = obj.s_core.balance;
-			}
-			if (obj.type == OBJ_RESOURCE || obj.type == OBJ_MONEY)
-			{
-				existingObj->s_resource_money.balance = obj.s_resource_money.balance;
-			}
-			if (obj.type == OBJ_BOMB)
-			{
-				existingObj->s_bomb.countdown = obj.s_bomb.countdown;
+				case OBJ_UNIT:
+					existingObj->s_unit = obj.s_unit;
+					break;
+				case OBJ_CORE:
+					existingObj->s_core = obj.s_core;
+					break;
+				case OBJ_RESOURCE:
+				case OBJ_MONEY:
+					existingObj->s_resource_money = obj.s_resource_money;
+					break;
+				case OBJ_BOMB:
+					existingObj->s_bomb = obj.s_bomb;
+					break;
+				default:
+					break;
 			}
 			objInserted = true;
 			break;
@@ -106,33 +113,9 @@ static void apply_obj_to_arr(t_obj obj)
 	game.objects = realloc(game.objects, sizeof(t_obj *) * (arrLen + 2));
 	game.objects[arrLen + 1] = NULL;
 	game.objects[arrLen] = malloc(sizeof(t_obj));
-	t_obj *existingObj = game.objects[arrLen];
-	existingObj->type = obj.type;
-	existingObj->state = STATE_ALIVE;
-	existingObj->id = obj.id;
-	existingObj->pos = obj.pos;
-	existingObj->hp = obj.hp;
-	existingObj->data = NULL;
-	if (obj.type == OBJ_UNIT)
-	{
-		existingObj->s_unit.unit_type = obj.s_unit.unit_type;
-		existingObj->s_unit.team_id = obj.s_unit.team_id;
-		existingObj->s_unit.balance = obj.s_unit.balance;
-		existingObj->s_unit.next_movement_opp = obj.s_unit.next_movement_opp;
-	}
-	if (obj.type == OBJ_CORE)
-	{
-		existingObj->s_core.team_id = obj.s_core.team_id;
-		existingObj->s_core.balance = obj.s_core.balance;
-	}
-	if (obj.type == OBJ_RESOURCE || obj.type == OBJ_MONEY)
-	{
-		existingObj->s_resource_money.balance = obj.s_resource_money.balance;
-	}
-	if (obj.type == OBJ_BOMB)
-	{
-		existingObj->s_bomb.countdown = obj.s_bomb.countdown;
-	}
+	t_obj *newObj = game.objects[arrLen];
+	*newObj = obj;
+	newObj->state = STATE_ALIVE;
 }
 
 void ft_parse_json_state(char *json)

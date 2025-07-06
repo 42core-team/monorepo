@@ -1,49 +1,55 @@
 #include "socket.h"
+char	*get_next_line(int fd);
 
-void	ft_perror_exit(char *msg);
+#include "core_lib.h"
 
-static FILE  *sock_stream = NULL;
+#include <netdb.h>
+#include <arpa/inet.h>
 
-int ft_init_socket(struct sockaddr_in addr)
+static void ft_print_error(char *str, const char *func_name)
 {
-	int socket_fd, flags, status_con;
+	fprintf(stderr, "Error: %s: %s\n", func_name, str);
+}
+
+int	ft_init_socket(struct sockaddr_in addr)
+{
+	int	socket_fd, status_con;
 
 	write(1, "Connecting to server", 21);
+
 	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (socket_fd < 0)
 		ft_perror_exit("Socket creation failed");
 
-	/* set non-blocking */
-	if ((flags = fcntl(socket_fd, F_GETFL, 0)) < 0 ||
-		fcntl(socket_fd, F_SETFL, flags | O_NONBLOCK) < 0)
-		ft_perror_exit("Failed to set non-blocking mode");
+	// Set socket to non-blocking mode
+	int flags = fcntl(socket_fd, F_GETFL, 0);
+	if (flags < 0)
+		ft_perror_exit("Get socket flags failed");
 
-	/* attempt connect (with timeout loop) */
+	flags |= O_NONBLOCK;
+	if (fcntl(socket_fd, F_SETFL, flags) < 0)
+		ft_perror_exit("Set socket to non-blocking mode failed");
+
 	do {
 		write(1, ".", 1);
-		status_con = connect(socket_fd, (struct sockaddr *)&addr, sizeof(addr));
+		status_con = connect(socket_fd, (struct sockaddr *) &addr, sizeof(addr));
 		if (status_con < 0) {
-			fd_set ws;
-			struct timeval tv = { .tv_sec = 5, .tv_usec = 0 };
-			FD_ZERO(&ws);
-			FD_SET(socket_fd, &ws);
-			status_con = select(socket_fd + 1, NULL, &ws, NULL, &tv);
+			fd_set waitset;
+			FD_ZERO(&waitset);
+			FD_SET(socket_fd, &waitset);
+
+			struct timeval timeout;
+			timeout.tv_sec = 5;
+			timeout.tv_usec = 0;
+
+			status_con = select(socket_fd + 1, NULL, &waitset, NULL, &timeout);
 		}
 		if (status_con != 0)
 			usleep(350000);
 	} while (status_con != 0);
 
 	write(1, "Connected!\n", 12);
-
-	/* wrap socket in a FILE* for stdio reads */
-	sock_stream = fdopen(socket_fd, "r+");
-	if (!sock_stream)
-		ft_perror_exit("fdopen failed");
-
-	/* Optional: make stdio I/O unbuffered so you don’t hang on fgets/getline */
-	setvbuf(sock_stream, NULL, _IONBF, 0);
-
-	return socket_fd;
+	return (socket_fd);
 }
 
 int	ft_send_socket(const int socket_fd, const char *msg)
@@ -58,57 +64,56 @@ int	ft_send_socket(const int socket_fd, const char *msg)
 	return (status_send);
 }
 
-bool ft_wait_for_data(int fd)
-{
-	fd_set rf;
-	struct timeval tv = { .tv_sec = 10, .tv_usec = 0 };
+bool ft_wait_for_data(int fd) {
+	fd_set readfds;
+	struct timeval tv;
 	int retval;
 
-	FD_ZERO(&rf);
-	FD_SET(fd, &rf);
-	retval = select(fd + 1, &rf, NULL, NULL, &tv);
-	if (retval < 0) {
-		fprintf(stderr, "Error: %s: %s\n", __func__, strerror(errno));
+	FD_ZERO(&readfds);
+	FD_SET(fd, &readfds);
+
+	tv.tv_sec = 10;
+	tv.tv_usec = 0;
+
+	retval = select(fd + 1, &readfds, NULL, NULL, &tv);
+
+	if (retval == -1) {
+		ft_print_error(strerror(errno), __func__);
+		return false;
+	} else if (retval) {
+		return true;
+	} else {
+		ft_print_error("Did not receive any data from socket fd", __func__);
 		return false;
 	}
-	if (retval == 0) {
-		fprintf(stderr, "Error: %s: timeout waiting for data\n", __func__);
-		return false;
-	}
-	return true;
 }
 
-char *ft_read_socket(const int socket_fd)
+char	*ft_read_socket(const int socket_fd)
 {
-	char   *line = NULL;
-	size_t  len  = 0;
-	char   *last = NULL;
-	ssize_t n;
+	char	*buffer = NULL;
+	char	*last_buffer = NULL;
 
-	while (ft_wait_for_data(socket_fd)
-		   && (n = getline(&line, &len, sock_stream)) > 0)
+	ft_wait_for_data(socket_fd);
+	buffer = get_next_line(socket_fd);
+
+	while (buffer != NULL)
 	{
-		free(last);
-		/* duplicate so caller owns it */
-		last = strdup(line);
+		if (last_buffer != NULL)
+			free(last_buffer);
+		last_buffer = buffer;
+		buffer = get_next_line(socket_fd);
 	}
-	free(line);
-	return last;  /* NULL if no data, or last line read */
+	return (last_buffer);
 }
 
-char *ft_read_socket_once(const int socket_fd)
+char	*ft_read_socket_once(const int socket_fd)
 {
-	char   *line = NULL;
-	size_t  len  = 0;
-	ssize_t n;
+	char	*buffer = NULL;
 
-	if (ft_wait_for_data(socket_fd)
-		&& (n = getline(&line, &len, sock_stream)) > 0)
-	{
-		return line;  /* caller must free() */
-	}
-	free(line);
-	return NULL;
+	ft_wait_for_data(socket_fd);
+	buffer = get_next_line(socket_fd);
+
+	return (buffer);
 }
 
 struct sockaddr_in	ft_init_addr(const char *hostname, const int port)
