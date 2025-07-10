@@ -1,6 +1,6 @@
 #include "Game.h"
 
-json Game::encodeState(std::vector<std::pair<std::unique_ptr<Action>, Core &>> &actions, unsigned long long tick)
+json Game::encodeState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, unsigned long long tick)
 {
 	json state;
 
