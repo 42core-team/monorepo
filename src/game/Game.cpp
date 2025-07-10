@@ -74,7 +74,7 @@ void Game::tick(unsigned long long tick)
 {
 	// 1. COMPUTE ACTIONS
 
-	std::vector<std::pair<std::unique_ptr<Action>, Core &>> actions; // action, team id
+	std::vector<std::pair<std::unique_ptr<Action>, Core *>> actions; // action, team id
 
 	for (auto& bridge : bridges_)
 	{
@@ -91,16 +91,16 @@ void Game::tick(unsigned long long tick)
 		std::vector<std::unique_ptr<Action>> clientActions = Action::parseActions(msg);
 
 		for (auto& action : clientActions)
-			actions.emplace_back(std::move(action), *core);
+			actions.emplace_back(std::move(action), core);
 	}
 
 	shuffle_vector(actions); // shuffle action execution order to ensure fairness
 
 	for (auto& ele : actions) {
 		auto& action = ele.first;
-		Core& core = ele.second;
+		Core *core = ele.second;
 
-		if (!action->execute(&core))
+		if (!action->execute(core))
 			action = nullptr;
 	}
 
@@ -264,7 +264,7 @@ void Game::killWorstPlayerOnTimeout()
 	}
 }
 
-void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core &>> &actions, unsigned long long tick)
+void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, unsigned long long tick)
 {
 	json state = encodeState(actions, tick);
 
