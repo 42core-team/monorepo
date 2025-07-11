@@ -4,10 +4,9 @@
 Game::Game(std::vector<unsigned int> team_ids)
 	: nextObjectId_(1)
 {
-	std::vector<unsigned int> team_ids_double = team_ids;
-	shuffle_vector(team_ids_double); // randomly assign core positions to ensure fairness
+	shuffle_vector(team_ids); // randomly assign core positions to ensure fairness
 	for (unsigned int i = 0; i < team_ids.size(); ++i)
-		Board::instance().addObject<Core>(Core(Board::instance().getNextObjectId(), team_ids_double[i]), Config::getCorePosition(i), true);
+		Board::instance().addObject<Core>(Core(Board::instance().getNextObjectId(), team_ids[i]), Config::getCorePosition(i), true);
 	Config::instance().worldGenerator->generateWorld();
 	Logger::Log("Game created with " + std::to_string(team_ids.size()) + " teams.");
 }

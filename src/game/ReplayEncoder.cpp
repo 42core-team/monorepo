@@ -181,19 +181,19 @@ void ReplayEncoder::exportReplay() const
 }
 void ReplayEncoder::saveReplay(const json &replayData) const
 {
-	std::string filePath = replaySaveFolder_ + "/replay_" + std::to_string(std::chrono::system_clock::now().time_since_epoch().count()) + ".json";
-	std::ofstream outFile(filePath);
-	if (!outFile.is_open())
-	{
-		Logger::Log(LogLevel::ERROR, "Could not open replay file for writing: " + filePath);
-		return;
-	}
+	// std::string filePath = replaySaveFolder_ + "/replay_" + std::to_string(std::chrono::system_clock::now().time_since_epoch().count()) + ".json";
+	// std::ofstream outFile(filePath);
+	// if (!outFile.is_open())
+	// {
+	// 	Logger::Log(LogLevel::ERROR, "Could not open replay file for writing: " + filePath);
+	// 	return;
+	// }
 
-	outFile << replayData.dump();
-	outFile.close();
+	// outFile << replayData.dump();
+	// outFile.close();
 
 	std::string latestPath = replaySaveFolder_ + "/replay_latest.json";
-	outFile = std::ofstream(latestPath);
+	std::ofstream outFile = std::ofstream(latestPath);
 	if (!outFile.is_open())
 	{
 		Logger::Log(LogLevel::ERROR, "Could not open latest replay file for writing: " + latestPath);
@@ -202,7 +202,7 @@ void ReplayEncoder::saveReplay(const json &replayData) const
 	outFile << replayData.dump();
 	outFile.close();
 
-	Logger::Log("Replay saved to " + filePath + " and latest replay updated.");
+	Logger::Log("Replay saved to " + latestPath + ".");
 }
 void ReplayEncoder::postReplay(const json &replayData) const
 {
