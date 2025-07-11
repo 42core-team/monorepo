@@ -49,7 +49,7 @@ class Board
 		unsigned int	getNextObjectId() { return next_object_id_++; }
 
 	private:
-		std::vector<std::unique_ptr<Object>> objects_; // [ 5 | 3] is at index grid_width * 5 + 3
+		std::vector<std::unique_ptr<Object>> objects_; // [ 5 | 3 ] is at index grid_width * 5 + 3
 
 		unsigned int grid_width_;
 		unsigned int grid_height_;
