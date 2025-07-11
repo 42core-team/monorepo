@@ -1,5 +1,7 @@
 #include "core_lib.h"
 
+extern t_game game;
+
 void core_util_print_object(t_obj *obj)
 {
 	printf("---");
@@ -42,6 +44,8 @@ void core_util_print_object(t_obj *obj)
 
 void core_util_print_objects(bool (*condition)(t_obj *))
 {
+	if (game.objects == NULL)
+		return;
 	for (int i = 0; game.objects[i]; i++)
 	{
 		t_obj *obj = game.objects[i];

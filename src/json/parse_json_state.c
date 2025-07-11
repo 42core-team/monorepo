@@ -13,97 +13,82 @@ static void apply_obj_to_arr(t_obj obj)
 		game.objects[0] = NULL;
 	}
 
-	bool objInserted = false;
-
 	obj.state = STATE_ALIVE;
 
 	// 1. LOOP: Id Matching
-	size_t index = 0;
-	while (game.objects[index] != NULL)
+	for (size_t index = 0; game.objects[index] != NULL; index++)
 	{
-		if (game.objects[index]->id == obj.id)
+		if (game.objects[index]->id != obj.id)
+			continue;
+
+		t_obj *existingObj = game.objects[index];
+
+		existingObj->type = obj.type;
+		existingObj->state = STATE_ALIVE;
+		existingObj->id = obj.id;
+		existingObj->pos = obj.pos;
+		existingObj->hp = obj.hp;
+		switch (obj.type)
 		{
-			t_obj *existingObj = game.objects[index];
-
-			existingObj->type = obj.type;
-			existingObj->state = STATE_ALIVE;
-			existingObj->id = obj.id;
-			existingObj->pos = obj.pos;
-			existingObj->hp = obj.hp;
-			switch (obj.type)
-			{
-				case OBJ_UNIT:
-					existingObj->s_unit = obj.s_unit;
-					break;
-				case OBJ_CORE:
-					existingObj->s_core = obj.s_core;
-					break;
-				case OBJ_RESOURCE:
-				case OBJ_MONEY:
-					existingObj->s_resource_money = obj.s_resource_money;
-					break;
-				case OBJ_BOMB:
-					existingObj->s_bomb = obj.s_bomb;
-					break;
-				default:
-					break;
-			}
-
-			objInserted = true;
-			break;
+			case OBJ_UNIT:
+				existingObj->s_unit = obj.s_unit;
+				break;
+			case OBJ_CORE:
+				existingObj->s_core = obj.s_core;
+				break;
+			case OBJ_RESOURCE:
+			case OBJ_MONEY:
+				existingObj->s_resource_money = obj.s_resource_money;
+				break;
+			case OBJ_BOMB:
+				existingObj->s_bomb = obj.s_bomb;
+				break;
+			default:
+				break;
 		}
-		index++;
-	}
-	if (objInserted)
+
 		return;
+	}
 
 	// 2. LOOP: Placeholder matching
-	index = 0;
-	while (game.objects[index] != NULL)
+	for (size_t index = 0; game.objects[index] != NULL; index++)
 	{
-		bool matches = game.objects[index]->id == 0;
-		if (obj.type == OBJ_UNIT && ((game.objects[index]->s_unit.unit_type != obj.s_unit.unit_type) || (game.objects[index]->s_unit.team_id != obj.s_unit.team_id)))
-			matches = false;
-		if (obj.type == OBJ_CORE && game.objects[index]->s_core.team_id != obj.s_core.team_id)
-			matches = false;
+		if (obj.type != OBJ_UNIT)
+			continue;
 
-		if (matches)
+		if ((game.objects[index]->s_unit.unit_type != obj.s_unit.unit_type) || (game.objects[index]->s_unit.team_id != obj.s_unit.team_id))
+			continue;
+
+		t_obj *existingObj = game.objects[index];
+		existingObj->type = obj.type;
+		existingObj->state = STATE_ALIVE;
+		existingObj->id = obj.id;
+		existingObj->pos = obj.pos;
+		existingObj->hp = obj.hp;
+		switch (obj.type)
 		{
-			t_obj *existingObj = game.objects[index];
-			existingObj->type = obj.type;
-			existingObj->state = STATE_ALIVE;
-			existingObj->id = obj.id;
-			existingObj->pos = obj.pos;
-			existingObj->hp = obj.hp;
-			switch (obj.type)
-			{
-				case OBJ_UNIT:
-					existingObj->s_unit = obj.s_unit;
-					break;
-				case OBJ_CORE:
-					existingObj->s_core = obj.s_core;
-					break;
-				case OBJ_RESOURCE:
-				case OBJ_MONEY:
-					existingObj->s_resource_money = obj.s_resource_money;
-					break;
-				case OBJ_BOMB:
-					existingObj->s_bomb = obj.s_bomb;
-					break;
-				default:
-					break;
-			}
-			objInserted = true;
-			break;
+			case OBJ_UNIT:
+				existingObj->s_unit = obj.s_unit;
+				break;
+			case OBJ_CORE:
+				existingObj->s_core = obj.s_core;
+				break;
+			case OBJ_RESOURCE:
+			case OBJ_MONEY:
+				existingObj->s_resource_money = obj.s_resource_money;
+				break;
+			case OBJ_BOMB:
+				existingObj->s_bomb = obj.s_bomb;
+				break;
+			default:
+				break;
 		}
-		index++;
-	}
-	if (objInserted)
 		return;
+	}
 
-	if (obj.type == OBJ_UNIT && obj.s_unit.team_id == game.my_team_id)
+	if (obj.type == OBJ_UNIT)
 	{
-		printf("Error matching team units. This is never supposed to happen. Have you freed something you shouldn't have? Troublemaker: [id %lu, unit_type %lu, team %lu]\n", obj.id, obj.s_unit.unit_type, obj.s_unit.team_id);
+		printf("Error matching team units. This is never supposed to happen. Have you freed something you shouldn't have? Never free t_obj*s, just read them. Troublemaker: [id %lu, unit_type %lu, team %lu]\n", obj.id, obj.s_unit.unit_type, obj.s_unit.team_id);
 	}
 
 	// 3. Add to the back
