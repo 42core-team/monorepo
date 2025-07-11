@@ -86,7 +86,7 @@ static void apply_obj_to_arr(t_obj obj)
 		return;
 	}
 
-	if (obj.type == OBJ_UNIT)
+	if (obj.type == OBJ_UNIT && obj.s_unit.team_id == game.my_team_id)
 	{
 		printf("Error matching team units. This is never supposed to happen. Have you freed something you shouldn't have? Never free t_obj*s, just read them. Troublemaker: [id %lu, unit_type %lu, team %lu]\n", obj.id, obj.s_unit.unit_type, obj.s_unit.team_id);
 	}
