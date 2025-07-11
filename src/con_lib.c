@@ -9,6 +9,10 @@ static bool is_my_core(t_obj *obj)
 		return false;
 	return (obj->s_core.team_id == game.my_team_id);
 }
+static bool is_core(t_obj *obj)
+{
+	return (obj && obj->type == OBJ_CORE);
+}
 
 /**
  * @brief Starts the connection to the server. This function should be called before any other function from this library.
@@ -21,6 +25,12 @@ static bool is_my_core(t_obj *obj)
  */
 int	ft_game_start(char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug)
 {
+	if (!tick_callback)
+	{
+		printf("Trust me, you'll want to provide a tick callback function.\n");
+		return 1;
+	}
+
 	// setup socket
 	const char *env_ip = getenv("SERVER_IP");
 	const char *env_port = getenv("SERVER_PORT");
@@ -86,6 +96,9 @@ int	ft_game_start(char *team_name, int argc, char **argv, void (*tick_callback)(
 		// execute user code
 		if (tick_callback)
 			tick_callback(game.elapsed_ticks);
+
+		printf("Tick ending! logging cores... %lu\n", game.my_team_id);
+		core_util_print_objects(is_core);
 	}
 
 	// handle game end
