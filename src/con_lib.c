@@ -101,7 +101,23 @@ int	core_startGame(char *team_name, int argc, char **argv, void (*tick_callback)
 
 	// clean up
 	close(socket_fd);
-	core_internal_util_freeGame();
+	if (game.objects != NULL)
+	{
+		for (int i = 0; game.objects[i] != NULL; i++)
+			free(game.objects[i]);
+		free(game.objects);
+		game.objects = NULL;
+	}
+	if (game.config.units != NULL)
+	{
+		for (int i = 0; game.config.units[i] != NULL; i++)
+		{
+			free(game.config.units[i]->name);
+			free(game.config.units[i]);
+		}
+		free(game.config.units);
+	}
+	core_internal_reset_actions();
 
 	return 0;
 }

@@ -3,7 +3,6 @@
 static void	core_static_util_perrorExit(char *msg)
 {
 	perror(msg);
-	core_internal_util_freeGame();
 	exit(EXIT_FAILURE);
 }
 

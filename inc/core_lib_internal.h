@@ -5,8 +5,6 @@
 
 // ----- General
 
-void core_internal_util_freeGame();
-
 int core_internal_util_distance(t_pos pos1, t_pos pos2);
 
 // ----- Socket
