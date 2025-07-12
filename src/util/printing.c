@@ -55,3 +55,56 @@ void core_util_print_objects(bool (*condition)(t_obj *))
 		printf("---\n");
 	}
 }
+
+void core_util_print_config_unit(t_unit_type unit_type)
+{
+	t_unit_config *unit_config = core_get_unitConfig(unit_type);
+	if (unit_config == NULL)
+	{
+		printf("Unit type %d not found.\n", unit_type);
+		return;
+	}
+
+	printf("Unit %s (%d) Config:\n", unit_config->name, unit_type);
+	printf("	- Cost: %lu\n", unit_config->cost);
+	printf("	- HP: %lu\n", unit_config->hp);
+	printf("	- Damage to Core: %lu\n", unit_config->dmg_core);
+	printf("	- Damage to Unit: %lu\n", unit_config->dmg_unit);
+	printf("	- Damage to Resource: %lu\n", unit_config->dmg_resource);
+	printf("	- Damage to Wall: %lu\n", unit_config->dmg_wall);
+	printf("	- Damage to Bomb: %lu\n", unit_config->dmg_bomb);
+	char *build_type = "None";
+	if (unit_config->build_type == BUILD_TYPE_WALL)
+		build_type = "Wall";
+	else if (unit_config->build_type == BUILD_TYPE_BOMB)
+		build_type = "Bomb";
+	printf("	- Build Type: %s\n", build_type);
+	printf("	- Speed: %lu\n", unit_config->speed);
+	printf("	- Min Speed: %lu\n", unit_config->min_speed);
+	printf("	- Can Build: %s\n", unit_config->can_build ? "Yes" : "No");
+}
+
+void core_util_print_config(void)
+{
+	printf("Game Config:\n");
+	printf("	- Map Height: %lu\n", game.config.height);
+	printf("	- Map Width: %lu\n", game.config.width);
+	printf("	- Idle Income: %lu\n", game.config.idle_income);
+	printf("	- Idle Income Timeout: %lu\n", game.config.idle_income_timeout);
+	printf("	- Resource HP: %lu\n", game.config.resource_hp);
+	printf("	- Resource Income: %lu\n", game.config.resource_income);
+	printf("	- Core HP: %lu\n", game.config.core_hp);
+	printf("	- Initial Balance: %lu\n", game.config.initial_balance);
+	printf("	- Wall HP: %lu\n", game.config.wall_hp);
+	printf("	- Wall Build Cost: %lu\n", game.config.wall_build_cost);
+	printf("	- Bomb HP: %lu\n", game.config.bomb_hp);
+	printf("	- Bomb Countdown: %lu\n", game.config.bomb_countdown);
+	printf("	- Bomb Throw Cost: %lu\n", game.config.bomb_throw_cost);
+	printf("	- Bomb Reach: %lu\n", game.config.bomb_reach);
+	printf("	- Bomb Damage: %lu\n", game.config.bomb_damage);
+	
+	for (int i = 0; game.config.units[i] != NULL; i++)
+	{
+		core_util_print_config_unit(game.config.units[i]->unit_type);
+	}
+}

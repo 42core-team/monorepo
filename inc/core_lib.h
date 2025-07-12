@@ -114,13 +114,11 @@ typedef struct s_unit_config
 	unsigned long dmg_bomb;
 	/// @brief The units build type.
 	t_build_type build_type;
-	/// @brief The maximum reach the unit can attack. Unused for direct hit attack type units.
-	unsigned long attack_reach;
 	/// @brief The time a unit waits between moves.
 	unsigned long speed;
 	/// @brief The minimum time a unit waits between moves.
 	unsigned long min_speed;
-	/// @brief Whether the unit can build walls.
+	/// @brief Whether the unit can build walls or bombs.
 	bool can_build;
 } t_unit_config;
 typedef struct s_config
@@ -271,5 +269,7 @@ void ft_build(t_obj *builder, t_pos pos);
 
 void core_util_print_object(t_obj *obj);
 void core_util_print_objects(bool (*condition)(t_obj *));
+void core_util_print_config_unit(t_unit_type unit_type);
+void core_util_print_config(void);
 
 #endif // CORE_LIB_H
