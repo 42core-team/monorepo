@@ -3,21 +3,21 @@
 Unit::Unit(unsigned int id, unsigned int teamId, unsigned int unit_type)
 	: Object(id, Config::instance().units[unit_type].hp, ObjectType::Unit), unit_type_(unit_type), team_id_(teamId), balance_(0)
 {
-	resetNextMoveOpp();
+	resetMoveCooldown();
 }
 
 void Unit::tick(unsigned long long tickCount)
 {
 	(void)tickCount;
-	if (next_move_opp_ > 0)
+	if (move_cooldown_ > 0)
 	{
-		next_move_opp_--;
-		if (calcNextMovementOpp() < next_move_opp_)
-			next_move_opp_ = calcNextMovementOpp();
+		move_cooldown_--;
+		if (calcMoveCooldown() < move_cooldown_)
+			move_cooldown_ = calcMoveCooldown();
 	}
 }
 
-unsigned int Unit::calcNextMovementOpp()
+unsigned int Unit::calcMoveCooldown()
 {
 	unsigned int baseSpeed = Config::instance().units[unit_type_].speed;
 	unsigned int minSpeed = Config::instance().units[unit_type_].minSpeed;
