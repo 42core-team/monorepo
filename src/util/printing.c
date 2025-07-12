@@ -28,7 +28,7 @@ void core_print_object(t_obj *obj)
 			printf("Unit Type: %lu\n", obj->s_unit.unit_type);
 			printf("Team ID: %lu\n", obj->s_unit.team_id);
 			printf("Balance: %lu\n", obj->s_unit.balance);
-			printf("Next Movement Opp: %lu\n", obj->s_unit.next_movement_opp);
+			printf("Move Cooldown: %lu\n", obj->s_unit.move_cooldown);
 			break;
 		case OBJ_RESOURCE:
 		case OBJ_MONEY:

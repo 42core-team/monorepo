@@ -70,7 +70,7 @@ t_obj *core_action_createUnit(t_unit_type unit_type)
 
 void core_action_move(t_obj *unit, t_pos pos)
 {
-	if (unit->s_unit.next_movement_opp != 0)
+	if (unit->s_unit.move_cooldown != 0)
 		return;
 
 	core_static_ensureCapacity();
