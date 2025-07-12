@@ -73,7 +73,7 @@ bool AttackAction::attackObj(Object *obj, Unit *unit) // returns object new hp, 
 	{
 		Bomb *bomb = (Bomb *)obj;
 		bomb->explode();
-		damage_ = Config::instance().units[unit->getUnitType()].damageBomb;
+		damage_ = 1;
 	}
 
 	return true;

@@ -68,7 +68,6 @@ struct UnitConfig
 	unsigned int damageUnit;
 	unsigned int damageResource;
 	unsigned int damageWall;
-	unsigned int damageBomb;
 
 	BuildType buildType;
 };
