@@ -50,6 +50,11 @@ t_obj *core_action_createUnit(t_unit_type unit_type)
 	action->data.create.unit_type = unit_type;
 
 	t_obj *newUnit = malloc(sizeof(t_obj));
+	if (!newUnit)
+	{
+		fprintf(stderr, "Failed to allocate memory for new unit.\n");
+		exit(EXIT_FAILURE);
+	}
 	newUnit->s_unit.unit_type = unit_type;
 	newUnit->s_unit.team_id = game.my_team_id;
 	newUnit->type = OBJ_UNIT;
