@@ -39,13 +39,10 @@ t_unit_config *core_get_unitConfig(t_unit_type unit_type)
 
 t_obj **core_get_obj_customCondition(bool (*condition)(t_obj *))
 {
-	if (!condition)
-		return (NULL);
-
 	int count = 0;
 	for (int i = 0; game.objects && game.objects[i] != NULL; i++)
 	{
-		if (condition(game.objects[i]))
+		if (!condition || condition(game.objects[i]))
 			count++;
 	}
 
@@ -59,7 +56,7 @@ t_obj **core_get_obj_customCondition(bool (*condition)(t_obj *))
 	int index = 0;
 	for (int i = 0; game.objects && game.objects[i] != NULL; i++)
 	{
-		if (condition(game.objects[i]))
+		if (!condition || condition(game.objects[i]))
 			result[index++] = game.objects[i];
 	}
 	result[index] = NULL;
