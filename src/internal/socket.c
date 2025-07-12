@@ -5,9 +5,9 @@ int core_internal_socket_init(struct sockaddr_in addr)
 	int socket_fd, status_con;
 	write(1, "Connecting to server", 21);
 
-	socket_fd = socket(AF_INET, SOCK_STREAM, SOCK_NONBLOCK);
+	socket_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
 	if (socket_fd < 0)
-		ft_perror_exit("Socket creation failed");
+		fprintf(stderr, "Error: %s: %s\n", __func__, strerror(errno)), exit(EXIT_FAILURE);
 
 	do {
 		write(1, ".", 1);
