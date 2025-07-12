@@ -1,4 +1,4 @@
-#include "parse_json.h"
+#include "core_lib_internal.h"
 
 void	ft_free_game()
 {

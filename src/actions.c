@@ -1,11 +1,12 @@
-#include "parse_json.h"
+#include "core_lib.h"
+#include "core_lib_internal.h"
 
 void ft_reset_actions(void)
 {
-	free(game.actions.list);
-	game.actions.list = NULL;
-	game.actions.count = 0;
-	game.actions.capacity = 0;
+	free(actions.list);
+	actions.list = NULL;
+	actions.count = 0;
+	actions.capacity = 0;
 }
 
 static bool is_my_core(t_obj *obj)
@@ -19,15 +20,15 @@ static t_obj *ft_get_my_core(void)
 
 static void ensure_capacity(void)
 {
-	if (game.actions.list == NULL)
+	if (actions.list == NULL)
 	{
-		game.actions.capacity = 8;
-		game.actions.list = malloc(sizeof(t_action) * game.actions.capacity);
+		actions.capacity = 8;
+		actions.list = malloc(sizeof(t_action) * actions.capacity);
 	}
-	else if (game.actions.count >= game.actions.capacity)
+	else if (actions.count >= actions.capacity)
 	{
-		game.actions.capacity *= 2;
-		game.actions.list = realloc(game.actions.list, sizeof(t_action) * game.actions.capacity);
+		actions.capacity *= 2;
+		actions.list = realloc(actions.list, sizeof(t_action) * actions.capacity);
 	}
 }
 
@@ -43,7 +44,7 @@ t_obj *ft_create_unit(t_unit_type unit_type)
 		return NULL;
 
 	ensure_capacity();
-	t_action *action = &game.actions.list[game.actions.count++];
+	t_action *action = &actions.list[actions.count++];
 	action->type = ACTION_CREATE;
 	action->data.create.unit_type = unit_type;
 
@@ -73,7 +74,7 @@ void ft_move(t_obj *unit, t_pos pos)
 		return;
 
 	ensure_capacity();
-	t_action *action = &game.actions.list[game.actions.count++];
+	t_action *action = &actions.list[actions.count++];
 	action->type = ACTION_MOVE;
 	action->data.move.id = unit->id;
 	action->data.move.pos = pos;
@@ -87,7 +88,7 @@ void ft_attack(t_obj *attacker, t_pos target_pos)
 		return;
 
 	ensure_capacity();
-	t_action *action = &game.actions.list[game.actions.count++];
+	t_action *action = &actions.list[actions.count++];
 	action->type = ACTION_ATTACK;
 	action->data.attack.id = attacker->id;
 	action->data.attack.pos = target_pos;
@@ -101,7 +102,7 @@ void ft_transfer_money(t_obj *source, t_pos target_pos, unsigned long amount)
 		return;
 
 	ensure_capacity();
-	t_action *action = &game.actions.list[game.actions.count++];
+	t_action *action = &actions.list[actions.count++];
 	action->type = ACTION_TRANSFER;
 	action->data.transfer.source_id = source->id;
 	action->data.transfer.target_pos = target_pos;
@@ -118,7 +119,7 @@ void ft_build(t_obj *builder, t_pos pos)
 		return;
 
 	ensure_capacity();
-	t_action *action = &game.actions.list[game.actions.count++];
+	t_action *action = &actions.list[actions.count++];
 	action->type = ACTION_BUILD;
 	action->data.build.builder_id = builder->id;
 	action->data.build.pos = pos;

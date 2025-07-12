@@ -1,7 +1,7 @@
-#include "socket.h"
-#include "parse_json.h"
+#include "core_lib_internal.h"
 
-t_game	game = {0};
+t_game		game = {0};
+t_actions	actions = {0};
 
 static bool is_my_core(t_obj *obj)
 {

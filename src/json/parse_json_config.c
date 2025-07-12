@@ -1,5 +1,4 @@
-#include "parse_json.h"
-#include "string.h"
+#include "core_lib_internal.h"
 
 static t_unit_config **ft_parse_unit_config(json_node *root)
 {

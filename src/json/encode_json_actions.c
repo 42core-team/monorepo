@@ -1,12 +1,12 @@
-#include "parse_json.h"
+#include "core_lib_internal.h"
 
 char *ft_all_action_json(void)
 {
 	json_node *arr = create_node(JSON_TYPE_ARRAY);
-	arr->array = malloc(sizeof(json_node*) * (game.actions.count + 1));
-	for (unsigned i = 0; i < game.actions.count; i++)
+	arr->array = malloc(sizeof(json_node*) * (actions.count + 1));
+	for (unsigned i = 0; i < actions.count; i++)
 	{
-		t_action *a = &game.actions.list[i];
+		t_action *a = &actions.list[i];
 		json_node *obj = create_node(JSON_TYPE_OBJECT);
 
 		// always allocate 4–6 slots; worst case we need 5 keys + NULL
@@ -109,7 +109,7 @@ char *ft_all_action_json(void)
 		obj->array[idx] = NULL;
 		arr->array[i] = obj;
 	}
-	arr->array[game.actions.count] = NULL;
+	arr->array[actions.count] = NULL;
 
 	json_node *root = create_node(JSON_TYPE_OBJECT);
 	root->array = malloc(sizeof(json_node*) * 2);

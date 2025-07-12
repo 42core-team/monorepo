@@ -1,4 +1,4 @@
-#include "socket.h"
+#include "core_lib_internal.h"
 
 static void ft_print_error(const char *str, const char *func_name)
 {

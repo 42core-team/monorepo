@@ -1,4 +1,4 @@
-#include "parse_json.h"
+#include "core_lib_internal.h"
 
 char	*ft_create_login_msg(char *team_name, int argc, char **argv)
 {

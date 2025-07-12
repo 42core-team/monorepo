@@ -1,4 +1,4 @@
-#include "parse_json.h"
+#include "core_lib_internal.h"
 
 static void apply_obj_to_arr(t_obj obj)
 {

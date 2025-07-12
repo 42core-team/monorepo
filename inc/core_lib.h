@@ -161,35 +161,6 @@ typedef struct s_config
 	t_unit_config **units;
 } t_config;
 
-typedef enum e_action_type
-{
-	ACTION_CREATE,
-	ACTION_MOVE,
-	ACTION_ATTACK,
-	ACTION_TRANSFER,
-	ACTION_BUILD
-} t_action_type;
-
-typedef struct s_action
-{
-	t_action_type type;
-	union
-	{
-		struct { unsigned long unit_type; } create;
-		struct { unsigned long id; t_pos pos; } move;
-		struct { unsigned long id; t_pos pos; } attack;
-		struct { unsigned long source_id; t_pos target_pos; unsigned long amount; } transfer;
-		struct { unsigned long builder_id; t_pos pos; } build;
-	} data;
-} t_action;
-
-typedef struct s_actions
-{
-	t_action *list;
-	unsigned int count;
-	unsigned int capacity;
-} t_actions;
-
 typedef struct s_game
 {
 	/**
@@ -208,10 +179,6 @@ typedef struct s_game
 	 * @brief List of all objects (units, cores, resources, etc.) and their informations. NULL-terminated.
 	 */
 	t_obj **objects;
-	/**
-	 * @brief List of all actions that will be send to the server when your function ends.
-	 */
-	t_actions actions;
 } t_game;
 
 /**
@@ -304,8 +271,5 @@ void ft_build(t_obj *builder, t_pos pos);
 
 void core_util_print_object(t_obj *obj);
 void core_util_print_objects(bool (*condition)(t_obj *));
-
-void ft_free_game();
-void ft_perror_exit(char *msg);
 
 #endif // CORE_LIB_H
