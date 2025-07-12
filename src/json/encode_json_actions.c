@@ -1,208 +1,131 @@
 #include "parse_json.h"
 
-void ft_reset_actions()
-{
-	if (game.actions.creates != NULL)
-		free(game.actions.creates);
-	game.actions.creates = NULL;
-	game.actions.creates_count = 0;
-
-	if (game.actions.travels != NULL)
-		free(game.actions.travels);
-	game.actions.travels = NULL;
-	game.actions.travels_count = 0;
-
-	if (game.actions.attacks != NULL)
-		free(game.actions.attacks);
-	game.actions.attacks = NULL;
-	game.actions.attacks_count = 0;
-
-	if (game.actions.transfer_moneys != NULL)
-		free(game.actions.transfer_moneys);
-	game.actions.transfer_moneys = NULL;
-	game.actions.transfer_moneys_count = 0;
-
-	if (game.actions.builds != NULL)
-		free(game.actions.builds);
-	game.actions.builds = NULL;
-	game.actions.builds_count = 0;
-}
-
 char *ft_all_action_json(void)
 {
-	json_node *actions_array = create_node(JSON_TYPE_ARRAY);
-	int size = game.actions.travels_count + game.actions.creates_count + game.actions.attacks_count + game.actions.transfer_moneys_count + game.actions.builds_count + 1;
-	actions_array->array = malloc(sizeof(json_node *) * size);
-	actions_array->array[size - 1] = NULL;
-
-	int i;
-	int max = game.actions.travels_count;
-	for (i = 0; i < max; i++)
+	json_node *arr = create_node(JSON_TYPE_ARRAY);
+	arr->array = malloc(sizeof(json_node*) * (game.actions.count + 1));
+	for (unsigned i = 0; i < game.actions.count; i++)
 	{
-		json_node *action = create_node(JSON_TYPE_OBJECT);
-		action->array = malloc(sizeof(json_node *) * 5);
-		action->array[4] = NULL;
+		t_action *a = &game.actions.list[i];
+		json_node *obj = create_node(JSON_TYPE_OBJECT);
 
-		json_node *type = create_node(JSON_TYPE_STRING);
-		type->key = strdup("type");
-		type->string = strdup("move");
-		action->array[0] = type;
+		// always allocate 4–6 slots; worst case we need 5 keys + NULL
+		obj->array = malloc(sizeof(json_node*) * 6);
+		int idx = 0;
 
-		json_node *unit_id = create_node(JSON_TYPE_NUMBER);
-		unit_id->key = strdup("unit_id");
-		unit_id->number = game.actions.travels[i].id;
-		action->array[1] = unit_id;
-
-		json_node *targetX = create_node(JSON_TYPE_NUMBER);
-		targetX->key = strdup("targetX");
-		targetX->number = game.actions.travels[i].target_pos.x;
-		action->array[2] = targetX;
-
-		json_node *targetY = create_node(JSON_TYPE_NUMBER);
-		targetY->key = strdup("targetY");
-		targetY->number = game.actions.travels[i].target_pos.y;
-		action->array[3] = targetY;
-
-		actions_array->array[i] = action;
+		json_node *t = create_node(JSON_TYPE_STRING);
+		t->key = strdup("type");
+		switch (a->type)
+		{
+			case ACTION_CREATE:
+				t->string = strdup("create");
+				obj->array[idx++] = t;
+				{
+					json_node *u = create_node(JSON_TYPE_NUMBER);
+					u->key = strdup("unit_type");
+					u->number = a->data.create.unit_type;
+					obj->array[idx++] = u;
+				}
+				break;
+			case ACTION_MOVE:
+				t->string = strdup("move");
+				obj->array[idx++] = t;
+				// id, x, y
+				{
+					json_node *uid = create_node(JSON_TYPE_NUMBER);
+					uid->key = strdup("unit_id");
+					uid->number = a->data.move.id;
+					obj->array[idx++] = uid;
+					json_node *x = create_node(JSON_TYPE_NUMBER);
+					x->key = strdup("targetX");
+					x->number = a->data.move.pos.x;
+					obj->array[idx++] = x;
+					json_node *y = create_node(JSON_TYPE_NUMBER);
+					y->key = strdup("targetY");
+					y->number = a->data.move.pos.y;
+					obj->array[idx++] = y;
+				}
+				break;
+			case ACTION_ATTACK:
+				t->string = strdup("attack");
+				obj->array[idx++] = t;
+				// same pattern…
+				{
+					json_node *uid = create_node(JSON_TYPE_NUMBER);
+					uid->key = strdup("unit_id");
+					uid->number = a->data.attack.id;
+					obj->array[idx++] = uid;
+					json_node *x = create_node(JSON_TYPE_NUMBER);
+					x->key = strdup("target_pos_x");
+					x->number = a->data.attack.pos.x;
+					obj->array[idx++] = x;
+					json_node *y = create_node(JSON_TYPE_NUMBER);
+					y->key = strdup("target_pos_y");
+					y->number = a->data.attack.pos.y;
+					obj->array[idx++] = y;
+				}
+				break;
+			case ACTION_TRANSFER:
+				t->string = strdup("transfer_money");
+				obj->array[idx++] = t;
+				{
+					json_node *src = create_node(JSON_TYPE_NUMBER);
+					src->key = strdup("source_id");
+					src->number = a->data.transfer.source_id;
+					obj->array[idx++] = src;
+					json_node *amt = create_node(JSON_TYPE_NUMBER);
+					amt->key = strdup("amount");
+					amt->number = a->data.transfer.amount;
+					obj->array[idx++] = amt;
+					json_node *x = create_node(JSON_TYPE_NUMBER);
+					x->key = strdup("target_pos_x");
+					x->number = a->data.transfer.target_pos.x;
+					obj->array[idx++] = x;
+					json_node *y = create_node(JSON_TYPE_NUMBER);
+					y->key = strdup("target_pos_y");
+					y->number = a->data.transfer.target_pos.y;
+					obj->array[idx++] = y;
+				}
+				break;
+			case ACTION_BUILD:
+				t->string = strdup("build");
+				obj->array[idx++] = t;
+				{
+					json_node *bid = create_node(JSON_TYPE_NUMBER);
+					bid->key = strdup("builder_id");
+					bid->number = a->data.build.builder_id;
+					obj->array[idx++] = bid;
+					json_node *x = create_node(JSON_TYPE_NUMBER);
+					x->key = strdup("x");
+					x->number = a->data.build.pos.x;
+					obj->array[idx++] = x;
+					json_node *y = create_node(JSON_TYPE_NUMBER);
+					y->key = strdup("y");
+					y->number = a->data.build.pos.y;
+					obj->array[idx++] = y;
+				}
+				break;
+		}
+		obj->array[idx] = NULL;
+		arr->array[i] = obj;
 	}
-	max += game.actions.creates_count;
-	for (; i < max; i++)
-	{
-		t_action_create *actionObj = &game.actions.creates[i - game.actions.travels_count];
+	arr->array[game.actions.count] = NULL;
 
-		json_node *action = create_node(JSON_TYPE_OBJECT);
-		action->array = malloc(sizeof(json_node *) * 3);
-		action->array[2] = NULL;
+	json_node *root = create_node(JSON_TYPE_OBJECT);
+	root->array = malloc(sizeof(json_node*) * 2);
+	json_node *ka = create_node(JSON_TYPE_ARRAY);
+	ka->key = strdup("actions");
+	ka->array = arr->array;
+	root->array[0] = ka;
+	root->array[1] = NULL;
 
-		json_node *type = create_node(JSON_TYPE_STRING);
-		type->key = strdup("type");
-		type->string = strdup("create");
-		action->array[0] = type;
+	char *out = json_to_string(root);
+	free_json(root);
+	free(arr);
 
-		json_node *unit_type = create_node(JSON_TYPE_NUMBER);
-		unit_type->key = strdup("unit_type");
-		unit_type->number = actionObj->unit_type;
-		action->array[1] = unit_type;
-
-		actions_array->array[i] = action;
-	}
-	max += game.actions.attacks_count;
-	for (; i < max; i++)
-	{
-		t_action_attack *actionObj = &game.actions.attacks[i - game.actions.travels_count - game.actions.creates_count];
-
-		json_node *action = create_node(JSON_TYPE_OBJECT);
-		action->array = malloc(sizeof(json_node *) * 5);
-		action->array[4] = NULL;
-
-		json_node *type = create_node(JSON_TYPE_STRING);
-		type->key = strdup("type");
-		type->string = strdup("attack");
-		action->array[0] = type;
-
-		json_node *unit_id = create_node(JSON_TYPE_NUMBER);
-		unit_id->key = strdup("unit_id");
-		unit_id->number = actionObj->id;
-		action->array[1] = unit_id;
-
-		json_node *target_id = create_node(JSON_TYPE_NUMBER);
-		target_id->key = strdup("target_pos_x");
-		target_id->number = actionObj->target_pos.x;
-		action->array[2] = target_id;
-
-		json_node *target_y = create_node(JSON_TYPE_NUMBER);
-		target_y->key = strdup("target_pos_y");
-		target_y->number = actionObj->target_pos.y;
-		action->array[3] = target_y;
-
-		actions_array->array[i] = action;
-	}
-	max += game.actions.transfer_moneys_count;
-	for (; i < max; i++)
-	{
-		t_action_transfer_money *actionObj = &game.actions.transfer_moneys[i - game.actions.travels_count - game.actions.creates_count - game.actions.attacks_count];
-
-		json_node *action = create_node(JSON_TYPE_OBJECT);
-		action->array = malloc(sizeof(json_node *) * 6);
-		action->array[5] = NULL;
-
-		json_node *type = create_node(JSON_TYPE_STRING);
-		type->key = strdup("type");
-		type->string = strdup("transfer_money");
-		action->array[0] = type;
-
-		json_node *source_id = create_node(JSON_TYPE_NUMBER);
-		source_id->key = strdup("source_id");
-		source_id->number = actionObj->source_id;
-		action->array[1] = source_id;
-
-		json_node *target_x = create_node(JSON_TYPE_NUMBER);
-		target_x->key = strdup("x");
-		target_x->number = actionObj->target_pos.x;
-		action->array[2] = target_x;
-
-		json_node *target_y = create_node(JSON_TYPE_NUMBER);
-		target_y->key = strdup("y");
-		target_y->number = actionObj->target_pos.y;
-		action->array[3] = target_y;
-
-		json_node *amount = create_node(JSON_TYPE_NUMBER);
-		amount->key = strdup("amount");
-		amount->number = actionObj->amount;
-		action->array[4] = amount;
-
-		actions_array->array[i] = action;
-	}
-	max += game.actions.builds_count;
-	for (; i < max; i++)
-	{
-		t_action_build *actionObj = &game.actions.builds[i - game.actions.travels_count - game.actions.creates_count - game.actions.transfer_moneys_count - game.actions.attacks_count];
-
-		json_node *action = create_node(JSON_TYPE_OBJECT);
-		action->array = malloc(sizeof(json_node *) * 5);
-		action->array[4] = NULL;
-
-		json_node *type = create_node(JSON_TYPE_STRING);
-		type->key = strdup("type");
-		type->string = strdup("build");
-		action->array[0] = type;
-
-		json_node *builder_id = create_node(JSON_TYPE_NUMBER);
-		builder_id->key = strdup("builder_id");
-		builder_id->number = actionObj->id;
-		action->array[1] = builder_id;
-
-		json_node *x = create_node(JSON_TYPE_NUMBER);
-		x->key = strdup("x");
-		x->number = actionObj->pos.x;
-		action->array[2] = x;
-
-		json_node *y = create_node(JSON_TYPE_NUMBER);
-		y->key = strdup("y");
-		y->number = actionObj->pos.y;
-		action->array[3] = y;
-
-		actions_array->array[i] = action;
-	}
-
-	json_node *root_obj = create_node(JSON_TYPE_OBJECT);
-	root_obj->array = malloc(sizeof(json_node *) * 2);
-	root_obj->array[1] = NULL;
-
-	json_node *actions_key = create_node(JSON_TYPE_ARRAY);
-	actions_key->key = strdup("actions");
-	actions_key->array = actions_array->array;
-
-	root_obj->array[0] = actions_key;
-
-	char *json = json_to_string(root_obj);
-	free_json(root_obj);
-	free(actions_array);
-
-	int json_len = strlen(json);
-	json = realloc(json, json_len + 2);
-	json[json_len] = '\n';
-	json[json_len + 1] = '\0';
-
-	return json;
+	// append newline
+	size_t L = strlen(out);
+	out = realloc(out, L+2);
+	out[L] = '\n'; out[L+1] = '\0';
+	return out;
 }

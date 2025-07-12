@@ -161,43 +161,33 @@ typedef struct s_config
 	t_unit_config **units;
 } t_config;
 
-typedef struct s_action_create
+typedef enum e_action_type
 {
-	unsigned long unit_type;
-} t_action_create;
-typedef struct s_action_travel
+	ACTION_CREATE,
+	ACTION_MOVE,
+	ACTION_ATTACK,
+	ACTION_TRANSFER,
+	ACTION_BUILD
+} t_action_type;
+
+typedef struct s_action
 {
-	unsigned long id;
-	t_pos target_pos;
-} t_action_travel;
-typedef struct s_action_attack
-{
-	unsigned long id;
-	t_pos target_pos;
-} t_action_attack;
-typedef struct s_action_transfer_money
-{
-	unsigned long source_id;
-	t_pos target_pos;
-	unsigned long amount;
-} t_action_transfer_money;
-typedef struct s_action_build
-{
-	unsigned long id;
-	t_pos pos;
-} t_action_build;
+	t_action_type type;
+	union
+	{
+		struct { unsigned long unit_type; } create;
+		struct { unsigned long id; t_pos pos; } move;
+		struct { unsigned long id; t_pos pos; } attack;
+		struct { unsigned long source_id; t_pos target_pos; unsigned long amount; } transfer;
+		struct { unsigned long builder_id; t_pos pos; } build;
+	} data;
+} t_action;
+
 typedef struct s_actions
 {
-	t_action_create *creates;
-	unsigned int creates_count;
-	t_action_travel *travels;
-	unsigned int travels_count;
-	t_action_attack *attacks;
-	unsigned int attacks_count;
-	t_action_transfer_money *transfer_moneys;
-	unsigned int transfer_moneys_count;
-	t_action_build *builds;
-	unsigned int builds_count;
+	t_action *list;
+	unsigned int count;
+	unsigned int capacity;
 } t_actions;
 
 typedef struct s_game
@@ -297,21 +287,13 @@ void ft_travel_to_pos(t_obj *unit, t_pos pos);
  */
 void ft_attack(t_obj *attacker, t_pos pos);
 /**
- * @brief Drops money at a specific position.
- *
- * @param source The object that should drop the money.
- * @param target_pos The position where the money should be dropped.
- * @param amount The amount of money that should be dropped.
- */
-void ft_drop_money(t_obj *source, t_pos target_pos, unsigned long amount);
-/**
  * @brief Transfers money from one object to another.
  *
  * @param source The object that should transfer the money.
  * @param target The object that should receive the money.
  * @param amount The amount of money that should be transferred.
  */
-void ft_transfer_money(t_obj *source, t_obj *target, unsigned long amount);
+void ft_transfer_money(t_obj *source, t_pos target_pos, unsigned long amount);
 /**
  * @brief Builds a wall at a specific position. Won't work if unit isn't a builder.
  *
