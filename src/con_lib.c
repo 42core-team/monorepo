@@ -31,7 +31,10 @@ int	core_startGame(char *team_name, int argc, char **argv, void (*tick_callback)
 	const char *env_ip = getenv("SERVER_IP");
 	const char *env_port = getenv("SERVER_PORT");
 	const int port = env_port ? atoi(env_port) : 4242;
-	game.my_team_id = argv[1] ? atoi(argv[1]) : printf("No team id provided, using 0.\n");
+	if (argv[1])
+		game.my_team_id = atoi(argv[1]);
+	else
+		return printf("Error: No team id provided.\n"), 1;
 	int socket_fd = core_internal_socket_init(core_internal_socket_initAddr(env_ip ? env_ip : "127.0.0.1", port));
 
 	// send login message
