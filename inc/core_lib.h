@@ -8,6 +8,9 @@
 #include <stdio.h>
 #include <limits.h>
 
+// ----- OBJECTS -----
+
+/// @brief Type of object
 typedef enum e_obj_type
 {
 	OBJ_CORE,
@@ -17,12 +20,25 @@ typedef enum e_obj_type
 	OBJ_MONEY,
 	OBJ_BOMB
 } t_obj_type;
+
+/// @brief Object state.
+/// @details Uninitialized objects should only have their type, state, data, team_id & unit_type read and set.
 typedef enum e_obj_state
 {
 	STATE_UNINITIALIZED = 1,
 	STATE_ALIVE = 2,
 	STATE_DEAD = 3
 } t_obj_state;
+
+/// @brief Type of unit.
+typedef enum e_unit_type
+{
+	UNIT_WARRIOR = 0,
+	UNIT_MINER = 1,
+	UNIT_CARRIER = 2,
+	UNIT_BUILDER = 3,
+	UNIT_BOMBERMAN = 4
+} t_unit_type;
 
 typedef struct s_pos
 {
@@ -38,7 +54,7 @@ typedef struct s_obj
 	t_obj_state state;
 	/// @brief Custom data, save whatever you want here.
 	void *data;
-	/// @brief The id of the obj
+	/// @brief The unique id of the obj
 	unsigned long id;
 	/// @brief The position of the obj
 	t_pos pos;
@@ -61,12 +77,12 @@ typedef struct s_obj
 			unsigned long team_id;
 			/// @brief The amount of money the unit is carrying.
 			unsigned long balance;
-			/// @brief The next time the unit can move, as defined by it's speed & how much it's carrying.
+			/// @brief Countdown to the next tick the unit can move, defined by it's speed & how much it's carrying.
 			unsigned long next_movement_opp;
 		} s_unit;
 		struct
 		{
-			/// @brief The amount of money the resource is carrying.
+			/// @brief The amount of money the resource / money contains.
 			unsigned long balance;
 		} s_resource_money;
 		struct
@@ -77,14 +93,9 @@ typedef struct s_obj
 	};
 } t_obj;
 
-typedef enum e_unit_type
-{
-	UNIT_WARRIOR = 0,
-	UNIT_MINER = 1,
-	UNIT_CARRIER = 2,
-	UNIT_BUILDER = 3,
-	UNIT_BOMBERMAN = 4
-} t_unit_type;
+// ----- CONFIG -----
+
+/// @brief Determines what a unit can build
 typedef enum e_build_type
 {
 	BUILD_TYPE_NONE = 0,
@@ -114,7 +125,7 @@ typedef struct s_unit_config
 	unsigned long dmg_bomb;
 	/// @brief The units build type.
 	t_build_type build_type;
-	/// @brief The time a unit waits between moves.
+	/// @brief The time a unit waits between moves if it is not carrying money.
 	unsigned long speed;
 	/// @brief The minimum time a unit waits between moves.
 	unsigned long min_speed;
@@ -153,12 +164,15 @@ typedef struct s_config
 	unsigned long bomb_throw_cost;
 	/// @brief How big the explosion of a bomb is.
 	unsigned long bomb_reach;
-	/// @brief How much damage a bomb does to cores.
+	/// @brief How much damage a bomb does to objects hit by its explosion.
 	unsigned long bomb_damage;
 	/// @brief List of all unit types that are available in the game. NULL-terminated.
 	t_unit_config **units;
 } t_config;
 
+// ----- GENERAL -----
+
+/// @brief Contains all the data about the game. Read it to your liking! Access it anywhere by typing `game.`
 typedef struct s_game
 {
 	/**
@@ -170,7 +184,7 @@ typedef struct s_game
 	 */
 	t_config config;
 	/**
-	 * @brief The id of the team that you are playing for.
+	 * @brief The id of the team that you are playing for. Saved in your cores team_id field.
 	 */
 	unsigned long my_team_id;
 	/**
@@ -185,82 +199,99 @@ typedef struct s_game
  */
 extern t_game game;
 
+/// @brief Starts the connection lib up, initializes the game, connects to the server & starts the game.
+/// @param team_name Name of your team
+/// @param argc Argument count from main function
+/// @param argv Arguments from main function
+/// @param tick_callback Function that will be called every game tick once new server data is available.
+/// @param debug Set to true to enable extensive logging.
+/// @return 0 on success, another number on failure.
 int core_startGame(char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug);
 
-// ------------------ getter -----------------
-/*
- * @brief Get any object based on its id
- */
+// ----- GETTER FUNCTIONS -----
+
+/// GETTER FUNCTIONS are used to get information about the current game state.
+
+/// @brief Get any object based on its id.
+/// @return The object or NULL if no such object exists.
 t_obj *core_get_obj_from_id(unsigned long id);
-/*
- * @brief Get the object at a specific position or null
- */
+
+/// @brief Get any object based on its position.
+/// @return The object at the position or NULL if no such object exists.
 t_obj *core_get_obj_from_pos(t_pos pos);
-/*
- * @brief Get all objects that match a custom condition
- * @param condition A function pointer that takes a t_obj pointer and returns a bool indicating if the object matches the condition
- * @return An array of pointers to t_obj that match the condition, NULL-terminated
- */
+
+/// @brief Get all objects matching a custom condition.
+/// @param condition Selection function pointer returning if the inputted object should be selected
+/// @return Null-terminated array of selected objects or NULL if no condition is provided or no objects match the condition.
 t_obj **core_get_obj_customCondition(bool (*condition)(t_obj *));
-/*
- * @brief Get the first object that matches a custom condition
- * @param condition A function pointer that takes a t_obj pointer and returns a bool indicating if the object matches the condition
- * @return The first object that matches the condition or NULL if no such object exists or no condition is provided
- */
+
+/// @brief Get the first object matching a custom condition.
+/// @param condition Selection function pointer returning if the inputted object should be selected
+/// @return The first object that matches the condition or NULL if no such object exists or no condition is provided.
 t_obj *core_get_obj_customCondition_first(bool (*condition)(t_obj *));
-/*
- * @brief Get the nearest object to the given position that matches a custom condition
- * @param pos The position to search from
- * @param condition A function pointer that takes a t_obj pointer and returns a bool indicating if the object matches the condition
- * @return The nearest object that matches the condition or NULL if no such object exists or no condition is provided
- */
+
+/// @brief Get the nearest object to a given position matching a custom condition.
+/// @param pos Position to search from
+/// @param condition Selection function pointer returning if the inputted object should be selected
+/// @return The nearest object that matches the condition or NULL if no such object exists or no condition is provided.
 t_obj *core_get_obj_customCondition_nearest(t_pos pos, bool (*condition)(t_obj *));
-// --------------- unit config getter ---------------
-/**
- * @brief Get the unit config by unit_type
- */
+
+/// @brief Get the unit config for a specific unit type.
+/// @param type The type of unit to get the config for.
+/// @return The unit config or NULL if no such unit type or unit config exists.
 t_unit_config *core_get_unitConfig(t_unit_type type);
 
-// --------------- actions.c ---------------
-/**
- * @brief Creates a unit of a specific type. Same as ft_create, besides that this function takes an id instead of a pointer to a unit.
- *
- * @param unit_type Which type of unit should be created.
- */
+// ----- ACTION FUNCTIONS -----
+
+// ACTION FUNCTIONS are used to perform actions in the game, like creating units, moving them, attacking, etc.
+
+/// @brief Create a new unit of specified type.
+/// @details The unit will be uninitialized, meaning you can read & write only read its type, state, data, team_id & unit_type.
+/// @param unit_type The type of unit to create.
+/// @return A newly created, uninitialized unit object or NULL if the unit could not be created.
 t_obj *core_action_createUnit(t_unit_type unit_type);
-/**
- * @brief Moves a unit to a specific position.
- *
- * @param unit The unit that should be moved.
- * @param pos The position the unit should move to.
- */
+
+/// @brief Moves a unit to a specific position.
+/// @details Units can only move one tile up, down, left or right; and only if their next_movement_opp is 0.
+/// @param unit The unit that should move.
+/// @param pos The position where the unit should move to.
 void core_action_move(t_obj *unit, t_pos pos);
-/**
- * @brief Attacks a target with a unit.
- *
- * @param attacker The unit that should attack.
- * @param pos The position that should be attacked.
- */
+
+/// @brief Attacks a target position with a unit.
+/// @details Units can only attack one tile up, down, left or right; and only if their next_movement_opp is 0.
+/// @param attacker The unit that should attack.
+/// @param pos The position where the unit should attack.
 void core_action_attack(t_obj *attacker, t_pos pos);
-/**
- * @brief Transfers money from one object to another.
- *
- * @param source The object that should transfer the money.
- * @param target The object that should receive the money.
- * @param amount The amount of money that should be transferred.
- */
+
+/// @brief Gives money to another object or drops it on the floor.
+/// @param source The object that the money should be transferred from.
+/// @param target_pos The position of the object to transfer the money to, or the non-occupied position where the money should be dropped.
+/// @param amount The amount of money to transfer or drop.
 void core_action_transferMoney(t_obj *source, t_pos target_pos, unsigned long amount);
-/**
- * @brief Builds a wall at a specific position. Won't work if unit isn't a builder.
- *
- * @param builder The builder that should build the wall.
- * @param pos The position where the wall should be built.
- */
+
+/// @brief Builds a new object.
+/// @details Units can only build one tile up, down, left or right.
+/// @param builder The unit that should build a new object. What will be built depends on the buildType of the builder unit.
+/// @param pos The position where the object should be built.
 void core_action_build(t_obj *builder, t_pos pos);
 
+// ----- PRINT FUNCTIONS -----
+
+// PRINT FUNCTIONS are used to print information about the game state to the console.
+
+/// @brief Prints all information about the current game state of a given object.
+/// @param obj The object to print information about.
 void core_print_object(t_obj *obj);
+
+/// @brief Prints all objects that match a custom condition.
+/// @param condition Selection function pointer returning if the inputted object should be selected
 void core_print_objects(bool (*condition)(t_obj *));
+
+/// @brief Prints a selected unit config.
+/// @param unit_type The type of unit to print the config for.
 void core_print_config_unit(t_unit_type unit_type);
+
+/// @brief Prints the entire game config and all unit configs
 void core_print_config(void);
 
 #endif // CORE_LIB_H
