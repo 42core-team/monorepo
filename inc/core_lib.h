@@ -121,8 +121,6 @@ typedef struct s_unit_config
 	unsigned long dmg_resource;
 	/// @brief How much damage the unit deals to walls.
 	unsigned long dmg_wall;
-	/// @brief How much damage the unit deals to bombs.
-	unsigned long dmg_bomb;
 	/// @brief The units build type.
 	t_build_type build_type;
 	/// @brief The time a unit waits between moves if it is not carrying money.

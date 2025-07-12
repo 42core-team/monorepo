@@ -72,7 +72,6 @@ void core_print_config_unit(t_unit_type unit_type)
 	printf("	- Damage to Unit: %lu\n", unit_config->dmg_unit);
 	printf("	- Damage to Resource: %lu\n", unit_config->dmg_resource);
 	printf("	- Damage to Wall: %lu\n", unit_config->dmg_wall);
-	printf("	- Damage to Bomb: %lu\n", unit_config->dmg_bomb);
 	char *build_type = "None";
 	if (unit_config->build_type == BUILD_TYPE_WALL)
 		build_type = "Wall";

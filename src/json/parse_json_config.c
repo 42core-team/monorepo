@@ -37,7 +37,6 @@ static t_unit_config **core_static_parse_unitConfig(json_node *root)
 		units[i]->dmg_unit = (long)json_find(unit_node, "damageUnit")->number;
 		units[i]->dmg_resource = (long)json_find(unit_node, "damageResource")->number;
 		units[i]->dmg_wall = (long)json_find(unit_node, "damageWall")->number;
-		units[i]->dmg_bomb = (unsigned long)json_find(unit_node, "damageBomb")->number;
 		units[i]->build_type = (t_build_type)json_find(unit_node, "buildType")->number;
 	}
 	units[array_size] = NULL;
