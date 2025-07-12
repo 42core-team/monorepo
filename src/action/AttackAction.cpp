@@ -55,7 +55,9 @@ bool AttackAction::attackObj(Object *obj, Unit *unit) // returns object new hp, 
 	}
 	else if (obj->getType() == ObjectType::Resource)
 	{
-		((Resource *)obj)->getMined(unit);
+		obj->setHP(obj->getHP() - Config::instance().units[unit->getUnitType()].damageResource);
+		if (obj->getHP() <= 0)
+			((Resource *)obj)->getMined(unit);
 		damage_ = Config::instance().units[unit->getUnitType()].damageResource;
 	}
 	else if (obj->getType() == ObjectType::Wall)

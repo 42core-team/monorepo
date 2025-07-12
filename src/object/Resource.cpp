@@ -10,26 +10,7 @@ Resource::Resource(unsigned int id, unsigned int balance)
 
 void Resource::getMined(Unit *miner)
 {
-	unsigned int damage = Config::instance().units[miner->getUnitType()].damageResource;
-	if ((int)damage > hp_)
-		damage = hp_;
-
-	unsigned int reward = 0;
-	if (hp_ > 0)
-	{
-		if ((int)damage == hp_)
-			reward = balance_;
-		else
-		{
-			reward = static_cast<unsigned int>(std::round(double(damage) * double(balance_) / double(hp_)));
-			reward = std::min(reward, balance_);
-		}
-	}
-
-	hp_ -= damage;
-	balance_ -= reward;
-
-	miner->addBalance(reward);
+	miner->addBalance(balance_);
 }
 
 void Resource::tick(unsigned long long tickCount)
