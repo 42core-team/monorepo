@@ -5,18 +5,9 @@ int core_internal_socket_init(struct sockaddr_in addr)
 	int socket_fd, status_con;
 	write(1, "Connecting to server", 21);
 
-	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+	socket_fd = socket(AF_INET, SOCK_STREAM, SOCK_NONBLOCK);
 	if (socket_fd < 0)
-		perror("Socket creation failed"), exit(EXIT_FAILURE);
-
-	// Set socket to non-blocking mode
-	int flags = fcntl(socket_fd, F_GETFL, 0);
-	if (flags < 0)
-		perror("Get socket flags failed"), exit(EXIT_FAILURE);
-
-	flags |= O_NONBLOCK;
-	if (fcntl(socket_fd, F_SETFL, flags) < 0)
-		perror("Set socket to non-blocking mode failed"), exit(EXIT_FAILURE);
+		ft_perror_exit("Socket creation failed");
 
 	do {
 		write(1, ".", 1);
