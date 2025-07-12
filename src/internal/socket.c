@@ -3,7 +3,7 @@
 int core_internal_socket_init(struct sockaddr_in addr)
 {
 	int socket_fd, status_con;
-	write(1, "Connecting to server", 21);
+	write(1, "Connecting to server", 20);
 
 	socket_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
 	if (socket_fd < 0)
