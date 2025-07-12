@@ -24,7 +24,7 @@ int core_internal_socket_init(struct sockaddr_in addr)
 			usleep(350000);
 	} while (status_con != 0);
 
-	write(1, "Connected!\n", 12);
+	write(1, "Connected!\n", 11);
 	return socket_fd;
 }
 
@@ -40,44 +40,38 @@ int core_internal_socket_send(const int socket_fd, const char *msg)
 	return (int)status_send;
 }
 
-/**
- * @brief Read a line terminated by '\n' from a socket file descriptor.
- * Returns a malloc'ed string without the '\n'. Caller must free.
- */
+
+#define BUFFER_SIZE 1024
 static char *core_static_socket_readLine(int fd)
 {
-	size_t capacity = 1024;
-	size_t len = 0;
-	char *buffer = malloc(capacity);
-	if (!buffer)
-		return NULL;
+	static char	*buf;
+	char		tmp[BUFFER_SIZE + 1];
+	ssize_t		r;
+	char		*nl;
+	size_t		len;
 
-	while (1) {
-		char c;
-		ssize_t r = recv(fd, &c, 1, 0);
-		if (r < 0) {
-			if (errno == EINTR)
-				continue;
-			free(buffer);
-			return NULL;
-		}
-		if (r == 0)
-			break;
-		if (c == '\n')
-			break;
-		if (len + 1 >= capacity) {
-			capacity *= 2;
-			char *tmp = realloc(buffer, capacity);
-			if (!tmp) {
-				free(buffer);
-				return NULL;
-			}
-			buffer = tmp;
-		}
-		buffer[len++] = c;
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	while (!(nl = buf ? strchr(buf, '\n') : NULL)
+		&& (r = read(fd, tmp, BUFFER_SIZE)) > 0)
+	{
+		tmp[r] = '\0';
+		size_t old = buf ? strlen(buf) : 0;
+		char *ext = realloc(buf, old + r + 1);
+		if (!ext)
+			return (free(buf), buf = NULL, NULL);
+		buf = ext;
+		memcpy(buf + old, tmp, r + 1);
 	}
-	buffer[len] = '\0';
-	return buffer;
+	if (!buf || !*buf)
+		return (free(buf), buf = NULL, NULL);
+	nl = strchr(buf, '\n');
+	len = nl ? (size_t)(nl - buf) + 1 : strlen(buf);
+	char *line = strndup(buf, len);
+	char *rest = strdup(buf + len);
+	free(buf);
+	buf = rest;
+	return (line);
 }
 
 static bool core_static_socket_waitForData(int fd)
@@ -100,23 +94,25 @@ static bool core_static_socket_waitForData(int fd)
 
 char *core_internal_socket_read(const int socket_fd)
 {
-	if (!core_static_socket_waitForData(socket_fd))
-		return NULL;
+	char	*buffer = NULL;
+	char	*last_buffer = NULL;
 
-	char *line = NULL;
-	char *last = NULL;
+	core_static_socket_waitForData(socket_fd);
+	buffer = core_static_socket_readLine(socket_fd);
 
-	while ((line = core_static_socket_readLine(socket_fd)) != NULL) {
-		free(last);
-		last = line;
+	while (buffer != NULL)
+	{
+		if (last_buffer != NULL)
+			free(last_buffer);
+		last_buffer = buffer;
+		buffer = core_static_socket_readLine(socket_fd);
 	}
-	return last;
+	return (last_buffer);
 }
 
 char *core_internal_socket_read_once(const int socket_fd)
 {
-	if (!core_static_socket_waitForData(socket_fd))
-		return NULL;
+	core_static_socket_waitForData(socket_fd);
 	return core_static_socket_readLine(socket_fd);
 }
 

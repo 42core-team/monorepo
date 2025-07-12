@@ -49,6 +49,9 @@ t_obj **core_get_obj_customCondition(bool (*condition)(t_obj *))
 			count++;
 	}
 
+	if (count == 0)
+		return (NULL);
+
 	t_obj **result = malloc(sizeof(t_obj *) * (count + 1));
 	if (!result)
 		return (NULL);
