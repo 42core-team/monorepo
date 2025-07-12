@@ -1,11 +1,6 @@
 #include "core_lib_internal.h"
 
-static void ft_print_error(const char *str, const char *func_name)
-{
-	fprintf(stderr, "Error: %s: %s\n", func_name, str);
-}
-
-int ft_init_socket(struct sockaddr_in addr)
+int core_internal_socket_init(struct sockaddr_in addr)
 {
 	int socket_fd, status_con;
 	write(1, "Connecting to server", 21);
@@ -42,7 +37,7 @@ int ft_init_socket(struct sockaddr_in addr)
 	return socket_fd;
 }
 
-int ft_send_socket(const int socket_fd, const char *msg)
+int core_internal_socket_send(const int socket_fd, const char *msg)
 {
 	if (!msg)
 		return -1;
@@ -58,7 +53,7 @@ int ft_send_socket(const int socket_fd, const char *msg)
  * @brief Read a line terminated by '\n' from a socket file descriptor.
  * Returns a malloc'ed string without the '\n'. Caller must free.
  */
-static char *read_line(int fd)
+static char *core_static_socket_readLine(int fd)
 {
 	size_t capacity = 1024;
 	size_t len = 0;
@@ -94,7 +89,7 @@ static char *read_line(int fd)
 	return buffer;
 }
 
-bool ft_wait_for_data(int fd)
+static bool core_static_socket_waitForData(int fd)
 {
 	fd_set readfds;
 	struct timeval tv = {10, 0};
@@ -103,38 +98,38 @@ bool ft_wait_for_data(int fd)
 
 	int retval = select(fd + 1, &readfds, NULL, NULL, &tv);
 	if (retval == -1) {
-		ft_print_error(strerror(errno), __func__);
+		fprintf(stderr, "Error: %s: %s\n", __func__, strerror(errno));
 		return false;
 	} else if (retval == 0) {
-		ft_print_error("Did not receive any data from socket fd", __func__);
+		fprintf(stderr, "Error: %s: %s\n", __func__, "Did not receive any data from socket fd");
 		return false;
 	}
 	return true;
 }
 
-char *ft_read_socket(const int socket_fd)
+char *core_internal_socket_read(const int socket_fd)
 {
-	if (!ft_wait_for_data(socket_fd))
+	if (!core_static_socket_waitForData(socket_fd))
 		return NULL;
 
 	char *line = NULL;
 	char *last = NULL;
 
-	while ((line = read_line(socket_fd)) != NULL) {
+	while ((line = core_static_socket_readLine(socket_fd)) != NULL) {
 		free(last);
 		last = line;
 	}
 	return last;
 }
 
-char *ft_read_socket_once(const int socket_fd)
+char *core_internal_socket_read_once(const int socket_fd)
 {
-	if (!ft_wait_for_data(socket_fd))
+	if (!core_static_socket_waitForData(socket_fd))
 		return NULL;
-	return read_line(socket_fd);
+	return core_static_socket_readLine(socket_fd);
 }
 
-struct sockaddr_in ft_init_addr(const char *hostname, const int port)
+struct sockaddr_in core_internal_socket_initAddr(const char *hostname, const int port)
 {
 	struct addrinfo hints, *res, *p;
 	int status;

@@ -1,7 +1,7 @@
 #include "core_lib.h"
 #include "core_lib_internal.h"
 
-void ft_reset_actions(void)
+void core_internal_reset_actions(void)
 {
 	free(actions.list);
 	actions.list = NULL;
@@ -9,16 +9,16 @@ void ft_reset_actions(void)
 	actions.capacity = 0;
 }
 
-static bool is_my_core(t_obj *obj)
+static bool core_static_isMyCore(t_obj *obj)
 {
 	return obj && obj->type == OBJ_CORE && obj->s_core.team_id == game.my_team_id;
 }
-static t_obj *ft_get_my_core(void)
+static t_obj *core_static_get_myCore(void)
 {
-	return core_get_obj_customCondition_first(is_my_core);
+	return core_get_obj_customCondition_first(core_static_isMyCore);
 }
 
-static void ensure_capacity(void)
+static void core_static_ensureCapacity(void)
 {
 	if (actions.list == NULL)
 	{
@@ -32,18 +32,18 @@ static void ensure_capacity(void)
 	}
 }
 
-t_obj *ft_create_unit(t_unit_type unit_type)
+t_obj *core_action_createUnit(t_unit_type unit_type)
 {
 	int unit_count = 0;
 	while (game.config.units != NULL && game.config.units[unit_count] != NULL)
 		unit_count++;
 	if ((int)unit_type < 0 || (int)unit_type >= unit_count)
 		return NULL;
-	if (!ft_get_my_core() || !game.config.units || !game.config.units[unit_type] ||
-		game.config.units[unit_type]->cost > ft_get_my_core()->s_core.balance)
+	if (!core_static_get_myCore() || !game.config.units || !game.config.units[unit_type] ||
+		game.config.units[unit_type]->cost > core_static_get_myCore()->s_core.balance)
 		return NULL;
 
-	ensure_capacity();
+	core_static_ensureCapacity();
 	t_action *action = &actions.list[actions.count++];
 	action->type = ACTION_CREATE;
 	action->data.create.unit_type = unit_type;
@@ -63,45 +63,45 @@ t_obj *ft_create_unit(t_unit_type unit_type)
 	game.objects[objLen] = newUnit;
 	game.objects[objLen + 1] = NULL;
 
-	ft_get_my_core()->s_core.balance -= game.config.units[unit_type]->cost;
+	core_static_get_myCore()->s_core.balance -= game.config.units[unit_type]->cost;
 
 	return newUnit;
 }
 
-void ft_move(t_obj *unit, t_pos pos)
+void core_action_move(t_obj *unit, t_pos pos)
 {
 	if (unit->s_unit.next_movement_opp != 0)
 		return;
 
-	ensure_capacity();
+	core_static_ensureCapacity();
 	t_action *action = &actions.list[actions.count++];
 	action->type = ACTION_MOVE;
 	action->data.move.id = unit->id;
 	action->data.move.pos = pos;
 }
 
-void ft_attack(t_obj *attacker, t_pos target_pos)
+void core_action_attack(t_obj *attacker, t_pos target_pos)
 {
 	if (!attacker)
 		return;
 	if (attacker->type != OBJ_UNIT)
 		return;
 
-	ensure_capacity();
+	core_static_ensureCapacity();
 	t_action *action = &actions.list[actions.count++];
 	action->type = ACTION_ATTACK;
 	action->data.attack.id = attacker->id;
 	action->data.attack.pos = target_pos;
 }
 
-void ft_transfer_money(t_obj *source, t_pos target_pos, unsigned long amount)
+void core_action_transferMoney(t_obj *source, t_pos target_pos, unsigned long amount)
 {
 	if (!source)
 		return;
 	if (source->type != OBJ_CORE && source->type != OBJ_UNIT)
 		return;
 
-	ensure_capacity();
+	core_static_ensureCapacity();
 	t_action *action = &actions.list[actions.count++];
 	action->type = ACTION_TRANSFER;
 	action->data.transfer.source_id = source->id;
@@ -109,7 +109,7 @@ void ft_transfer_money(t_obj *source, t_pos target_pos, unsigned long amount)
 	action->data.transfer.amount = amount;
 }
 
-void ft_build(t_obj *builder, t_pos pos)
+void core_action_build(t_obj *builder, t_pos pos)
 {
 	if (!builder || builder->type != OBJ_UNIT || (builder->s_unit.unit_type != UNIT_BUILDER && builder->s_unit.unit_type != UNIT_BOMBERMAN))
 		return;
@@ -118,7 +118,7 @@ void ft_build(t_obj *builder, t_pos pos)
 	if (builder->s_unit.unit_type == UNIT_BOMBERMAN && builder->s_unit.balance < game.config.bomb_throw_cost)
 		return;
 
-	ensure_capacity();
+	core_static_ensureCapacity();
 	t_action *action = &actions.list[actions.count++];
 	action->type = ACTION_BUILD;
 	action->data.build.builder_id = builder->id;

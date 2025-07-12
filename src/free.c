@@ -1,6 +1,6 @@
 #include "core_lib_internal.h"
 
-void	ft_free_game()
+void	core_internal_util_freeGame()
 {
 	// Objects
 	if (game.objects != NULL)
@@ -22,12 +22,5 @@ void	ft_free_game()
 		free(game.config.units);
 	}
 
-	ft_reset_actions();
-}
-
-void	ft_perror_exit(char *msg)
-{
-	perror(msg);
-	ft_free_game();
-	exit(EXIT_FAILURE);
+	core_internal_reset_actions();
 }

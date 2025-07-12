@@ -2,7 +2,7 @@
 
 extern t_game game;
 
-void core_util_print_object(t_obj *obj)
+void core_print_object(t_obj *obj)
 {
 	printf("---");
 	printf("ID: %lu\n", obj->id);
@@ -42,7 +42,7 @@ void core_util_print_object(t_obj *obj)
 	}
 }
 
-void core_util_print_objects(bool (*condition)(t_obj *))
+void core_print_objects(bool (*condition)(t_obj *))
 {
 	if (game.objects == NULL)
 		return;
@@ -51,12 +51,12 @@ void core_util_print_objects(bool (*condition)(t_obj *))
 		t_obj *obj = game.objects[i];
 		if (condition && !condition(obj))
 			continue;
-		core_util_print_object(obj);
+		core_print_object(obj);
 		printf("---\n");
 	}
 }
 
-void core_util_print_config_unit(t_unit_type unit_type)
+void core_print_config_unit(t_unit_type unit_type)
 {
 	t_unit_config *unit_config = core_get_unitConfig(unit_type);
 	if (unit_config == NULL)
@@ -84,7 +84,7 @@ void core_util_print_config_unit(t_unit_type unit_type)
 	printf("	- Can Build: %s\n", unit_config->can_build ? "Yes" : "No");
 }
 
-void core_util_print_config(void)
+void core_print_config(void)
 {
 	printf("Game Config:\n");
 	printf("	- Map Height: %lu\n", game.config.height);
@@ -105,6 +105,6 @@ void core_util_print_config(void)
 	
 	for (int i = 0; game.config.units[i] != NULL; i++)
 	{
-		core_util_print_config_unit(game.config.units[i]->unit_type);
+		core_print_config_unit(game.config.units[i]->unit_type);
 	}
 }

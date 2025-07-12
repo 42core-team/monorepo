@@ -185,7 +185,7 @@ typedef struct s_game
  */
 extern t_game game;
 
-int ft_game_start(char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug);
+int core_startGame(char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug);
 
 // ------------------ getter -----------------
 /*
@@ -227,28 +227,21 @@ t_unit_config *core_get_unitConfig(t_unit_type type);
  *
  * @param unit_type Which type of unit should be created.
  */
-t_obj *ft_create_unit(t_unit_type unit_type);
+t_obj *core_action_createUnit(t_unit_type unit_type);
 /**
  * @brief Moves a unit to a specific position.
  *
  * @param unit The unit that should be moved.
  * @param pos The position the unit should move to.
  */
-void ft_move(t_obj *unit, t_pos pos);
-/**
- * @brief Determines next direction to move to reach goal, then calls ft_move().
- *
- * @param unit The unit that should be moved.
- * @param direction The target position.
- */
-void ft_travel_to_pos(t_obj *unit, t_pos pos);
+void core_action_move(t_obj *unit, t_pos pos);
 /**
  * @brief Attacks a target with a unit.
  *
  * @param attacker The unit that should attack.
  * @param pos The position that should be attacked.
  */
-void ft_attack(t_obj *attacker, t_pos pos);
+void core_action_attack(t_obj *attacker, t_pos pos);
 /**
  * @brief Transfers money from one object to another.
  *
@@ -256,18 +249,18 @@ void ft_attack(t_obj *attacker, t_pos pos);
  * @param target The object that should receive the money.
  * @param amount The amount of money that should be transferred.
  */
-void ft_transfer_money(t_obj *source, t_pos target_pos, unsigned long amount);
+void core_action_transferMoney(t_obj *source, t_pos target_pos, unsigned long amount);
 /**
  * @brief Builds a wall at a specific position. Won't work if unit isn't a builder.
  *
  * @param builder The builder that should build the wall.
  * @param pos The position where the wall should be built.
  */
-void ft_build(t_obj *builder, t_pos pos);
+void core_action_build(t_obj *builder, t_pos pos);
 
-void core_util_print_object(t_obj *obj);
-void core_util_print_objects(bool (*condition)(t_obj *));
-void core_util_print_config_unit(t_unit_type unit_type);
-void core_util_print_config(void);
+void core_print_object(t_obj *obj);
+void core_print_objects(bool (*condition)(t_obj *));
+void core_print_config_unit(t_unit_type unit_type);
+void core_print_config(void);
 
 #endif // CORE_LIB_H

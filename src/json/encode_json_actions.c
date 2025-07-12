@@ -1,6 +1,6 @@
 #include "core_lib_internal.h"
 
-char *ft_all_action_json(void)
+char *core_internal_encode_action(void)
 {
 	json_node *arr = create_node(JSON_TYPE_ARRAY);
 	arr->array = malloc(sizeof(json_node*) * (actions.count + 1));

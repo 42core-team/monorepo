@@ -1,6 +1,6 @@
 #include "core_lib_internal.h"
 
-char	*ft_create_login_msg(char *team_name, int argc, char **argv)
+char	*core_internal_encode_login(char *team_name, int argc, char **argv)
 {
 	if (argc < 2)
 	{

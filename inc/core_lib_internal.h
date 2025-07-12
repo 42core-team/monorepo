@@ -5,10 +5,9 @@
 
 // ----- General
 
-void ft_free_game();
-void ft_perror_exit(char *msg);
+void core_internal_util_freeGame();
 
-int core_util_distance(t_pos pos1, t_pos pos2);
+int core_internal_util_distance(t_pos pos1, t_pos pos2);
 
 // ----- Socket
 
@@ -24,11 +23,11 @@ int core_util_distance(t_pos pos1, t_pos pos2);
 #include <string.h>
 #include <stdbool.h>
 
-int					ft_init_socket(struct sockaddr_in addr);
-int					ft_send_socket(const int socket_fd, const char *msg);
-char				*ft_read_socket(const int socket_fd);
-char				*ft_read_socket_once(const int socket_fd);
-struct sockaddr_in	ft_init_addr(const char *hostname, const int port);
+int					core_internal_socket_init(struct sockaddr_in addr);
+int					core_internal_socket_send(const int socket_fd, const char *msg);
+char				*core_internal_socket_read(const int socket_fd);
+char				*core_internal_socket_read_once(const int socket_fd);
+struct sockaddr_in	core_internal_socket_initAddr(const char *hostname, const int port);
 
 // ----- Actions
 
@@ -63,13 +62,14 @@ typedef struct s_actions
 
 extern t_actions actions;
 
+void	core_internal_reset_actions(void);
+
 // ----- JSON parsing and encoding
 
-void	ft_parse_json_state(char *json);
-void	ft_parse_json_config(char *json);
-char	*ft_all_action_json();
-void	ft_reset_actions();
-char	*ft_create_login_msg(char *team_name, int argc, char **argv);
+void	core_internal_parse_state(char *json);
+void	core_internal_parse_config(char *json);
+char	*core_internal_encode_action();
+char	*core_internal_encode_login(char *team_name, int argc, char **argv);
 
 // ----- JSON LIB
 

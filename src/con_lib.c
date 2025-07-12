@@ -3,7 +3,7 @@
 t_game		game = {0};
 t_actions	actions = {0};
 
-static bool is_my_core(t_obj *obj)
+static bool core_static_isMyCore(t_obj *obj)
 {
 	if (!obj || obj->type != OBJ_CORE)
 		return false;
@@ -19,7 +19,7 @@ static bool is_my_core(t_obj *obj)
  * @param tick_callback A function that will be called every game tick.
  * @param debug Whether to enable debug mode or not.
  */
-int	ft_game_start(char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug)
+int	core_startGame(char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug)
 {
 	if (!tick_callback)
 	{
@@ -32,20 +32,20 @@ int	ft_game_start(char *team_name, int argc, char **argv, void (*tick_callback)(
 	const char *env_port = getenv("SERVER_PORT");
 	const int port = env_port ? atoi(env_port) : 4242;
 	game.my_team_id = argv[1] ? atoi(argv[1]) : printf("No team id provided, using 0.\n");
-	int socket_fd = ft_init_socket(ft_init_addr(env_ip ? env_ip : "127.0.0.1", port));
+	int socket_fd = core_internal_socket_init(core_internal_socket_initAddr(env_ip ? env_ip : "127.0.0.1", port));
 
 	// send login message
-	char *login_msg = ft_create_login_msg(team_name, argc, argv);
+	char *login_msg = core_internal_encode_login(team_name, argc, argv);
 	if (!login_msg)
 	{
 		printf("Unable to create login message, shutting down.\n");
 		return (1);
 	}
-	ft_send_socket(socket_fd, login_msg);
+	core_internal_socket_send(socket_fd, login_msg);
 	free(login_msg);
 
 	// receive config
-	char *conf = ft_read_socket_once(socket_fd);
+	char *conf = core_internal_socket_read_once(socket_fd);
 	if (!conf)
 	{
 		printf("Something went very awry and there was no json received.\n");
@@ -53,7 +53,7 @@ int	ft_game_start(char *team_name, int argc, char **argv, void (*tick_callback)(
 	}
 	if (debug)
 		printf("Received: %s\n", conf);
-	ft_parse_json_config(conf);
+	core_internal_parse_config(conf);
 	free(conf);
 
 	// run game loop
@@ -64,15 +64,15 @@ int	ft_game_start(char *team_name, int argc, char **argv, void (*tick_callback)(
 		first_tick = false;
 
 		// send user-selected actions
-		char *actions = ft_all_action_json();
-		ft_reset_actions();
+		char *actions = core_internal_encode_action();
+		core_internal_reset_actions();
 		if (debug)
 			printf("Actions: %s\n", actions);
-		ft_send_socket(socket_fd, actions);
+		core_internal_socket_send(socket_fd, actions);
 		free(actions);
 
 		// receive new json state
-		char *msg = ft_read_socket(socket_fd);
+		char *msg = core_internal_socket_read(socket_fd);
 		if (!msg)
 		{
 			printf("The connection was closed by the server. Bye, bye!\n");
@@ -84,9 +84,9 @@ int	ft_game_start(char *team_name, int argc, char **argv, void (*tick_callback)(
 			printf("Received: %s\n", json_to_formatted_string(node));
 			free_json(node);
 		}
-		ft_parse_json_state(msg);
+		core_internal_parse_state(msg);
 		free(msg);
-		my_core = core_get_obj_customCondition_first(is_my_core);
+		my_core = core_get_obj_customCondition_first(core_static_isMyCore);
 
 		// execute user code
 		if (tick_callback)
@@ -101,7 +101,7 @@ int	ft_game_start(char *team_name, int argc, char **argv, void (*tick_callback)(
 
 	// clean up
 	close(socket_fd);
-	ft_free_game();
+	core_internal_util_freeGame();
 
 	return 0;
 }

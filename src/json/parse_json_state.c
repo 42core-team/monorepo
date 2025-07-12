@@ -1,6 +1,6 @@
 #include "core_lib_internal.h"
 
-static void apply_obj_to_arr(t_obj obj)
+static void core_static_applyObjToArray(t_obj obj)
 {
 	if (game.objects == NULL)
 	{
@@ -103,7 +103,7 @@ static void apply_obj_to_arr(t_obj obj)
 	newObj->state = STATE_ALIVE;
 }
 
-void ft_parse_json_state(char *json)
+void core_internal_parse_state(char *json)
 {
 	json_node *root = string_to_json(json);
 
@@ -147,7 +147,7 @@ void ft_parse_json_state(char *json)
 			readObj.s_bomb.countdown = (unsigned long)json_find(objects->array[i], "countdown")->number;
 		}
 
-		apply_obj_to_arr(readObj);
+		core_static_applyObjToArray(readObj);
 	}
 
 	// clean uninitialized units, as the server did not send them
