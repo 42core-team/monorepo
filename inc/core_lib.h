@@ -220,8 +220,6 @@ t_obj *core_get_obj_customCondition_nearest(t_pos pos, bool (*condition)(t_obj *
  * @brief Get the unit config by unit_type
  */
 t_unit_config *core_get_unitConfig(t_unit_type type);
-// --------------------- utils ----------------
-int core_util_distance(t_pos pos1, t_pos pos2);
 
 // --------------- actions.c ---------------
 /**

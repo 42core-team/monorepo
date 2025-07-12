@@ -1,4 +1,5 @@
 #include "core_lib.h"
+#include "core_lib_internal.h"
 
 t_obj *core_get_obj_from_id(unsigned long id)
 {

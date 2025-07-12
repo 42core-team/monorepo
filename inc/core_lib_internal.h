@@ -8,6 +8,8 @@
 void ft_free_game();
 void ft_perror_exit(char *msg);
 
+int core_util_distance(t_pos pos1, t_pos pos2);
+
 // ----- Socket
 
 #include <fcntl.h>
