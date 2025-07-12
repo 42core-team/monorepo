@@ -39,8 +39,9 @@ t_obj *core_action_createUnit(t_unit_type unit_type)
 		unit_count++;
 	if ((int)unit_type < 0 || (int)unit_type >= unit_count)
 		return NULL;
-	if (!core_static_get_myCore() || !game.config.units || !game.config.units[unit_type] ||
-		game.config.units[unit_type]->cost > core_static_get_myCore()->s_core.balance)
+	t_obj *myCore = core_static_get_myCore();
+	if (!myCore || !game.config.units || !game.config.units[unit_type] ||
+		game.config.units[unit_type]->cost > myCore->s_core.balance)
 		return NULL;
 
 	core_static_ensureCapacity();
