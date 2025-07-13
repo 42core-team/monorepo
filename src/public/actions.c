@@ -1,15 +1,7 @@
 #include "core_lib.h"
 #include "core_lib_internal.h"
 
-void core_internal_reset_actions(void)
-{
-	free(actions.list);
-	actions.list = NULL;
-	actions.count = 0;
-	actions.capacity = 0;
-}
-
-static bool core_static_isMyCore(t_obj *obj)
+static bool core_static_isMyCore(const t_obj *obj)
 {
 	return obj && obj->type == OBJ_CORE && obj->s_core.team_id == game.my_team_id;
 }
@@ -74,7 +66,7 @@ t_obj *core_action_createUnit(t_unit_type unit_type)
 	return newUnit;
 }
 
-void core_action_move(t_obj *unit, t_pos pos)
+void core_action_move(const t_obj *unit, t_pos pos)
 {
 	if (unit->s_unit.move_cooldown != 0)
 		return;
@@ -86,7 +78,7 @@ void core_action_move(t_obj *unit, t_pos pos)
 	action->data.move.pos = pos;
 }
 
-void core_action_attack(t_obj *attacker, t_pos target_pos)
+void core_action_attack(const t_obj *attacker, t_pos target_pos)
 {
 	if (!attacker)
 		return;
@@ -100,7 +92,7 @@ void core_action_attack(t_obj *attacker, t_pos target_pos)
 	action->data.attack.pos = target_pos;
 }
 
-void core_action_transferMoney(t_obj *source, t_pos target_pos, unsigned long amount)
+void core_action_transferMoney(const t_obj *source, t_pos target_pos, unsigned long amount)
 {
 	if (!source)
 		return;
@@ -115,7 +107,7 @@ void core_action_transferMoney(t_obj *source, t_pos target_pos, unsigned long am
 	action->data.transfer.amount = amount;
 }
 
-void core_action_build(t_obj *builder, t_pos pos)
+void core_action_build(const t_obj *builder, t_pos pos)
 {
 	if (!builder || builder->type != OBJ_UNIT || (builder->s_unit.unit_type != UNIT_BUILDER && builder->s_unit.unit_type != UNIT_BOMBERMAN))
 		return;
@@ -129,9 +121,4 @@ void core_action_build(t_obj *builder, t_pos pos)
 	action->type = ACTION_BUILD;
 	action->data.build.builder_id = builder->id;
 	action->data.build.pos = pos;
-
-	if (builder->s_unit.unit_type == UNIT_BUILDER)
-		builder->s_unit.balance -= game.config.wall_build_cost;
-	if (builder->s_unit.unit_type == UNIT_BOMBERMAN)
-		builder->s_unit.balance -= game.config.bomb_throw_cost;
 }

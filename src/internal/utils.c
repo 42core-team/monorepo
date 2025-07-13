@@ -1,4 +1,4 @@
-#include "core_lib.h"
+#include "core_lib_internal.h"
 
 int core_internal_util_distance(t_pos pos1, t_pos pos2)
 {
@@ -11,4 +11,12 @@ int core_internal_util_distance(t_pos pos1, t_pos pos2)
 		deltaY = -deltaY;
 
 	return ((int)(deltaX + deltaY));
+}
+
+void core_internal_reset_actions(void)
+{
+	free(actions.list);
+	actions.list = NULL;
+	actions.count = 0;
+	actions.capacity = 0;
 }

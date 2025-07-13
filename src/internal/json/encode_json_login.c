@@ -1,6 +1,6 @@
 #include "core_lib_internal.h"
 
-char	*core_internal_encode_login(char *team_name, int argc, char **argv)
+char	*core_internal_encode_login(const char *team_name, int argc, char **argv)
 {
 	if (argc < 2)
 	{
@@ -23,7 +23,7 @@ char	*core_internal_encode_login(char *team_name, int argc, char **argv)
 	root->array[1] = id;
 
 	json_node *name = create_node(JSON_TYPE_STRING);
-	name->string = team_name ? strdup(team_name) : strdup("default");
+	name->string = team_name ? strdup(team_name) : strdup("Mysteriously unnamed Team");
 	name->key = strdup("name");
 	root->array[2] = name;
 

@@ -204,7 +204,7 @@ extern t_game game;
 /// @param tick_callback Function that will be called every game tick once new server data is available.
 /// @param debug Set to true to enable extensive logging.
 /// @return 0 on success, another number on failure.
-int core_startGame(char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug);
+int core_startGame(const char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug);
 
 // ----- GETTER FUNCTIONS -----
 
@@ -221,18 +221,18 @@ t_obj *core_get_obj_from_pos(t_pos pos);
 /// @brief Get all objects matching a custom condition.
 /// @param condition Selection function pointer returning if the inputted object should be selected
 /// @return Null-terminated array of selected objects or NULL if no condition is provided or no objects match the condition.
-t_obj **core_get_objs_customCondition(bool (*condition)(t_obj *));
+t_obj **core_get_objs_customCondition(bool (*condition)(const t_obj *));
 
 /// @brief Get the first object matching a custom condition.
 /// @param condition Selection function pointer returning if the inputted object should be selected
 /// @return The first object that matches the condition or NULL if no such object exists or no condition is provided.
-t_obj *core_get_obj_customCondition_first(bool (*condition)(t_obj *));
+t_obj *core_get_obj_customCondition_first(bool (*condition)(const t_obj *));
 
 /// @brief Get the nearest object to a given position matching a custom condition.
 /// @param pos Position to search from
 /// @param condition Selection function pointer returning if the inputted object should be selected
 /// @return The nearest object that matches the condition or NULL if no such object exists or no condition is provided.
-t_obj *core_get_obj_customCondition_nearest(t_pos pos, bool (*condition)(t_obj *));
+t_obj *core_get_obj_customCondition_nearest(t_pos pos, bool (*condition)(const t_obj *));
 
 /// @brief Get the unit config for a specific unit type.
 /// @param type The type of unit to get the config for.
@@ -241,7 +241,7 @@ t_unit_config *core_get_unitConfig(t_unit_type type);
 
 // ----- ACTION FUNCTIONS -----
 
-// ACTION FUNCTIONS are used to perform actions in the game, like creating units, moving them, attacking, etc.
+// ACTION FUNCTIONS are used to perform actions in the game, like creating units, moving them, attacking, etc. Their changes are applied between ticks.
 
 /// @brief Create a new unit of specified type.
 /// @details The unit will be uninitialized, meaning you can read & write only read its type, state, data, team_id & unit_type.
@@ -253,25 +253,25 @@ t_obj *core_action_createUnit(t_unit_type unit_type);
 /// @details Units can only move one tile up, down, left or right; and only if their move_cooldown is 0.
 /// @param unit The unit that should move.
 /// @param pos The position where the unit should move to.
-void core_action_move(t_obj *unit, t_pos pos);
+void core_action_move(const t_obj *unit, t_pos pos);
 
 /// @brief Attacks a target position with a unit.
 /// @details Units can only attack one tile up, down, left or right; and only if their move_cooldown is 0.
 /// @param attacker The unit that should attack.
 /// @param pos The position where the unit should attack.
-void core_action_attack(t_obj *attacker, t_pos pos);
+void core_action_attack(const t_obj *attacker, t_pos pos);
 
 /// @brief Gives money to another object or drops it on the floor.
 /// @param source The object that the money should be transferred from.
 /// @param target_pos The position of the object to transfer the money to, or the non-occupied position where the money should be dropped.
 /// @param amount The amount of money to transfer or drop.
-void core_action_transferMoney(t_obj *source, t_pos target_pos, unsigned long amount);
+void core_action_transferMoney(const t_obj *source, t_pos target_pos, unsigned long amount);
 
 /// @brief Builds a new object.
 /// @details Units can only build one tile up, down, left or right.
 /// @param builder The unit that should build a new object. What will be built depends on the buildType of the builder unit.
 /// @param pos The position where the object should be built.
-void core_action_build(t_obj *builder, t_pos pos);
+void core_action_build(const t_obj *builder, t_pos pos);
 
 // ----- PRINT FUNCTIONS -----
 
@@ -279,11 +279,11 @@ void core_action_build(t_obj *builder, t_pos pos);
 
 /// @brief Prints all information about the current game state of a given object.
 /// @param obj The object to print information about.
-void core_print_object(t_obj *obj);
+void core_print_object(const t_obj *obj);
 
 /// @brief Prints all objects that match a custom condition.
 /// @param condition Selection function pointer returning if the inputted object should be selected
-void core_print_objects(bool (*condition)(t_obj *));
+void core_print_objects(bool (*condition)(const t_obj *));
 
 /// @brief Prints a selected unit config.
 /// @param unit_type The type of unit to print the config for.

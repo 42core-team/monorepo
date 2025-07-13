@@ -22,10 +22,10 @@ int core_internal_util_distance(t_pos pos1, t_pos pos2);
 #include <stdbool.h>
 
 int					core_internal_socket_init(struct sockaddr_in addr);
-int					core_internal_socket_send(const int socket_fd, const char *msg);
-char				*core_internal_socket_read(const int socket_fd);
-char				*core_internal_socket_read_once(const int socket_fd);
-struct sockaddr_in	core_internal_socket_initAddr(const char *hostname, const int port);
+int					core_internal_socket_send(int socket_fd, const char *msg);
+char				*core_internal_socket_read(int socket_fd);
+char				*core_internal_socket_read_once(int socket_fd);
+struct sockaddr_in	core_internal_socket_initAddr(const char *hostname, int port);
 
 // ----- Actions
 
@@ -67,7 +67,7 @@ void	core_internal_reset_actions(void);
 void	core_internal_parse_state(char *json);
 void	core_internal_parse_config(char *json);
 char	*core_internal_encode_action();
-char	*core_internal_encode_login(char *team_name, int argc, char **argv);
+char	*core_internal_encode_login(const char *team_name, int argc, char **argv);
 
 // ----- JSON LIB
 

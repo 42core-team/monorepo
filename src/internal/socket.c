@@ -28,7 +28,7 @@ int core_internal_socket_init(struct sockaddr_in addr)
 	return socket_fd;
 }
 
-int core_internal_socket_send(const int socket_fd, const char *msg)
+int core_internal_socket_send(int socket_fd, const char *msg)
 {
 	if (!msg)
 		return -1;
@@ -92,7 +92,7 @@ static bool core_static_socket_waitForData(int fd)
 	return true;
 }
 
-char *core_internal_socket_read(const int socket_fd)
+char *core_internal_socket_read(int socket_fd)
 {
 	char	*buffer = NULL;
 	char	*last_buffer = NULL;
@@ -110,7 +110,7 @@ char *core_internal_socket_read(const int socket_fd)
 	return (last_buffer);
 }
 
-char *core_internal_socket_read_once(const int socket_fd)
+char *core_internal_socket_read_once(int socket_fd)
 {
 	core_static_socket_waitForData(socket_fd);
 	return core_static_socket_readLine(socket_fd);

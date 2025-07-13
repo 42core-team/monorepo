@@ -2,7 +2,7 @@
 
 extern t_game game;
 
-void core_print_object(t_obj *obj)
+void core_print_object(const t_obj *obj)
 {
 	printf("---");
 	printf("ID: %lu\n", obj->id);
@@ -42,7 +42,7 @@ void core_print_object(t_obj *obj)
 	}
 }
 
-void core_print_objects(bool (*condition)(t_obj *))
+void core_print_objects(bool (*condition)(const t_obj *))
 {
 	if (game.objects == NULL)
 		return;

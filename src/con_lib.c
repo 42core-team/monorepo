@@ -3,7 +3,7 @@
 t_game		game = {0};
 t_actions	actions = {0};
 
-static bool core_static_isMyCore(t_obj *obj)
+static bool core_static_isMyCore(const t_obj *obj)
 {
 	if (!obj || obj->type != OBJ_CORE)
 		return false;
@@ -19,7 +19,7 @@ static bool core_static_isMyCore(t_obj *obj)
  * @param tick_callback A function that will be called every game tick.
  * @param debug Whether to enable debug mode or not.
  */
-int	core_startGame(char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug)
+int	core_startGame(const char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug)
 {
 	if (!tick_callback)
 	{
