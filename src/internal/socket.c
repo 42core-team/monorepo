@@ -41,7 +41,7 @@ int core_internal_socket_send(const int socket_fd, const char *msg)
 }
 
 
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE 4096
 static char *core_static_socket_readLine(int fd)
 {
 	static char	*buf;
