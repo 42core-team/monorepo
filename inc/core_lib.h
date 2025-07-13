@@ -221,7 +221,7 @@ t_obj *core_get_obj_from_pos(t_pos pos);
 /// @brief Get all objects matching a custom condition.
 /// @param condition Selection function pointer returning if the inputted object should be selected
 /// @return Null-terminated array of selected objects or NULL if no condition is provided or no objects match the condition.
-t_obj **core_get_obj_customCondition(bool (*condition)(t_obj *));
+t_obj **core_get_objs_customCondition(bool (*condition)(t_obj *));
 
 /// @brief Get the first object matching a custom condition.
 /// @param condition Selection function pointer returning if the inputted object should be selected
