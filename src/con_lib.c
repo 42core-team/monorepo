@@ -35,7 +35,8 @@ int	core_startGame(char *team_name, int argc, char **argv, void (*tick_callback)
 		game.my_team_id = atoi(argv[1]);
 	else
 		return printf("Error: No team id provided.\n"), 1;
-	int socket_fd = core_internal_socket_init(core_internal_socket_initAddr(env_ip ? env_ip : "127.0.0.1", port));
+	struct sockaddr_in server_addr = core_internal_socket_initAddr(env_ip ? env_ip : "127.0.0.1", port);
+	int socket_fd = core_internal_socket_init(server_addr);
 
 	// send login message
 	char *login_msg = core_internal_encode_login(team_name, argc, argv);
