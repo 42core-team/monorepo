@@ -93,8 +93,7 @@ int	core_startGame(char *team_name, int argc, char **argv, void (*tick_callback)
 		my_core = core_get_obj_customCondition_first(core_static_isMyCore);
 
 		// execute user code
-		if (tick_callback)
-			tick_callback(game.elapsed_ticks);
+		tick_callback(game.elapsed_ticks);
 	}
 
 	// handle game end
