@@ -68,12 +68,12 @@ int	core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 		first_tick = false;
 
 		// send user-selected actions
-		char *tickActions = core_internal_encode_action();
+		char *tick_actions = core_internal_encode_action();
 		core_internal_reset_actions();
 		if (debug)
-			printf("Actions: %s\n", tickActions);
-		core_internal_socket_send(socket_fd, tickActions);
-		free(tickActions);
+			printf("Actions: %s\n", tick_actions);
+		core_internal_socket_send(socket_fd, tick_actions);
+		free(tick_actions);
 
 		// receive new json state
 		char *msg = core_internal_socket_read(socket_fd);
