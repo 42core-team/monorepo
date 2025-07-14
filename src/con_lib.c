@@ -1,27 +1,13 @@
-#include "socket.h"
-#include "parse_json.h"
-#include "event_handler.h"
+#include "core_lib_internal.h"
 
-int		socket_fd = -1;
-bool	debug = false;
-t_game	game = {0};
-t_event_handler event_handler = {0};
-void	*user_data = NULL;
+t_game		game = {0};
+t_actions	actions = {0};
 
-bool	ft_receive_config()
+static bool core_static_isMyCore(const t_obj *obj)
 {
-	char	*msg = ft_read_socket_once(socket_fd);
-
-	if (!msg)
-	{
-		printf("Something went very awry and there was no json received.\n");
+	if (!obj || obj->type != OBJ_CORE)
 		return false;
-	}
-	if (debug)
-		printf("Received: %s\n", msg);
-	ft_parse_json_config(msg);
-	free(msg);
-	return true;
+	return (obj->s_core.team_id == game.my_team_id);
 }
 
 /**
@@ -30,83 +16,67 @@ bool	ft_receive_config()
  * @param team_name The name of your team.
  * @param argc The argc from the main function.
  * @param argv The argv from the main function.
+ * @param tick_callback A function that will be called every game tick.
+ * @param debug Whether to enable debug mode or not.
  */
-void	ft_init_con(char *team_name, int argc, char **argv)
+int	core_startGame(const char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug)
 {
-	memset(&game, 0, sizeof(t_game));
-	memset(&game.config, 0, sizeof(t_config));
-	memset(&game.actions, 0, sizeof(t_actions));
+	if (!tick_callback)
+	{
+		printf("Trust me, you'll want to provide a tick callback function.\n");
+		return 1;
+	}
 
+	// setup socket
 	const char *env_ip = getenv("SERVER_IP");
 	const char *env_port = getenv("SERVER_PORT");
 	const int port = env_port ? atoi(env_port) : 4242;
-	game.my_team_id = argv[1] ? atoi(argv[1]) : 0;
+	if (argv[1])
+		game.my_team_id = atoi(argv[1]);
+	else
+		return printf("Error: No team id provided.\n"), 1;
+	struct sockaddr_in server_addr = core_internal_socket_initAddr(env_ip ? env_ip : "127.0.0.1", port);
+	int socket_fd = core_internal_socket_init(server_addr);
 
-	socket_fd = ft_init_socket(ft_init_addr(env_ip ? env_ip : "127.0.0.1", port));
-
-	char *login_msg = ft_create_login_msg(team_name, argc, argv);
+	// send login message
+	char *login_msg = core_internal_encode_login(team_name, argc, argv);
 	if (!login_msg)
 	{
 		printf("Unable to create login message, shutting down.\n");
-		exit(1);
+		return (1);
 	}
-	ft_send_socket(socket_fd, login_msg);
+	core_internal_socket_send(socket_fd, login_msg);
 	free(login_msg);
 
-	ft_reset_actions();
-	bool validConf = ft_receive_config();
-
-	if (!validConf)
+	// receive config
+	char *conf = core_internal_socket_read_once(socket_fd);
+	if (!conf)
 	{
-		printf("Unable to initialize server connection, shutting down.\n");
-		exit(1);
+		printf("Something went very awry and there was no json received.\n");
+		return 1;
 	}
-	printf("Game started! Your id: %ld\n", game.my_team_id);
-}
+	if (debug)
+		printf("Received: %s\n", conf);
+	core_internal_parse_config(conf);
+	free(conf);
 
-/// @brief Closes the connection to the server and frees all allocated memory.
-void	ft_close_con()
-{
-	close(socket_fd);
-	ft_free_all();
-}
-
-/// @brief Enables debug mode, which prints all sent and received messages.
-void	ft_enable_debug()
-{
-	debug = true;
-}
-
-/**
- * @brief Starts the main loop that sends and receives messages from the server. This function should be called after ft_init_con.
- *
- * @param ft_init_func Your own function that is called once at the start of the game.
- * @param ft_user_loop Your own function that is called every time new data is received.
- * @param ptr A pointer that is passed to your functions.
- */
-void ft_loop(t_event_handler handler, void *custom_data)
-{
-	char	*msg;
-	char	*actions;
-
-	event_handler = handler;
-	user_data = custom_data;
-	if (event_handler.on_start)
-		event_handler.on_start(custom_data);
-
+	// run game loop
 	bool first_tick = true;
-	while ((ft_get_my_core() != NULL && ft_get_my_core()->hp > 0) || first_tick)
+	t_obj *my_core = NULL;
+	while ((my_core != NULL && my_core->hp > 0) || first_tick)
 	{
 		first_tick = false;
 
-		actions = ft_all_action_json();
-		ft_reset_actions();
+		// send user-selected actions
+		char *tick_actions = core_internal_encode_action();
+		core_internal_reset_actions();
 		if (debug)
-			printf("Actions: %s\n", actions);
-		ft_send_socket(socket_fd, actions);
-		free(actions);
+			printf("Actions: %s\n", tick_actions);
+		core_internal_socket_send(socket_fd, tick_actions);
+		free(tick_actions);
 
-		msg = ft_read_socket(socket_fd);
+		// receive new json state
+		char *msg = core_internal_socket_read(socket_fd);
 		if (!msg)
 		{
 			printf("The connection was closed by the server. Bye, bye!\n");
@@ -118,34 +88,39 @@ void ft_loop(t_event_handler handler, void *custom_data)
 			printf("Received: %s\n", json_to_formatted_string(node));
 			free_json(node);
 		}
-
-		ft_parse_json_state(msg);
+		core_internal_parse_state(msg);
 		free(msg);
+		my_core = core_get_obj_customCondition_first(core_static_isMyCore);
 
-		if (event_handler.on_tick)
-			event_handler.on_tick(game.elapsed_ticks, custom_data);
-		if (event_handler.on_object_ticked)
-		{
-			for (size_t i = 0; game.resources && game.resources[i]; i++)
-				event_handler.on_object_ticked(game.resources[i], game.elapsed_ticks, custom_data);
-			for (size_t i = 0; game.units && game.units[i]; i++)
-				event_handler.on_object_ticked(game.units[i], game.elapsed_ticks, custom_data);
-			for (size_t i = 0; game.walls && game.walls[i]; i++)
-				event_handler.on_object_ticked(game.walls[i], game.elapsed_ticks, custom_data);
-			for (size_t i = 0; game.cores && game.cores[i]; i++)
-				event_handler.on_object_ticked(game.cores[i], game.elapsed_ticks, custom_data);
-			for (size_t i = 0; game.moneys && game.moneys[i]; i++)
-				event_handler.on_object_ticked(game.moneys[i], game.elapsed_ticks, custom_data);
-			for (size_t i = 0; game.bombs && game.bombs[i]; i++)
-				event_handler.on_object_ticked(game.bombs[i], game.elapsed_ticks, custom_data);
-		}
+		// execute user code
+		tick_callback(game.elapsed_ticks);
 	}
 
-	if (event_handler.on_exit)
-		event_handler.on_exit(custom_data);
-
-	if (ft_get_my_core() && ft_get_my_core()->hp > 0)
+	// handle game end
+	if (my_core && my_core->hp > 0)
 		printf("Game over! You won!\n");
 	else
 		printf("Game over! You lost!\n");
+
+	// clean up
+	close(socket_fd);
+	if (game.objects != NULL)
+	{
+		for (int i = 0; game.objects[i] != NULL; i++)
+			free(game.objects[i]);
+		free(game.objects);
+		game.objects = NULL;
+	}
+	if (game.config.units != NULL)
+	{
+		for (int i = 0; game.config.units[i] != NULL; i++)
+		{
+			free(game.config.units[i]->name);
+			free(game.config.units[i]);
+		}
+		free(game.config.units);
+	}
+	core_internal_reset_actions();
+
+	return 0;
 }

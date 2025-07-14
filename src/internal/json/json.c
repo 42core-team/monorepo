@@ -1,4 +1,4 @@
-#include "json.h"
+#include "core_lib_internal.h"
 
 /* --- STRING -> JSON --- */
 

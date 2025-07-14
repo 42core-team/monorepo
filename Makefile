@@ -1,7 +1,7 @@
 LIBRARY = con_lib.a
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -lm -g
+CFLAGS = -Wall -Wextra -Werror -lm -g -fsanitize=address
 
 INC = inc
 OBJDIR = obj

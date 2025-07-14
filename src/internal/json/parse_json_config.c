@@ -1,7 +1,12 @@
-#include "parse_json.h"
-#include "string.h"
+#include "core_lib_internal.h"
 
-static t_unit_config **ft_parse_unit_config(json_node *root)
+static void	core_static_util_perrorExit(char *msg)
+{
+	perror(msg);
+	exit(EXIT_FAILURE);
+}
+
+static t_unit_config **core_static_parse_unitConfig(json_node *root)
 {
 	json_node *json = json_find(root, "units");
 
@@ -11,13 +16,13 @@ static t_unit_config **ft_parse_unit_config(json_node *root)
 
 	t_unit_config **units = malloc(sizeof(t_unit_config *) * (array_size + 1));
 	if (!units)
-		ft_perror_exit("Failed to allocate memory for unit configs\n");
+		core_static_util_perrorExit("Failed to allocate memory for unit configs\n");
 
 	for (int i = 0; i < array_size; i++)
 	{
 		units[i] = malloc(sizeof(t_unit_config));
 		if (!units[i])
-			ft_perror_exit("Failed to allocate memory for unit config\n");
+			core_static_util_perrorExit("Failed to allocate memory for unit config\n");
 
 		json_node *unit_node = json->array[i];
 
@@ -31,7 +36,6 @@ static t_unit_config **ft_parse_unit_config(json_node *root)
 		units[i]->dmg_unit = (long)json_find(unit_node, "damageUnit")->number;
 		units[i]->dmg_resource = (long)json_find(unit_node, "damageResource")->number;
 		units[i]->dmg_wall = (long)json_find(unit_node, "damageWall")->number;
-		units[i]->dmg_bomb = (unsigned long)json_find(unit_node, "damageBomb")->number;
 		units[i]->build_type = (t_build_type)json_find(unit_node, "buildType")->number;
 	}
 	units[array_size] = NULL;
@@ -39,7 +43,7 @@ static t_unit_config **ft_parse_unit_config(json_node *root)
 	return units;
 }
 
-void ft_parse_json_config(char *json)
+void core_internal_parse_config(char *json)
 {
 	json_node *root = string_to_json(json);
 
@@ -60,7 +64,7 @@ void ft_parse_json_config(char *json)
 	game.config.bomb_reach = (unsigned long)json_find(root, "bombReach")->number;
 	game.config.bomb_damage = (unsigned long)json_find(root, "bombDamage")->number;
 
-	game.config.units = ft_parse_unit_config(root);
+	game.config.units = core_static_parse_unitConfig(root);
 
 	free_json(root);
 }
