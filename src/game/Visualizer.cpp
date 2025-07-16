@@ -65,7 +65,7 @@ void Visualizer::visualizeGameState(unsigned long long tick)
 			std::cout << " Team: " << unit.getTeamId();
 			std::cout << " Type: " << unit.getUnitType();
 			std::cout << " Balance: " << unit.getBalance();
-			std::cout << " Next Move Opp: " << unit.getNextMoveOpp();
+			std::cout << " Next Move Opp: " << unit.getMoveCooldown();
 		}
 		std::cout << std::endl;
 	}

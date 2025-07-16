@@ -42,7 +42,7 @@ bool AttackAction::attackObj(Object *obj, Unit *unit) // returns object new hp, 
 {
 	if (!obj)
 		return false;
-	unit->resetNextMoveOpp();
+	unit->resetMoveCooldown();
 	if (obj->getType() == ObjectType::Unit)
 	{
 		obj->setHP(obj->getHP() - Config::instance().units[unit->getUnitType()].damageUnit);
@@ -75,7 +75,7 @@ bool AttackAction::attackObj(Object *obj, Unit *unit) // returns object new hp, 
 	{
 		Bomb *bomb = (Bomb *)obj;
 		bomb->explode();
-		damage_ = Config::instance().units[unit->getUnitType()].damageBomb;
+		damage_ = 1;
 	}
 
 	return true;
@@ -91,7 +91,7 @@ bool AttackAction::execute(Core *core)
 	if (!unitObj || unitObj->getType() != ObjectType::Unit)
 		return false;
 	Unit *unit = (Unit *)unitObj;
-	if (unit->getNextMoveOpp() > 0)
+	if (unit->getMoveCooldown() > 0)
 		return false;
 	if (unit->getTeamId() != core->getTeamId())
 		return false;

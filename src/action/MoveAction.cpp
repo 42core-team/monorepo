@@ -45,7 +45,7 @@ bool MoveAction::execute(Core * core)
 		return false;
 	Unit * unit = (Unit *)unitObj;
 
-	if (unit->getNextMoveOpp() > 0)
+	if (unit->getMoveCooldown() > 0)
 		return false;
 	if (unit->getTeamId() != core->getTeamId())
 		return false;
@@ -57,7 +57,7 @@ bool MoveAction::execute(Core * core)
 		return false;
 
 	Board::instance().moveObjectById(unit->getId(), target_);
-	unit->resetNextMoveOpp();
+	unit->resetMoveCooldown();
 
 	return true;
 }

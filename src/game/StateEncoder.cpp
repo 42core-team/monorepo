@@ -27,7 +27,7 @@ json Game::encodeState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &
 			o["teamId"] = ((Unit &)obj).getTeamId();
 			o["unit_type"] = ((Unit &)obj).getUnitType();
 			o["balance"] = ((Unit &)obj).getBalance();
-			o["nextMoveOpp"] = ((Unit &)obj).getNextMoveOpp();
+			o["moveCooldown"] = ((Unit &)obj).getMoveCooldown();
 		}
 		if (obj.getType() == ObjectType::Resource || obj.getType() == ObjectType::Money)
 		{

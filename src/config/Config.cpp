@@ -63,7 +63,6 @@ GameConfig parseConfig()
 			unit.damageUnit = unitJson.value("damageUnit", 0);
 			unit.damageResource = unitJson.value("damageResource", 0);
 			unit.damageWall = unitJson.value("damageWall", 0);
-			unit.damageBomb = unitJson.value("damageBomb", 0);
 			int buildTypeInt = unitJson.value("buildType", 0);
 			unit.buildType = static_cast<BuildType>(buildTypeInt);
 
@@ -150,7 +149,6 @@ json Config::encodeConfig()
 		u["damageUnit"] = unit.damageUnit;
 		u["damageResource"] = unit.damageResource;
 		u["damageWall"] = unit.damageWall;
-		u["damageBomb"] = unit.damageBomb;
 
 		u["buildType"] = unit.buildType;
 
