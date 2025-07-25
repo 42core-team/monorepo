@@ -140,18 +140,45 @@ class ReplayLoader {
 }
 
 let replayLoader: ReplayLoader | null = null;
+let replayInterval: ReturnType<typeof setInterval> | null = null;
 
-export async function loadReplay(filePath: string, cacheInterval = 25): Promise<void> {
+export async function loadReplayAndKeepUpdated(filePath: string, cacheInterval = 25, updateInterval = 1000): Promise<void> {
 	replayLoader = new ReplayLoader(cacheInterval);
-	await replayLoader
-		.loadReplay(filePath)
-		.then(() => {
-			console.log('Replay loaded!');
-		})
-		.catch((err) => {
-			console.log('Failed to load Replay: ', err);
-			throw new Error('Failed to load Replay: ', err);
-		});
+
+	// initial load
+	await replayLoader.loadReplay(filePath);
+
+	// grab initial ETag
+	let lastEtag: string | null = null;
+	try {
+		const headRes = await fetch(filePath, { method: 'HEAD' });
+		lastEtag = headRes.headers.get('ETag');
+	} catch (err) {
+		console.warn('Failed to fetch initial ETag:', err);
+	}
+
+	// schedule updates
+	if (replayInterval) {
+		clearInterval(replayInterval);
+	}
+	replayInterval = setInterval(async () => {
+		try {
+			const head = await fetch(filePath, { method: 'HEAD' });
+			const etag = head.headers.get('ETag');
+			if (!etag) {
+				console.warn('No ETag header present. This is a web server issue.');
+				return;
+			}
+
+			if (etag !== lastEtag) {
+				lastEtag = etag;
+				console.log('🔄 Detected changes via ETag, reloading replay…');
+				await replayLoader!.loadReplay(filePath);
+			}
+		} catch (err) {
+			console.error('Error checking for updates:', err);
+		}
+	}, updateInterval);
 }
 
 export function getStateAt(tick: number): ReplayTick | null {
