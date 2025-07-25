@@ -1,5 +1,11 @@
 # Debug Visualizer
 
+-   `npm run serve` -> Run visualizer under `localhost:8080`
+-   `npm run dev` -> Run dev mode, no need to manually recompile the ts
+-   `npm run build` -> Build ts files into servable js files
+
+## Dev Notes
+
 Three parts of the ts code:
 
 1. time manager
