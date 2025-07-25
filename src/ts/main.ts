@@ -1,1 +1,1 @@
-console.log("Debug Visualizer is running!");
+console.log('Debug Visualizer is running!');

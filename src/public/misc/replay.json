@@ -1,882 +1,2875 @@
 {
-  "misc": {
-    "team_results": [
-      { "id": 2, "name": "The Core Rookies", "place": 0 },
-      { "id": 1, "name": "Gridmaster", "place": 0 }
-    ],
-    "game_end_reason": 2
-  },
-  "ticks": {
-    "0": {
-      "objects": [
-        {
-          "id": 0,
-          "type": 0,
-          "x": 0,
-          "y": 0,
-          "hp": 350,
-          "teamId": 2,
-          "balance": 300
-        },
-        { "id": 203, "type": 3, "x": 10, "y": 0, "hp": 100 },
-        { "id": 42, "type": 3, "x": 19, "y": 0, "hp": 100 },
-        { "id": 43, "type": 2, "x": 20, "y": 0, "hp": 50, "balance": 200 },
-        { "id": 44, "type": 3, "x": 21, "y": 0, "hp": 100 },
-        { "id": 176, "type": 3, "x": 25, "y": 0, "hp": 100 },
-        { "id": 147, "type": 2, "x": 29, "y": 0, "hp": 50, "balance": 200 },
-        { "id": 3, "type": 3, "x": 9, "y": 1, "hp": 100 },
-        { "id": 4, "type": 3, "x": 11, "y": 1, "hp": 100 },
-        { "id": 208, "type": 3, "x": 16, "y": 1, "hp": 100 },
-        { "id": 45, "type": 3, "x": 21, "y": 1, "hp": 100 },
-        { "id": 177, "type": 3, "x": 25, "y": 1, "hp": 100 },
-        { "id": 148, "type": 3, "x": 29, "y": 1, "hp": 100 },
-        { "id": 5, "type": 3, "x": 8, "y": 2, "hp": 100 },
-        { "id": 6, "type": 3, "x": 12, "y": 2, "hp": 100 },
-        { "id": 46, "type": 3, "x": 18, "y": 2, "hp": 100 },
-        { "id": 47, "type": 3, "x": 21, "y": 2, "hp": 100 },
-        { "id": 178, "type": 3, "x": 25, "y": 2, "hp": 100 },
-        { "id": 149, "type": 3, "x": 28, "y": 2, "hp": 100 },
-        { "id": 181, "type": 2, "x": 5, "y": 3, "hp": 50, "balance": 200 },
-        { "id": 182, "type": 3, "x": 6, "y": 3, "hp": 100 },
-        { "id": 7, "type": 3, "x": 9, "y": 3, "hp": 100 },
-        { "id": 8, "type": 2, "x": 10, "y": 3, "hp": 50, "balance": 200 },
-        { "id": 9, "type": 3, "x": 11, "y": 3, "hp": 100 },
-        { "id": 48, "type": 3, "x": 18, "y": 3, "hp": 100 },
-        { "id": 49, "type": 3, "x": 21, "y": 3, "hp": 100 },
-        { "id": 230, "type": 2, "x": 22, "y": 3, "hp": 50, "balance": 200 },
-        { "id": 183, "type": 3, "x": 4, "y": 4, "hp": 100 },
-        { "id": 184, "type": 3, "x": 5, "y": 4, "hp": 100 },
-        { "id": 50, "type": 3, "x": 18, "y": 4, "hp": 100 },
-        { "id": 51, "type": 4, "x": 19, "y": 4, "hp": 1, "balance": 200 },
-        { "id": 52, "type": 3, "x": 21, "y": 4, "hp": 100 },
-        { "id": 219, "type": 3, "x": 23, "y": 4, "hp": 100 },
-        { "id": 179, "type": 3, "x": 0, "y": 5, "hp": 100 },
-        { "id": 167, "type": 4, "x": 13, "y": 5, "hp": 1, "balance": 200 },
-        { "id": 168, "type": 3, "x": 14, "y": 5, "hp": 100 },
-        { "id": 53, "type": 3, "x": 18, "y": 5, "hp": 100 },
-        { "id": 244, "type": 4, "x": 19, "y": 5, "hp": 1, "balance": 200 },
-        { "id": 54, "type": 4, "x": 20, "y": 5, "hp": 1, "balance": 200 },
-        { "id": 55, "type": 3, "x": 21, "y": 5, "hp": 100 },
-        { "id": 211, "type": 3, "x": 25, "y": 5, "hp": 100 },
-        { "id": 212, "type": 3, "x": 4, "y": 6, "hp": 100 },
-        { "id": 169, "type": 2, "x": 13, "y": 6, "hp": 50, "balance": 200 },
-        { "id": 170, "type": 3, "x": 14, "y": 6, "hp": 100 },
-        { "id": 56, "type": 3, "x": 20, "y": 6, "hp": 100 },
-        { "id": 57, "type": 3, "x": 21, "y": 6, "hp": 100 },
-        { "id": 217, "type": 3, "x": 22, "y": 6, "hp": 100 },
-        { "id": 119, "type": 3, "x": 26, "y": 6, "hp": 100 },
-        { "id": 120, "type": 3, "x": 27, "y": 6, "hp": 100 },
-        { "id": 121, "type": 3, "x": 29, "y": 6, "hp": 100 },
-        { "id": 171, "type": 3, "x": 9, "y": 7, "hp": 100 },
-        { "id": 172, "type": 3, "x": 11, "y": 7, "hp": 100 },
-        { "id": 173, "type": 3, "x": 12, "y": 7, "hp": 100 },
-        { "id": 242, "type": 4, "x": 24, "y": 7, "hp": 1, "balance": 200 },
-        { "id": 122, "type": 3, "x": 25, "y": 7, "hp": 100 },
-        { "id": 123, "type": 2, "x": 27, "y": 7, "hp": 50, "balance": 200 },
-        { "id": 124, "type": 3, "x": 28, "y": 7, "hp": 100 },
-        { "id": 115, "type": 2, "x": 5, "y": 8, "hp": 50, "balance": 200 },
-        { "id": 116, "type": 3, "x": 6, "y": 8, "hp": 100 },
-        { "id": 125, "type": 3, "x": 25, "y": 8, "hp": 100 },
-        { "id": 126, "type": 2, "x": 26, "y": 8, "hp": 50, "balance": 200 },
-        { "id": 127, "type": 4, "x": 27, "y": 8, "hp": 1, "balance": 200 },
-        { "id": 128, "type": 3, "x": 28, "y": 8, "hp": 100 },
-        { "id": 214, "type": 3, "x": 1, "y": 9, "hp": 100 },
-        { "id": 117, "type": 3, "x": 5, "y": 9, "hp": 100 },
-        { "id": 118, "type": 2, "x": 6, "y": 9, "hp": 50, "balance": 200 },
-        { "id": 74, "type": 3, "x": 15, "y": 9, "hp": 100 },
-        { "id": 129, "type": 4, "x": 25, "y": 9, "hp": 1, "balance": 200 },
-        { "id": 130, "type": 3, "x": 26, "y": 9, "hp": 100 },
-        { "id": 131, "type": 3, "x": 27, "y": 9, "hp": 100 },
-        { "id": 132, "type": 3, "x": 29, "y": 9, "hp": 100 },
-        { "id": 204, "type": 3, "x": 10, "y": 10, "hp": 100 },
-        { "id": 75, "type": 3, "x": 15, "y": 10, "hp": 100 },
-        { "id": 76, "type": 3, "x": 16, "y": 10, "hp": 100 },
-        { "id": 150, "type": 3, "x": 21, "y": 10, "hp": 100 },
-        { "id": 207, "type": 3, "x": 22, "y": 10, "hp": 100 },
-        { "id": 215, "type": 3, "x": 25, "y": 10, "hp": 100 },
-        { "id": 222, "type": 3, "x": 0, "y": 11, "hp": 100 },
-        { "id": 221, "type": 3, "x": 1, "y": 11, "hp": 100 },
-        { "id": 206, "type": 3, "x": 2, "y": 11, "hp": 100 },
-        { "id": 93, "type": 3, "x": 10, "y": 11, "hp": 100 },
-        { "id": 94, "type": 3, "x": 11, "y": 11, "hp": 100 },
-        { "id": 205, "type": 3, "x": 13, "y": 11, "hp": 100 },
-        { "id": 77, "type": 2, "x": 16, "y": 11, "hp": 50, "balance": 200 },
-        { "id": 151, "type": 3, "x": 22, "y": 11, "hp": 100 },
-        { "id": 40, "type": 3, "x": 27, "y": 11, "hp": 100 },
-        { "id": 152, "type": 4, "x": 21, "y": 12, "hp": 1, "balance": 200 },
-        { "id": 153, "type": 4, "x": 22, "y": 12, "hp": 1, "balance": 200 },
-        { "id": 154, "type": 4, "x": 23, "y": 12, "hp": 1, "balance": 200 },
-        { "id": 236, "type": 2, "x": 27, "y": 12, "hp": 50, "balance": 200 },
-        { "id": 79, "type": 3, "x": 1, "y": 13, "hp": 100 },
-        { "id": 80, "type": 3, "x": 2, "y": 13, "hp": 100 },
-        { "id": 81, "type": 3, "x": 4, "y": 13, "hp": 100 },
-        { "id": 82, "type": 3, "x": 5, "y": 13, "hp": 100 },
-        { "id": 95, "type": 3, "x": 9, "y": 13, "hp": 100 },
-        { "id": 96, "type": 2, "x": 10, "y": 13, "hp": 50, "balance": 200 },
-        { "id": 97, "type": 3, "x": 12, "y": 13, "hp": 100 },
-        { "id": 155, "type": 3, "x": 22, "y": 13, "hp": 100 },
-        { "id": 216, "type": 3, "x": 26, "y": 13, "hp": 100 },
-        { "id": 83, "type": 3, "x": 0, "y": 14, "hp": 100 },
-        { "id": 84, "type": 2, "x": 2, "y": 14, "hp": 50, "balance": 200 },
-        { "id": 85, "type": 3, "x": 3, "y": 14, "hp": 100 },
-        { "id": 86, "type": 3, "x": 6, "y": 14, "hp": 100 },
-        { "id": 98, "type": 3, "x": 11, "y": 14, "hp": 100 },
-        { "id": 218, "type": 3, "x": 12, "y": 14, "hp": 100 },
-        { "id": 156, "type": 3, "x": 21, "y": 14, "hp": 100 },
-        { "id": 157, "type": 4, "x": 22, "y": 14, "hp": 1, "balance": 200 },
-        { "id": 41, "type": 3, "x": 28, "y": 14, "hp": 100 },
-        { "id": 351, "type": 3, "x": 1, "y": 15, "hp": 100 },
-        { "id": 350, "type": 4, "x": 7, "y": 15, "hp": 1, "balance": 200 },
-        { "id": 349, "type": 3, "x": 8, "y": 15, "hp": 100 },
-        { "id": 348, "type": 3, "x": 17, "y": 15, "hp": 100 },
-        { "id": 347, "type": 3, "x": 18, "y": 15, "hp": 100 },
-        { "id": 346, "type": 3, "x": 23, "y": 15, "hp": 100 },
-        { "id": 345, "type": 3, "x": 26, "y": 15, "hp": 100 },
-        { "id": 344, "type": 2, "x": 27, "y": 15, "hp": 50, "balance": 200 },
-        { "id": 343, "type": 3, "x": 29, "y": 15, "hp": 100 },
-        { "id": 342, "type": 3, "x": 3, "y": 16, "hp": 100 },
-        { "id": 341, "type": 3, "x": 7, "y": 16, "hp": 100 },
-        { "id": 340, "type": 3, "x": 17, "y": 16, "hp": 100 },
-        { "id": 339, "type": 2, "x": 19, "y": 16, "hp": 50, "balance": 200 },
-        { "id": 338, "type": 3, "x": 20, "y": 16, "hp": 100 },
-        { "id": 337, "type": 3, "x": 24, "y": 16, "hp": 100 },
-        { "id": 336, "type": 3, "x": 25, "y": 16, "hp": 100 },
-        { "id": 335, "type": 3, "x": 27, "y": 16, "hp": 100 },
-        { "id": 334, "type": 3, "x": 28, "y": 16, "hp": 100 },
-        { "id": 333, "type": 2, "x": 2, "y": 17, "hp": 50, "balance": 200 },
-        { "id": 332, "type": 4, "x": 6, "y": 17, "hp": 1, "balance": 200 },
-        { "id": 331, "type": 4, "x": 7, "y": 17, "hp": 1, "balance": 200 },
-        { "id": 330, "type": 4, "x": 8, "y": 17, "hp": 1, "balance": 200 },
-        { "id": 329, "type": 3, "x": 2, "y": 18, "hp": 100 },
-        { "id": 328, "type": 3, "x": 7, "y": 18, "hp": 100 },
-        { "id": 327, "type": 2, "x": 13, "y": 18, "hp": 50, "balance": 200 },
-        { "id": 326, "type": 3, "x": 16, "y": 18, "hp": 100 },
-        { "id": 325, "type": 3, "x": 18, "y": 18, "hp": 100 },
-        { "id": 324, "type": 3, "x": 19, "y": 18, "hp": 100 },
-        { "id": 323, "type": 3, "x": 27, "y": 18, "hp": 100 },
-        { "id": 322, "type": 3, "x": 28, "y": 18, "hp": 100 },
-        { "id": 321, "type": 3, "x": 29, "y": 18, "hp": 100 },
-        { "id": 320, "type": 3, "x": 4, "y": 19, "hp": 100 },
-        { "id": 319, "type": 3, "x": 7, "y": 19, "hp": 100 },
-        { "id": 318, "type": 3, "x": 8, "y": 19, "hp": 100 },
-        { "id": 317, "type": 3, "x": 13, "y": 19, "hp": 100 },
-        { "id": 316, "type": 3, "x": 14, "y": 19, "hp": 100 },
-        { "id": 315, "type": 3, "x": 19, "y": 19, "hp": 100 },
-        { "id": 314, "type": 3, "x": 0, "y": 20, "hp": 100 },
-        { "id": 313, "type": 3, "x": 2, "y": 20, "hp": 100 },
-        { "id": 312, "type": 3, "x": 3, "y": 20, "hp": 100 },
-        { "id": 311, "type": 4, "x": 4, "y": 20, "hp": 1, "balance": 200 },
-        { "id": 310, "type": 3, "x": 14, "y": 20, "hp": 100 },
-        { "id": 309, "type": 2, "x": 23, "y": 20, "hp": 50, "balance": 200 },
-        { "id": 308, "type": 3, "x": 24, "y": 20, "hp": 100 },
-        { "id": 307, "type": 3, "x": 28, "y": 20, "hp": 100 },
-        { "id": 306, "type": 3, "x": 1, "y": 21, "hp": 100 },
-        { "id": 305, "type": 4, "x": 2, "y": 21, "hp": 1, "balance": 200 },
-        { "id": 304, "type": 2, "x": 3, "y": 21, "hp": 50, "balance": 200 },
-        { "id": 303, "type": 3, "x": 4, "y": 21, "hp": 100 },
-        { "id": 302, "type": 3, "x": 23, "y": 21, "hp": 100 },
-        { "id": 301, "type": 2, "x": 24, "y": 21, "hp": 50, "balance": 200 },
-        { "id": 300, "type": 3, "x": 1, "y": 22, "hp": 100 },
-        { "id": 299, "type": 2, "x": 2, "y": 22, "hp": 50, "balance": 200 },
-        { "id": 298, "type": 3, "x": 4, "y": 22, "hp": 100 },
-        { "id": 297, "type": 4, "x": 5, "y": 22, "hp": 1, "balance": 200 },
-        { "id": 296, "type": 3, "x": 17, "y": 22, "hp": 100 },
-        { "id": 295, "type": 3, "x": 18, "y": 22, "hp": 100 },
-        { "id": 294, "type": 3, "x": 20, "y": 22, "hp": 100 },
-        { "id": 293, "type": 3, "x": 0, "y": 23, "hp": 100 },
-        { "id": 292, "type": 3, "x": 2, "y": 23, "hp": 100 },
-        { "id": 291, "type": 3, "x": 3, "y": 23, "hp": 100 },
-        { "id": 290, "type": 3, "x": 7, "y": 23, "hp": 100 },
-        { "id": 289, "type": 3, "x": 8, "y": 23, "hp": 100 },
-        { "id": 288, "type": 3, "x": 9, "y": 23, "hp": 100 },
-        { "id": 287, "type": 3, "x": 15, "y": 23, "hp": 100 },
-        { "id": 286, "type": 2, "x": 16, "y": 23, "hp": 50, "balance": 200 },
-        { "id": 285, "type": 3, "x": 25, "y": 23, "hp": 100 },
-        { "id": 284, "type": 3, "x": 4, "y": 24, "hp": 100 },
-        { "id": 283, "type": 3, "x": 8, "y": 24, "hp": 100 },
-        { "id": 282, "type": 4, "x": 9, "y": 24, "hp": 1, "balance": 200 },
-        { "id": 281, "type": 4, "x": 10, "y": 24, "hp": 1, "balance": 200 },
-        { "id": 280, "type": 3, "x": 11, "y": 24, "hp": 100 },
-        { "id": 279, "type": 3, "x": 15, "y": 24, "hp": 100 },
-        { "id": 278, "type": 4, "x": 16, "y": 24, "hp": 1, "balance": 200 },
-        { "id": 277, "type": 3, "x": 29, "y": 24, "hp": 100 },
-        { "id": 276, "type": 3, "x": 6, "y": 25, "hp": 100 },
-        { "id": 275, "type": 3, "x": 8, "y": 25, "hp": 100 },
-        { "id": 274, "type": 4, "x": 10, "y": 25, "hp": 1, "balance": 200 },
-        { "id": 273, "type": 3, "x": 11, "y": 25, "hp": 100 },
-        { "id": 272, "type": 3, "x": 24, "y": 25, "hp": 100 },
-        { "id": 271, "type": 3, "x": 25, "y": 25, "hp": 100 },
-        { "id": 270, "type": 2, "x": 7, "y": 26, "hp": 50, "balance": 200 },
-        { "id": 269, "type": 3, "x": 8, "y": 26, "hp": 100 },
-        { "id": 268, "type": 3, "x": 11, "y": 26, "hp": 100 },
-        { "id": 267, "type": 3, "x": 18, "y": 26, "hp": 100 },
-        { "id": 266, "type": 2, "x": 19, "y": 26, "hp": 50, "balance": 200 },
-        { "id": 265, "type": 3, "x": 20, "y": 26, "hp": 100 },
-        { "id": 264, "type": 3, "x": 23, "y": 26, "hp": 100 },
-        { "id": 263, "type": 2, "x": 24, "y": 26, "hp": 50, "balance": 200 },
-        { "id": 262, "type": 3, "x": 1, "y": 27, "hp": 100 },
-        { "id": 261, "type": 3, "x": 4, "y": 27, "hp": 100 },
-        { "id": 260, "type": 3, "x": 8, "y": 27, "hp": 100 },
-        { "id": 259, "type": 3, "x": 11, "y": 27, "hp": 100 },
-        { "id": 258, "type": 3, "x": 17, "y": 27, "hp": 100 },
-        { "id": 257, "type": 3, "x": 21, "y": 27, "hp": 100 },
-        { "id": 256, "type": 3, "x": 0, "y": 28, "hp": 100 },
-        { "id": 255, "type": 3, "x": 4, "y": 28, "hp": 100 },
-        { "id": 254, "type": 3, "x": 8, "y": 28, "hp": 100 },
-        { "id": 253, "type": 3, "x": 13, "y": 28, "hp": 100 },
-        { "id": 252, "type": 3, "x": 18, "y": 28, "hp": 100 },
-        { "id": 251, "type": 3, "x": 20, "y": 28, "hp": 100 },
-        { "id": 250, "type": 2, "x": 0, "y": 29, "hp": 50, "balance": 200 },
-        { "id": 249, "type": 3, "x": 4, "y": 29, "hp": 100 },
-        { "id": 248, "type": 3, "x": 8, "y": 29, "hp": 100 },
-        { "id": 247, "type": 2, "x": 9, "y": 29, "hp": 50, "balance": 200 },
-        { "id": 246, "type": 3, "x": 10, "y": 29, "hp": 100 },
-        { "id": 245, "type": 3, "x": 19, "y": 29, "hp": 100 },
-        {
-          "id": 1,
-          "type": 0,
-          "x": 29,
-          "y": 29,
-          "hp": 350,
-          "teamId": 1,
-          "balance": 300
-        }
-      ]
-    },
-    "1": {
-      "objects": [
-        { "id": 1, "balance": 150 },
-        {
-          "id": 352,
-          "type": 1,
-          "x": 28,
-          "y": 29,
-          "hp": 25,
-          "teamId": 1,
-          "unit_type": 0,
-          "balance": 0,
-          "nextMoveOpp": 2
-        }
-      ],
-      "actions": [{ "type": "create", "unit_type": 0 }]
-    },
-    "2": {
-      "objects": [
-        { "id": 1, "balance": 50 },
-        {
-          "id": 353,
-          "type": 1,
-          "x": 29,
-          "y": 28,
-          "hp": 15,
-          "teamId": 1,
-          "unit_type": 1,
-          "balance": 0,
-          "nextMoveOpp": 4
-        }
-      ],
-      "actions": [{ "type": "create", "unit_type": 1 }]
-    },
-    "3": null,
-    "4": {
-      "objects": [{ "id": 352, "y": 28 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 28, "targetY": 28 }
-      ]
-    },
-    "5": null,
-    "6": null,
-    "7": {
-      "objects": [
-        { "id": 352, "y": 27 },
-        { "id": 353, "y": 27 }
-      ],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 28, "targetY": 27 },
-        { "type": "move", "unit_id": 353, "targetX": 29, "targetY": 27 }
-      ]
-    },
-    "8": null,
-    "9": null,
-    "10": {
-      "objects": [{ "id": 352, "x": 27 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 27, "targetY": 27 }
-      ]
-    },
-    "11": null,
-    "12": {
-      "objects": [{ "id": 353, "x": 28 }],
-      "actions": [
-        { "type": "move", "unit_id": 353, "targetX": 28, "targetY": 27 }
-      ]
-    },
-    "13": {
-      "objects": [{ "id": 352, "x": 26 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 26, "targetY": 27 }
-      ]
-    },
-    "14": null,
-    "15": null,
-    "16": {
-      "objects": [{ "id": 352, "x": 25 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 25, "targetY": 27 }
-      ]
-    },
-    "17": {
-      "objects": [{ "id": 353, "x": 27 }],
-      "actions": [
-        { "type": "move", "unit_id": 353, "targetX": 27, "targetY": 27 }
-      ]
-    },
-    "18": null,
-    "19": {
-      "objects": [{ "id": 352, "x": 24 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 24, "targetY": 27 }
-      ]
-    },
-    "20": null,
-    "21": null,
-    "22": {
-      "objects": [
-        { "id": 352, "x": 23 },
-        { "id": 353, "x": 26 }
-      ],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 23, "targetY": 27 },
-        { "type": "move", "unit_id": 353, "targetX": 26, "targetY": 27 }
-      ]
-    },
-    "23": null,
-    "24": null,
-    "25": {
-      "objects": [{ "id": 352, "x": 22 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 22, "targetY": 27 }
-      ]
-    },
-    "26": null,
-    "27": {
-      "objects": [{ "id": 353, "x": 25 }],
-      "actions": [
-        { "type": "move", "unit_id": 353, "targetX": 25, "targetY": 27 }
-      ]
-    },
-    "28": {
-      "objects": [{ "id": 352, "y": 26 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 22, "targetY": 26 }
-      ]
-    },
-    "29": null,
-    "30": null,
-    "31": {
-      "objects": [{ "id": 352, "y": 25 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 22, "targetY": 25 }
-      ]
-    },
-    "32": {
-      "objects": [{ "id": 353, "y": 26 }],
-      "actions": [
-        { "type": "move", "unit_id": 353, "targetX": 25, "targetY": 26 }
-      ]
-    },
-    "33": null,
-    "34": {
-      "objects": [{ "id": 352, "x": 21 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 21, "targetY": 25 }
-      ]
-    },
-    "35": null,
-    "36": null,
-    "37": {
-      "objects": [
-        { "id": 263, "hp": 40, "balance": 160 },
-        { "id": 352, "y": 24 },
-        { "id": 353, "balance": 40 }
-      ],
-      "actions": [
-        {
-          "type": "move",
-          "unit_id": 353,
-          "target_pos_x": 24,
-          "target_pos_y": 26,
-          "damage": 10
-        },
-        { "type": "move", "unit_id": 352, "targetX": 21, "targetY": 24 }
-      ]
-    },
-    "38": null,
-    "39": null,
-    "40": {
-      "objects": [{ "id": 352, "y": 23 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 21, "targetY": 23 }
-      ]
-    },
-    "41": null,
-    "42": {
-      "objects": [
-        { "id": 263, "hp": 30, "balance": 120 },
-        { "id": 353, "balance": 80 }
-      ],
-      "actions": [
-        {
-          "type": "move",
-          "unit_id": 353,
-          "target_pos_x": 24,
-          "target_pos_y": 26,
-          "damage": 10
-        }
-      ]
-    },
-    "43": {
-      "objects": [{ "id": 352, "y": 22 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 21, "targetY": 22 }
-      ]
-    },
-    "44": null,
-    "45": null,
-    "46": {
-      "objects": [{ "id": 352, "y": 21 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 21, "targetY": 21 }
-      ]
-    },
-    "47": {
-      "objects": [
-        { "id": 263, "hp": 20, "balance": 80 },
-        { "id": 353, "balance": 120 }
-      ],
-      "actions": [
-        {
-          "type": "move",
-          "unit_id": 353,
-          "target_pos_x": 24,
-          "target_pos_y": 26,
-          "damage": 10
-        }
-      ]
-    },
-    "48": null,
-    "49": {
-      "objects": [{ "id": 352, "y": 20 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 21, "targetY": 20 }
-      ]
-    },
-    "50": null,
-    "51": null,
-    "52": {
-      "objects": [
-        { "id": 263, "hp": 10, "balance": 40 },
-        { "id": 352, "y": 19 },
-        { "id": 353, "balance": 160 }
-      ],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 21, "targetY": 19 },
-        {
-          "type": "move",
-          "unit_id": 353,
-          "target_pos_x": 24,
-          "target_pos_y": 26,
-          "damage": 10
-        }
-      ]
-    },
-    "53": null,
-    "54": null,
-    "55": {
-      "objects": [{ "id": 352, "y": 18 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 21, "targetY": 18 }
-      ]
-    },
-    "56": null,
-    "57": null,
-    "58": {
-      "objects": [{ "id": 352, "y": 17 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 21, "targetY": 17 }
-      ]
-    },
-    "59": null,
-    "60": null,
-    "61": {
-      "objects": [{ "id": 352, "x": 20 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 20, "targetY": 17 }
-      ]
-    },
-    "62": {
-      "objects": [
-        { "id": 353, "balance": 200 },
-        { "id": 263, "state": "dead" }
-      ],
-      "actions": [
-        {
-          "type": "move",
-          "unit_id": 353,
-          "target_pos_x": 24,
-          "target_pos_y": 26,
-          "damage": 10
-        }
-      ]
-    },
-    "63": null,
-    "64": {
-      "objects": [{ "id": 352, "x": 19 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 19, "targetY": 17 }
-      ]
-    },
-    "65": null,
-    "66": null,
-    "67": {
-      "objects": [{ "id": 352, "x": 18 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 18, "targetY": 17 }
-      ]
-    },
-    "68": null,
-    "69": null,
-    "70": {
-      "objects": [{ "id": 352, "x": 17 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 17, "targetY": 17 }
-      ]
-    },
-    "71": null,
-    "72": null,
-    "73": {
-      "objects": [{ "id": 352, "x": 16 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 16, "targetY": 17 }
-      ]
-    },
-    "74": null,
-    "75": null,
-    "76": {
-      "objects": [{ "id": 352, "y": 16 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 16, "targetY": 16 }
-      ]
-    },
-    "77": {
-      "objects": [{ "id": 353, "x": 26 }],
-      "actions": [
-        { "type": "move", "unit_id": 353, "targetX": 26, "targetY": 26 }
-      ]
-    },
-    "78": null,
-    "79": {
-      "objects": [{ "id": 352, "x": 15 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 15, "targetY": 16 }
-      ]
-    },
-    "80": null,
-    "81": null,
-    "82": {
-      "objects": [{ "id": 352, "y": 15 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 15, "targetY": 15 }
-      ]
-    },
-    "83": null,
-    "84": null,
-    "85": {
-      "objects": [{ "id": 352, "y": 14 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 15, "targetY": 14 }
-      ]
-    },
-    "86": null,
-    "87": null,
-    "88": {
-      "objects": [{ "id": 352, "y": 13 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 15, "targetY": 13 }
-      ]
-    },
-    "89": null,
-    "90": null,
-    "91": {
-      "objects": [{ "id": 352, "y": 12 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 15, "targetY": 12 }
-      ]
-    },
-    "92": {
-      "objects": [{ "id": 353, "y": 25 }],
-      "actions": [
-        { "type": "move", "unit_id": 353, "targetX": 26, "targetY": 25 }
-      ]
-    },
-    "93": null,
-    "94": {
-      "objects": [{ "id": 352, "x": 14 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 14, "targetY": 12 }
-      ]
-    },
-    "95": null,
-    "96": null,
-    "97": {
-      "objects": [{ "id": 352, "y": 11 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 14, "targetY": 11 }
-      ]
-    },
-    "98": null,
-    "99": null,
-    "100": {
-      "objects": [{ "id": 352, "y": 10 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 14, "targetY": 10 }
-      ]
-    },
-    "101": null,
-    "102": null,
-    "103": {
-      "objects": [{ "id": 352, "x": 13 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 13, "targetY": 10 }
-      ]
-    },
-    "104": null,
-    "105": null,
-    "106": {
-      "objects": [{ "id": 352, "x": 12 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 12, "targetY": 10 }
-      ]
-    },
-    "107": {
-      "objects": [{ "id": 353, "y": 24 }],
-      "actions": [
-        { "type": "move", "unit_id": 353, "targetX": 26, "targetY": 24 }
-      ]
-    },
-    "108": null,
-    "109": {
-      "objects": [{ "id": 352, "x": 11 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 11, "targetY": 10 }
-      ]
-    },
-    "110": null,
-    "111": null,
-    "112": {
-      "objects": [{ "id": 352, "y": 9 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 11, "targetY": 9 }
-      ]
-    },
-    "113": null,
-    "114": null,
-    "115": {
-      "objects": [{ "id": 352, "x": 10 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 10, "targetY": 9 }
-      ]
-    },
-    "116": null,
-    "117": null,
-    "118": {
-      "objects": [{ "id": 352, "x": 9 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 9, "targetY": 9 }
-      ]
-    },
-    "119": null,
-    "120": null,
-    "121": {
-      "objects": [{ "id": 352, "y": 8 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 9, "targetY": 8 }
-      ]
-    },
-    "122": {
-      "objects": [{ "id": 353, "x": 25 }],
-      "actions": [
-        { "type": "move", "unit_id": 353, "targetX": 25, "targetY": 24 }
-      ]
-    },
-    "123": null,
-    "124": {
-      "objects": [{ "id": 352, "x": 8 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 8, "targetY": 8 }
-      ]
-    },
-    "125": null,
-    "126": null,
-    "127": {
-      "objects": [{ "id": 352, "y": 7 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 8, "targetY": 7 }
-      ]
-    },
-    "128": null,
-    "129": null,
-    "130": {
-      "objects": [{ "id": 352, "x": 7 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 7, "targetY": 7 }
-      ]
-    },
-    "131": null,
-    "132": null,
-    "133": {
-      "objects": [{ "id": 352, "y": 6 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 7, "targetY": 6 }
-      ]
-    },
-    "134": null,
-    "135": null,
-    "136": {
-      "objects": [{ "id": 352, "x": 6 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 6, "targetY": 6 }
-      ]
-    },
-    "137": {
-      "objects": [{ "id": 353, "x": 24 }],
-      "actions": [
-        { "type": "move", "unit_id": 353, "targetX": 24, "targetY": 24 }
-      ]
-    },
-    "138": null,
-    "139": {
-      "objects": [{ "id": 352, "y": 5 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 6, "targetY": 5 }
-      ]
-    },
-    "140": null,
-    "141": null,
-    "142": {
-      "objects": [{ "id": 352, "x": 5 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 5, "targetY": 5 }
-      ]
-    },
-    "143": null,
-    "144": null,
-    "145": {
-      "objects": [{ "id": 352, "x": 4 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 4, "targetY": 5 }
-      ]
-    },
-    "146": null,
-    "147": null,
-    "148": {
-      "objects": [{ "id": 352, "x": 3 }],
-      "actions": [
-        { "type": "move", "unit_id": 352, "targetX": 3, "targetY": 5 }
-      ]
-    },
-    "149": null,
-    "150": { "objects": [{ "id": 0, "hp": 0 }] }
-  },
-  "config": {
-    "width": 30,
-    "height": 30,
-    "tickRate": 30,
-    "idleIncome": 0,
-    "idleIncomeTimeOut": 600,
-    "resourceHp": 50,
-    "resourceIncome": 200,
-    "moneyObjIncome": 75,
-    "coreHp": 350,
-    "initialBalance": 300,
-    "wallHp": 100,
-    "wallBuildCost": 20,
-    "bombHp": 50,
-    "bombCountdown": 25,
-    "bombThrowCost": 50,
-    "bombReach": 3,
-    "bombDamage": 50,
-    "units": [
-      {
-        "name": "Warrior",
-        "cost": 150,
-        "hp": 25,
-        "speed": 3,
-        "minSpeed": 12,
-        "damageCore": 10,
-        "damageUnit": 6,
-        "damageResource": 2,
-        "damageWall": 3,
-        "damageBomb": 5,
-        "buildType": 0
-      },
-      {
-        "name": "Miner",
-        "cost": 100,
-        "hp": 15,
-        "speed": 5,
-        "minSpeed": 15,
-        "damageCore": 3,
-        "damageUnit": 2,
-        "damageResource": 10,
-        "damageWall": 5,
-        "damageBomb": 2,
-        "buildType": 0
-      },
-      {
-        "name": "Carrier",
-        "cost": 125,
-        "hp": 20,
-        "speed": 3,
-        "minSpeed": 5,
-        "damageCore": 3,
-        "damageUnit": 2,
-        "damageResource": 4,
-        "damageWall": 3,
-        "damageBomb": 1,
-        "buildType": 0
-      },
-      {
-        "name": "Builder",
-        "cost": 300,
-        "hp": 30,
-        "speed": 2,
-        "minSpeed": 8,
-        "damageCore": 5,
-        "damageUnit": 3,
-        "damageResource": 2,
-        "damageWall": 3,
-        "damageBomb": 4,
-        "buildType": 0
-      },
-      {
-        "name": "Bomberman",
-        "cost": 200,
-        "hp": 40,
-        "speed": 1,
-        "minSpeed": 10,
-        "damageCore": 20,
-        "damageUnit": 10,
-        "damageResource": 5,
-        "damageWall": 10,
-        "damageBomb": 15,
-        "buildType": 0
-      }
-    ],
-    "corePositions": [
-      { "x": 0, "y": 0 },
-      { "x": 29, "y": 29 }
-    ]
-  },
-  "full_tick_amount": 150
+	"misc": {
+		"team_results": [
+			{
+				"id": 2,
+				"name": "The Core Rookies",
+				"place": 0
+			},
+			{
+				"id": 1,
+				"name": "Gridmaster",
+				"place": 0
+			}
+		],
+		"game_end_reason": 2
+	},
+	"ticks": {
+		"0": {
+			"objects": [
+				{
+					"id": 0,
+					"type": 0,
+					"x": 0,
+					"y": 0,
+					"hp": 350,
+					"teamId": 2,
+					"balance": 300
+				},
+				{
+					"id": 203,
+					"type": 3,
+					"x": 10,
+					"y": 0,
+					"hp": 100
+				},
+				{
+					"id": 42,
+					"type": 3,
+					"x": 19,
+					"y": 0,
+					"hp": 100
+				},
+				{
+					"id": 43,
+					"type": 2,
+					"x": 20,
+					"y": 0,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 44,
+					"type": 3,
+					"x": 21,
+					"y": 0,
+					"hp": 100
+				},
+				{
+					"id": 176,
+					"type": 3,
+					"x": 25,
+					"y": 0,
+					"hp": 100
+				},
+				{
+					"id": 147,
+					"type": 2,
+					"x": 29,
+					"y": 0,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 3,
+					"type": 3,
+					"x": 9,
+					"y": 1,
+					"hp": 100
+				},
+				{
+					"id": 4,
+					"type": 3,
+					"x": 11,
+					"y": 1,
+					"hp": 100
+				},
+				{
+					"id": 208,
+					"type": 3,
+					"x": 16,
+					"y": 1,
+					"hp": 100
+				},
+				{
+					"id": 45,
+					"type": 3,
+					"x": 21,
+					"y": 1,
+					"hp": 100
+				},
+				{
+					"id": 177,
+					"type": 3,
+					"x": 25,
+					"y": 1,
+					"hp": 100
+				},
+				{
+					"id": 148,
+					"type": 3,
+					"x": 29,
+					"y": 1,
+					"hp": 100
+				},
+				{
+					"id": 5,
+					"type": 3,
+					"x": 8,
+					"y": 2,
+					"hp": 100
+				},
+				{
+					"id": 6,
+					"type": 3,
+					"x": 12,
+					"y": 2,
+					"hp": 100
+				},
+				{
+					"id": 46,
+					"type": 3,
+					"x": 18,
+					"y": 2,
+					"hp": 100
+				},
+				{
+					"id": 47,
+					"type": 3,
+					"x": 21,
+					"y": 2,
+					"hp": 100
+				},
+				{
+					"id": 178,
+					"type": 3,
+					"x": 25,
+					"y": 2,
+					"hp": 100
+				},
+				{
+					"id": 149,
+					"type": 3,
+					"x": 28,
+					"y": 2,
+					"hp": 100
+				},
+				{
+					"id": 181,
+					"type": 2,
+					"x": 5,
+					"y": 3,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 182,
+					"type": 3,
+					"x": 6,
+					"y": 3,
+					"hp": 100
+				},
+				{
+					"id": 7,
+					"type": 3,
+					"x": 9,
+					"y": 3,
+					"hp": 100
+				},
+				{
+					"id": 8,
+					"type": 2,
+					"x": 10,
+					"y": 3,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 9,
+					"type": 3,
+					"x": 11,
+					"y": 3,
+					"hp": 100
+				},
+				{
+					"id": 48,
+					"type": 3,
+					"x": 18,
+					"y": 3,
+					"hp": 100
+				},
+				{
+					"id": 49,
+					"type": 3,
+					"x": 21,
+					"y": 3,
+					"hp": 100
+				},
+				{
+					"id": 230,
+					"type": 2,
+					"x": 22,
+					"y": 3,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 183,
+					"type": 3,
+					"x": 4,
+					"y": 4,
+					"hp": 100
+				},
+				{
+					"id": 184,
+					"type": 3,
+					"x": 5,
+					"y": 4,
+					"hp": 100
+				},
+				{
+					"id": 50,
+					"type": 3,
+					"x": 18,
+					"y": 4,
+					"hp": 100
+				},
+				{
+					"id": 51,
+					"type": 4,
+					"x": 19,
+					"y": 4,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 52,
+					"type": 3,
+					"x": 21,
+					"y": 4,
+					"hp": 100
+				},
+				{
+					"id": 219,
+					"type": 3,
+					"x": 23,
+					"y": 4,
+					"hp": 100
+				},
+				{
+					"id": 179,
+					"type": 3,
+					"x": 0,
+					"y": 5,
+					"hp": 100
+				},
+				{
+					"id": 167,
+					"type": 4,
+					"x": 13,
+					"y": 5,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 168,
+					"type": 3,
+					"x": 14,
+					"y": 5,
+					"hp": 100
+				},
+				{
+					"id": 53,
+					"type": 3,
+					"x": 18,
+					"y": 5,
+					"hp": 100
+				},
+				{
+					"id": 244,
+					"type": 4,
+					"x": 19,
+					"y": 5,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 54,
+					"type": 4,
+					"x": 20,
+					"y": 5,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 55,
+					"type": 3,
+					"x": 21,
+					"y": 5,
+					"hp": 100
+				},
+				{
+					"id": 211,
+					"type": 3,
+					"x": 25,
+					"y": 5,
+					"hp": 100
+				},
+				{
+					"id": 212,
+					"type": 3,
+					"x": 4,
+					"y": 6,
+					"hp": 100
+				},
+				{
+					"id": 169,
+					"type": 2,
+					"x": 13,
+					"y": 6,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 170,
+					"type": 3,
+					"x": 14,
+					"y": 6,
+					"hp": 100
+				},
+				{
+					"id": 56,
+					"type": 3,
+					"x": 20,
+					"y": 6,
+					"hp": 100
+				},
+				{
+					"id": 57,
+					"type": 3,
+					"x": 21,
+					"y": 6,
+					"hp": 100
+				},
+				{
+					"id": 217,
+					"type": 3,
+					"x": 22,
+					"y": 6,
+					"hp": 100
+				},
+				{
+					"id": 119,
+					"type": 3,
+					"x": 26,
+					"y": 6,
+					"hp": 100
+				},
+				{
+					"id": 120,
+					"type": 3,
+					"x": 27,
+					"y": 6,
+					"hp": 100
+				},
+				{
+					"id": 121,
+					"type": 3,
+					"x": 29,
+					"y": 6,
+					"hp": 100
+				},
+				{
+					"id": 171,
+					"type": 3,
+					"x": 9,
+					"y": 7,
+					"hp": 100
+				},
+				{
+					"id": 172,
+					"type": 3,
+					"x": 11,
+					"y": 7,
+					"hp": 100
+				},
+				{
+					"id": 173,
+					"type": 3,
+					"x": 12,
+					"y": 7,
+					"hp": 100
+				},
+				{
+					"id": 242,
+					"type": 4,
+					"x": 24,
+					"y": 7,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 122,
+					"type": 3,
+					"x": 25,
+					"y": 7,
+					"hp": 100
+				},
+				{
+					"id": 123,
+					"type": 2,
+					"x": 27,
+					"y": 7,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 124,
+					"type": 3,
+					"x": 28,
+					"y": 7,
+					"hp": 100
+				},
+				{
+					"id": 115,
+					"type": 2,
+					"x": 5,
+					"y": 8,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 116,
+					"type": 3,
+					"x": 6,
+					"y": 8,
+					"hp": 100
+				},
+				{
+					"id": 125,
+					"type": 3,
+					"x": 25,
+					"y": 8,
+					"hp": 100
+				},
+				{
+					"id": 126,
+					"type": 2,
+					"x": 26,
+					"y": 8,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 127,
+					"type": 4,
+					"x": 27,
+					"y": 8,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 128,
+					"type": 3,
+					"x": 28,
+					"y": 8,
+					"hp": 100
+				},
+				{
+					"id": 214,
+					"type": 3,
+					"x": 1,
+					"y": 9,
+					"hp": 100
+				},
+				{
+					"id": 117,
+					"type": 3,
+					"x": 5,
+					"y": 9,
+					"hp": 100
+				},
+				{
+					"id": 118,
+					"type": 2,
+					"x": 6,
+					"y": 9,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 74,
+					"type": 3,
+					"x": 15,
+					"y": 9,
+					"hp": 100
+				},
+				{
+					"id": 129,
+					"type": 4,
+					"x": 25,
+					"y": 9,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 130,
+					"type": 3,
+					"x": 26,
+					"y": 9,
+					"hp": 100
+				},
+				{
+					"id": 131,
+					"type": 3,
+					"x": 27,
+					"y": 9,
+					"hp": 100
+				},
+				{
+					"id": 132,
+					"type": 3,
+					"x": 29,
+					"y": 9,
+					"hp": 100
+				},
+				{
+					"id": 204,
+					"type": 3,
+					"x": 10,
+					"y": 10,
+					"hp": 100
+				},
+				{
+					"id": 75,
+					"type": 3,
+					"x": 15,
+					"y": 10,
+					"hp": 100
+				},
+				{
+					"id": 76,
+					"type": 3,
+					"x": 16,
+					"y": 10,
+					"hp": 100
+				},
+				{
+					"id": 150,
+					"type": 3,
+					"x": 21,
+					"y": 10,
+					"hp": 100
+				},
+				{
+					"id": 207,
+					"type": 3,
+					"x": 22,
+					"y": 10,
+					"hp": 100
+				},
+				{
+					"id": 215,
+					"type": 3,
+					"x": 25,
+					"y": 10,
+					"hp": 100
+				},
+				{
+					"id": 222,
+					"type": 3,
+					"x": 0,
+					"y": 11,
+					"hp": 100
+				},
+				{
+					"id": 221,
+					"type": 3,
+					"x": 1,
+					"y": 11,
+					"hp": 100
+				},
+				{
+					"id": 206,
+					"type": 3,
+					"x": 2,
+					"y": 11,
+					"hp": 100
+				},
+				{
+					"id": 93,
+					"type": 3,
+					"x": 10,
+					"y": 11,
+					"hp": 100
+				},
+				{
+					"id": 94,
+					"type": 3,
+					"x": 11,
+					"y": 11,
+					"hp": 100
+				},
+				{
+					"id": 205,
+					"type": 3,
+					"x": 13,
+					"y": 11,
+					"hp": 100
+				},
+				{
+					"id": 77,
+					"type": 2,
+					"x": 16,
+					"y": 11,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 151,
+					"type": 3,
+					"x": 22,
+					"y": 11,
+					"hp": 100
+				},
+				{
+					"id": 40,
+					"type": 3,
+					"x": 27,
+					"y": 11,
+					"hp": 100
+				},
+				{
+					"id": 152,
+					"type": 4,
+					"x": 21,
+					"y": 12,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 153,
+					"type": 4,
+					"x": 22,
+					"y": 12,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 154,
+					"type": 4,
+					"x": 23,
+					"y": 12,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 236,
+					"type": 2,
+					"x": 27,
+					"y": 12,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 79,
+					"type": 3,
+					"x": 1,
+					"y": 13,
+					"hp": 100
+				},
+				{
+					"id": 80,
+					"type": 3,
+					"x": 2,
+					"y": 13,
+					"hp": 100
+				},
+				{
+					"id": 81,
+					"type": 3,
+					"x": 4,
+					"y": 13,
+					"hp": 100
+				},
+				{
+					"id": 82,
+					"type": 3,
+					"x": 5,
+					"y": 13,
+					"hp": 100
+				},
+				{
+					"id": 95,
+					"type": 3,
+					"x": 9,
+					"y": 13,
+					"hp": 100
+				},
+				{
+					"id": 96,
+					"type": 2,
+					"x": 10,
+					"y": 13,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 97,
+					"type": 3,
+					"x": 12,
+					"y": 13,
+					"hp": 100
+				},
+				{
+					"id": 155,
+					"type": 3,
+					"x": 22,
+					"y": 13,
+					"hp": 100
+				},
+				{
+					"id": 216,
+					"type": 3,
+					"x": 26,
+					"y": 13,
+					"hp": 100
+				},
+				{
+					"id": 83,
+					"type": 3,
+					"x": 0,
+					"y": 14,
+					"hp": 100
+				},
+				{
+					"id": 84,
+					"type": 2,
+					"x": 2,
+					"y": 14,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 85,
+					"type": 3,
+					"x": 3,
+					"y": 14,
+					"hp": 100
+				},
+				{
+					"id": 86,
+					"type": 3,
+					"x": 6,
+					"y": 14,
+					"hp": 100
+				},
+				{
+					"id": 98,
+					"type": 3,
+					"x": 11,
+					"y": 14,
+					"hp": 100
+				},
+				{
+					"id": 218,
+					"type": 3,
+					"x": 12,
+					"y": 14,
+					"hp": 100
+				},
+				{
+					"id": 156,
+					"type": 3,
+					"x": 21,
+					"y": 14,
+					"hp": 100
+				},
+				{
+					"id": 157,
+					"type": 4,
+					"x": 22,
+					"y": 14,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 41,
+					"type": 3,
+					"x": 28,
+					"y": 14,
+					"hp": 100
+				},
+				{
+					"id": 351,
+					"type": 3,
+					"x": 1,
+					"y": 15,
+					"hp": 100
+				},
+				{
+					"id": 350,
+					"type": 4,
+					"x": 7,
+					"y": 15,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 349,
+					"type": 3,
+					"x": 8,
+					"y": 15,
+					"hp": 100
+				},
+				{
+					"id": 348,
+					"type": 3,
+					"x": 17,
+					"y": 15,
+					"hp": 100
+				},
+				{
+					"id": 347,
+					"type": 3,
+					"x": 18,
+					"y": 15,
+					"hp": 100
+				},
+				{
+					"id": 346,
+					"type": 3,
+					"x": 23,
+					"y": 15,
+					"hp": 100
+				},
+				{
+					"id": 345,
+					"type": 3,
+					"x": 26,
+					"y": 15,
+					"hp": 100
+				},
+				{
+					"id": 344,
+					"type": 2,
+					"x": 27,
+					"y": 15,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 343,
+					"type": 3,
+					"x": 29,
+					"y": 15,
+					"hp": 100
+				},
+				{
+					"id": 342,
+					"type": 3,
+					"x": 3,
+					"y": 16,
+					"hp": 100
+				},
+				{
+					"id": 341,
+					"type": 3,
+					"x": 7,
+					"y": 16,
+					"hp": 100
+				},
+				{
+					"id": 340,
+					"type": 3,
+					"x": 17,
+					"y": 16,
+					"hp": 100
+				},
+				{
+					"id": 339,
+					"type": 2,
+					"x": 19,
+					"y": 16,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 338,
+					"type": 3,
+					"x": 20,
+					"y": 16,
+					"hp": 100
+				},
+				{
+					"id": 337,
+					"type": 3,
+					"x": 24,
+					"y": 16,
+					"hp": 100
+				},
+				{
+					"id": 336,
+					"type": 3,
+					"x": 25,
+					"y": 16,
+					"hp": 100
+				},
+				{
+					"id": 335,
+					"type": 3,
+					"x": 27,
+					"y": 16,
+					"hp": 100
+				},
+				{
+					"id": 334,
+					"type": 3,
+					"x": 28,
+					"y": 16,
+					"hp": 100
+				},
+				{
+					"id": 333,
+					"type": 2,
+					"x": 2,
+					"y": 17,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 332,
+					"type": 4,
+					"x": 6,
+					"y": 17,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 331,
+					"type": 4,
+					"x": 7,
+					"y": 17,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 330,
+					"type": 4,
+					"x": 8,
+					"y": 17,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 329,
+					"type": 3,
+					"x": 2,
+					"y": 18,
+					"hp": 100
+				},
+				{
+					"id": 328,
+					"type": 3,
+					"x": 7,
+					"y": 18,
+					"hp": 100
+				},
+				{
+					"id": 327,
+					"type": 2,
+					"x": 13,
+					"y": 18,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 326,
+					"type": 3,
+					"x": 16,
+					"y": 18,
+					"hp": 100
+				},
+				{
+					"id": 325,
+					"type": 3,
+					"x": 18,
+					"y": 18,
+					"hp": 100
+				},
+				{
+					"id": 324,
+					"type": 3,
+					"x": 19,
+					"y": 18,
+					"hp": 100
+				},
+				{
+					"id": 323,
+					"type": 3,
+					"x": 27,
+					"y": 18,
+					"hp": 100
+				},
+				{
+					"id": 322,
+					"type": 3,
+					"x": 28,
+					"y": 18,
+					"hp": 100
+				},
+				{
+					"id": 321,
+					"type": 3,
+					"x": 29,
+					"y": 18,
+					"hp": 100
+				},
+				{
+					"id": 320,
+					"type": 3,
+					"x": 4,
+					"y": 19,
+					"hp": 100
+				},
+				{
+					"id": 319,
+					"type": 3,
+					"x": 7,
+					"y": 19,
+					"hp": 100
+				},
+				{
+					"id": 318,
+					"type": 3,
+					"x": 8,
+					"y": 19,
+					"hp": 100
+				},
+				{
+					"id": 317,
+					"type": 3,
+					"x": 13,
+					"y": 19,
+					"hp": 100
+				},
+				{
+					"id": 316,
+					"type": 3,
+					"x": 14,
+					"y": 19,
+					"hp": 100
+				},
+				{
+					"id": 315,
+					"type": 3,
+					"x": 19,
+					"y": 19,
+					"hp": 100
+				},
+				{
+					"id": 314,
+					"type": 3,
+					"x": 0,
+					"y": 20,
+					"hp": 100
+				},
+				{
+					"id": 313,
+					"type": 3,
+					"x": 2,
+					"y": 20,
+					"hp": 100
+				},
+				{
+					"id": 312,
+					"type": 3,
+					"x": 3,
+					"y": 20,
+					"hp": 100
+				},
+				{
+					"id": 311,
+					"type": 4,
+					"x": 4,
+					"y": 20,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 310,
+					"type": 3,
+					"x": 14,
+					"y": 20,
+					"hp": 100
+				},
+				{
+					"id": 309,
+					"type": 2,
+					"x": 23,
+					"y": 20,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 308,
+					"type": 3,
+					"x": 24,
+					"y": 20,
+					"hp": 100
+				},
+				{
+					"id": 307,
+					"type": 3,
+					"x": 28,
+					"y": 20,
+					"hp": 100
+				},
+				{
+					"id": 306,
+					"type": 3,
+					"x": 1,
+					"y": 21,
+					"hp": 100
+				},
+				{
+					"id": 305,
+					"type": 4,
+					"x": 2,
+					"y": 21,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 304,
+					"type": 2,
+					"x": 3,
+					"y": 21,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 303,
+					"type": 3,
+					"x": 4,
+					"y": 21,
+					"hp": 100
+				},
+				{
+					"id": 302,
+					"type": 3,
+					"x": 23,
+					"y": 21,
+					"hp": 100
+				},
+				{
+					"id": 301,
+					"type": 2,
+					"x": 24,
+					"y": 21,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 300,
+					"type": 3,
+					"x": 1,
+					"y": 22,
+					"hp": 100
+				},
+				{
+					"id": 299,
+					"type": 2,
+					"x": 2,
+					"y": 22,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 298,
+					"type": 3,
+					"x": 4,
+					"y": 22,
+					"hp": 100
+				},
+				{
+					"id": 297,
+					"type": 4,
+					"x": 5,
+					"y": 22,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 296,
+					"type": 3,
+					"x": 17,
+					"y": 22,
+					"hp": 100
+				},
+				{
+					"id": 295,
+					"type": 3,
+					"x": 18,
+					"y": 22,
+					"hp": 100
+				},
+				{
+					"id": 294,
+					"type": 3,
+					"x": 20,
+					"y": 22,
+					"hp": 100
+				},
+				{
+					"id": 293,
+					"type": 3,
+					"x": 0,
+					"y": 23,
+					"hp": 100
+				},
+				{
+					"id": 292,
+					"type": 3,
+					"x": 2,
+					"y": 23,
+					"hp": 100
+				},
+				{
+					"id": 291,
+					"type": 3,
+					"x": 3,
+					"y": 23,
+					"hp": 100
+				},
+				{
+					"id": 290,
+					"type": 3,
+					"x": 7,
+					"y": 23,
+					"hp": 100
+				},
+				{
+					"id": 289,
+					"type": 3,
+					"x": 8,
+					"y": 23,
+					"hp": 100
+				},
+				{
+					"id": 288,
+					"type": 3,
+					"x": 9,
+					"y": 23,
+					"hp": 100
+				},
+				{
+					"id": 287,
+					"type": 3,
+					"x": 15,
+					"y": 23,
+					"hp": 100
+				},
+				{
+					"id": 286,
+					"type": 2,
+					"x": 16,
+					"y": 23,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 285,
+					"type": 3,
+					"x": 25,
+					"y": 23,
+					"hp": 100
+				},
+				{
+					"id": 284,
+					"type": 3,
+					"x": 4,
+					"y": 24,
+					"hp": 100
+				},
+				{
+					"id": 283,
+					"type": 3,
+					"x": 8,
+					"y": 24,
+					"hp": 100
+				},
+				{
+					"id": 282,
+					"type": 4,
+					"x": 9,
+					"y": 24,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 281,
+					"type": 4,
+					"x": 10,
+					"y": 24,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 280,
+					"type": 3,
+					"x": 11,
+					"y": 24,
+					"hp": 100
+				},
+				{
+					"id": 279,
+					"type": 3,
+					"x": 15,
+					"y": 24,
+					"hp": 100
+				},
+				{
+					"id": 278,
+					"type": 4,
+					"x": 16,
+					"y": 24,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 277,
+					"type": 3,
+					"x": 29,
+					"y": 24,
+					"hp": 100
+				},
+				{
+					"id": 276,
+					"type": 3,
+					"x": 6,
+					"y": 25,
+					"hp": 100
+				},
+				{
+					"id": 275,
+					"type": 3,
+					"x": 8,
+					"y": 25,
+					"hp": 100
+				},
+				{
+					"id": 274,
+					"type": 4,
+					"x": 10,
+					"y": 25,
+					"hp": 1,
+					"balance": 200
+				},
+				{
+					"id": 273,
+					"type": 3,
+					"x": 11,
+					"y": 25,
+					"hp": 100
+				},
+				{
+					"id": 272,
+					"type": 3,
+					"x": 24,
+					"y": 25,
+					"hp": 100
+				},
+				{
+					"id": 271,
+					"type": 3,
+					"x": 25,
+					"y": 25,
+					"hp": 100
+				},
+				{
+					"id": 270,
+					"type": 2,
+					"x": 7,
+					"y": 26,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 269,
+					"type": 3,
+					"x": 8,
+					"y": 26,
+					"hp": 100
+				},
+				{
+					"id": 268,
+					"type": 3,
+					"x": 11,
+					"y": 26,
+					"hp": 100
+				},
+				{
+					"id": 267,
+					"type": 3,
+					"x": 18,
+					"y": 26,
+					"hp": 100
+				},
+				{
+					"id": 266,
+					"type": 2,
+					"x": 19,
+					"y": 26,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 265,
+					"type": 3,
+					"x": 20,
+					"y": 26,
+					"hp": 100
+				},
+				{
+					"id": 264,
+					"type": 3,
+					"x": 23,
+					"y": 26,
+					"hp": 100
+				},
+				{
+					"id": 263,
+					"type": 2,
+					"x": 24,
+					"y": 26,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 262,
+					"type": 3,
+					"x": 1,
+					"y": 27,
+					"hp": 100
+				},
+				{
+					"id": 261,
+					"type": 3,
+					"x": 4,
+					"y": 27,
+					"hp": 100
+				},
+				{
+					"id": 260,
+					"type": 3,
+					"x": 8,
+					"y": 27,
+					"hp": 100
+				},
+				{
+					"id": 259,
+					"type": 3,
+					"x": 11,
+					"y": 27,
+					"hp": 100
+				},
+				{
+					"id": 258,
+					"type": 3,
+					"x": 17,
+					"y": 27,
+					"hp": 100
+				},
+				{
+					"id": 257,
+					"type": 3,
+					"x": 21,
+					"y": 27,
+					"hp": 100
+				},
+				{
+					"id": 256,
+					"type": 3,
+					"x": 0,
+					"y": 28,
+					"hp": 100
+				},
+				{
+					"id": 255,
+					"type": 3,
+					"x": 4,
+					"y": 28,
+					"hp": 100
+				},
+				{
+					"id": 254,
+					"type": 3,
+					"x": 8,
+					"y": 28,
+					"hp": 100
+				},
+				{
+					"id": 253,
+					"type": 3,
+					"x": 13,
+					"y": 28,
+					"hp": 100
+				},
+				{
+					"id": 252,
+					"type": 3,
+					"x": 18,
+					"y": 28,
+					"hp": 100
+				},
+				{
+					"id": 251,
+					"type": 3,
+					"x": 20,
+					"y": 28,
+					"hp": 100
+				},
+				{
+					"id": 250,
+					"type": 2,
+					"x": 0,
+					"y": 29,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 249,
+					"type": 3,
+					"x": 4,
+					"y": 29,
+					"hp": 100
+				},
+				{
+					"id": 248,
+					"type": 3,
+					"x": 8,
+					"y": 29,
+					"hp": 100
+				},
+				{
+					"id": 247,
+					"type": 2,
+					"x": 9,
+					"y": 29,
+					"hp": 50,
+					"balance": 200
+				},
+				{
+					"id": 246,
+					"type": 3,
+					"x": 10,
+					"y": 29,
+					"hp": 100
+				},
+				{
+					"id": 245,
+					"type": 3,
+					"x": 19,
+					"y": 29,
+					"hp": 100
+				},
+				{
+					"id": 1,
+					"type": 0,
+					"x": 29,
+					"y": 29,
+					"hp": 350,
+					"teamId": 1,
+					"balance": 300
+				}
+			]
+		},
+		"1": {
+			"objects": [
+				{
+					"id": 1,
+					"balance": 150
+				},
+				{
+					"id": 352,
+					"type": 1,
+					"x": 28,
+					"y": 29,
+					"hp": 25,
+					"teamId": 1,
+					"unit_type": 0,
+					"balance": 0,
+					"nextMoveOpp": 2
+				}
+			],
+			"actions": [
+				{
+					"type": "create",
+					"unit_type": 0
+				}
+			]
+		},
+		"2": {
+			"objects": [
+				{
+					"id": 1,
+					"balance": 50
+				},
+				{
+					"id": 353,
+					"type": 1,
+					"x": 29,
+					"y": 28,
+					"hp": 15,
+					"teamId": 1,
+					"unit_type": 1,
+					"balance": 0,
+					"nextMoveOpp": 4
+				}
+			],
+			"actions": [
+				{
+					"type": "create",
+					"unit_type": 1
+				}
+			]
+		},
+		"3": null,
+		"4": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 28
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 28,
+					"targetY": 28
+				}
+			]
+		},
+		"5": null,
+		"6": null,
+		"7": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 27
+				},
+				{
+					"id": 353,
+					"y": 27
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 28,
+					"targetY": 27
+				},
+				{
+					"type": "move",
+					"unit_id": 353,
+					"targetX": 29,
+					"targetY": 27
+				}
+			]
+		},
+		"8": null,
+		"9": null,
+		"10": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 27
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 27,
+					"targetY": 27
+				}
+			]
+		},
+		"11": null,
+		"12": {
+			"objects": [
+				{
+					"id": 353,
+					"x": 28
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 353,
+					"targetX": 28,
+					"targetY": 27
+				}
+			]
+		},
+		"13": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 26
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 26,
+					"targetY": 27
+				}
+			]
+		},
+		"14": null,
+		"15": null,
+		"16": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 25
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 25,
+					"targetY": 27
+				}
+			]
+		},
+		"17": {
+			"objects": [
+				{
+					"id": 353,
+					"x": 27
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 353,
+					"targetX": 27,
+					"targetY": 27
+				}
+			]
+		},
+		"18": null,
+		"19": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 24
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 24,
+					"targetY": 27
+				}
+			]
+		},
+		"20": null,
+		"21": null,
+		"22": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 23
+				},
+				{
+					"id": 353,
+					"x": 26
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 23,
+					"targetY": 27
+				},
+				{
+					"type": "move",
+					"unit_id": 353,
+					"targetX": 26,
+					"targetY": 27
+				}
+			]
+		},
+		"23": null,
+		"24": null,
+		"25": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 22
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 22,
+					"targetY": 27
+				}
+			]
+		},
+		"26": null,
+		"27": {
+			"objects": [
+				{
+					"id": 353,
+					"x": 25
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 353,
+					"targetX": 25,
+					"targetY": 27
+				}
+			]
+		},
+		"28": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 26
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 22,
+					"targetY": 26
+				}
+			]
+		},
+		"29": null,
+		"30": null,
+		"31": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 25
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 22,
+					"targetY": 25
+				}
+			]
+		},
+		"32": {
+			"objects": [
+				{
+					"id": 353,
+					"y": 26
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 353,
+					"targetX": 25,
+					"targetY": 26
+				}
+			]
+		},
+		"33": null,
+		"34": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 21
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 21,
+					"targetY": 25
+				}
+			]
+		},
+		"35": null,
+		"36": null,
+		"37": {
+			"objects": [
+				{
+					"id": 263,
+					"hp": 40,
+					"balance": 160
+				},
+				{
+					"id": 352,
+					"y": 24
+				},
+				{
+					"id": 353,
+					"balance": 40
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 353,
+					"target_pos_x": 24,
+					"target_pos_y": 26,
+					"damage": 10
+				},
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 21,
+					"targetY": 24
+				}
+			]
+		},
+		"38": null,
+		"39": null,
+		"40": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 23
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 21,
+					"targetY": 23
+				}
+			]
+		},
+		"41": null,
+		"42": {
+			"objects": [
+				{
+					"id": 263,
+					"hp": 30,
+					"balance": 120
+				},
+				{
+					"id": 353,
+					"balance": 80
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 353,
+					"target_pos_x": 24,
+					"target_pos_y": 26,
+					"damage": 10
+				}
+			]
+		},
+		"43": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 22
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 21,
+					"targetY": 22
+				}
+			]
+		},
+		"44": null,
+		"45": null,
+		"46": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 21
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 21,
+					"targetY": 21
+				}
+			]
+		},
+		"47": {
+			"objects": [
+				{
+					"id": 263,
+					"hp": 20,
+					"balance": 80
+				},
+				{
+					"id": 353,
+					"balance": 120
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 353,
+					"target_pos_x": 24,
+					"target_pos_y": 26,
+					"damage": 10
+				}
+			]
+		},
+		"48": null,
+		"49": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 20
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 21,
+					"targetY": 20
+				}
+			]
+		},
+		"50": null,
+		"51": null,
+		"52": {
+			"objects": [
+				{
+					"id": 263,
+					"hp": 10,
+					"balance": 40
+				},
+				{
+					"id": 352,
+					"y": 19
+				},
+				{
+					"id": 353,
+					"balance": 160
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 21,
+					"targetY": 19
+				},
+				{
+					"type": "move",
+					"unit_id": 353,
+					"target_pos_x": 24,
+					"target_pos_y": 26,
+					"damage": 10
+				}
+			]
+		},
+		"53": null,
+		"54": null,
+		"55": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 18
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 21,
+					"targetY": 18
+				}
+			]
+		},
+		"56": null,
+		"57": null,
+		"58": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 17
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 21,
+					"targetY": 17
+				}
+			]
+		},
+		"59": null,
+		"60": null,
+		"61": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 20
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 20,
+					"targetY": 17
+				}
+			]
+		},
+		"62": {
+			"objects": [
+				{
+					"id": 353,
+					"balance": 200
+				},
+				{
+					"id": 263,
+					"state": "dead"
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 353,
+					"target_pos_x": 24,
+					"target_pos_y": 26,
+					"damage": 10
+				}
+			]
+		},
+		"63": null,
+		"64": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 19
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 19,
+					"targetY": 17
+				}
+			]
+		},
+		"65": null,
+		"66": null,
+		"67": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 18
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 18,
+					"targetY": 17
+				}
+			]
+		},
+		"68": null,
+		"69": null,
+		"70": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 17
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 17,
+					"targetY": 17
+				}
+			]
+		},
+		"71": null,
+		"72": null,
+		"73": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 16
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 16,
+					"targetY": 17
+				}
+			]
+		},
+		"74": null,
+		"75": null,
+		"76": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 16
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 16,
+					"targetY": 16
+				}
+			]
+		},
+		"77": {
+			"objects": [
+				{
+					"id": 353,
+					"x": 26
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 353,
+					"targetX": 26,
+					"targetY": 26
+				}
+			]
+		},
+		"78": null,
+		"79": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 15
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 15,
+					"targetY": 16
+				}
+			]
+		},
+		"80": null,
+		"81": null,
+		"82": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 15
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 15,
+					"targetY": 15
+				}
+			]
+		},
+		"83": null,
+		"84": null,
+		"85": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 14
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 15,
+					"targetY": 14
+				}
+			]
+		},
+		"86": null,
+		"87": null,
+		"88": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 13
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 15,
+					"targetY": 13
+				}
+			]
+		},
+		"89": null,
+		"90": null,
+		"91": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 12
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 15,
+					"targetY": 12
+				}
+			]
+		},
+		"92": {
+			"objects": [
+				{
+					"id": 353,
+					"y": 25
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 353,
+					"targetX": 26,
+					"targetY": 25
+				}
+			]
+		},
+		"93": null,
+		"94": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 14
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 14,
+					"targetY": 12
+				}
+			]
+		},
+		"95": null,
+		"96": null,
+		"97": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 11
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 14,
+					"targetY": 11
+				}
+			]
+		},
+		"98": null,
+		"99": null,
+		"100": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 10
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 14,
+					"targetY": 10
+				}
+			]
+		},
+		"101": null,
+		"102": null,
+		"103": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 13
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 13,
+					"targetY": 10
+				}
+			]
+		},
+		"104": null,
+		"105": null,
+		"106": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 12
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 12,
+					"targetY": 10
+				}
+			]
+		},
+		"107": {
+			"objects": [
+				{
+					"id": 353,
+					"y": 24
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 353,
+					"targetX": 26,
+					"targetY": 24
+				}
+			]
+		},
+		"108": null,
+		"109": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 11
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 11,
+					"targetY": 10
+				}
+			]
+		},
+		"110": null,
+		"111": null,
+		"112": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 9
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 11,
+					"targetY": 9
+				}
+			]
+		},
+		"113": null,
+		"114": null,
+		"115": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 10
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 10,
+					"targetY": 9
+				}
+			]
+		},
+		"116": null,
+		"117": null,
+		"118": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 9
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 9,
+					"targetY": 9
+				}
+			]
+		},
+		"119": null,
+		"120": null,
+		"121": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 8
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 9,
+					"targetY": 8
+				}
+			]
+		},
+		"122": {
+			"objects": [
+				{
+					"id": 353,
+					"x": 25
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 353,
+					"targetX": 25,
+					"targetY": 24
+				}
+			]
+		},
+		"123": null,
+		"124": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 8
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 8,
+					"targetY": 8
+				}
+			]
+		},
+		"125": null,
+		"126": null,
+		"127": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 7
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 8,
+					"targetY": 7
+				}
+			]
+		},
+		"128": null,
+		"129": null,
+		"130": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 7
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 7,
+					"targetY": 7
+				}
+			]
+		},
+		"131": null,
+		"132": null,
+		"133": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 6
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 7,
+					"targetY": 6
+				}
+			]
+		},
+		"134": null,
+		"135": null,
+		"136": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 6
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 6,
+					"targetY": 6
+				}
+			]
+		},
+		"137": {
+			"objects": [
+				{
+					"id": 353,
+					"x": 24
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 353,
+					"targetX": 24,
+					"targetY": 24
+				}
+			]
+		},
+		"138": null,
+		"139": {
+			"objects": [
+				{
+					"id": 352,
+					"y": 5
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 6,
+					"targetY": 5
+				}
+			]
+		},
+		"140": null,
+		"141": null,
+		"142": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 5
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 5,
+					"targetY": 5
+				}
+			]
+		},
+		"143": null,
+		"144": null,
+		"145": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 4
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 4,
+					"targetY": 5
+				}
+			]
+		},
+		"146": null,
+		"147": null,
+		"148": {
+			"objects": [
+				{
+					"id": 352,
+					"x": 3
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 352,
+					"targetX": 3,
+					"targetY": 5
+				}
+			]
+		},
+		"149": null,
+		"150": {
+			"objects": [
+				{
+					"id": 0,
+					"hp": 0
+				}
+			]
+		}
+	},
+	"config": {
+		"width": 30,
+		"height": 30,
+		"tickRate": 30,
+		"idleIncome": 0,
+		"idleIncomeTimeOut": 600,
+		"resourceHp": 50,
+		"resourceIncome": 200,
+		"moneyObjIncome": 75,
+		"coreHp": 350,
+		"initialBalance": 300,
+		"wallHp": 100,
+		"wallBuildCost": 20,
+		"bombHp": 50,
+		"bombCountdown": 25,
+		"bombThrowCost": 50,
+		"bombReach": 3,
+		"bombDamage": 50,
+		"units": [
+			{
+				"name": "Warrior",
+				"cost": 150,
+				"hp": 25,
+				"speed": 3,
+				"minSpeed": 12,
+				"damageCore": 10,
+				"damageUnit": 6,
+				"damageResource": 2,
+				"damageWall": 3,
+				"damageBomb": 5,
+				"buildType": 0
+			},
+			{
+				"name": "Miner",
+				"cost": 100,
+				"hp": 15,
+				"speed": 5,
+				"minSpeed": 15,
+				"damageCore": 3,
+				"damageUnit": 2,
+				"damageResource": 10,
+				"damageWall": 5,
+				"damageBomb": 2,
+				"buildType": 0
+			},
+			{
+				"name": "Carrier",
+				"cost": 125,
+				"hp": 20,
+				"speed": 3,
+				"minSpeed": 5,
+				"damageCore": 3,
+				"damageUnit": 2,
+				"damageResource": 4,
+				"damageWall": 3,
+				"damageBomb": 1,
+				"buildType": 0
+			},
+			{
+				"name": "Builder",
+				"cost": 300,
+				"hp": 30,
+				"speed": 2,
+				"minSpeed": 8,
+				"damageCore": 5,
+				"damageUnit": 3,
+				"damageResource": 2,
+				"damageWall": 3,
+				"damageBomb": 4,
+				"buildType": 0
+			},
+			{
+				"name": "Bomberman",
+				"cost": 200,
+				"hp": 40,
+				"speed": 1,
+				"minSpeed": 10,
+				"damageCore": 20,
+				"damageUnit": 10,
+				"damageResource": 5,
+				"damageWall": 10,
+				"damageBomb": 15,
+				"buildType": 0
+			}
+		],
+		"corePositions": [
+			{
+				"x": 0,
+				"y": 0
+			},
+			{
+				"x": 29,
+				"y": 29
+			}
+		]
+	},
+	"full_tick_amount": 150
 }
