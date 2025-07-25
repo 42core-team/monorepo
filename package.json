@@ -1,14 +1,14 @@
 {
-  "name": "debug-visualizer",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "build": "tsc"
-  },
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "typescript": "^5.8.3"
-  }
+	"name": "core-debug-visualizer",
+	"scripts": {
+		"dev": "tsc --watch & npm run serve",
+		"serve": "http-server src/public -p 8080 -c-1 -o html/index.html",
+		"build": "tsc"
+	},
+	"dependencies": {
+		"typescript": "^5.8.3"
+	},
+	"devDependencies": {
+		"http-server": "^14.1.1"
+	}
 }

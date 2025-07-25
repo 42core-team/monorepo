@@ -1,12 +1,14 @@
 {
-  "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "rootDir": "src/ts",
-    "outDir": "src/dist",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "strict": true,
-    "allowJs": true
-  }
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "esnext",
+        "moduleResolution": "node",
+        "rootDir": "src/ts",
+        "outDir": "src/public/js",
+        "esModuleInterop": true,
+        "strict": true,
+        "allowJs": true
+    },
+    "include": ["src/ts/**/*"],
+    "exclude": ["src/public/js", "vite.config.js"]
 }
