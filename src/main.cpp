@@ -24,11 +24,13 @@ using json = nlohmann::ordered_json;
 
 int main(int argc, char *argv[])
 {
-	if (argc < 5)
+	if (argc < 6)
 	{
-		Logger::Log(LogLevel::ERROR, std::string("Usage: ") + argv[0] + " [config file path] [replay save folder] <teamId1> <teamId2> ...");
+		Logger::Log(LogLevel::ERROR, std::string("Usage: ") + argv[0] + " [config file path] [replay save folder] [data file path] <teamId1> <teamId2> ...");
 		return 1;
 	}
+
+	Config::setDataFilePath(argv[3]);
 
 	Config::setConfigFilePath(argv[1]);
 	Config::instance(); // Would exit if config file is invalid & initializes config
@@ -36,7 +38,7 @@ int main(int argc, char *argv[])
 	ReplayEncoder::setReplaySaveFolder(argv[2]);
 	ReplayEncoder::verifyReplaySaveFolder();
 
-	if (argc - 3 > (int)Config::instance().corePositions.size())
+	if (argc - 4 > (int)Config::instance().corePositions.size())
 	{
 		Logger::Log(LogLevel::ERROR, "Too many team IDs for Core Locations specified.");
 		return 1;
@@ -54,7 +56,7 @@ int main(int argc, char *argv[])
 	}
 
 	std::vector<unsigned int> expectedTeamIds;
-	for (int i = 3; i < argc; i++)
+	for (int i = 4; i < argc; i++)
 		expectedTeamIds.push_back(std::stoi(argv[i]));
 
 	std::sort(expectedTeamIds.begin(), expectedTeamIds.end());

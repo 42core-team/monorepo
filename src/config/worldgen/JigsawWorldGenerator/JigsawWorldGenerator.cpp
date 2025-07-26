@@ -11,7 +11,7 @@ JigsawWorldGenerator::JigsawWorldGenerator(unsigned int seed)
 
 void JigsawWorldGenerator::loadTemplates()
 {
-	for (const auto &entry : std::filesystem::directory_iterator("./data/jigsaw-templates/"))
+	for (const auto &entry : std::filesystem::directory_iterator(Config::getDataFilePath() + "/jigsaw-templates"))
 	{
 		if (entry.path().extension() != ".txt")
 		{

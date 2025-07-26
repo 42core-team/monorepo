@@ -87,8 +87,15 @@ class Config
 		}
 		static std::string getConfigFilePath() { return configFilePath; }
 
+		static void setDataFilePath(const std::string &path)
+		{
+			dataFilePath = path;
+		}
+		static std::string getDataFilePath() { return dataFilePath; }
+
 	private:
 		static std::string configFilePath;
+		static std::string dataFilePath;
 };
 
 #endif // CONFIG_H
