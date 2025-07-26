@@ -1,13 +1,9 @@
-import { getStateAt, loadReplayAndKeepUpdated } from './replay_loader/replayLoader.js';
+window.addEventListener('DOMContentLoaded', async () => {
+	const { setupReplayLoader } = await import('./replay_loader/replayLoader.js');
+	const { setupTimeManager } = await import('./time_manager/timeManager.js');
 
-console.log('Debug Visualizer is running!');
+	const replayFilePath = '../misc/replay.json';
 
-await loadReplayAndKeepUpdated('../misc/replay.json');
-setInterval(async () => {
-	const state = getStateAt(0);
-	if (state) {
-		console.log('State at tick 0:', state);
-	} else {
-		console.log('No state found at tick 0');
-	}
-}, 10000);
+	await setupReplayLoader(replayFilePath);
+	await setupTimeManager();
+});

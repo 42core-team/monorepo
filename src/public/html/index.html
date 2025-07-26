@@ -7,8 +7,38 @@
 	</head>
 	<body>
 		<script type="module" src="../js/main.js"></script>
+
 		<h1>Debug Visualizer</h1>
 		<p>This is a simple debug visualizer.</p>
 		<p>Check the console for messages.</p>
+
+		<!-- Time controls box -->
+		<div id="time-controls" style="background-color: grey; padding: 30px; border-radius: 20px; width: fit-content">
+			<button id="play-button">Play</button>
+			<button id="play-rev-button">Play Reverse</button>
+			<button id="pause-button">Pause</button>
+			<br />
+			<button id="next-action-button">Next Action</button>
+			<button id="prev-action-button">Previous Action</button>
+			<br />
+			<button id="next-tick-button">Next Tick</button>
+			<button id="prev-tick-button">Previous Tick</button>
+			<br />
+			<button id="skip-start-button">Skip to start</button>
+			<button id="skip-end-button">Skip to end</button>
+			<br />
+			<label for="tick-timeline-slider">Tick Timeline:</label>
+			<input type="range" id="tick-timeline-slider" min="0" max="100" value="0" />
+			<input type="number" id="tick-timeline-number-input" min="0" max="100" value="0" />
+			<br />
+			<label for="action-timeline-slider">Action Timeline:</label>
+			<input type="range" id="action-timeline-slider" min="0" max="100" value="0" />
+			<input type="number" id="action-timeline-number-input" min="0" max="100" value="0" />
+			<br />
+			<label for="speed">Speed:</label>
+			<input type="range" id="speed-slider" min="0.1" max="100" step="0.1" value="1" />
+			<input type="number" id="speed-number-input" min="0.1" max="100" step="0.1" value="1" />
+			<p>ApS (Actions per Second)</p>
+		</div>
 	</body>
 </html>

@@ -23,6 +23,10 @@ export interface ReplayTick {
 }
 
 export interface ReplayData {
+	misc: {
+		team_results: { id: number; name: string; place: number }[];
+		game_end_reason: number;
+	};
 	ticks: { [tick: string]: ReplayTick };
 	full_tick_amount: number;
 	config?: GameConfig;
@@ -51,7 +55,7 @@ function deepClone<T>(obj: T): T {
 }
 
 class ReplayLoader {
-	private replayData: ReplayData = { ticks: {}, full_tick_amount: 0 };
+	private replayData: ReplayData = { misc: { team_results: [], game_end_reason: 0 }, ticks: {}, full_tick_amount: 0 };
 	private cache: Map<number, State>;
 	private cacheInterval: number;
 
@@ -85,7 +89,7 @@ class ReplayLoader {
 						this.cache.set(t, deepClone(fullState));
 					}
 				}
-				console.log('Replay loaded with snapshots at intervals:', Array.from(this.cache.keys()));
+				console.log(`💫 Replay loaded successfully! ✨ (${this.replayData.misc.team_results[0].name} 🤜 vs 🤛 ${this.replayData.misc.team_results[1].name} for ${totalTicks} ticks)`);
 			})
 			.catch((err) => {
 				console.log('Failed to load Replay: ', err);
@@ -97,9 +101,8 @@ class ReplayLoader {
 			const id = diffObj.id;
 			if (state[id]) {
 				Object.assign(state[id], diffObj);
-				if (diffObj.state == 'dead') {
-					// maybe some death animations through progressive state change
-					delete state[id]; // maybe cores should not disappear on death
+				if (diffObj.state === 'dead') {
+					delete state[id];
 				}
 			} else {
 				state[id] = deepClone(diffObj);
@@ -131,7 +134,11 @@ class ReplayLoader {
 				this.applyDiff(state, tickData);
 			}
 		}
-		return { objects: Object.values(state), actions: [] } as ReplayTick;
+
+		const resultTickData = this.replayData.ticks[tick.toString()];
+		const actions: TickAction[] = resultTickData?.actions ? deepClone(resultTickData.actions) : [];
+
+		return { objects: Object.values(state), actions } as ReplayTick;
 	}
 
 	public getGameConfig(): GameConfig | undefined {
@@ -142,7 +149,8 @@ class ReplayLoader {
 let replayLoader: ReplayLoader | null = null;
 let replayInterval: ReturnType<typeof setInterval> | null = null;
 
-export async function loadReplayAndKeepUpdated(filePath: string, cacheInterval = 25, updateInterval = 1000): Promise<void> {
+// loads replay and sets up periodic updates
+export async function setupReplayLoader(filePath: string, cacheInterval = 25, updateInterval = 1000): Promise<void> {
 	replayLoader = new ReplayLoader(cacheInterval);
 
 	// initial load
@@ -173,10 +181,15 @@ export async function loadReplayAndKeepUpdated(filePath: string, cacheInterval =
 			if (etag !== lastEtag) {
 				lastEtag = etag;
 				console.log('🔄 Detected changes via ETag, reloading replay…');
-				await replayLoader!.loadReplay(filePath);
+				if (replayLoader) {
+					await replayLoader.loadReplay(filePath);
+				} else {
+					console.error('ReplayLoader is not initialized.');
+				}
 			}
 		} catch (err) {
 			console.error('Error checking for updates:', err);
+			alert("Couldn't fetch replay updates. There is an issue with the webserver, please reopen your VSCode devcontainer.");
 		}
 	}, updateInterval);
 }
@@ -192,6 +205,13 @@ export function getStateAt(tick: number): ReplayTick | null {
 		console.log(err);
 		return null;
 	}
+}
+export function getTotalReplayTicks(): number {
+	if (!replayLoader) {
+		throw new Error('Replay not loaded. Please call loadReplay first.');
+	}
+
+	return totalReplayTicks;
 }
 
 export function getGameConfig(): GameConfig | undefined {
