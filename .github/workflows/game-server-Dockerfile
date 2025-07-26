@@ -1,13 +1,19 @@
-FROM alpine:latest AS build-game
-RUN apk add build-base clang curl-dev
+FROM ubuntu:noble AS build-game
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    clang \
+    libcurl4-openssl-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /core
 COPY . .
 
 RUN make re
 
-FROM alpine:latest AS release
-RUN apk add --no-cache libstdc++ libgcc curl-dev
+FROM ubuntu:noble AS release
+RUN apt-get update && apt-get install -y \
+    libcurl4 \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /core
 COPY --from=build-game /core/core ./core
 COPY --from=build-game /core/data ./data
