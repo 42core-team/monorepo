@@ -29,11 +29,20 @@ enum PlayingStates {
 	NotPlaying = 0,
 	Reverse = -1,
 }
+export type tickData = {
+	tick: number;
+	action: number;
+	actionProgress: number; // Fractional progress through current action (0–1)
+};
 
 let playing: PlayingStates = PlayingStates.NotPlaying;
 let action: number = 0;
 let tick: number = 0;
 let speedApS: number = 1; // Actions per Second
+
+// Live playback state
+let lastTimestamp: number | null = null;
+let actionProgress: number = 0; // Fractional progress through current action (0–1)
 
 // Helper functions
 
@@ -83,12 +92,15 @@ export async function setupTimeManager() {
 
 	playButton.addEventListener('click', () => {
 		playing = PlayingStates.Playing;
+		lastTimestamp = Date.now(); // Start timing immediately
 	});
 	playRevButton.addEventListener('click', () => {
 		playing = PlayingStates.Reverse;
+		lastTimestamp = Date.now(); // Start timing immediately in reverse
 	});
 	pauseButton.addEventListener('click', () => {
 		playing = PlayingStates.NotPlaying;
+		lastTimestamp = null;
 	});
 
 	nextActionButton.addEventListener('click', () => {
@@ -183,4 +195,67 @@ export async function setupTimeManager() {
 			speedSlider.value = speedApS.toString();
 		}
 	});
+}
+
+export function getCurrentTckData(): tickData {
+	const now = Date.now();
+	if (playing === PlayingStates.NotPlaying) {
+		lastTimestamp = null;
+		return { tick, action, actionProgress: 0 };
+	}
+	if (lastTimestamp === null) {
+		lastTimestamp = now;
+		return { tick, action, actionProgress };
+	}
+	const dt = (now - lastTimestamp) / 1000; // seconds elapsed
+	lastTimestamp = now;
+	const delta = dt * speedApS * (playing as number);
+	actionProgress += delta;
+
+	// Advance forward through actions/ticks
+	while (actionProgress >= 1) {
+		actionProgress -= 1;
+		if (action < getTotalActionsOfCurrentTick() - 1) {
+			action++;
+		} else {
+			let nextTick = tick + 1;
+			while (nextTick < getTotalTicks() && getStateAt(nextTick)?.actions.length === 0) {
+				nextTick++;
+			}
+			if (nextTick < getTotalTicks()) {
+				setTick(nextTick);
+				action = 0;
+			} else {
+				playing = PlayingStates.NotPlaying;
+				actionProgress = 0;
+				break;
+			}
+		}
+		setAction(action);
+	}
+
+	// Reverse playback through actions/ticks
+	while (actionProgress < 0) {
+		actionProgress += 1;
+		if (action > 0) {
+			action--;
+		} else {
+			let prevTick = tick - 1;
+			while (prevTick >= 0 && getStateAt(prevTick)?.actions.length === 0) {
+				prevTick--;
+			}
+			if (prevTick >= 0) {
+				setTick(prevTick);
+				action = getTotalActionsOfCurrentTick() - 1;
+			} else {
+				playing = PlayingStates.NotPlaying;
+				actionProgress = 0;
+				break;
+			}
+		}
+		setAction(action);
+	}
+	actionProgress = Math.max(0, Math.min(1, actionProgress));
+
+	return { tick, action, actionProgress };
 }
