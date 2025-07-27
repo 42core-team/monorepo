@@ -115,7 +115,7 @@ function drawObject(obj: TickObject): void {
 	const img = document.createElementNS(svgNS, 'image');
 	img.setAttributeNS(xlinkNS, 'href', `/assets/object-svgs/${path}`);
 
-	const scale = obj.type === 3 ? 1 : 0.8; // Wall is larger, others are smaller
+	const scale = obj.type === 3 ? 1 : obj.type === 2 ? 0.95 : 0.8; // Wall & resources are larger, others are smaller
 	const offset = (1 - scale) / 2;
 	img.setAttribute('x', `${obj.x + offset}`);
 	img.setAttribute('y', `${obj.y + offset}`);
