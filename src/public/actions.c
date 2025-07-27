@@ -31,10 +31,6 @@ t_obj *core_action_createUnit(t_unit_type unit_type)
 		unit_count++;
 	if ((int)unit_type < 0 || (int)unit_type >= unit_count)
 		return NULL;
-	t_obj *myCore = core_static_get_myCore();
-	if (!myCore || !game.config.units || !game.config.units[unit_type] ||
-		game.config.units[unit_type]->cost > myCore->s_core.balance)
-		return NULL;
 
 	core_static_ensureCapacity();
 	t_action *action = &actions.list[actions.count++];
@@ -68,9 +64,6 @@ t_obj *core_action_createUnit(t_unit_type unit_type)
 
 void core_action_move(const t_obj *unit, t_pos pos)
 {
-	if (unit->s_unit.move_cooldown != 0)
-		return;
-
 	core_static_ensureCapacity();
 	t_action *action = &actions.list[actions.count++];
 	action->type = ACTION_MOVE;
@@ -82,9 +75,6 @@ void core_action_attack(const t_obj *attacker, t_pos target_pos)
 {
 	if (!attacker)
 		return;
-	if (attacker->type != OBJ_UNIT)
-		return;
-
 	core_static_ensureCapacity();
 	t_action *action = &actions.list[actions.count++];
 	action->type = ACTION_ATTACK;
@@ -96,9 +86,6 @@ void core_action_transferMoney(const t_obj *source, t_pos target_pos, unsigned l
 {
 	if (!source)
 		return;
-	if (source->type != OBJ_CORE && source->type != OBJ_UNIT)
-		return;
-
 	core_static_ensureCapacity();
 	t_action *action = &actions.list[actions.count++];
 	action->type = ACTION_TRANSFER;
@@ -109,11 +96,7 @@ void core_action_transferMoney(const t_obj *source, t_pos target_pos, unsigned l
 
 void core_action_build(const t_obj *builder, t_pos pos)
 {
-	if (!builder || builder->type != OBJ_UNIT || (builder->s_unit.unit_type != UNIT_BUILDER && builder->s_unit.unit_type != UNIT_BOMBERMAN))
-		return;
-	if (builder->s_unit.unit_type == UNIT_BUILDER && builder->s_unit.balance < game.config.wall_build_cost)
-		return;
-	if (builder->s_unit.unit_type == UNIT_BOMBERMAN && builder->s_unit.balance < game.config.bomb_throw_cost)
+	if (!builder)
 		return;
 
 	core_static_ensureCapacity();
