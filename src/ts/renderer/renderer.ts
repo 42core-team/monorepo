@@ -57,12 +57,12 @@ function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, s
 	const metrics = getBarMetrics(obj);
 	metrics.forEach(({ key, percentage }, i) => {
 		const height = 1 / metrics.length;
-		const yPosition = obj.y + i * height;
+		const yPosition = yOffset + i * height;
 
 		const color = key === 'hp' ? 'var(--hp-color)' : key === 'balance' ? 'var(--balance-color)' : 'var(--cooldown-color)';
 
 		const bg = document.createElementNS(svgNS, 'rect');
-		bg.setAttribute('x', obj.x.toString());
+		bg.setAttribute('x', xOffset.toString());
 		bg.setAttribute('y', yPosition.toString());
 		bg.setAttribute('width', '1');
 		bg.setAttribute('height', height.toString());
@@ -71,7 +71,7 @@ function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, s
 		svgCanvas.appendChild(bg);
 
 		const fg = document.createElementNS(svgNS, 'rect');
-		fg.setAttribute('x', obj.x.toString());
+		fg.setAttribute('x', xOffset.toString());
 		fg.setAttribute('y', yPosition.toString());
 		fg.setAttribute('width', String(percentage / 100));
 		fg.setAttribute('height', height.toString());
