@@ -38,7 +38,7 @@ export type tickData = {
 let playing: PlayingStates = PlayingStates.NotPlaying;
 let action: number = 0;
 let tick: number = 0;
-let speedApS: number = 1; // Actions per Second
+let speedApS: number = 5; // Actions per Second
 
 // Live playback state
 let lastTimestamp: number | null = null;

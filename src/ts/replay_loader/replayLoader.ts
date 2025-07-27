@@ -1,20 +1,49 @@
-export interface TickObject {
+export interface BaseObject {
 	id: number;
-	type?: number;
+	type: number;
 	x?: number;
 	y?: number;
-	dir?: number;
 	hp?: number;
+	state?: string;
+
+	unit_type?: number;
 	teamId?: number;
 	balance?: number;
-	state?: string;
 }
+export interface CoreObject extends BaseObject {
+	type: 0; // Core
+	teamId: number;
+	balance: number;
+}
+export interface UnitObject extends BaseObject {
+	type: 1; // Unit
+	unit_type: number;
+	teamId: number;
+	balance: number;
+}
+export interface ResourceObject extends BaseObject {
+	type: 2; // Resource
+	balance: number;
+}
+export interface WallObject extends BaseObject {
+	type: 3; // Wall
+}
+export interface MoneyObject extends BaseObject {
+	type: 4; // Money
+	balance: number;
+}
+export interface BombObject extends BaseObject {
+	type: 5; // Bomb
+	countdown: number;
+}
+export type TickObject = CoreObject | UnitObject | ResourceObject | WallObject | MoneyObject | BombObject;
 
 export interface TickAction {
 	type: string;
 	unit_type?: number;
 	unit_id?: number;
-	dir?: number;
+	targetX?: number;
+	targetY?: number;
 }
 
 export interface ReplayTick {
@@ -32,6 +61,18 @@ export interface ReplayData {
 	config?: GameConfig;
 }
 
+export interface UnitConfig {
+	name: string;
+	cost: number;
+	hp: number;
+	speed: number;
+	minSpeed: number;
+	damageCore: number;
+	damageUnit: number;
+	damageResource: number;
+	damageWall: number;
+	buildType: number;
+}
 export interface GameConfig {
 	width: number;
 	height: number;
@@ -40,13 +81,21 @@ export interface GameConfig {
 	idleIncomeTimeOut: number;
 	resourceHp: number;
 	resourceIncome: number;
+	moneyObjIncome: number;
 	coreHp: number;
 	initialBalance: number;
 	wallHp: number;
 	wallBuildCost: number;
+	bombHp: number;
+	bombCountdown: number;
+	bombThrowCost: number;
+	bombReach: number;
+	bombDamage: number;
+	units: UnitConfig[];
+	corePositions: { x: number; y: number }[]; // 💥 included in JSON
 }
 
-type State = { [id: string]: unknown };
+type State = Record<number, TickObject>;
 
 export let totalReplayTicks = 0;
 
@@ -56,12 +105,11 @@ function deepClone<T>(obj: T): T {
 
 class ReplayLoader {
 	private replayData: ReplayData = { misc: { team_results: [], game_end_reason: 0 }, ticks: {}, full_tick_amount: 0 };
-	private cache: Map<number, State>;
+	private cache: Map<number, State> = new Map<number, State>();
 	private cacheInterval: number;
 
 	constructor(cacheInterval = 25) {
 		this.cacheInterval = cacheInterval;
-		this.cache = new Map<number, State>();
 	}
 
 	public async loadReplay(filePath: string): Promise<void> {
@@ -79,8 +127,7 @@ class ReplayLoader {
 				}
 				this.cache.set(0, deepClone(fullState));
 
-				const totalTicks = this.replayData.full_tick_amount;
-				for (let t = 1; t <= totalTicks; t++) {
+				for (let t = 1; t <= totalReplayTicks; t++) {
 					const tickData = this.replayData.ticks[t.toString()];
 					if (tickData?.objects) {
 						this.applyDiff(fullState, tickData);
@@ -89,7 +136,7 @@ class ReplayLoader {
 						this.cache.set(t, deepClone(fullState));
 					}
 				}
-				console.log(`💫 Replay loaded successfully! ✨ (${this.replayData.misc.team_results[0].name} 🤜 vs 🤛 ${this.replayData.misc.team_results[1].name} for ${totalTicks} ticks)`);
+				console.log(`💫 Replay loaded successfully! ✨ (${this.replayData.misc.team_results[0].name} 🤜 vs 🤛 ${this.replayData.misc.team_results[1].name} for ${totalReplayTicks} ticks)`);
 			})
 			.catch((err) => {
 				console.log('Failed to load Replay: ', err);
@@ -212,6 +259,19 @@ export function getTotalReplayTicks(): number {
 	}
 
 	return totalReplayTicks;
+}
+export function getNameOfUnitType(unitType: number): string {
+	if (!replayLoader) {
+		throw new Error('Replay not loaded. Please call loadReplay first.');
+	}
+	const cfg = replayLoader.getGameConfig();
+	if (!cfg) {
+		throw new Error('GameConfig is missing! Did loadReplay parse config?');
+	}
+	if (!Array.isArray(cfg.units) || unitType < 0 || unitType >= cfg.units.length) {
+		throw new Error(`Invalid unitType index: ${unitType}`);
+	}
+	return cfg.units[unitType].name;
 }
 
 export function getGameConfig(): GameConfig | undefined {
