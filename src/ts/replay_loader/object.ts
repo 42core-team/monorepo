@@ -121,7 +121,7 @@ export function getBarMetrics(obj: TickObject): { key: string; percentage: numbe
 	// Balance
 	if ((obj.type === 0 || obj.type === 1) && obj.balance > 0) {
 		// resources and moneys holding money doesnt actually contain any info
-		let maxBalance = getGameConfig()?.resourceIncome || 175 * 3;
+		let maxBalance = (getGameConfig()?.resourceIncome || 175) * 3;
 		if (obj.balance > maxBalance) {
 			maxBalance = obj.balance;
 		}
