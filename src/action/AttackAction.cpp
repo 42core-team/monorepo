@@ -2,7 +2,7 @@
 
 #include "Unit.h"
 
-AttackAction::AttackAction(json msg) : Action(ActionType::MOVE)
+AttackAction::AttackAction(json msg) : Action(ActionType::ATTACK)
 {
 	decodeJSON(msg);
 }
@@ -29,7 +29,7 @@ json AttackAction::encodeJSON()
 {
 	json js;
 
-	js["type"] = "move";
+	js["type"] = "attack";
 	js["unit_id"] = unit_id_;
 	js["target_pos_x"] = target_pos_.x;
 	js["target_pos_y"] = target_pos_.y;
