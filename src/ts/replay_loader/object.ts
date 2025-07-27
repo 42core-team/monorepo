@@ -5,10 +5,6 @@ export interface BaseObject {
 	y: number;
 	hp: number;
 	state?: string;
-
-	unit_type?: number;
-	teamId?: number;
-	balance?: number;
 }
 export interface CoreObject extends BaseObject {
 	type: 0; // Core
@@ -20,6 +16,7 @@ export interface UnitObject extends BaseObject {
 	unit_type: number;
 	teamId: number;
 	balance: number;
+	moveCooldown: number;
 }
 export interface ResourceObject extends BaseObject {
 	type: 2; // Resource

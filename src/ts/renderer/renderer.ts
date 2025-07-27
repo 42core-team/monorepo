@@ -48,12 +48,12 @@ function drawObject(obj: TickObject): void {
 	}
 
 	let path: string;
-	const teamIndex = ((obj.teamId ?? 1) - 1) as AssetTeam;
 
 	switch (obj.type) {
 		case 0: {
 			// Core
 			const cores = svgAssets[0];
+			const teamIndex = ((obj.teamId ?? 1) - 1) as AssetTeam;
 			path = cores[teamIndex];
 			break;
 		}
@@ -65,6 +65,7 @@ function drawObject(obj: TickObject): void {
 				throw new Error(`Unit object ${obj.id} missing unit_type 🤯`);
 			}
 			const unitName = getNameOfUnitType(unitType);
+			const teamIndex = ((obj.teamId ?? 1) - 1) as AssetTeam;
 			path = units[unitName as keyof typeof units][teamIndex];
 			break;
 		}
@@ -98,7 +99,7 @@ function drawObject(obj: TickObject): void {
 		svgCanvas.appendChild(hpLabel);
 	}
 
-	if (obj.balance != null) {
+	if ('balance' in obj && obj.balance != null) {
 		const $label = document.createElementNS(svgNS, 'text');
 		$label.setAttribute('x', obj.x.toString());
 		$label.setAttribute('y', (obj.y + 0.6).toString());
@@ -106,6 +107,16 @@ function drawObject(obj: TickObject): void {
 		$label.setAttribute('fill', '#777');
 		$label.textContent = `💰${obj.balance}`;
 		svgCanvas.appendChild($label);
+	}
+
+	if ('moveCooldown' in obj && obj.moveCooldown != null) {
+		const cooldownLabel = document.createElementNS(svgNS, 'text');
+		cooldownLabel.setAttribute('x', obj.x.toString());
+		cooldownLabel.setAttribute('y', (obj.y + 0.9).toString());
+		cooldownLabel.setAttribute('font-size', '0.3');
+		cooldownLabel.setAttribute('fill', '#777');
+		cooldownLabel.textContent = `⏳${obj.moveCooldown}`;
+		svgCanvas.appendChild(cooldownLabel);
 	}
 }
 
