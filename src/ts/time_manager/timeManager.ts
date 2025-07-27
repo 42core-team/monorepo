@@ -197,7 +197,7 @@ export async function setupTimeManager() {
 	});
 }
 
-export function getCurrentTckData(): tickData {
+export function getCurrentTickData(): tickData {
 	const now = Date.now();
 	if (playing === PlayingStates.NotPlaying) {
 		lastTimestamp = null;
