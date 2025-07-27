@@ -83,12 +83,14 @@ export async function setupTimeManager() {
 
 	skipStartButton.addEventListener('click', () => {
 		setTick(0);
+		tickProgress = 0;
 	});
 	skipEndButton.addEventListener('click', () => {
 		const totalTicks = getTotalTicks();
 		if (totalTicks > 0) {
 			setTick(totalTicks - 1);
 		}
+		tickProgress = 1;
 	});
 
 	tickTimelineSlider.addEventListener('input', () => {
@@ -142,6 +144,7 @@ export function getCurrentTickData(): tickData {
 			tickProgress = 1;
 		}
 	}
+	// TODO: this is buggy reversing will loop first tick and never hit else
 	if (tickProgress < 0) {
 		if (tick > 0) {
 			const newTick = Math.max(tick + Math.ceil(tickProgress), 0);

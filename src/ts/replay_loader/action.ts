@@ -3,6 +3,7 @@ export interface BaseAction {
 }
 export interface MoveAction extends BaseAction {
 	type: 'move';
+	unit_id: number;
 	targetX: number;
 	targetY: number;
 }

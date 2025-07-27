@@ -47,7 +47,7 @@ const svgCanvas = svgCanvasElement as SVGSVGElement;
 const tooltipElement = document.getElementById('tooltip') as HTMLDivElement;
 const gameConfig = getGameConfig();
 
-function drawObject(obj: TickObject): void {
+function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, scaleFactor: number = 1): void {
 	if (!gameConfig) {
 		throw new Error('Game configuration not found. Cannot draw objects.');
 	}
@@ -67,7 +67,7 @@ function drawObject(obj: TickObject): void {
 		bg.setAttribute('width', '1');
 		bg.setAttribute('height', height.toString());
 		bg.setAttribute('fill', color);
-		bg.setAttribute('fill-opacity', '0.5');
+		bg.setAttribute('fill-opacity', `${0.5 * scaleFactor}`);
 		svgCanvas.appendChild(bg);
 
 		const fg = document.createElementNS(svgNS, 'rect');
@@ -75,6 +75,7 @@ function drawObject(obj: TickObject): void {
 		fg.setAttribute('y', yPosition.toString());
 		fg.setAttribute('width', String(percentage / 100));
 		fg.setAttribute('height', height.toString());
+		fg.setAttribute('fill-opacity', `${scaleFactor}`);
 		fg.setAttribute('fill', color);
 		svgCanvas.appendChild(fg);
 	});
@@ -123,15 +124,13 @@ function drawObject(obj: TickObject): void {
 	} else if (obj.type === 4) {
 		scale = 0.6; // Money
 	}
-	const offset = (1 - scale) / 2;
-	img.setAttribute('x', `${obj.x + offset}`);
-	img.setAttribute('y', `${obj.y + offset}`);
-	img.setAttribute('width', `${scale}`);
-	img.setAttribute('height', `${scale}`);
-	if (obj.type === 2 && Math.floor(obj.x + obj.y) % 2 === 0) {
-		img.setAttribute('transform-origin', `${obj.x + scale / 2} ${obj.y + scale / 2}`);
-		img.setAttribute('transform', 'scale(-1,1)');
-	}
+
+	const offset = (1 - scale * scaleFactor) / 2;
+	img.removeAttribute('x');
+	img.removeAttribute('y');
+	img.setAttribute('width', '1');
+	img.setAttribute('height', '1');
+	img.setAttribute('transform', `translate(${xOffset + offset},${yOffset + offset}) scale(${scale * scaleFactor})`);
 	svgCanvas.appendChild(img);
 }
 
@@ -154,8 +153,35 @@ function drawFrame(_timestamp: number): void {
 
 	cleanGrid();
 
-	for (const obj of replayData.objects) {
-		drawObject(obj);
+	for (const currObj of replayData.objects) {
+		let scale = 1;
+		let x = currObj.x;
+		let y = currObj.y;
+
+		let prevObj = null;
+		try {
+			prevObj = getStateAt(currentTickData.tick - 1)?.objects.find((o) => o.id === currObj.id);
+		} catch {}
+		let nextObj = null;
+		try {
+			nextObj = getStateAt(currentTickData.tick + 1)?.objects.find((o) => o.id === currObj.id);
+		} catch {}
+
+		const sineProgress = Math.sin((currentTickData.tickProgress * Math.PI) / 2);
+
+		if (!prevObj || prevObj.state === 'dead') {
+			scale = sineProgress;
+		}
+		if (!nextObj || nextObj.state === 'dead') {
+			scale = 1 - sineProgress;
+		}
+		// check movement
+		if (nextObj) {
+			x = currObj.x + (nextObj.x - currObj.x) * sineProgress;
+			y = currObj.y + (nextObj.y - currObj.y) * sineProgress;
+		}
+
+		drawObject(currObj, x, y, scale);
 	}
 
 	window.requestAnimationFrame(drawFrame);
