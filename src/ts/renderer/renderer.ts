@@ -115,12 +115,23 @@ function drawObject(obj: TickObject): void {
 	const img = document.createElementNS(svgNS, 'image');
 	img.setAttributeNS(xlinkNS, 'href', `/assets/object-svgs/${path}`);
 
-	const scale = obj.type === 3 ? 1 : obj.type === 2 ? 0.95 : 0.8; // Wall & resources are larger, others are smaller
+	let scale = 0.8;
+	if (obj.type === 2) {
+		scale = 0.95; // Resource
+	} else if (obj.type === 3) {
+		scale = 1; // Wall
+	} else if (obj.type === 4) {
+		scale = 0.6; // Money
+	}
 	const offset = (1 - scale) / 2;
 	img.setAttribute('x', `${obj.x + offset}`);
 	img.setAttribute('y', `${obj.y + offset}`);
 	img.setAttribute('width', `${scale}`);
 	img.setAttribute('height', `${scale}`);
+	if (obj.type === 2 && Math.floor(obj.x + obj.y) % 2 === 0) {
+		img.setAttribute('transform-origin', `${obj.x + scale / 2} ${obj.y + scale / 2}`);
+		img.setAttribute('transform', 'scale(-1,1)');
+	}
 	svgCanvas.appendChild(img);
 }
 

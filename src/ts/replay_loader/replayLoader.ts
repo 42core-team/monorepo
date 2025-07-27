@@ -77,14 +77,6 @@ class ReplayLoader {
 				state[id] = deepClone(diffObj);
 			}
 		}
-		for (const obj of Object.values(state)) {
-			if (!('moveCooldown' in obj)) {
-				continue;
-			}
-			if (obj.moveCooldown > 0) {
-				obj.moveCooldown--;
-			}
-		}
 	}
 
 	public getStateAt(tick: number): ReplayTick {
@@ -109,6 +101,14 @@ class ReplayLoader {
 			const tickData = this.replayData.ticks[t.toString()];
 			if (tickData?.objects) {
 				this.applyDiff(state, tickData);
+			}
+			for (const obj of Object.values(state)) {
+				if (!('moveCooldown' in obj)) {
+					continue;
+				}
+				if (obj.moveCooldown > 0) {
+					obj.moveCooldown--;
+				}
 			}
 		}
 
