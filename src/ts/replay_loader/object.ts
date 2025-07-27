@@ -1,9 +1,9 @@
 export interface BaseObject {
 	id: number;
 	type: number;
-	x?: number;
-	y?: number;
-	hp?: number;
+	x: number;
+	y: number;
+	hp: number;
 	state?: string;
 
 	unit_type?: number;

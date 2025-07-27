@@ -43,6 +43,10 @@ const svgCanvas = document.getElementById('svg-canvas') as HTMLElement;
 const gameConfig = getGameConfig();
 
 function drawObject(obj: TickObject): void {
+	if (!gameConfig) {
+		throw new Error('Game configuration not found. Cannot draw objects.');
+	}
+
 	let path: string;
 	const teamIndex = ((obj.teamId ?? 1) - 1) as AssetTeam;
 
@@ -80,6 +84,29 @@ function drawObject(obj: TickObject): void {
 	img.setAttribute('width', '1');
 	img.setAttribute('height', '1');
 	svgCanvas.appendChild(img);
+
+	if (obj.hp != null) {
+		const maxHp = obj.type === 0 ? gameConfig.coreHp : gameConfig.units[obj.type].hp;
+		const pct = Math.round((obj.hp / maxHp) * 100);
+
+		const hpLabel = document.createElementNS(svgNS, 'text');
+		hpLabel.setAttribute('x', obj.x.toString());
+		hpLabel.setAttribute('y', (obj.y + 0.3).toString());
+		hpLabel.setAttribute('font-size', '0.3');
+		hpLabel.setAttribute('fill', '#777');
+		hpLabel.textContent = `❤️${pct}%`;
+		svgCanvas.appendChild(hpLabel);
+	}
+
+	if (obj.balance != null) {
+		const $label = document.createElementNS(svgNS, 'text');
+		$label.setAttribute('x', obj.x.toString());
+		$label.setAttribute('y', (obj.y + 0.6).toString());
+		$label.setAttribute('font-size', '0.3');
+		$label.setAttribute('fill', '#777');
+		$label.textContent = `💰${obj.balance}`;
+		svgCanvas.appendChild($label);
+	}
 }
 
 function cleanGrid(): void {
@@ -128,7 +155,9 @@ export async function setupRenderer(): Promise<void> {
 			rect.setAttribute('y', y.toString());
 			rect.setAttribute('width', '1');
 			rect.setAttribute('height', '1');
-			rect.setAttribute('fill', (x + y) % 2 === 0 ? '#f0f0f0' : '#d0d0d0');
+			rect.setAttribute('fill', '#f7f7f7');
+			rect.setAttribute('stroke', 'black');
+			rect.setAttribute('stroke-width', '0.01');
 			svgCanvas.appendChild(rect);
 		}
 	}
