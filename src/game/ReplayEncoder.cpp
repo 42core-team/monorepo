@@ -13,7 +13,7 @@ json ReplayEncoder::diffObject(const json &currentObj, const json &previousObj)
 	for (auto it = currentObj.begin(); it != currentObj.end(); ++it)
 	{
 		const std::string &key = it.key();
-		if (key == "id" || (key == "moveCooldown" && currentObj.contains("moveCooldown") && previousObj.contains("moveCooldown") && currentObj["moveCooldown"] < previousObj["moveCooldown"]))
+		if (key == "id" || (key == "moveCooldown" && currentObj.contains("moveCooldown") && previousObj.contains("moveCooldown") && currentObj["moveCooldown"] <= previousObj["moveCooldown"]))
 			continue;
 
 		if (previousObj.find(key) == previousObj.end() || previousObj.at(key) != it.value())
