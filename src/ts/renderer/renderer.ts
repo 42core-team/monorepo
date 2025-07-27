@@ -1,4 +1,4 @@
-import type { TickObject } from '../replay_loader/object.js';
+import { formatObjectData, type TickObject } from '../replay_loader/object.js';
 import { getGameConfig, getNameOfUnitType, getStateAt } from '../replay_loader/replayLoader.js';
 import { getCurrentTickData } from '../time_manager/timeManager.js';
 
@@ -39,7 +39,12 @@ const svgAssets = {
 	5: 'core.svg',
 } as const;
 
-const svgCanvas = document.getElementById('svg-canvas') as HTMLElement;
+const svgCanvasElement = document.getElementById('svg-canvas');
+if (!svgCanvasElement || !(svgCanvasElement instanceof SVGSVGElement)) {
+	throw new Error('SVG canvas element not found or is not an SVG element');
+}
+const svgCanvas = svgCanvasElement as SVGSVGElement;
+const tooltipElement = document.getElementById('tooltip') as HTMLDivElement;
 const gameConfig = getGameConfig();
 
 function drawObject(obj: TickObject): void {
@@ -172,4 +177,35 @@ export async function setupRenderer(): Promise<void> {
 			svgCanvas.appendChild(rect);
 		}
 	}
+
+	svgCanvas.addEventListener('mousemove', (e) => {
+		const pt = svgCanvas.createSVGPoint();
+		pt.x = e.clientX;
+		pt.y = e.clientY;
+
+		const ctm = svgCanvas.getScreenCTM();
+		if (!ctm) {
+			tooltipElement.style.display = 'none';
+			return;
+		}
+		const svgP = pt.matrixTransform(ctm.inverse());
+
+		const tx = Math.floor(svgP.x),
+			ty = Math.floor(svgP.y);
+
+		const currentObjects = getStateAt(getCurrentTickData().tick)?.objects || [];
+		const obj = currentObjects.find((o: TickObject) => o.x === tx && o.y === ty);
+
+		if (obj) {
+			const offsetX = 10;
+			const offsetY = e.clientY > window.innerHeight / 2 ? -tooltipElement.offsetHeight - 10 : 10;
+			tooltipElement.style.left = `${e.pageX + offsetX}px`;
+			tooltipElement.style.top = `${e.pageY + offsetY}px`;
+			tooltipElement.style.borderRadius = e.clientY > window.innerHeight / 2 ? '15px 15px 15px 0' : '0 15px 15px 15px';
+			tooltipElement.style.display = 'block';
+			tooltipElement.innerHTML = formatObjectData(obj);
+		} else {
+			tooltipElement.style.display = 'none';
+		}
+	});
 }
