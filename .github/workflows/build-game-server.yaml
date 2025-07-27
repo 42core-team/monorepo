@@ -8,6 +8,7 @@ on:
       - dev
       - "event-*"
       - "rush-*"
+  pull_request:
 
 env:
   REGISTRY_IMAGE: ghcr.io/42core-team/game-server
@@ -17,7 +18,40 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Job for pull requests - only compile and test, don't push
+  test-build:
+    if: github.event_name == 'pull_request'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: x64
+          - platform: linux/arm64
+            runner: arm64
+    runs-on:
+      - ${{ matrix.runner }}
+      - self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build (test only)
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ github.workspace }}
+          file: .github/workflows/game-server-Dockerfile
+          platforms: ${{ matrix.platform }}
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # Job for pushes to main branches - build and push
   build:
+    if: github.event_name != 'pull_request'
     strategy:
       fail-fast: false
       matrix:
@@ -59,7 +93,7 @@ jobs:
 
       - name: Build and push by digest
         id: build
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ${{ github.workspace }}
           file: .github/workflows/game-server-Dockerfile
@@ -85,6 +119,7 @@ jobs:
           retention-days: 1
 
   merge:
+    if: github.event_name != 'pull_request'
     runs-on: self-hosted
     needs: build
     steps:
