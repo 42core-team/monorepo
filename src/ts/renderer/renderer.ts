@@ -1,4 +1,5 @@
-import { getGameConfig, getNameOfUnitType, getStateAt, type TickObject } from '../replay_loader/replayLoader.js';
+import type { TickObject } from '../replay_loader/object.js';
+import { getGameConfig, getNameOfUnitType, getStateAt } from '../replay_loader/replayLoader.js';
 import { getCurrentTickData } from '../time_manager/timeManager.js';
 
 const svgNS = 'http://www.w3.org/2000/svg';

@@ -1,50 +1,6 @@
-export interface BaseObject {
-	id: number;
-	type: number;
-	x?: number;
-	y?: number;
-	hp?: number;
-	state?: string;
-
-	unit_type?: number;
-	teamId?: number;
-	balance?: number;
-}
-export interface CoreObject extends BaseObject {
-	type: 0; // Core
-	teamId: number;
-	balance: number;
-}
-export interface UnitObject extends BaseObject {
-	type: 1; // Unit
-	unit_type: number;
-	teamId: number;
-	balance: number;
-}
-export interface ResourceObject extends BaseObject {
-	type: 2; // Resource
-	balance: number;
-}
-export interface WallObject extends BaseObject {
-	type: 3; // Wall
-}
-export interface MoneyObject extends BaseObject {
-	type: 4; // Money
-	balance: number;
-}
-export interface BombObject extends BaseObject {
-	type: 5; // Bomb
-	countdown: number;
-}
-export type TickObject = CoreObject | UnitObject | ResourceObject | WallObject | MoneyObject | BombObject;
-
-export interface TickAction {
-	type: string;
-	unit_type?: number;
-	unit_id?: number;
-	targetX?: number;
-	targetY?: number;
-}
+import type { TickAction } from './action';
+import type { GameConfig } from './config';
+import type { TickObject } from './object';
 
 export interface ReplayTick {
 	objects: TickObject[];
@@ -59,40 +15,6 @@ export interface ReplayData {
 	ticks: { [tick: string]: ReplayTick };
 	full_tick_amount: number;
 	config?: GameConfig;
-}
-
-export interface UnitConfig {
-	name: string;
-	cost: number;
-	hp: number;
-	speed: number;
-	minSpeed: number;
-	damageCore: number;
-	damageUnit: number;
-	damageResource: number;
-	damageWall: number;
-	buildType: number;
-}
-export interface GameConfig {
-	width: number;
-	height: number;
-	tickRate: number;
-	idleIncome: number;
-	idleIncomeTimeOut: number;
-	resourceHp: number;
-	resourceIncome: number;
-	moneyObjIncome: number;
-	coreHp: number;
-	initialBalance: number;
-	wallHp: number;
-	wallBuildCost: number;
-	bombHp: number;
-	bombCountdown: number;
-	bombThrowCost: number;
-	bombReach: number;
-	bombDamage: number;
-	units: UnitConfig[];
-	corePositions: { x: number; y: number }[]; // 💥 included in JSON
 }
 
 type State = Record<number, TickObject>;
