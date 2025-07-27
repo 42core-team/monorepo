@@ -3,6 +3,12 @@
 	src: url('/assets/fonts/JetBrainsMonoNerdFontMono-Regular.ttf') format('truetype');
 }
 
+:root {
+	--hp-color: #c70202ff;
+	--balance-color: #008600ff;
+	--cooldown-color: #0066ffff;
+}
+
 body {
 	margin: 0;
 	padding: 0;

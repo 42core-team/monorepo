@@ -1,4 +1,4 @@
-import { formatObjectData, type TickObject } from '../replay_loader/object.js';
+import { formatObjectData, getBarMetrics, type TickObject } from '../replay_loader/object.js';
 import { getGameConfig, getNameOfUnitType, getStateAt } from '../replay_loader/replayLoader.js';
 import { getCurrentTickData } from '../time_manager/timeManager.js';
 
@@ -52,6 +52,35 @@ function drawObject(obj: TickObject): void {
 		throw new Error('Game configuration not found. Cannot draw objects.');
 	}
 
+	// metric bars background
+
+	const metrics = getBarMetrics(obj);
+	metrics.forEach(({ key, percentage }, i) => {
+		const height = 1 / metrics.length;
+		const yPosition = obj.y + i * height;
+
+		const color = key === 'hp' ? 'var(--hp-color)' : key === 'balance' ? 'var(--balance-color)' : 'var(--cooldown-color)';
+
+		const bg = document.createElementNS(svgNS, 'rect');
+		bg.setAttribute('x', obj.x.toString());
+		bg.setAttribute('y', yPosition.toString());
+		bg.setAttribute('width', '1');
+		bg.setAttribute('height', height.toString());
+		bg.setAttribute('fill', color);
+		bg.setAttribute('fill-opacity', '0.5');
+		svgCanvas.appendChild(bg);
+
+		const fg = document.createElementNS(svgNS, 'rect');
+		fg.setAttribute('x', obj.x.toString());
+		fg.setAttribute('y', yPosition.toString());
+		fg.setAttribute('width', String(percentage / 100));
+		fg.setAttribute('height', height.toString());
+		fg.setAttribute('fill', color);
+		svgCanvas.appendChild(fg);
+	});
+
+	// object icon
+
 	let path: string;
 
 	switch (obj.type) {
@@ -85,44 +114,14 @@ function drawObject(obj: TickObject): void {
 
 	const img = document.createElementNS(svgNS, 'image');
 	img.setAttributeNS(xlinkNS, 'href', `/assets/object-svgs/${path}`);
-	img.setAttribute('x', `${obj.x}`);
-	img.setAttribute('y', `${obj.y}`);
-	img.setAttribute('width', '1');
-	img.setAttribute('height', '1');
+
+	const scale = obj.type === 3 ? 1 : 0.8; // Wall is larger, others are smaller
+	const offset = (1 - scale) / 2;
+	img.setAttribute('x', `${obj.x + offset}`);
+	img.setAttribute('y', `${obj.y + offset}`);
+	img.setAttribute('width', `${scale}`);
+	img.setAttribute('height', `${scale}`);
 	svgCanvas.appendChild(img);
-
-	if (obj.hp != null) {
-		const maxHp = obj.type === 0 ? gameConfig.coreHp : gameConfig.units[obj.type].hp;
-		const pct = Math.round((obj.hp / maxHp) * 100);
-
-		const hpLabel = document.createElementNS(svgNS, 'text');
-		hpLabel.setAttribute('x', obj.x.toString());
-		hpLabel.setAttribute('y', (obj.y + 0.3).toString());
-		hpLabel.setAttribute('font-size', '0.3');
-		hpLabel.setAttribute('fill', '#777');
-		hpLabel.textContent = `❤️${pct}%`;
-		svgCanvas.appendChild(hpLabel);
-	}
-
-	if ('balance' in obj && obj.balance != null) {
-		const $label = document.createElementNS(svgNS, 'text');
-		$label.setAttribute('x', obj.x.toString());
-		$label.setAttribute('y', (obj.y + 0.6).toString());
-		$label.setAttribute('font-size', '0.3');
-		$label.setAttribute('fill', '#777');
-		$label.textContent = `💰${obj.balance}`;
-		svgCanvas.appendChild($label);
-	}
-
-	if ('moveCooldown' in obj && obj.moveCooldown != null) {
-		const cooldownLabel = document.createElementNS(svgNS, 'text');
-		cooldownLabel.setAttribute('x', obj.x.toString());
-		cooldownLabel.setAttribute('y', (obj.y + 0.9).toString());
-		cooldownLabel.setAttribute('font-size', '0.3');
-		cooldownLabel.setAttribute('fill', '#777');
-		cooldownLabel.textContent = `⏳${obj.moveCooldown}`;
-		svgCanvas.appendChild(cooldownLabel);
-	}
 }
 
 function cleanGrid(): void {

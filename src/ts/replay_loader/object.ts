@@ -1,3 +1,5 @@
+import { getGameConfig } from './replayLoader.js';
+
 export interface BaseObject {
 	id: number;
 	type: number;
@@ -45,32 +47,98 @@ const objectTypeNames = {
 };
 
 export function formatObjectData(obj: TickObject): string {
-	const lines: { line: string; priority: number }[] = [];
+	const lines: { line: string; priority: number; color: string }[] = [];
 
-	lines.push({ line: `❤️ HP: ${obj.hp}`, priority: 0 });
-	lines.push({ line: `❓ Object Type: ${objectTypeNames[obj.type] || 'Unknown'}`, priority: 4 });
-	lines.push({ line: `#️⃣ ID: ${obj.id}`, priority: 5 });
-	lines.push({ line: `📍 Position: [${obj.x}, ${obj.y}]`, priority: 6 });
+	lines.push({ line: `❤️ HP: ${obj.hp}`, priority: 0, color: 'var(--hp-color)' });
+	lines.push({ line: `❓ Object Type: ${objectTypeNames[obj.type] || 'Unknown'}`, priority: 4, color: 'black' });
+	lines.push({ line: `#️⃣ ID: ${obj.id}`, priority: 5, color: 'black' });
+	lines.push({ line: `📍 Position: [${obj.x}, ${obj.y}]`, priority: 6, color: 'black' });
 
 	switch (obj.type) {
 		case 0:
-			lines.push({ line: `🏁 Team ID: ${obj.teamId}`, priority: 5 });
-			lines.push({ line: `💰 Balance: ${obj.balance}`, priority: 1 });
+			lines.push({ line: `🏁 Team ID: ${obj.teamId}`, priority: 5, color: 'black' });
+			lines.push({ line: `💰 Balance: ${obj.balance}`, priority: 1, color: 'var(--balance-color)' });
 			break;
 		case 1:
-			lines.push({ line: `🏁 Team ID: ${obj.teamId}`, priority: 5 });
-			lines.push({ line: `💰 Balance: ${obj.balance}`, priority: 1 });
-			lines.push({ line: `🔢 Move Cooldown: ${obj.moveCooldown}`, priority: 2 });
+			lines.push({ line: `🏁 Team ID: ${obj.teamId}`, priority: 5, color: 'black' });
+			lines.push({ line: `💰 Balance: ${obj.balance}`, priority: 1, color: 'var(--balance-color)' });
+			lines.push({ line: `🔢 Move Cooldown: ${obj.moveCooldown}`, priority: 2, color: 'var(--cooldown-color)' });
 			break;
 		case 4:
 		case 2:
-			lines.push({ line: `💰 Balance: ${obj.balance}`, priority: 1 });
+			lines.push({ line: `💰 Balance: ${obj.balance}`, priority: 1, color: 'var(--balance-color)' });
 			break;
 		case 5:
-			lines.push({ line: `💣 Explosion Countdown: ${obj.countdown}`, priority: -1 });
+			lines.push({ line: `💣 Explosion Countdown: ${obj.countdown}`, priority: -1, color: 'black' });
 			break;
 	}
 
 	lines.sort((a, b) => a.priority - b.priority);
-	return lines.map((line) => line.line).join('<br>');
+
+	const result: string[] = [];
+	let prevPriority = -Infinity;
+	for (const { line, priority, color } of lines) {
+		if (prevPriority <= 2 && priority >= 3) {
+			result.push('');
+		}
+		result.push(`<span style="color: ${color}">${line}</span>`);
+		prevPriority = priority;
+	}
+
+	return result.join('<br>');
+}
+
+export function getBarMetrics(obj: TickObject): { key: string; percentage: number }[] {
+	const metrics: { key: string; percentage: number }[] = [];
+
+	// HP
+
+	let maxHP: number = -1;
+	switch (obj.type) {
+		case 0: // Core
+			maxHP = getGameConfig()?.coreHp || -1;
+			break;
+		case 1: // Unit
+			maxHP = getGameConfig()?.units?.[obj.unit_type]?.hp || -1;
+			break;
+		case 2: // Resource
+			maxHP = getGameConfig()?.resourceHp || -1;
+			break;
+		case 3: // Wall
+			maxHP = getGameConfig()?.wallHp || -1;
+			break;
+		case 5: // Bomb
+			maxHP = getGameConfig()?.bombHp || -1;
+			break;
+	}
+	if (obj.hp < maxHP && maxHP !== -1) {
+		metrics.push({
+			key: 'hp',
+			percentage: (obj.hp / maxHP) * 100,
+		});
+	}
+
+	// Balance
+	if ((obj.type === 0 || obj.type === 1) && obj.balance > 0) {
+		// resources and moneys holding money doesnt actually contain any info
+		let maxBalance = getGameConfig()?.resourceIncome || 175 * 3;
+		if (obj.balance > maxBalance) {
+			maxBalance = obj.balance;
+		}
+		metrics.push({
+			key: 'balance',
+			percentage: (obj.balance / maxBalance) * 100,
+		});
+	}
+
+	// Move Cooldown
+	if (obj.type === 1 && obj.moveCooldown > 0) {
+		const maxCooldown = getGameConfig()?.units?.[obj.unit_type]?.minSpeed || 10;
+		metrics.push({
+			key: 'moveCooldown',
+			percentage: (obj.moveCooldown / maxCooldown) * 100,
+		});
+	}
+
+	return metrics;
 }

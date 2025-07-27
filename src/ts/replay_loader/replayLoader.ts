@@ -1,6 +1,6 @@
-import type { TickAction } from './action';
-import type { GameConfig } from './config';
-import type { TickObject } from './object';
+import type { TickAction } from './action.js';
+import type { GameConfig } from './config.js';
+import type { TickObject } from './object.js';
 
 export interface ReplayTick {
 	objects: TickObject[];
