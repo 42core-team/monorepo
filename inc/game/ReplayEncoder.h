@@ -8,7 +8,6 @@ using json = nlohmann::ordered_json;
 #include "Config.h"
 
 #include <fstream>
-#include <curl/curl.h>
 
 typedef struct team_data_s {
 	unsigned int teamId;

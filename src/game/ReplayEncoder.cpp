@@ -162,15 +162,7 @@ void ReplayEncoder::exportReplay() const
 	replayData["config"] = config_;
 	replayData["full_tick_amount"] = lastTickCount_;
 
-	if (Config::server().replaysFolderPath.rfind("http://", 0) == 0 ||
-		Config::server().replaysFolderPath.rfind("https://", 0) == 0)
-	{
-		postReplay(replayData);
-	}
-	else
-	{
-		saveReplay(replayData);
-	}
+	saveReplay(replayData);
 }
 void ReplayEncoder::saveReplay(const json &replayData) const
 {
@@ -196,35 +188,4 @@ void ReplayEncoder::saveReplay(const json &replayData) const
 	outFile.close();
 
 	Logger::Log("Replay saved to " + latestPath + ".");
-}
-void ReplayEncoder::postReplay(const json &replayData) const
-{
-	CURL *curl = curl_easy_init();
-	if (!curl)
-	{
-		Logger::Log(LogLevel::ERROR, "Failed to initialize CURL for posting replay.");
-		return;
-	}
-
-	curl_easy_setopt(curl, CURLOPT_URL, Config::server().replaysFolderPath.c_str());
-	curl_easy_setopt(curl, CURLOPT_POST, 1L);
-	std::string payload = replayData.dump();
-	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload.c_str());
-	curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, payload.size());
-
-	struct curl_slist *headers = nullptr;
-	headers = curl_slist_append(headers, "Content-Type: application/json");
-	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-	char errbuf[CURL_ERROR_SIZE] = {0};
-	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errbuf);
-
-	CURLcode res = curl_easy_perform(curl);
-	if (res != CURLE_OK)
-		Logger::Log(LogLevel::ERROR, std::string("Replay upload failed: ") + curl_easy_strerror(res) + " - " + (errbuf[0] ? errbuf : "No error message"));
-	else
-		Logger::Log("Replay successfully uploaded to " + Config::server().replaysFolderPath + ".");
-
-	curl_slist_free_all(headers);
-	curl_easy_cleanup(curl);
 }
