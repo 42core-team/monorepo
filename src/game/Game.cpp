@@ -19,10 +19,12 @@ void Game::addBridge(std::unique_ptr<Bridge> bridge)
 
 void Game::run()
 {
+	auto serverStartTime = std::chrono::steady_clock::now();
+
 	sendConfig();
 	unsigned long long tickCount = 0;
 
-	unsigned int maxWait = Config::game().clientWaitTimeout;
+	unsigned int maxWait = Config::server().clientWaitTimeoutMs;
 	while (Board::instance().getCoreCount() > 1) // CORE GAMELOOP
 	{
 		auto waitStart = std::chrono::steady_clock::now();
@@ -64,7 +66,7 @@ void Game::run()
 			}
 		}
 
-		tick(tickCount, actions);
+		tick(tickCount, actions, serverStartTime);
 
 		tickCount++;
 	}
@@ -85,7 +87,7 @@ void Game::run()
 	replayEncoder_.exportReplay();
 }
 
-void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions)
+void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, std::chrono::steady_clock::time_point serverStartTime)
 {
 	// 1. EXECUTE ACTIONS
 
@@ -128,7 +130,9 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 
 	// 3. CHECK TIMEOUT
 
-	if (tick >= Config::game().timeout)
+	if (tick >= Config::server().timeoutTicks)
+		killWorstPlayerOnTimeout();
+	if (std::chrono::steady_clock::now() - serverStartTime >= std::chrono::milliseconds(Config::server().timeoutMs))
 		killWorstPlayerOnTimeout();
 
 	// 4. SEND STATE

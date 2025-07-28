@@ -21,9 +21,6 @@ struct GameConfig
 
 	unsigned int width;
 	unsigned int height;
-	unsigned int tickRate; // ticks per second
-	unsigned int timeout;
-	unsigned int clientWaitTimeout;
 
 	unsigned int idleIncome;		// idle income per tick
 	unsigned int idleIncomeTimeOut; // idle income duration in ticks
