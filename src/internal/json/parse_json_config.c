@@ -49,11 +49,11 @@ void core_internal_parse_config(char *json)
 
 	game.config.width = (unsigned long)json_find(root, "width")->number;
 	game.config.height = (unsigned long)json_find(root, "height")->number;
-	game.config.tick_rate = (unsigned long)json_find(root, "tickRate")->number;
 	game.config.idle_income = (unsigned long)json_find(root, "idleIncome")->number;
 	game.config.idle_income_timeout = (unsigned long)json_find(root, "idleIncomeTimeOut")->number;
 	game.config.resource_hp = (unsigned long)json_find(root, "resourceHp")->number;
 	game.config.resource_income = (unsigned long)json_find(root, "resourceIncome")->number;
+	game.config.money_obj_income = (unsigned long)json_find(root, "moneyObjIncome")->number;
 	game.config.core_hp = (unsigned long)json_find(root, "coreHp")->number;
 	game.config.initial_balance = (unsigned long)json_find(root, "initialBalance")->number;
 	game.config.wall_hp = (unsigned long)json_find(root, "wallHp")->number;

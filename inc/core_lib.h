@@ -136,8 +136,6 @@ typedef struct s_config
 	unsigned long height;
 	/// @brief The width of the map.
 	unsigned long width;
-	/// @brief How many ticks there are in one second.
-	unsigned long tick_rate;
 	/// @brief How much idle income you get every second.
 	unsigned long idle_income;
 	/// @brief How many ticks you get idle income.
@@ -146,6 +144,8 @@ typedef struct s_config
 	unsigned long resource_hp;
 	/// @brief How much income you get when you destroy a resource.
 	unsigned long resource_income;
+	/// @brief How much money a money object contains.
+	unsigned long money_obj_income;
 	/// @brief How much healthpoints a core has at the start of the game.
 	unsigned long core_hp;
 	/// @brief How much money a team starts with.
