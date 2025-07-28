@@ -23,6 +23,10 @@ static constexpr char EMPTY_CELL = '.';
 
 void Visualizer::visualizeGameState(unsigned long long tick)
 {
+	if (!Config::server().enableTerminalVisualizer)
+		return;
+
+
 	std::cout << "Tick: " << tick << "\n\n";
 
 	std::cout << "  Cores:   Team0 = '" << CORE_SYMBOLS[0]
