@@ -1,6 +1,10 @@
 {
 	"configFilePath": "config.json",
-	"replaysFolderPath": "replays",
+	"replayFolderPaths": [
+		"replays",
+		"debug-visualizer/src/public/misc",
+		"3d-visualizer/static/replays"
+	],
 	"dataFolderPath": "data",
 	"timeoutTicks": 3000,
 	"timeoutMs": 3000,

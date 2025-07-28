@@ -19,9 +19,19 @@ static ServerConfig parseServerConfig()
 	json j = json::parse(inFile);
 
 	config.gameConfigFilePath = j.value("gameConfigFilePath", "config/game.json");
-	config.replaysFolderPath = j.value("replaysFolderPath", "replays/");
-	if (config.replaysFolderPath.back() == '/')
-		config.replaysFolderPath.pop_back();
+	if (j.contains("replayFolderPaths") && j["replayFolderPaths"].is_array()) {
+		config.replayFolderPaths.clear();
+		for (const auto& path : j["replayFolderPaths"]) {
+			if (path.is_string()) {
+				std::string folderPath = path.get<std::string>();
+				if (!folderPath.empty() && folderPath.back() == '/')
+					folderPath.pop_back();
+				config.replayFolderPaths.push_back(folderPath);
+			}
+		}
+	} else {
+		config.replayFolderPaths = {"replays"};
+	}
 	config.dataFolderPath = j.value("dataFolderPath", "data/");
 	if (config.dataFolderPath.back() == '/')
 		config.dataFolderPath.pop_back();

@@ -111,23 +111,24 @@ void ReplayEncoder::includeConfig(json &config)
 
 void ReplayEncoder::verifyReplaySaveFolder()
 {
-	const std::string &replaySaveFolder = Config::server().replaysFolderPath;
-
-	if (replaySaveFolder.empty())
+	for (const std::string &replaySaveFolder : Config::server().replayFolderPaths)
 	{
-		Logger::Log(LogLevel::ERROR, "Replay save folder is not set.");
-		std::exit(1);
-	}
+		if (replaySaveFolder.empty())
+		{
+			Logger::Log(LogLevel::ERROR, "Replay save folder is not set.");
+			std::exit(1);
+		}
 
-	if (replaySaveFolder.rfind("http://", 0) == 0 ||
-		replaySaveFolder.rfind("https://", 0) == 0)
-		return;
+		if (replaySaveFolder.rfind("http://", 0) == 0 ||
+			replaySaveFolder.rfind("https://", 0) == 0)
+			return;
 
-	if (!std::filesystem::exists(replaySaveFolder) ||
-		!std::filesystem::is_directory(replaySaveFolder))
-	{
-		Logger::Log(LogLevel::ERROR, "Replay save folder is incorrectly set to: " + replaySaveFolder);
-		exit(1);
+		if (!std::filesystem::exists(replaySaveFolder) ||
+			!std::filesystem::is_directory(replaySaveFolder))
+		{
+			Logger::Log(LogLevel::ERROR, "Replay save folder is incorrectly set to: " + replaySaveFolder);
+			exit(1);
+		}
 	}
 }
 
@@ -150,9 +151,9 @@ json ReplayEncoder::encodeMiscSection() const
 
 void ReplayEncoder::exportReplay() const
 {
-	if (Config::server().replaysFolderPath.empty())
+	if (Config::server().replayFolderPaths.empty())
 	{
-		Logger::Log(LogLevel::ERROR, "Replay save folder is not set. Cannot save replay.");
+		Logger::Log(LogLevel::ERROR, "No Replay save folder set. Cannot save replay.");
 		return;
 	}
 
@@ -177,15 +178,18 @@ void ReplayEncoder::saveReplay(const json &replayData) const
 	// outFile << replayData.dump();
 	// outFile.close();
 
-	std::string latestPath = Config::server().replaysFolderPath + "/replay_latest.json";
-	std::ofstream outFile = std::ofstream(latestPath);
-	if (!outFile.is_open())
+	for (const std::string &replaySaveFolder : Config::server().replayFolderPaths)
 	{
-		Logger::Log(LogLevel::ERROR, "Could not open latest replay file for writing: " + latestPath);
-		return;
-	}
-	outFile << replayData.dump();
-	outFile.close();
+		std::string latestPath = replaySaveFolder + "/replay_latest.json";
+		std::ofstream outFile = std::ofstream(latestPath);
+		if (!outFile.is_open())
+		{
+			Logger::Log(LogLevel::ERROR, "Could not open latest replay file for writing: " + latestPath);
+			return;
+		}
+		outFile << replayData.dump();
+		outFile.close();
 
-	Logger::Log("Replay saved to " + latestPath + ".");
+		Logger::Log("Replay saved to " + latestPath + ".");
+	}
 }

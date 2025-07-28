@@ -30,8 +30,8 @@ int main(int argc, char *argv[])
 	}
 
 	Config::setServerConfigFilePath(argv[1]);
-	Config::game(); // Would exit if config file is invalid & initializes config
 	Config::server();
+	Config::game(); // Would exit if config file is invalid & initializes config
 
 	ReplayEncoder::verifyReplaySaveFolder();
 

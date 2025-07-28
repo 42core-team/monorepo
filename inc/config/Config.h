@@ -72,7 +72,7 @@ struct UnitConfig
 struct ServerConfig
 {
 	std::string gameConfigFilePath;
-	std::string replaysFolderPath;
+	std::vector<std::string> replayFolderPaths;
 	std::string dataFolderPath;
 	unsigned int timeoutTicks;
 	unsigned int timeoutMs;
