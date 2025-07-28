@@ -140,62 +140,13 @@ UnitConfig &Config::getUnitConfig(unsigned int unit_type)
 
 json Config::encodeConfig()
 {
-	const GameConfig &config = Config::game();
-
-	json configJson;
-
-	configJson["width"] = config.width;
-	configJson["height"] = config.height;
-	configJson["tickRate"] = config.tickRate;
-
-	configJson["idleIncome"] = config.idleIncome;
-	configJson["idleIncomeTimeOut"] = config.idleIncomeTimeOut;
-
-	configJson["resourceHp"] = config.resourceHp;
-	configJson["resourceIncome"] = config.resourceIncome;
-	configJson["moneyObjIncome"] = config.moneyObjIncome;
-
-	configJson["coreHp"] = config.coreHp;
-	configJson["initialBalance"] = config.initialBalance;
-
-	configJson["wallHp"] = config.wallHp;
-	configJson["wallBuildCost"] = config.wallBuildCost;
-
-	configJson["bombHp"] = config.bombHp;
-	configJson["bombCountdown"] = config.bombCountdown;
-	configJson["bombThrowCost"] = config.bombThrowCost;
-	configJson["bombReach"] = config.bombReach;
-	configJson["bombDamage"] = config.bombDamage;
-
-	configJson["units"] = json::array();
-	for (auto &unit : config.units)
+	std::ifstream inFile(Config::server().gameConfigFilePath);
+	if (!inFile)
 	{
-		json u;
-
-		u["name"] = unit.name;
-		u["cost"] = unit.cost;
-		u["hp"] = unit.hp;
-		u["speed"] = unit.speed;
-		u["minSpeed"] = unit.minSpeed;
-
-		u["damageCore"] = unit.damageCore;
-		u["damageUnit"] = unit.damageUnit;
-		u["damageResource"] = unit.damageResource;
-		u["damageWall"] = unit.damageWall;
-
-		u["buildType"] = unit.buildType;
-
-		configJson["units"].push_back(u);
+		Logger::Log(LogLevel::ERROR, "Could not open config file: " + Config::server().gameConfigFilePath);
+		exit(EXIT_FAILURE);
 	}
 
-	configJson["corePositions"] = json::array();
-	for (const auto &pos : config.corePositions)
-	{
-		json posJson;
-		posJson["x"] = pos.x;
-		posJson["y"] = pos.y;
-		configJson["corePositions"].push_back(posJson);
-	}
-
-	return configJson;
+	json j = json::parse(inFile);
+	return j;
 }
