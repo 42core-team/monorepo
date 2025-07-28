@@ -88,8 +88,8 @@ void ReplayEncoder::addTickState(const json &state)
 		tickDiff["objects"] = objectsDiff;
 	if (!actions.empty())
 		tickDiff["actions"] = actions;
-
-	ticks_[std::to_string(tick)] = tickDiff;
+	if (!tickDiff.empty())
+		ticks_[std::to_string(tick)] = tickDiff;
 
 	lastTickCount_ = tick;
 }
