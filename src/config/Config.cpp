@@ -23,6 +23,7 @@ GameConfig parseConfig()
 	config.height = j.value("height", 25);
 	config.tickRate = j.value("tickRate", 5);
 	config.timeout = j.value("timeout", 3000);
+	config.clientWaitTimeout = j.value("clientWaitTimeoutMs", 500);
 	config.idleIncome = j.value("idleIncome", 1);
 	config.idleIncomeTimeOut = j.value("idleIncomeTimeOut", 600);
 	config.resourceHp = j.value("resourceHp", 50);
