@@ -27,7 +27,12 @@ Bridge::~Bridge()
 {
 	disconnected_ = true;
 
-	Board::instance().removeObjectById(Board::instance().getCoreByTeamId(team_id_)->getId());
+	auto core = Board::instance().getCoreByTeamId(team_id_);
+	if (core != nullptr) {
+		Board::instance().removeObjectById(core->getId());
+	} else {
+		Logger::Log(LogLevel::WARNING, "Core not found for team ID: " + std::to_string(team_id_) + ". Unable to remove object.");
+	}
 
 	writeCv_.notify_all();
 	readCv_.notify_all();
