@@ -4,8 +4,8 @@ export interface BaseAction {
 export interface MoveAction extends BaseAction {
 	type: 'move';
 	unit_id: number;
-	targetX: number;
-	targetY: number;
+	x: number;
+	y: number;
 }
 export interface TransferMoneyAction extends BaseAction {
 	type: 'transfer_money';
@@ -16,7 +16,7 @@ export interface TransferMoneyAction extends BaseAction {
 }
 export interface BuildAction extends BaseAction {
 	type: 'build';
-	builder_id: number;
+	unit_id: number;
 	x: number;
 	y: number;
 }
@@ -27,8 +27,8 @@ export interface CreateAction extends BaseAction {
 export interface AttackAction extends BaseAction {
 	type: 'attack';
 	unit_id: number;
-	target_pos_x: number;
-	target_pos_y: number;
-	damage: number;
+	x: number;
+	y: number;
+	dmg: number;
 }
 export type TickAction = MoveAction | TransferMoneyAction | BuildAction | CreateAction | AttackAction;
