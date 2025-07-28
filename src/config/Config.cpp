@@ -1,19 +1,45 @@
 #include "Config.h"
 
-std::string Config::configFilePath = "";
-std::string Config::dataFilePath = "";
+std::string Config::serverConfigFilePath = "";
 
 #include "JigsawWorldGenerator.h"
 #include "DistancedResourceWorldGenerator.h"
 
-GameConfig parseConfig()
+static ServerConfig parseServerConfig()
+{
+	ServerConfig config;
+
+	std::ifstream inFile(Config::getServerConfigFilePath());
+	if (!inFile)
+	{
+		Logger::LogErr("Could not open server config file: " + Config::getServerConfigFilePath());
+		exit(EXIT_FAILURE);
+	}
+
+	json j = json::parse(inFile);
+
+	config.gameConfigFilePath = j.value("gameConfigFilePath", "config/game.json");
+	config.replaysFolderPath = j.value("replaysFolderPath", "replays/");
+	if (config.replaysFolderPath.back() == '/')
+		config.replaysFolderPath.pop_back();
+	config.dataFolderPath = j.value("dataFolderPath", "data/");
+	if (config.dataFolderPath.back() == '/')
+		config.dataFolderPath.pop_back();
+	config.timeoutTicks = j.value("timeoutTicks", 3000);
+	config.timeoutMs = j.value("timeoutMs", 3000);
+	config.clientWaitTimeoutMs = j.value("clientWaitTimeoutMs", 500);
+	config.enableTerminalVisualizer = j.value("enableTerminalVisualizer", false);
+
+	return config;
+}
+static GameConfig parseGameConfig()
 {
 	GameConfig config;
 
-	std::ifstream inFile(Config::getConfigFilePath());
+	std::ifstream inFile(Config::server().gameConfigFilePath);
 	if (!inFile)
 	{
-		Logger::Log(LogLevel::ERROR, "Could not open config file: " + Config::getConfigFilePath());
+		Logger::Log(LogLevel::ERROR, "Could not open config file: " + Config::server().gameConfigFilePath);
 		exit(EXIT_FAILURE);
 	}
 
@@ -21,8 +47,6 @@ GameConfig parseConfig()
 
 	config.width = j.value("width", 25);
 	config.height = j.value("height", 25);
-	config.tickRate = j.value("tickRate", 5);
-	config.timeout = j.value("timeout", 3000);
 	config.idleIncome = j.value("idleIncome", 1);
 	config.idleIncomeTimeOut = j.value("idleIncomeTimeOut", 600);
 	config.resourceHp = j.value("resourceHp", 50);
@@ -91,79 +115,35 @@ GameConfig parseConfig()
 	return config;
 }
 
-GameConfig &Config::instance()
+GameConfig &Config::game()
 {
-	static GameConfig configInstance = parseConfig();
+	static GameConfig configInstance = parseGameConfig();
 	return configInstance;
+}
+ServerConfig &Config::server()
+{
+	static ServerConfig serverConfigInstance = parseServerConfig();
+	return serverConfigInstance;
 }
 
 Position &Config::getCorePosition(unsigned int teamId)
 {
-	return instance().corePositions[teamId];
+	return game().corePositions[teamId];
 }
 UnitConfig &Config::getUnitConfig(unsigned int unit_type)
 {
-	return instance().units[unit_type];
+	return game().units[unit_type];
 }
 
 json Config::encodeConfig()
 {
-	const GameConfig &config = Config::instance();
-
-	json configJson;
-
-	configJson["width"] = config.width;
-	configJson["height"] = config.height;
-	configJson["tickRate"] = config.tickRate;
-
-	configJson["idleIncome"] = config.idleIncome;
-	configJson["idleIncomeTimeOut"] = config.idleIncomeTimeOut;
-
-	configJson["resourceHp"] = config.resourceHp;
-	configJson["resourceIncome"] = config.resourceIncome;
-	configJson["moneyObjIncome"] = config.moneyObjIncome;
-
-	configJson["coreHp"] = config.coreHp;
-	configJson["initialBalance"] = config.initialBalance;
-
-	configJson["wallHp"] = config.wallHp;
-	configJson["wallBuildCost"] = config.wallBuildCost;
-
-	configJson["bombHp"] = config.bombHp;
-	configJson["bombCountdown"] = config.bombCountdown;
-	configJson["bombThrowCost"] = config.bombThrowCost;
-	configJson["bombReach"] = config.bombReach;
-	configJson["bombDamage"] = config.bombDamage;
-
-	configJson["units"] = json::array();
-	for (auto &unit : config.units)
+	std::ifstream inFile(Config::server().gameConfigFilePath);
+	if (!inFile)
 	{
-		json u;
-
-		u["name"] = unit.name;
-		u["cost"] = unit.cost;
-		u["hp"] = unit.hp;
-		u["speed"] = unit.speed;
-		u["minSpeed"] = unit.minSpeed;
-
-		u["damageCore"] = unit.damageCore;
-		u["damageUnit"] = unit.damageUnit;
-		u["damageResource"] = unit.damageResource;
-		u["damageWall"] = unit.damageWall;
-
-		u["buildType"] = unit.buildType;
-
-		configJson["units"].push_back(u);
+		Logger::Log(LogLevel::ERROR, "Could not open config file: " + Config::server().gameConfigFilePath);
+		exit(EXIT_FAILURE);
 	}
 
-	configJson["corePositions"] = json::array();
-	for (const auto &pos : config.corePositions)
-	{
-		json posJson;
-		posJson["x"] = pos.x;
-		posJson["y"] = pos.y;
-		configJson["corePositions"].push_back(posJson);
-	}
-
-	return configJson;
+	json j = json::parse(inFile);
+	return j;
 }

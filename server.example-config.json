@@ -1,0 +1,9 @@
+{
+	"configFilePath": "config.json",
+	"replaysFolderPath": "replays",
+	"dataFolderPath": "data",
+	"timeoutTicks": 3000,
+	"timeoutMs": 3000,
+	"clientWaitTimeoutMs": 500,
+	"enableTerminalVisualizer": false
+}

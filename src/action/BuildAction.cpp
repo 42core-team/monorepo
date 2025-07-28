@@ -16,7 +16,7 @@ void BuildAction::decodeJSON(json msg)
 	builder_id_ = msg["builder_id"];
 	position_ = Position(msg["x"], msg["y"]);
 
-	if (!position_.isValid(Config::instance().width, Config::instance().height))
+	if (!position_.isValid(Config::game().width, Config::game().height))
 		is_valid_ = false;
 }
 json BuildAction::encodeJSON()
@@ -41,7 +41,7 @@ bool BuildAction::execute(Core *core)
 	if (builderObj == nullptr || builderObj->getType() != ObjectType::Unit)
 		return false;
 	Unit *builder = dynamic_cast<Unit *>(builderObj);
-	BuildType buildType = Config::instance().units[builder->getUnitType()].buildType;
+	BuildType buildType = Config::game().units[builder->getUnitType()].buildType;
 	if (buildType == BuildType::NONE)
 		return false;
 
@@ -53,16 +53,16 @@ bool BuildAction::execute(Core *core)
 
 	if (buildType == BuildType::WALL)
 	{
-		if (builder->getBalance() < Config::instance().wallBuildCost)
+		if (builder->getBalance() < Config::game().wallBuildCost)
 			return false;
-		builder->setBalance(builder->getBalance() - Config::instance().wallBuildCost);
+		builder->setBalance(builder->getBalance() - Config::game().wallBuildCost);
 		Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), position_);
 	}
 	else if (buildType == BuildType::BOMB)
 	{
-		if (builder->getBalance() < Config::instance().bombThrowCost)
+		if (builder->getBalance() < Config::game().bombThrowCost)
 		return false;
-		builder->setBalance(builder->getBalance() - Config::instance().bombThrowCost);
+		builder->setBalance(builder->getBalance() - Config::game().bombThrowCost);
 		Board::instance().addObject<Bomb>(Bomb(Board::instance().getNextObjectId()), position_);
 	}
 

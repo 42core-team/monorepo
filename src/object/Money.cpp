@@ -2,7 +2,7 @@
 
 Money::Money(unsigned int id)
 	: Object(id, 1, ObjectType::Money),
-	balance_(Config::instance().resourceIncome) {}
+	balance_(Config::game().resourceIncome) {}
 Money::Money(unsigned int id, unsigned int balance)
 	: Object(id, 1, ObjectType::Money),
 	balance_(balance) {}

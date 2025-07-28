@@ -22,6 +22,7 @@ class Bridge
 
 		void sendMessage(const json& message);
 		bool receiveMessage(json& message);
+		bool tryReceiveMessage(json &message);
 		bool isDisconnected();
 
 		void start();
