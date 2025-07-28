@@ -45,8 +45,7 @@ static GameConfig parseGameConfig()
 
 	json j = json::parse(inFile);
 
-	config.width = j.value("width", 25);
-	config.height = j.value("height", 25);
+	config.gridSize = j.value("gridSize", 25);
 	config.idleIncome = j.value("idleIncome", 1);
 	config.idleIncomeTimeOut = j.value("idleIncomeTimeOut", 600);
 	config.resourceHp = j.value("resourceHp", 50);
@@ -109,7 +108,7 @@ static GameConfig parseGameConfig()
 	{
 		Logger::Log(LogLevel::ERROR, "No core positions found in config. Using default positions. Please fix this.");
 		config.corePositions.push_back({0, 0});
-		config.corePositions.push_back({static_cast<int>(config.width - 1), static_cast<int>(config.height - 1)});
+		config.corePositions.push_back({static_cast<int>(config.gridSize - 1), static_cast<int>(config.gridSize - 1)});
 	}
 
 	return config;

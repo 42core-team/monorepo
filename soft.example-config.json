@@ -1,6 +1,5 @@
 {
-	"width": 25,
-	"height": 25,
+	"gridSize": 25,
 	"idleIncome": 1,
 	"idleIncomeTimeOut": 600,
 	"resourceHp": 50,

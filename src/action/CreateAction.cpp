@@ -31,7 +31,7 @@ bool CreateAction::execute(Core *core)
 		return false;
 
 	Position closestEmptyPos = findFirstEmptyGridCell(Board::instance().getObjectPositionById(core->getId()));
-	if (!closestEmptyPos.isValid(Config::game().width, Config::game().height))
+	if (!closestEmptyPos.isValid(Config::game().gridSize, Config::game().gridSize))
 		return false;
 
 	if (unit_type_ >= Config::game().units.size())

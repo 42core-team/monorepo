@@ -77,8 +77,8 @@ void Visualizer::visualizeGameState(unsigned long long tick)
 	if (core1)
 		std::cout << "Core h Health: " << core1->getHP() << std::endl;
 
-	int H = Config::game().height;
-	int W = Config::game().width;
+	int H = Config::game().gridSize;
+	int W = Config::game().gridSize;
 
 	std::cout << "  ";
 	for (int i = 0; i < W; ++i)

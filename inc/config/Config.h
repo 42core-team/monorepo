@@ -19,8 +19,7 @@ struct GameConfig
 	std::unique_ptr<WorldGenerator> worldGenerator;
 	json worldGeneratorConfig;
 
-	unsigned int width;
-	unsigned int height;
+	unsigned int gridSize;
 
 	unsigned int idleIncome;		// idle income per tick
 	unsigned int idleIncomeTimeOut; // idle income duration in ticks

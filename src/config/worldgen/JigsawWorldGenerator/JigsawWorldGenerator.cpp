@@ -96,7 +96,7 @@ bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, i
 			if (cell == ' ')
 				continue;
 
-			if (posX + x < 0 || posX + x >= (int)Config::game().width || posY + y < 0 || posY + y >= (int)Config::game().height)
+			if (posX + x < 0 || posX + x >= (int)Config::game().gridSize || posY + y < 0 || posY + y >= (int)Config::game().gridSize)
 				continue;
 
 			Position targetPos(posX + x, posY + y);
@@ -196,8 +196,8 @@ void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 	else if (currentObjCount < amount)
 	{
 		int addCount = amount - currentObjCount;
-		std::uniform_int_distribution<int> distX(0, Config::game().width - 1);
-		std::uniform_int_distribution<int> distY(0, Config::game().height - 1);
+		std::uniform_int_distribution<int> distX(0, Config::game().gridSize - 1);
+		std::uniform_int_distribution<int> distY(0, Config::game().gridSize - 1);
 
 		int max_iter = 10000;
 		while (addCount > 0 && --max_iter > 0)
@@ -231,10 +231,10 @@ void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 			rerollLikeliness -= wallsCount * 5;
 
 			// higher likelihood near non-core corners
-			int bottomLeftDistance = pos.distance(Position(0, Config::game().height));
-			int topRightDistance = pos.distance(Position(Config::game().width, 0));
+			int bottomLeftDistance = pos.distance(Position(0, Config::game().gridSize));
+			int topRightDistance = pos.distance(Position(Config::game().gridSize, 0));
 			int cornerDist = bottomLeftDistance < topRightDistance ? bottomLeftDistance : topRightDistance;
-			rerollLikeliness -= Config::game().width - cornerDist;
+			rerollLikeliness -= Config::game().gridSize - cornerDist;
 
 			if (rerollLikeliness < 0)
 				rerollLikeliness = 0;
@@ -272,8 +272,8 @@ void JigsawWorldGenerator::clearPathBetweenCores()
 		coreNbr++;
 	}
 
-	int W = Config::game().width;
-	int H = Config::game().height;
+	int W = Config::game().gridSize;
+	int H = Config::game().gridSize;
 
 	auto getCost = [](int x, int y) -> int
 	{
@@ -369,8 +369,8 @@ void JigsawWorldGenerator::placeWalls()
 	int additionalWallPlaceAttemptCount = Config::game().worldGeneratorConfig.value("additionalWallPlaceAttemptCount", 100);
 	int minCoreDistance = Config::game().worldGeneratorConfig.value("minCoreDistance", 5);
 
-	std::uniform_int_distribution<int> distX(0, Config::game().width - 1);
-	std::uniform_int_distribution<int> distY(0, Config::game().height - 1);
+	std::uniform_int_distribution<int> distX(0, Config::game().gridSize - 1);
+	std::uniform_int_distribution<int> distY(0, Config::game().gridSize - 1);
 	std::uniform_real_distribution<double> probDist(0.0, 1.0);
 
 	for (int i = 0; i < additionalWallPlaceAttemptCount; ++i)
@@ -427,8 +427,8 @@ void JigsawWorldGenerator::placeWalls()
 
 void JigsawWorldGenerator::mirrorWorld()
 {
-	unsigned int W = Config::game().width;
-	unsigned int H = Config::game().height;
+	unsigned int W = Config::game().gridSize;
+	unsigned int H = Config::game().gridSize;
 
 	for (const Object & obj : Board::instance())
 	{
@@ -476,8 +476,8 @@ void JigsawWorldGenerator::generateWorld()
 
 	Visualizer::visualizeGameState(0);
 
-	unsigned int width = Config::game().width;
-	unsigned int height = Config::game().height;
+	unsigned int width = Config::game().gridSize;
+	unsigned int height = Config::game().gridSize;
 
 	std::uniform_int_distribution<int> distX(0, width + 10);
 	std::uniform_int_distribution<int> distY(0, height + 10);

@@ -16,7 +16,7 @@ void BuildAction::decodeJSON(json msg)
 	builder_id_ = msg["builder_id"];
 	position_ = Position(msg["x"], msg["y"]);
 
-	if (!position_.isValid(Config::game().width, Config::game().height))
+	if (!position_.isValid(Config::game().gridSize, Config::game().gridSize))
 		is_valid_ = false;
 }
 json BuildAction::encodeJSON()

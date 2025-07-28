@@ -19,7 +19,7 @@ void AttackAction::decodeJSON(json msg)
 	target_pos_.x = msg["target_pos_x"];
 	target_pos_.y = msg["target_pos_y"];
 
-	if (!target_pos_.isValid(Config::game().width, Config::game().height))
+	if (!target_pos_.isValid(Config::game().gridSize, Config::game().gridSize))
 	{
 		is_valid_ = false;
 		return;

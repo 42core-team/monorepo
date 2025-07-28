@@ -8,8 +8,8 @@ void DistancedResourceWorldGenerator::generateWorld()
 {
 	Logger::Log("Generating world of type distanced resources.");
 
-	unsigned int width = Config::game().width;
-	unsigned int height = Config::game().height;
+	unsigned int width = Config::game().gridSize;
+	unsigned int height = Config::game().gridSize;
 	int resourceCount = Config::game().worldGeneratorConfig.value("resourceOrMoneyCount", 20);
 
 	// place objects randomly
