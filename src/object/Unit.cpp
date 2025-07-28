@@ -31,5 +31,5 @@ unsigned int Unit::calcMoveCooldown()
 	if (speed > minSpeed)
 		speed = minSpeed;
 
-	return speed;
+	return speed + 1;
 }
