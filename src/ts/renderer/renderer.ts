@@ -193,7 +193,7 @@ export async function setupRenderer(): Promise<void> {
 		throw new Error('Game configuration not found. Cannot set up renderer.');
 	}
 
-	const gridSize = gameConfig.width;
+	const gridSize = gameConfig.gridSize;
 	svgCanvas.setAttribute('width', gridSize.toString());
 	svgCanvas.setAttribute('height', gridSize.toString());
 	svgCanvas.setAttribute('viewBox', `0 0 ${gridSize} ${gridSize}`);

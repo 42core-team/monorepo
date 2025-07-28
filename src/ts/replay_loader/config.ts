@@ -11,9 +11,7 @@ export interface UnitConfig {
 	buildType: number;
 }
 export interface GameConfig {
-	width: number;
-	height: number;
-	tickRate: number;
+	gridSize: number;
 	idleIncome: number;
 	idleIncomeTimeOut: number;
 	resourceHp: number;
