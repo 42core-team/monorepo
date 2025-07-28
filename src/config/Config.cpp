@@ -101,6 +101,13 @@ static GameConfig parseGameConfig()
 			Position pos;
 			pos.x = posJson.value("x", 0);
 			pos.y = posJson.value("y", 0);
+
+			if (!pos.isValid(config.gridSize, config.gridSize))
+			{
+				Logger::Log(LogLevel::ERROR, "Invalid core position: (" + std::to_string(pos.x) + ", " + std::to_string(pos.y) + "). Skipping this position.");
+				continue;
+			}
+
 			config.corePositions.push_back(pos);
 		}
 	}
