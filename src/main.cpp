@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <csignal>
 #include <cerrno>
-#include <curl/curl.h>
 
 #include "Bridge.h"
 #include "Game.h"
@@ -24,21 +23,19 @@ using json = nlohmann::ordered_json;
 
 int main(int argc, char *argv[])
 {
-	if (argc < 6)
+	if (argc < 4)
 	{
-		Logger::Log(LogLevel::ERROR, std::string("Usage: ") + argv[0] + " [config file path] [replay save folder] [data file path] <teamId1> <teamId2> ...");
+		Logger::Log(LogLevel::ERROR, std::string("Usage: ") + argv[0] + " [server config file path] <teamId1> <teamId2> ...");
 		return 1;
 	}
 
-	Config::setDataFilePath(argv[3]);
+	Config::setServerConfigFilePath(argv[1]);
+	Config::game(); // Would exit if config file is invalid & initializes config
+	Config::server();
 
-	Config::setConfigFilePath(argv[1]);
-	Config::instance(); // Would exit if config file is invalid & initializes config
-
-	ReplayEncoder::setReplaySaveFolder(argv[2]);
 	ReplayEncoder::verifyReplaySaveFolder();
 
-	if (argc - 4 > (int)Config::instance().corePositions.size())
+	if (argc - 2 > (int)Config::game().corePositions.size())
 	{
 		Logger::Log(LogLevel::ERROR, "Too many team IDs for Core Locations specified.");
 		return 1;
@@ -47,16 +44,8 @@ int main(int argc, char *argv[])
 	// init srand
 	srand(time(nullptr));
 
-	// init curl
-	CURLcode gres = curl_global_init(CURL_GLOBAL_DEFAULT);
-	if (gres != CURLE_OK)
-	{
-		Logger::Log(LogLevel::ERROR, std::string("curl_global_init failed: ") + curl_easy_strerror(gres));
-		return 1;
-	}
-
 	std::vector<unsigned int> expectedTeamIds;
-	for (int i = 4; i < argc; i++)
+	for (int i = 2; i < argc; i++)
 		expectedTeamIds.push_back(std::stoi(argv[i]));
 
 	std::sort(expectedTeamIds.begin(), expectedTeamIds.end());
@@ -133,8 +122,6 @@ int main(int argc, char *argv[])
 						   { game.run(); });
 
 	gameThread.join();
-
-	curl_global_cleanup();
 
 	return 0;
 }

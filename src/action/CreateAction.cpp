@@ -31,10 +31,10 @@ bool CreateAction::execute(Core *core)
 		return false;
 
 	Position closestEmptyPos = findFirstEmptyGridCell(Board::instance().getObjectPositionById(core->getId()));
-	if (!closestEmptyPos.isValid(Config::instance().width, Config::instance().height))
+	if (!closestEmptyPos.isValid(Config::game().width, Config::game().height))
 		return false;
 
-	if (unit_type_ >= Config::instance().units.size())
+	if (unit_type_ >= Config::game().units.size())
 		return false;
 
 	unsigned int unitCost = Config::getUnitConfig(unit_type_).cost;

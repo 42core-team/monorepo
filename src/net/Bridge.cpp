@@ -30,6 +30,7 @@ Bridge::~Bridge()
 	auto core = Board::instance().getCoreByTeamId(team_id_);
 	if (core != nullptr) {
 		Board::instance().removeObjectById(core->getId());
+		Logger::Log("Core of team " + std::to_string(team_id_) + " has been removed from the board.");
 	} else {
 		Logger::Log(LogLevel::WARNING, "Core not found for team ID: " + std::to_string(team_id_) + ". Unable to remove object.");
 	}

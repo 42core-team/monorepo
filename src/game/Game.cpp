@@ -7,7 +7,7 @@ Game::Game(std::vector<unsigned int> team_ids)
 	shuffle_vector(team_ids); // randomly assign core positions to ensure fairness
 	for (unsigned int i = 0; i < team_ids.size(); ++i)
 		Board::instance().addObject<Core>(Core(Board::instance().getNextObjectId(), team_ids[i]), Config::getCorePosition(i), true);
-	Config::instance().worldGenerator->generateWorld();
+	Config::game().worldGenerator->generateWorld();
 	Logger::Log("Game created with " + std::to_string(team_ids.size()) + " teams.");
 }
 Game::~Game() {}
@@ -19,10 +19,12 @@ void Game::addBridge(std::unique_ptr<Bridge> bridge)
 
 void Game::run()
 {
+	auto serverStartTime = std::chrono::steady_clock::now();
+
 	sendConfig();
 	unsigned long long tickCount = 0;
 
-	unsigned int maxWait = Config::instance().clientWaitTimeout;
+	unsigned int maxWait = Config::server().clientWaitTimeoutMs;
 	while (Board::instance().getCoreCount() > 1) // CORE GAMELOOP
 	{
 		auto waitStart = std::chrono::steady_clock::now();
@@ -52,7 +54,11 @@ void Game::run()
 				Bridge* bb = it->get();
 				if (!gotMsg[bb]) {
 					Logger::LogWarn("Bridge of team " + std::to_string(bb->getTeamId()) + " did not send an action in time. Disconnecting.");
-					bb->sendMessage(json{{"error","timeout"}});
+					for (auto& action : actions) {
+						if (action.second && action.second->getTeamId() == bb->getTeamId()) {
+							action.second = nullptr; // invalidate actions for this team
+						}
+					}
 					it = bridges_.erase(it);
 				} else {
 					++it;
@@ -60,7 +66,7 @@ void Game::run()
 			}
 		}
 
-		tick(tickCount, actions);
+		tick(tickCount, actions, serverStartTime);
 
 		tickCount++;
 	}
@@ -81,7 +87,7 @@ void Game::run()
 	replayEncoder_.exportReplay();
 }
 
-void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions)
+void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, std::chrono::steady_clock::time_point serverStartTime)
 {
 	// 1. EXECUTE ACTIONS
 
@@ -91,7 +97,9 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 		auto& action = ele.first;
 		Core *core = ele.second;
 
-		if (!action->execute(core))
+		if (!core || !action)
+			action = nullptr;
+		else if (!action->execute(core))
 			action = nullptr;
 	}
 
@@ -122,7 +130,9 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 
 	// 3. CHECK TIMEOUT
 
-	if (tick >= Config::instance().timeout)
+	if (tick >= Config::server().timeoutTicks)
+		killWorstPlayerOnTimeout();
+	if (std::chrono::steady_clock::now() - serverStartTime >= std::chrono::milliseconds(Config::server().timeoutMs))
 		killWorstPlayerOnTimeout();
 
 	// 4. SEND STATE
@@ -146,10 +156,6 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 					break;
 				}
 			}
-			
-			// remove core from board
-			Logger::Log("Core of team " + std::to_string(core.getTeamId()) + " has been destroyed.");
-			Board::instance().removeObjectById(obj.getId());
 		}
 	}
 }

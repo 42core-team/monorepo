@@ -2,8 +2,6 @@
 
 #define REPLAY_VERSION std::string("1.0.0")
 
-std::string ReplayEncoder::replaySaveFolder_ = "";
-
 json ReplayEncoder::diffObject(const json &currentObj, const json &previousObj)
 {
 	json diff;
@@ -111,29 +109,24 @@ void ReplayEncoder::includeConfig(json &config)
 	config_ = config;
 }
 
-void ReplayEncoder::setReplaySaveFolder(const std::string &folder)
-{
-	std::string trimmedFolder = folder;
-	while (!trimmedFolder.empty() && trimmedFolder.back() == '/')
-		trimmedFolder.pop_back();
-	replaySaveFolder_ = trimmedFolder;
-}
 void ReplayEncoder::verifyReplaySaveFolder()
 {
-	if (replaySaveFolder_.empty())
+	const std::string &replaySaveFolder = Config::server().replaysFolderPath;
+
+	if (replaySaveFolder.empty())
 	{
 		Logger::Log(LogLevel::ERROR, "Replay save folder is not set.");
 		std::exit(1);
 	}
 
-	if (replaySaveFolder_.rfind("http://", 0) == 0 ||
-		replaySaveFolder_.rfind("https://", 0) == 0)
+	if (replaySaveFolder.rfind("http://", 0) == 0 ||
+		replaySaveFolder.rfind("https://", 0) == 0)
 		return;
 
-	if (!std::filesystem::exists(replaySaveFolder_) ||
-		!std::filesystem::is_directory(replaySaveFolder_))
+	if (!std::filesystem::exists(replaySaveFolder) ||
+		!std::filesystem::is_directory(replaySaveFolder))
 	{
-		Logger::Log(LogLevel::ERROR, "Replay save folder is incorrectly set to: " + replaySaveFolder_);
+		Logger::Log(LogLevel::ERROR, "Replay save folder is incorrectly set to: " + replaySaveFolder);
 		exit(1);
 	}
 }
@@ -157,7 +150,7 @@ json ReplayEncoder::encodeMiscSection() const
 
 void ReplayEncoder::exportReplay() const
 {
-	if (replaySaveFolder_.empty())
+	if (Config::server().replaysFolderPath.empty())
 	{
 		Logger::Log(LogLevel::ERROR, "Replay save folder is not set. Cannot save replay.");
 		return;
@@ -169,15 +162,7 @@ void ReplayEncoder::exportReplay() const
 	replayData["config"] = config_;
 	replayData["full_tick_amount"] = lastTickCount_;
 
-	if (replaySaveFolder_.rfind("http://", 0) == 0 ||
-		replaySaveFolder_.rfind("https://", 0) == 0)
-	{
-		postReplay(replayData);
-	}
-	else
-	{
-		saveReplay(replayData);
-	}
+	saveReplay(replayData);
 }
 void ReplayEncoder::saveReplay(const json &replayData) const
 {
@@ -192,7 +177,7 @@ void ReplayEncoder::saveReplay(const json &replayData) const
 	// outFile << replayData.dump();
 	// outFile.close();
 
-	std::string latestPath = replaySaveFolder_ + "/replay_latest.json";
+	std::string latestPath = Config::server().replaysFolderPath + "/replay_latest.json";
 	std::ofstream outFile = std::ofstream(latestPath);
 	if (!outFile.is_open())
 	{
@@ -203,35 +188,4 @@ void ReplayEncoder::saveReplay(const json &replayData) const
 	outFile.close();
 
 	Logger::Log("Replay saved to " + latestPath + ".");
-}
-void ReplayEncoder::postReplay(const json &replayData) const
-{
-	CURL *curl = curl_easy_init();
-	if (!curl)
-	{
-		Logger::Log(LogLevel::ERROR, "Failed to initialize CURL for posting replay.");
-		return;
-	}
-
-	curl_easy_setopt(curl, CURLOPT_URL, replaySaveFolder_.c_str());
-	curl_easy_setopt(curl, CURLOPT_POST, 1L);
-	std::string payload = replayData.dump();
-	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload.c_str());
-	curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, payload.size());
-
-	struct curl_slist *headers = nullptr;
-	headers = curl_slist_append(headers, "Content-Type: application/json");
-	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-	char errbuf[CURL_ERROR_SIZE] = {0};
-	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errbuf);
-
-	CURLcode res = curl_easy_perform(curl);
-	if (res != CURLE_OK)
-		Logger::Log(LogLevel::ERROR, std::string("Replay upload failed: ") + curl_easy_strerror(res) + " - " + (errbuf[0] ? errbuf : "No error message"));
-	else
-		Logger::Log("Replay successfully uploaded to " + replaySaveFolder_);
-
-	curl_slist_free_all(headers);
-	curl_easy_cleanup(curl);
 }

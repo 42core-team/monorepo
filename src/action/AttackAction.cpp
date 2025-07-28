@@ -19,7 +19,7 @@ void AttackAction::decodeJSON(json msg)
 	target_pos_.x = msg["target_pos_x"];
 	target_pos_.y = msg["target_pos_y"];
 
-	if (!target_pos_.isValid(Config::instance().width, Config::instance().height))
+	if (!target_pos_.isValid(Config::game().width, Config::game().height))
 	{
 		is_valid_ = false;
 		return;
@@ -45,25 +45,25 @@ bool AttackAction::attackObj(Object *obj, Unit *unit) // returns object new hp, 
 	unit->resetMoveCooldown();
 	if (obj->getType() == ObjectType::Unit)
 	{
-		obj->setHP(obj->getHP() - Config::instance().units[unit->getUnitType()].damageUnit);
-		damage_ = Config::instance().units[unit->getUnitType()].damageUnit;
+		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageUnit);
+		damage_ = Config::game().units[unit->getUnitType()].damageUnit;
 	}
 	else if (obj->getType() == ObjectType::Core)
 	{
-		obj->setHP(obj->getHP() - Config::instance().units[unit->getUnitType()].damageCore);
-		damage_ = Config::instance().units[unit->getUnitType()].damageCore;
+		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageCore);
+		damage_ = Config::game().units[unit->getUnitType()].damageCore;
 	}
 	else if (obj->getType() == ObjectType::Resource)
 	{
-		obj->setHP(obj->getHP() - Config::instance().units[unit->getUnitType()].damageResource);
+		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageResource);
 		if (obj->getHP() <= 0)
 			((Resource *)obj)->getMined(unit);
-		damage_ = Config::instance().units[unit->getUnitType()].damageResource;
+		damage_ = Config::game().units[unit->getUnitType()].damageResource;
 	}
 	else if (obj->getType() == ObjectType::Wall)
 	{
-		obj->setHP(obj->getHP() - Config::instance().units[unit->getUnitType()].damageWall);
-		damage_ = Config::instance().units[unit->getUnitType()].damageWall;
+		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageWall);
+		damage_ = Config::game().units[unit->getUnitType()].damageWall;
 	}
 	else if (obj->getType() == ObjectType::Money)
 	{

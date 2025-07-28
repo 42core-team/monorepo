@@ -8,9 +8,9 @@ void DistancedResourceWorldGenerator::generateWorld()
 {
 	Logger::Log("Generating world of type distanced resources.");
 
-	unsigned int width = Config::instance().width;
-	unsigned int height = Config::instance().height;
-	int resourceCount = Config::instance().worldGeneratorConfig.value("resourceOrMoneyCount", 20);
+	unsigned int width = Config::game().width;
+	unsigned int height = Config::game().height;
+	int resourceCount = Config::game().worldGeneratorConfig.value("resourceOrMoneyCount", 20);
 
 	// place objects randomly
 
@@ -43,7 +43,7 @@ void DistancedResourceWorldGenerator::generateWorld()
 			continue; // repick another position
 		}
 
-		std::uniform_int_distribution<int> resourceOrMoney(0, Config::instance().worldGeneratorConfig.value("moneyChance", 4) - 1);
+		std::uniform_int_distribution<int> resourceOrMoney(0, Config::game().worldGeneratorConfig.value("moneyChance", 4) - 1);
 		if (resourceOrMoney(eng_) == 0)
 			Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), randPos);
 		else
