@@ -86,8 +86,7 @@ void core_print_config_unit(t_unit_type unit_type)
 void core_print_config(void)
 {
 	printf("Game Config:\n");
-	printf("	- Map Height: %lu\n", game.config.height);
-	printf("	- Map Width: %lu\n", game.config.width);
+	printf("	- Map Grid Size: %lu\n", game.config.gridSize);
 	printf("	- Idle Income: %lu\n", game.config.idle_income);
 	printf("	- Idle Income Timeout: %lu\n", game.config.idle_income_timeout);
 	printf("	- Resource HP: %lu\n", game.config.resource_hp);

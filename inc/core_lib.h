@@ -132,10 +132,8 @@ typedef struct s_unit_config
 } t_unit_config;
 typedef struct s_config
 {
-	/// @brief The height of the map.
-	unsigned long height;
-	/// @brief The width of the map.
-	unsigned long width;
+	/// @brief The width & height of the map.
+	unsigned long gridSize;
 	/// @brief How much idle income you get every second.
 	unsigned long idle_income;
 	/// @brief How many ticks you get idle income.

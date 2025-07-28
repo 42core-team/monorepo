@@ -47,8 +47,7 @@ void core_internal_parse_config(char *json)
 {
 	json_node *root = string_to_json(json);
 
-	game.config.width = (unsigned long)json_find(root, "width")->number;
-	game.config.height = (unsigned long)json_find(root, "height")->number;
+	game.config.gridSize = (unsigned long)json_find(root, "gridSize")->number;
 	game.config.idle_income = (unsigned long)json_find(root, "idleIncome")->number;
 	game.config.idle_income_timeout = (unsigned long)json_find(root, "idleIncomeTimeOut")->number;
 	game.config.resource_hp = (unsigned long)json_find(root, "resourceHp")->number;
