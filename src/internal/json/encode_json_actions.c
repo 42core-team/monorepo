@@ -37,11 +37,11 @@ char *core_internal_encode_action(void)
 					uid->number = a->data.move.id;
 					obj->array[idx++] = uid;
 					json_node *x = create_node(JSON_TYPE_NUMBER);
-					x->key = strdup("targetX");
+					x->key = strdup("x");
 					x->number = a->data.move.pos.x;
 					obj->array[idx++] = x;
 					json_node *y = create_node(JSON_TYPE_NUMBER);
-					y->key = strdup("targetY");
+					y->key = strdup("y");
 					y->number = a->data.move.pos.y;
 					obj->array[idx++] = y;
 				}
@@ -56,11 +56,11 @@ char *core_internal_encode_action(void)
 					uid->number = a->data.attack.id;
 					obj->array[idx++] = uid;
 					json_node *x = create_node(JSON_TYPE_NUMBER);
-					x->key = strdup("target_pos_x");
+					x->key = strdup("x");
 					x->number = a->data.attack.pos.x;
 					obj->array[idx++] = x;
 					json_node *y = create_node(JSON_TYPE_NUMBER);
-					y->key = strdup("target_pos_y");
+					y->key = strdup("y");
 					y->number = a->data.attack.pos.y;
 					obj->array[idx++] = y;
 				}
@@ -78,11 +78,11 @@ char *core_internal_encode_action(void)
 					amt->number = a->data.transfer.amount;
 					obj->array[idx++] = amt;
 					json_node *x = create_node(JSON_TYPE_NUMBER);
-					x->key = strdup("target_pos_x");
+					x->key = strdup("x");
 					x->number = a->data.transfer.target_pos.x;
 					obj->array[idx++] = x;
 					json_node *y = create_node(JSON_TYPE_NUMBER);
-					y->key = strdup("target_pos_y");
+					y->key = strdup("y");
 					y->number = a->data.transfer.target_pos.y;
 					obj->array[idx++] = y;
 				}
@@ -92,7 +92,7 @@ char *core_internal_encode_action(void)
 				obj->array[idx++] = t;
 				{
 					json_node *bid = create_node(JSON_TYPE_NUMBER);
-					bid->key = strdup("builder_id");
+					bid->key = strdup("unit_id");
 					bid->number = a->data.build.builder_id;
 					obj->array[idx++] = bid;
 					json_node *x = create_node(JSON_TYPE_NUMBER);
