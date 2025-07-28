@@ -18,7 +18,7 @@ class Board
 		~Board() = default;
 
 		static Board& instance() {
-			static Board _instance(Config::instance().width, Config::instance().height);
+			static Board _instance(Config::game().width, Config::game().height);
 			return _instance;
 		}
 

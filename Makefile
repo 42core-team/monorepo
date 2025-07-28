@@ -1,6 +1,6 @@
 CXX := clang++
 
-CXXFLAGS := -std=c++17 -Wall -Wextra -Werror -pthread -MMD -MP -fsanitize=address
+CXXFLAGS := -std=c++17 -Wall -Wextra -Werror -pthread -MMD -MP -fsanitize=address -g
 
 LDFLAGS := -pthread -lcurl
 

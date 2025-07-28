@@ -2,9 +2,9 @@
 
 Position findFirstEmptyGridCell(Position startPos) // bfs / flood fill
 {
-	Position errorPos = {static_cast<int>(Config::instance().width), static_cast<int>(Config::instance().height)};
-	const int width  = Config::instance().width;
-	const int height = Config::instance().height;
+	Position errorPos = {static_cast<int>(Config::game().width), static_cast<int>(Config::game().height)};
+	const int width  = Config::game().width;
+	const int height = Config::game().height;
 	
 	if ((int)startPos.x < 0 || (int)startPos.x >= width || (int)startPos.y < 0 || (int)startPos.y >= height)
 		return errorPos;

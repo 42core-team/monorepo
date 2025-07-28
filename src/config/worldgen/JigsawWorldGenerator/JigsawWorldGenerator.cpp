@@ -11,7 +11,7 @@ JigsawWorldGenerator::JigsawWorldGenerator(unsigned int seed)
 
 void JigsawWorldGenerator::loadTemplates()
 {
-	for (const auto &entry : std::filesystem::directory_iterator(Config::getDataFilePath() + "/jigsaw-templates"))
+	for (const auto &entry : std::filesystem::directory_iterator(Config::server().dataFolderPath + "/jigsaw-templates"))
 	{
 		if (entry.path().extension() != ".txt")
 		{
@@ -36,8 +36,8 @@ void JigsawWorldGenerator::loadTemplates()
 
 bool JigsawWorldGenerator::canPlaceTemplate(const MapTemplate &temp, int posX, int posY)
 {
-	int minSpacing = Config::instance().worldGeneratorConfig.value("minTemplateSpacing", 1);
-	int minCoreDistance = Config::instance().worldGeneratorConfig.value("minCoreDistance", 5);
+	int minSpacing = Config::game().worldGeneratorConfig.value("minTemplateSpacing", 1);
+	int minCoreDistance = Config::game().worldGeneratorConfig.value("minCoreDistance", 5);
 
 	for (int y = 0; y < temp.height; ++y)
 	{
@@ -96,7 +96,7 @@ bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, i
 			if (cell == ' ')
 				continue;
 
-			if (posX + x < 0 || posX + x >= (int)Config::instance().width || posY + y < 0 || posY + y >= (int)Config::instance().height)
+			if (posX + x < 0 || posX + x >= (int)Config::game().width || posY + y < 0 || posY + y >= (int)Config::game().height)
 				continue;
 
 			Position targetPos(posX + x, posY + y);
@@ -174,7 +174,7 @@ bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, i
 // TODO: Make this a template function. the if statement down there is painful
 void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 {
-	int minCoreDistance = Config::instance().worldGeneratorConfig.value("minCoreDistance", 5);
+	int minCoreDistance = Config::game().worldGeneratorConfig.value("minCoreDistance", 5);
 
 	std::vector<unsigned int> typeObjectIds;
 	for (auto & obj : Board::instance())
@@ -196,8 +196,8 @@ void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 	else if (currentObjCount < amount)
 	{
 		int addCount = amount - currentObjCount;
-		std::uniform_int_distribution<int> distX(0, Config::instance().width - 1);
-		std::uniform_int_distribution<int> distY(0, Config::instance().height - 1);
+		std::uniform_int_distribution<int> distX(0, Config::game().width - 1);
+		std::uniform_int_distribution<int> distY(0, Config::game().height - 1);
 
 		int max_iter = 10000;
 		while (addCount > 0 && --max_iter > 0)
@@ -231,10 +231,10 @@ void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 			rerollLikeliness -= wallsCount * 5;
 
 			// higher likelihood near non-core corners
-			int bottomLeftDistance = pos.distance(Position(0, Config::instance().height));
-			int topRightDistance = pos.distance(Position(Config::instance().width, 0));
+			int bottomLeftDistance = pos.distance(Position(0, Config::game().height));
+			int topRightDistance = pos.distance(Position(Config::game().width, 0));
 			int cornerDist = bottomLeftDistance < topRightDistance ? bottomLeftDistance : topRightDistance;
-			rerollLikeliness -= Config::instance().width - cornerDist;
+			rerollLikeliness -= Config::game().width - cornerDist;
 
 			if (rerollLikeliness < 0)
 				rerollLikeliness = 0;
@@ -272,8 +272,8 @@ void JigsawWorldGenerator::clearPathBetweenCores()
 		coreNbr++;
 	}
 
-	int W = Config::instance().width;
-	int H = Config::instance().height;
+	int W = Config::game().width;
+	int H = Config::game().height;
 
 	auto getCost = [](int x, int y) -> int
 	{
@@ -354,7 +354,7 @@ void JigsawWorldGenerator::clearPathBetweenCores()
 			if (Board::instance().getObjectPositionById(obj.getId()) == pos && obj.getType() != ObjectType::Core)
 				Board::instance().removeObjectById(obj.getId());
 
-		if (!Config::instance().worldGeneratorConfig.value("mirrorMap", true))
+		if (!Config::game().worldGeneratorConfig.value("mirrorMap", true))
 			continue;
 
 		Position mirrorPos((W - 1) - pos.x, (H - 1) - pos.y);
@@ -366,11 +366,11 @@ void JigsawWorldGenerator::clearPathBetweenCores()
 
 void JigsawWorldGenerator::placeWalls()
 {
-	int additionalWallPlaceAttemptCount = Config::instance().worldGeneratorConfig.value("additionalWallPlaceAttemptCount", 100);
-	int minCoreDistance = Config::instance().worldGeneratorConfig.value("minCoreDistance", 5);
+	int additionalWallPlaceAttemptCount = Config::game().worldGeneratorConfig.value("additionalWallPlaceAttemptCount", 100);
+	int minCoreDistance = Config::game().worldGeneratorConfig.value("minCoreDistance", 5);
 
-	std::uniform_int_distribution<int> distX(0, Config::instance().width - 1);
-	std::uniform_int_distribution<int> distY(0, Config::instance().height - 1);
+	std::uniform_int_distribution<int> distX(0, Config::game().width - 1);
+	std::uniform_int_distribution<int> distY(0, Config::game().height - 1);
 	std::uniform_real_distribution<double> probDist(0.0, 1.0);
 
 	for (int i = 0; i < additionalWallPlaceAttemptCount; ++i)
@@ -427,8 +427,8 @@ void JigsawWorldGenerator::placeWalls()
 
 void JigsawWorldGenerator::mirrorWorld()
 {
-	unsigned int W = Config::instance().width;
-	unsigned int H = Config::instance().height;
+	unsigned int W = Config::game().width;
+	unsigned int H = Config::game().height;
 
 	for (const Object & obj : Board::instance())
 	{
@@ -469,15 +469,15 @@ void JigsawWorldGenerator::mirrorWorld()
 
 void JigsawWorldGenerator::generateWorld()
 {
-	int templatePlaceAttemptCount = Config::instance().worldGeneratorConfig.value("templatePlaceAttemptCount", 1000);
-	bool mirrorMap = Config::instance().worldGeneratorConfig.value("mirrorMap", true);
+	int templatePlaceAttemptCount = Config::game().worldGeneratorConfig.value("templatePlaceAttemptCount", 1000);
+	bool mirrorMap = Config::game().worldGeneratorConfig.value("mirrorMap", true);
 
 	Logger::Log("Generating world with JigsawWorldGenerator");
 
 	Visualizer::visualizeGameState(0);
 
-	unsigned int width = Config::instance().width;
-	unsigned int height = Config::instance().height;
+	unsigned int width = Config::game().width;
+	unsigned int height = Config::game().height;
 
 	std::uniform_int_distribution<int> distX(0, width + 10);
 	std::uniform_int_distribution<int> distY(0, height + 10);
@@ -500,11 +500,11 @@ void JigsawWorldGenerator::generateWorld()
 	Visualizer::visualizeGameState(0);
 
 	Logger::Log("Step 3: Balancing resources");
-	balanceObjectType(ObjectType::Resource, Config::instance().worldGeneratorConfig.value("resourceCount", 20));
+	balanceObjectType(ObjectType::Resource, Config::game().worldGeneratorConfig.value("resourceCount", 20));
 	Visualizer::visualizeGameState(0);
 
 	Logger::Log("Step 4: Balancing moneys");
-	balanceObjectType(ObjectType::Money, Config::instance().worldGeneratorConfig.value("moneysCount", 20));
+	balanceObjectType(ObjectType::Money, Config::game().worldGeneratorConfig.value("moneysCount", 20));
 	Visualizer::visualizeGameState(0);
 
 	if (mirrorMap)

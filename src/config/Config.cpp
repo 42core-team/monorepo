@@ -1,19 +1,45 @@
 #include "Config.h"
 
-std::string Config::configFilePath = "";
-std::string Config::dataFilePath = "";
+std::string Config::serverConfigFilePath = "";
 
 #include "JigsawWorldGenerator.h"
 #include "DistancedResourceWorldGenerator.h"
 
-GameConfig parseConfig()
+static ServerConfig parseServerConfig()
+{
+	ServerConfig config;
+
+	std::ifstream inFile(Config::getServerConfigFilePath());
+	if (!inFile)
+	{
+		Logger::LogErr("Could not open server config file: " + Config::getServerConfigFilePath());
+		exit(EXIT_FAILURE);
+	}
+
+	json j = json::parse(inFile);
+
+	config.gameConfigFilePath = j.value("gameConfigFilePath", "config/game.json");
+	config.replaysFolderPath = j.value("replaysFolderPath", "replays/");
+	if (config.replaysFolderPath.back() == '/')
+		config.replaysFolderPath.pop_back();
+	config.dataFolderPath = j.value("dataFolderPath", "data/");
+	if (config.dataFolderPath.back() == '/')
+		config.dataFolderPath.pop_back();
+	config.timeoutTicks = j.value("timeoutTicks", 3000);
+	config.timeoutMs = j.value("timeoutMs", 3000);
+	config.clientWaitTimeoutMs = j.value("clientWaitTimeoutMs", 500);
+	config.enableTerminalVisualizer = j.value("enableTerminalVisualizer", false);
+
+	return config;
+}
+static GameConfig parseGameConfig()
 {
 	GameConfig config;
 
-	std::ifstream inFile(Config::getConfigFilePath());
+	std::ifstream inFile(Config::server().gameConfigFilePath);
 	if (!inFile)
 	{
-		Logger::Log(LogLevel::ERROR, "Could not open config file: " + Config::getConfigFilePath());
+		Logger::Log(LogLevel::ERROR, "Could not open config file: " + Config::server().gameConfigFilePath);
 		exit(EXIT_FAILURE);
 	}
 
@@ -92,24 +118,29 @@ GameConfig parseConfig()
 	return config;
 }
 
-GameConfig &Config::instance()
+GameConfig &Config::game()
 {
-	static GameConfig configInstance = parseConfig();
+	static GameConfig configInstance = parseGameConfig();
 	return configInstance;
+}
+ServerConfig &Config::server()
+{
+	static ServerConfig serverConfigInstance = parseServerConfig();
+	return serverConfigInstance;
 }
 
 Position &Config::getCorePosition(unsigned int teamId)
 {
-	return instance().corePositions[teamId];
+	return game().corePositions[teamId];
 }
 UnitConfig &Config::getUnitConfig(unsigned int unit_type)
 {
-	return instance().units[unit_type];
+	return game().units[unit_type];
 }
 
 json Config::encodeConfig()
 {
-	const GameConfig &config = Config::instance();
+	const GameConfig &config = Config::game();
 
 	json configJson;
 

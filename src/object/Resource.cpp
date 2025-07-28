@@ -1,10 +1,10 @@
 #include "Resource.h"
 
 Resource::Resource(unsigned int id)
-	: Object(id, Config::instance().resourceHp, ObjectType::Resource),
-	  balance_(Config::instance().resourceIncome) {}
+	: Object(id, Config::game().resourceHp, ObjectType::Resource),
+	  balance_(Config::game().resourceIncome) {}
 Resource::Resource(unsigned int id, unsigned int balance)
-	: Object(id, static_cast<unsigned int>(std::round(double(balance) / Config::instance().resourceIncome * Config::instance().resourceHp)),
+	: Object(id, static_cast<unsigned int>(std::round(double(balance) / Config::game().resourceIncome * Config::game().resourceHp)),
 			 ObjectType::Resource),
 	  balance_(balance) {}
 

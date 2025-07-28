@@ -73,30 +73,36 @@ struct UnitConfig
 	BuildType buildType;
 };
 
+struct ServerConfig
+{
+	std::string gameConfigFilePath;
+	std::string replaysFolderPath;
+	std::string dataFolderPath;
+	unsigned int timeoutTicks;
+	unsigned int timeoutMs;
+	unsigned int clientWaitTimeoutMs;
+	bool enableTerminalVisualizer;
+};
+
 class Config
 {
 	public:
-		static GameConfig &instance();
+		static GameConfig &game();
+		static ServerConfig &server();
+
 		static json encodeConfig();
 
 		static Position &getCorePosition(unsigned int teamId);
 		static UnitConfig &getUnitConfig(unsigned int typeId);
 
-		static void setConfigFilePath(const std::string &path)
+		static void setServerConfigFilePath(const std::string &path)
 		{
-			configFilePath = path;
+			serverConfigFilePath = path;
 		}
-		static std::string getConfigFilePath() { return configFilePath; }
-
-		static void setDataFilePath(const std::string &path)
-		{
-			dataFilePath = path;
-		}
-		static std::string getDataFilePath() { return dataFilePath; }
+		static std::string getServerConfigFilePath() { return serverConfigFilePath; }
 
 	private:
-		static std::string configFilePath;
-		static std::string dataFilePath;
+		static std::string serverConfigFilePath;
 };
 
 #endif // CONFIG_H

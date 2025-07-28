@@ -1,11 +1,11 @@
 #include "Bomb.h"
 
 Bomb::Bomb(unsigned int id)
-	: Object(id, Config::instance().bombHp, ObjectType::Bomb), countdown_(Config::instance().bombCountdown) {}
+	: Object(id, Config::game().bombHp, ObjectType::Bomb), countdown_(Config::game().bombCountdown) {}
 
 void Bomb::explode()
 {
-	int bombReach = Config::instance().bombReach;
+	int bombReach = Config::game().bombReach;
 	Position bombPos = Board::instance().getObjectPositionById(this->getId());
 	for (int i = 0; i < bombReach; i++) // pos X
 	{
@@ -14,7 +14,7 @@ void Bomb::explode()
 			continue;
 		if (obj->getType() == ObjectType::Wall)
 			break;
-		obj->setHP(obj->getHP() - Config::instance().bombDamage);
+		obj->setHP(obj->getHP() - Config::game().bombDamage);
 	}
 	for (int i = 0; i < bombReach; i++) // pos Y
 	{
@@ -23,7 +23,7 @@ void Bomb::explode()
 			continue;
 		if (obj->getType() == ObjectType::Wall)
 			break;
-		obj->setHP(obj->getHP() - Config::instance().bombDamage);
+		obj->setHP(obj->getHP() - Config::game().bombDamage);
 	}
 	for (int i = 0; i < bombReach; i++) // neg X
 	{
@@ -32,7 +32,7 @@ void Bomb::explode()
 			continue;
 		if (obj->getType() == ObjectType::Wall)
 			break;
-		obj->setHP(obj->getHP() - Config::instance().bombDamage);
+		obj->setHP(obj->getHP() - Config::game().bombDamage);
 	}
 	for (int i = 0; i < bombReach; i++) // neg Y
 	{
@@ -41,7 +41,7 @@ void Bomb::explode()
 			continue;
 		if (obj->getType() == ObjectType::Wall)
 			break;
-		obj->setHP(obj->getHP() - Config::instance().bombDamage);
+		obj->setHP(obj->getHP() - Config::game().bombDamage);
 	}
 	Board::instance().removeObjectById(this->getId());
 }
