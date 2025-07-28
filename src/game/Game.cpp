@@ -20,35 +20,47 @@ void Game::addBridge(std::unique_ptr<Bridge> bridge)
 void Game::run()
 {
 	sendConfig();
-
-	using clock = std::chrono::steady_clock;
-	unsigned int ticksPerSecond = Config::instance().tickRate;
-	auto tickInterval = std::chrono::nanoseconds(1000000000 / ticksPerSecond);
-
-	auto startTime = clock::now();
 	unsigned long long tickCount = 0;
 
+	unsigned int maxWait = Config::instance().clientWaitTimeout;
 	while (Board::instance().getCoreCount() > 1) // CORE GAMELOOP
 	{
-		auto now = clock::now();
-		auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - startTime);
-		unsigned long long expectedTickCount = elapsed.count() / tickInterval.count();
+		auto waitStart = std::chrono::steady_clock::now();
+		std::unordered_map<Bridge*, bool> gotMsg;
+		for (auto& b : bridges_) gotMsg[b.get()] = false;
 
-		if (expectedTickCount > tickCount)
-		{
-			// Over one tick passed, we're lagging.
-			if (expectedTickCount > tickCount + 1)
-			{
-				unsigned long skipped = expectedTickCount - tickCount - 1;
-				Logger::Log(LogLevel::WARNING, "Processing delay: skipping " + std::to_string(skipped) + " tick(s).");
+		std::vector<std::pair<std::unique_ptr<Action>, Core *>> actions;
+		while (std::chrono::steady_clock::now() - waitStart < std::chrono::milliseconds(maxWait)) {
+			bool all = true;
+			for (auto& b : bridges_) {
+				if (!gotMsg[b.get()]) {
+					json msg;
+					if (b->tryReceiveMessage(msg)) {
+						Core* core = Board::instance().getCoreByTeamId(b->getTeamId());
+						for (auto& a : Action::parseActions(msg))
+							actions.emplace_back(std::move(a), core);
+						gotMsg[b.get()] = true;
+					} else {
+						all = false;
+					}
+				}
 			}
-			tickCount = expectedTickCount;
+			if (all) break;
+		}
+		if (std::chrono::steady_clock::now() - waitStart >= std::chrono::milliseconds(maxWait)) {
+			for (auto it = bridges_.begin(); it != bridges_.end();) {
+				Bridge* bb = it->get();
+				if (!gotMsg[bb]) {
+					Logger::LogWarn("Bridge of team " + std::to_string(bb->getTeamId()) + " did not send an action in time. Disconnecting.");
+					bb->sendMessage(json{{"error","timeout"}});
+					it = bridges_.erase(it);
+				} else {
+					++it;
+				}
+			}
 		}
 
-		auto nextTickTime = startTime + (tickCount + 1) * tickInterval;
-		std::this_thread::sleep_until(nextTickTime);
-
-		tick(tickCount);
+		tick(tickCount, actions);
 
 		tickCount++;
 	}
@@ -69,29 +81,9 @@ void Game::run()
 	replayEncoder_.exportReplay();
 }
 
-void Game::tick(unsigned long long tick)
+void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions)
 {
-	// 1. COMPUTE ACTIONS
-
-	std::vector<std::pair<std::unique_ptr<Action>, Core *>> actions; // action, team id
-
-	for (auto& bridge : bridges_)
-	{
-		json msg;
-		bridge->receiveMessage(msg);
-
-		Core *core = Board::instance().getCoreByTeamId(bridge->getTeamId());
-
-		if (!core)
-			continue;
-		if (core->getHP() <= 0)
-			continue;
-
-		std::vector<std::unique_ptr<Action>> clientActions = Action::parseActions(msg);
-
-		for (auto& action : clientActions)
-			actions.emplace_back(std::move(action), core);
-	}
+	// 1. EXECUTE ACTIONS
 
 	shuffle_vector(actions); // shuffle action execution order to ensure fairness
 

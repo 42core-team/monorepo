@@ -1,5 +1,7 @@
 #include "Bridge.h"
 
+#include "Board.h"
+
 #include <sys/socket.h> // For shutdown()
 #include <unistd.h>		// For close(), read() and write()
 #include <cstring>		// For strerror()
@@ -24,6 +26,13 @@ Bridge::Bridge(int socket_fd, unsigned int teamId)
 Bridge::~Bridge()
 {
 	disconnected_ = true;
+
+	auto core = Board::instance().getCoreByTeamId(team_id_);
+	if (core != nullptr) {
+		Board::instance().removeObjectById(core->getId());
+	} else {
+		Logger::Log(LogLevel::WARNING, "Core not found for team ID: " + std::to_string(team_id_) + ". Unable to remove object.");
+	}
 
 	writeCv_.notify_all();
 	readCv_.notify_all();
@@ -64,6 +73,15 @@ bool Bridge::receiveMessage(json &message)
 	message = readQueue_.front();
 	readQueue_.pop();
 	// std::cout << "Server received message: " << message << std::endl;
+	return true;
+}
+bool Bridge::tryReceiveMessage(json &message)
+{
+	std::lock_guard<std::mutex> lock(readMutex_);
+	if (readQueue_.empty())
+		return false;
+	message = readQueue_.front();
+	readQueue_.pop();
 	return true;
 }
 
