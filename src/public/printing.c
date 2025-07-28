@@ -78,8 +78,8 @@ void core_print_config_unit(t_unit_type unit_type)
 	else if (unit_config->build_type == BUILD_TYPE_BOMB)
 		build_type = "Bomb";
 	printf("	- Build Type: %s\n", build_type);
-	printf("	- Speed: %lu\n", unit_config->speed);
-	printf("	- Min Speed: %lu\n", unit_config->min_speed);
+	printf("	- Base Move Cooldown: %lu\n", unit_config->baseMoveCooldown);
+	printf("	- Max Move Cooldown: %lu\n", unit_config->maxMoveCooldown);
 	printf("	- Can Build: %s\n", unit_config->can_build ? "Yes" : "No");
 }
 

@@ -124,9 +124,9 @@ typedef struct s_unit_config
 	/// @brief The units build type.
 	t_build_type build_type;
 	/// @brief The time a unit waits between moves if it is not carrying money.
-	unsigned long speed;
+	unsigned long baseMoveCooldown;
 	/// @brief The minimum time a unit waits between moves.
-	unsigned long min_speed;
+	unsigned long maxMoveCooldown;
 	/// @brief Whether the unit can build walls or bombs.
 	bool can_build;
 } t_unit_config;
