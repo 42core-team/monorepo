@@ -20,6 +20,7 @@ class Resource : public Object
 		void getMined(Unit * miner);
 
 		unsigned int getBalance() const { return balance_; }
+		void setBalance(unsigned int balance) { balance_ = balance; }
 
 	private:
 		unsigned int balance_;

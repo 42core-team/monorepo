@@ -364,6 +364,43 @@ void JigsawWorldGenerator::clearPathBetweenCores()
 	}
 }
 
+static void varyResourceIncome()
+{
+	const int baseResourceIncome = Config::game().worldGeneratorConfig.value("baseResourceIncome", 200);
+	const int additionalIncomePerAdjacentWall = Config::game().worldGeneratorConfig.value("resourceAdditionalIncomePerAdjacentWall", 20);
+	const float multiplierIfFullySurrounded = Config::game().worldGeneratorConfig.value("resourceMultiplierIfFullySurrounded", 1.3);
+	const int randomVariation = Config::game().worldGeneratorConfig.value("randomResourceIncomeVariation", 0);
+
+	for (Object & obj : Board::instance())
+	{
+		if (obj.getType() != ObjectType::Resource)
+			continue;
+
+		Position pos = Board::instance().getObjectPositionById(obj.getId());
+		static Position dirs[] = {{1,0},{-1,0},{0,1},{0,-1}};
+		auto& board = Board::instance();
+		int adjacentWalls = 0;
+		for (auto& d : dirs) {
+			auto* o = board.getObjectAtPos({pos.x + d.x, pos.y + d.y});
+			if (o && o->getType() == ObjectType::Wall)
+				adjacentWalls++;
+		}
+
+		int income = baseResourceIncome + additionalIncomePerAdjacentWall * adjacentWalls;
+		if (adjacentWalls >= 4)
+			income = static_cast<int>(income * multiplierIfFullySurrounded);
+
+		if (randomVariation > 0)
+		{
+			int variation = randomVariation / 2;
+			income = income - variation + (std::rand() % randomVariation);
+		}
+
+		Resource & ResourceObj = static_cast<Resource &>(obj);
+		ResourceObj.setBalance(income);
+	}
+}
+
 void JigsawWorldGenerator::placeWalls()
 {
 	int additionalWallPlaceAttemptCount = Config::game().worldGeneratorConfig.value("additionalWallPlaceAttemptCount", 100);
@@ -517,6 +554,8 @@ void JigsawWorldGenerator::generateWorld()
 	Logger::Log("Step 6: Clearing at least 1 path between cores.");
 	clearPathBetweenCores();
 	Visualizer::visualizeGameState(0);
+
+	varyResourceIncome();
 
 	Logger::Log("World generation complete");
 }

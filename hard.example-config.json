@@ -22,7 +22,11 @@
 		"resourceCount": 35,
 		"moneysCount": 25,
 		"minTemplateSpacing": 1,
-		"minCoreDistance": 5
+		"minCoreDistance": 5,
+		"baseResourceIncome": 200,
+		"resourceAdditionalIncomePerAdjacentWall": 20,
+		"resourceMultiplierIfFullySurrounded": 1.3,
+		"randomVariation": 20
 	},
 	"units": [
 		{
