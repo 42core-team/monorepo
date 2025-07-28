@@ -135,8 +135,8 @@ export function getBarMetrics(obj: TickObject): { key: string; percentage: numbe
 	if (obj.type === 1 && obj.moveCooldown > 0) {
 		const cfg = getGameConfig();
 		if (!cfg) return metrics;
-		const baseSpeed = cfg.units[obj.unit_type].speed;
-		const minSpeed = cfg.units[obj.unit_type].minSpeed;
+		const baseSpeed = cfg.units[obj.unit_type].baseMoveCooldown;
+		const minSpeed = cfg.units[obj.unit_type].maxMoveCooldown;
 		let resourcePart = obj.balance / (cfg.resourceIncome / 4);
 		if (resourcePart < 1) resourcePart = 1;
 		const defaultCd = Math.min(baseSpeed * resourcePart, minSpeed);

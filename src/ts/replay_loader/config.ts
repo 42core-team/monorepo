@@ -2,8 +2,8 @@ export interface UnitConfig {
 	name: string;
 	cost: number;
 	hp: number;
-	speed: number;
-	minSpeed: number;
+	baseMoveCooldown: number;
+	maxMoveCooldown: number;
 	damageCore: number;
 	damageUnit: number;
 	damageResource: number;
