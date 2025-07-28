@@ -9,14 +9,14 @@ MoveAction::MoveAction(json msg) : Action(ActionType::MOVE)
 
 void MoveAction::decodeJSON(json msg)
 {
-	if (!msg.contains("unit_id") || !msg.contains("targetX") || !msg.contains("targetY"))
+	if (!msg.contains("unit_id") || !msg.contains("x") || !msg.contains("y"))
 	{
 		is_valid_ = false;
 		return;
 	}
 
 	unit_id_ = msg["unit_id"];
-	target_ = Position(msg["targetX"], msg["targetY"]);
+	target_ = Position(msg["x"], msg["y"]);
 	if (!target_.isValid(Config::game().gridSize, Config::game().gridSize))
 	{
 		is_valid_ = false;
@@ -29,8 +29,8 @@ json MoveAction::encodeJSON()
 
 	js["type"] = "move";
 	js["unit_id"] = unit_id_;
-	js["targetX"] = target_.x;
-	js["targetY"] = target_.y;
+	js["x"] = target_.x;
+	js["y"] = target_.y;
 
 	return js;
 }

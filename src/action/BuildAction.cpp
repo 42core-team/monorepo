@@ -7,13 +7,13 @@ BuildAction::BuildAction(json msg) : Action(ActionType::BUILD)
 
 void BuildAction::decodeJSON(json msg)
 {
-	if (!msg.contains("builder_id") || !msg.contains("x") || !msg.contains("y"))
+	if (!msg.contains("unit_id") || !msg.contains("x") || !msg.contains("y"))
 	{
 		is_valid_ = false;
 		return;
 	}
 
-	builder_id_ = msg["builder_id"];
+	builder_id_ = msg["unit_id"];
 	position_ = Position(msg["x"], msg["y"]);
 
 	if (!position_.isValid(Config::game().gridSize, Config::game().gridSize))
@@ -24,7 +24,7 @@ json BuildAction::encodeJSON()
 	json js;
 
 	js["type"] = "build";
-	js["builder_id"] = builder_id_;
+	js["unit_id"] = builder_id_;
 	js["x"] = position_.x;
 	js["y"] = position_.y;
 

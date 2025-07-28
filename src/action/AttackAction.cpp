@@ -9,15 +9,15 @@ AttackAction::AttackAction(json msg) : Action(ActionType::MOVE)
 
 void AttackAction::decodeJSON(json msg)
 {
-	if (!msg.contains("unit_id") || !msg.contains("target_pos_x") || !msg.contains("target_pos_y"))
+	if (!msg.contains("unit_id") || !msg.contains("x") || !msg.contains("y"))
 	{
 		is_valid_ = false;
 		return;
 	}
 
 	unit_id_ = msg["unit_id"];
-	target_pos_.x = msg["target_pos_x"];
-	target_pos_.y = msg["target_pos_y"];
+	target_pos_.x = msg["x"];
+	target_pos_.y = msg["y"];
 
 	if (!target_pos_.isValid(Config::game().gridSize, Config::game().gridSize))
 	{
@@ -31,9 +31,9 @@ json AttackAction::encodeJSON()
 
 	js["type"] = "move";
 	js["unit_id"] = unit_id_;
-	js["target_pos_x"] = target_pos_.x;
-	js["target_pos_y"] = target_pos_.y;
-	js["damage"] = damage_;
+	js["x"] = target_pos_.x;
+	js["y"] = target_pos_.y;
+	js["dmg"] = damage_;
 
 	return js;
 }
