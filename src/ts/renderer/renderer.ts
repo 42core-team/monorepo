@@ -67,7 +67,7 @@ function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, s
 		bg.setAttribute('width', '1');
 		bg.setAttribute('height', height.toString());
 		bg.setAttribute('fill', color);
-		bg.setAttribute('fill-opacity', `${0.5 * scaleFactor}`);
+		bg.setAttribute('fill-opacity', `${0.3 * scaleFactor}`);
 		svgCanvas.appendChild(bg);
 
 		const fg = document.createElementNS(svgNS, 'rect');
@@ -75,7 +75,7 @@ function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, s
 		fg.setAttribute('y', yPosition.toString());
 		fg.setAttribute('width', String(percentage / 100));
 		fg.setAttribute('height', height.toString());
-		fg.setAttribute('fill-opacity', `${scaleFactor}`);
+		fg.setAttribute('fill-opacity', `${0.7 * scaleFactor}`);
 		fg.setAttribute('fill', color);
 		svgCanvas.appendChild(fg);
 	});
