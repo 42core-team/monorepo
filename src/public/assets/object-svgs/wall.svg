@@ -25,110 +25,15 @@
      showgrid="false"
      inkscape:zoom="0.93579987"
      inkscape:cx="145.86452"
-     inkscape:cy="278.37148"
-     inkscape:window-width="1680"
+     inkscape:cy="411.94705"
+     inkscape:window-width="1472"
      inkscape:window-height="1022"
-     inkscape:window-x="0"
+     inkscape:window-x="211"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg1" />
-  <rect
-     style="fill:#000000;fill-opacity:1"
+  <path
      id="rect2"
-     width="448"
-     height="448"
-     x="0"
-     y="0" />
-  <rect
-     style="fill:#ffffff;stroke-width:1.76938"
-     id="rect1"
-     width="486.60706"
-     height="30"
-     x="-14.142237"
-     y="75" />
-  <rect
-     style="fill:#ffffff;stroke-width:1.15507"
-     id="rect1-8"
-     width="207.37492"
-     height="30"
-     x="-126"
-     y="-254"
-     transform="rotate(90)" />
-  <rect
-     style="fill:#ffffff;stroke-width:1.15507"
-     id="rect1-8-4"
-     width="207.37492"
-     height="30"
-     x="380.49762"
-     y="-254"
-     transform="rotate(90)" />
-  <rect
-     style="fill:#ffffff;stroke-width:1.00551"
-     id="rect1-8-7"
-     width="157.15051"
-     height="30"
-     x="245"
-     y="-330"
-     transform="rotate(90)" />
-  <rect
-     style="fill:#ffffff;stroke-width:0.977782"
-     id="rect1-8-7-6"
-     width="148.60167"
-     height="30"
-     x="244.50931"
-     y="-106"
-     transform="rotate(90)" />
-  <rect
-     style="fill:#ffffff;stroke-width:1.15507"
-     id="rect1-8-1"
-     width="207.37492"
-     height="30"
-     x="-126"
-     y="-30"
-     transform="rotate(90)" />
-  <rect
-     style="fill:#ffffff;stroke-width:1.15507"
-     id="rect1-8-1-56"
-     width="207.37492"
-     height="30"
-     x="386.45807"
-     y="-30"
-     transform="rotate(90)" />
-  <rect
-     style="fill:#ffffff;stroke-width:1.02582"
-     id="rect1-8-1-5"
-     width="163.56213"
-     height="30"
-     x="81"
-     y="-180"
-     transform="rotate(90)" />
-  <rect
-     style="fill:#ffffff;stroke-width:1.02582"
-     id="rect1-8-1-5-0"
-     width="163.56213"
-     height="30"
-     x="87"
-     y="-404"
-     transform="rotate(90)" />
-  <rect
-     style="fill:#ffffff;stroke-width:1.77762"
-     id="rect1-6"
-     width="491.14743"
-     height="30"
-     x="-14.242157"
-     y="225" />
-  <rect
-     style="fill:#ffffff;stroke-width:1.77762"
-     id="rect1-6-5"
-     width="491.14743"
-     height="30"
-     x="-19.798279"
-     y="-75" />
-  <rect
-     style="fill:#ffffff;stroke-width:1.77762"
-     id="rect1-6-5-0"
-     width="491.14743"
-     height="30"
-     x="-6.2802138"
-     y="373" />
+     style="fill:#000000;fill-opacity:1"
+     d="M 30 0 L 30 75 L 224 75 L 224 0 L 30 0 z M 254 0 L 254 75 L 448 75 L 448 0 L 254 0 z M 0 105 L 0 225 L 150 225 L 150 105 L 0 105 z M 180 105 L 180 225 L 374 225 L 374 105 L 180 105 z M 404 105 L 404 225 L 448 225 L 448 105 L 404 105 z M 0 255 L 0 373 L 76 373 L 76 255 L 0 255 z M 106 255 L 106 373 L 300 373 L 300 255 L 106 255 z M 330 255 L 330 373 L 448 373 L 448 255 L 330 255 z M 30 403 L 30 448 L 224 448 L 224 403 L 30 403 z M 254 403 L 254 448 L 448 448 L 448 403 L 254 403 z " />
 </svg>

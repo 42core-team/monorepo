@@ -244,4 +244,12 @@ export async function setupRenderer(): Promise<void> {
 			tooltipElement.style.display = 'none';
 		}
 	});
+	const hideIfOutside = (e: MouseEvent) => {
+		const rect = svgCanvas.getBoundingClientRect();
+		if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) {
+			tooltipElement.style.display = 'none';
+		}
+	};
+	document.addEventListener('mousemove', hideIfOutside);
+	window.addEventListener('blur', () => (tooltipElement.style.display = 'none'));
 }
