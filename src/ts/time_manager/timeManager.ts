@@ -117,6 +117,42 @@ export async function setupTimeManager() {
 			speedSlider.value = speedApS.toString();
 		}
 	});
+
+	window.addEventListener('keydown', (event) => {
+		switch (event.key) {
+			case ' ':
+				if (playing === PlayingStates.NotPlaying) {
+					playButton.click();
+				} else {
+					pauseButton.click();
+				}
+			case 'r':
+			case 's':
+				skipStartButton.click();
+				break;
+			case 'e':
+				skipEndButton.click();
+				break;
+			case 'ArrowRight':
+				nextTickButton.click();
+				break;
+			case 'ArrowLeft':
+				prevTickButton.click();
+				break;
+			case 'ArrowUp':
+				if (speedApS >= 20) break;
+				speedNumberInput.value = (parseFloat(speedNumberInput.value) + 0.5).toString();
+				speedSlider.value = speedNumberInput.value;
+				speedApS = parseFloat(speedNumberInput.value);
+				break;
+			case 'ArrowDown':
+				if (speedApS < 1) break;
+				speedNumberInput.value = (parseFloat(speedNumberInput.value) - 0.5).toString();
+				speedSlider.value = speedNumberInput.value;
+				speedApS = parseFloat(speedNumberInput.value);
+				break;
+		}
+	});
 }
 
 export function getCurrentTickData(): tickData {
@@ -164,7 +200,7 @@ export function resetTimeManager() {
 	lastTimestamp = null;
 	tickProgress = 0;
 	tickTimelineSlider.max = (getTotalTicks() - 1).toString();
-	tickTimelineSlider.value = "0";
+	tickTimelineSlider.value = '0';
 	tickTimelineNumberInput.max = (getTotalTicks() - 1).toString();
-	tickTimelineNumberInput.value = "0";
+	tickTimelineNumberInput.value = '0';
 }
