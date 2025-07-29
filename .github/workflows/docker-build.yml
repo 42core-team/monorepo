@@ -18,10 +18,10 @@ jobs:
       matrix:
         include:
           - architecture: amd64
-            runner: [self-hosted, x64]
+            runner: [self-hosted, x64, ubuntu-latest]
             platform: linux/amd64
           - architecture: arm64
-            runner: [self-hosted, arm64]
+            runner: [self-hosted, arm64 ubuntu-latest-arm64]
             platform: linux/arm64
 
     steps:
