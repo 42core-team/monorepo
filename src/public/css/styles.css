@@ -21,7 +21,7 @@ body {
 
 /* SVG Output Canvas */
 #tooltip {
-	position: absolute;
+	position: fixed;
 	display: none;
 	padding: 10px;
 	background: white;

@@ -49,6 +49,13 @@ function setTick(tickValue: number) {
 	tickTimelineSlider.value = tick.toString();
 	tickTimelineNumberInput.value = tick.toString();
 }
+function setPlaying(isPlaying: boolean) {
+	playing = isPlaying;
+	const playPauseIcon = document.getElementById('playPauseIcon') as HTMLImageElement;
+	if (playPauseIcon) {
+		playPauseIcon.src = playing ? '/assets/ui-svgs/pause.svg' : '/assets/ui-svgs/play.svg';
+	}
+}
 
 // External Functions
 
@@ -60,13 +67,7 @@ export async function setupTimeManager() {
 	// Setup event listeners
 
 	playButton.addEventListener('click', () => {
-		playing = !playing;
-
-		const playPauseIcon = document.getElementById('playPauseIcon') as HTMLImageElement;
-		if (playPauseIcon) {
-			playPauseIcon.src = playing ? '/assets/ui-svgs/pause.svg' : '/assets/ui-svgs/play.svg';
-		}
-
+		setPlaying(!playing);
 		if (playing) {
 			lastTimestamp = Date.now(); // Start timing immediately
 		} else {
@@ -191,7 +192,7 @@ export function getCurrentTickData(): tickData {
 			setTick(newTick);
 			tickProgress = tickProgress % 1;
 		} else {
-			playing = false;
+			setPlaying(false);
 			tickProgress = 1;
 		}
 	}
@@ -202,7 +203,7 @@ export function getCurrentTickData(): tickData {
 			setTick(newTick);
 			tickProgress = (tickProgress % 1) + 1;
 		} else {
-			playing = false;
+			setPlaying(false);
 			tickProgress = 0;
 		}
 	}
