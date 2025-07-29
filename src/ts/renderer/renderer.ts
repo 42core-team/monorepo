@@ -14,24 +14,24 @@ const svgAssets = {
 	},
 	1: {
 		Warrior: {
-			0: 'units/Warrior/1.svg',
-			1: 'units/Warrior/2.svg',
+			0: 'units/warrior/1.svg',
+			1: 'units/warrior/2.svg',
 		},
 		Miner: {
-			0: 'units/Miner/1.svg',
-			1: 'units/Miner/2.svg',
+			0: 'units/miner/1.svg',
+			1: 'units/miner/2.svg',
 		},
 		Builder: {
-			0: 'units/Builder/1.svg',
-			1: 'units/Builder/2.svg',
+			0: 'units/builder/1.svg',
+			1: 'units/builder/2.svg',
 		},
 		Carrier: {
-			0: 'units/Carrier/1.svg',
-			1: 'units/Carrier/2.svg',
+			0: 'units/carrier/1.svg',
+			1: 'units/carrier/2.svg',
 		},
 		Bomberman: {
-			0: 'units/Bomberman/1.svg',
-			1: 'units/Bomberman/2.svg',
+			0: 'units/bomberman/1.svg',
+			1: 'units/bomberman/2.svg',
 		},
 	},
 	2: 'resource.svg',
