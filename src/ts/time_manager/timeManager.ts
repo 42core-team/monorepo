@@ -1,4 +1,4 @@
-import { getTotalReplayTicks } from '../replay_loader/replayLoader.js';
+import { getTotalReplayTicks, getWinningTeamFormatted } from '../replay_loader/replayLoader.js';
 
 const playButton = document.getElementById('play-pause-button') as HTMLButtonElement;
 
@@ -194,6 +194,7 @@ export function getCurrentTickData(): tickData {
 		} else {
 			setPlaying(false);
 			tickProgress = 1;
+			alert(`Game ended. Winning Team: ${getWinningTeamFormatted()}`);
 		}
 	}
 

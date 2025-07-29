@@ -19,6 +19,10 @@ export interface ReplayData {
 }
 
 type State = Record<number, TickObject>;
+type ReplayMisc = {
+	team_results: { id: number; name: string; place: number }[];
+	game_end_reason: number;
+};
 
 export let totalReplayTicks = 0;
 
@@ -150,6 +154,10 @@ class ReplayLoader {
 	public getGameConfig(): GameConfig | undefined {
 		return this.replayData.config;
 	}
+
+	public getGameMisc(): ReplayMisc {
+		return this.replayData.misc;
+	}
 }
 
 let replayLoader: ReplayLoader | null = null;
@@ -251,6 +259,19 @@ export function getGameConfig(): GameConfig | undefined {
 	}
 
 	return replayLoader.getGameConfig();
+}
+
+export function getWinningTeamFormatted(): string {
+	if (!replayLoader) {
+		throw new Error('Replay not loaded. Please call loadReplay first.');
+	}
+
+	const winningTeam = replayLoader.getGameMisc().team_results.find((team) => team.place === 0);
+	if (!winningTeam) {
+		return 'No winning team found';
+	}
+
+	return `${winningTeam.name} (ID: ${winningTeam.id})`;
 }
 
 window.addEventListener('drop', (e) => {
