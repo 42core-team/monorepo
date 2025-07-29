@@ -175,7 +175,7 @@ export function getCurrentTickData(): tickData {
 	const now = Date.now();
 	if (!playing) {
 		lastTimestamp = null;
-		return { tick, tickProgress: 0 };
+		return { tick, tickProgress };
 	}
 	if (lastTimestamp === null) {
 		lastTimestamp = now;
@@ -194,17 +194,6 @@ export function getCurrentTickData(): tickData {
 		} else {
 			setPlaying(false);
 			tickProgress = 1;
-		}
-	}
-	// TODO: this is buggy reversing will loop first tick and never hit else
-	if (tickProgress < 0) {
-		if (tick > 0) {
-			const newTick = Math.max(tick + Math.ceil(tickProgress), 0);
-			setTick(newTick);
-			tickProgress = (tickProgress % 1) + 1;
-		} else {
-			setPlaying(false);
-			tickProgress = 0;
 		}
 	}
 

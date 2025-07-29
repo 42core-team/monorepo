@@ -101,9 +101,13 @@ class ReplayLoader {
 	}
 
 	public getStateAt(tick: number): ReplayTick {
-		if (tick < 0 || tick > this.replayData.full_tick_amount) {
+		if (tick < 0 || tick > totalReplayTicks) {
 			throw new Error('Tick out of range');
 		}
+		if (tick === totalReplayTicks) {
+			return { objects: [], actions: [] }; // empty state for ending animation
+		}
+
 		let snapshotTick = -1;
 		for (const key of this.cache.keys()) {
 			if (key <= tick && key > snapshotTick) {

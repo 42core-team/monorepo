@@ -145,6 +145,7 @@ function cleanGrid(): void {
 
 function drawFrame(_timestamp: number): void {
 	const currentTickData = getCurrentTickData();
+	console.log(`Rendering tick: ${currentTickData.tick}, progress: ${currentTickData.tickProgress}`);
 	const replayData = getStateAt(currentTickData.tick);
 	if (!replayData) {
 		console.warn('No replay data available for the current tick.');
@@ -182,13 +183,12 @@ function drawFrame(_timestamp: number): void {
 
 		let prevObj = null;
 		try {
-			if (currentTickData.tick - 1 >= 0)
-				prevObj = getStateAt(currentTickData.tick - 1)?.objects.find((o) => o.id === currObj.id);
-		} catch { }
+			if (currentTickData.tick - 1 >= 0) prevObj = getStateAt(currentTickData.tick - 1)?.objects.find((o) => o.id === currObj.id);
+		} catch {}
 		let nextObj = null;
 		try {
 			nextObj = getStateAt(currentTickData.tick + 1)?.objects.find((o) => o.id === currObj.id);
-		} catch { }
+		} catch {}
 
 		const sineProgress = Math.sin((currentTickData.tickProgress * Math.PI) / 2);
 
