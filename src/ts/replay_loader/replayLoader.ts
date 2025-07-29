@@ -22,6 +22,8 @@ type State = Record<number, TickObject>;
 
 export let totalReplayTicks = 0;
 
+let replayDataOverride: string | null = null; // if a file was dropped into the window, display this instead of the auto fetched replay data
+
 function deepClone<T>(obj: T): T {
 	return JSON.parse(JSON.stringify(obj));
 }
@@ -36,34 +38,52 @@ class ReplayLoader {
 	}
 
 	public async loadReplay(filePath: string): Promise<void> {
-		await fetch(filePath, { cache: 'no-cache' })
-			.then((response) => response.json())
-			.then((json) => {
-				this.replayData = json as ReplayData;
-				totalReplayTicks = this.replayData.full_tick_amount;
-				const fullState: State = {};
-				const tick0 = this.replayData.ticks['0'];
-				if (tick0?.objects) {
-					for (const obj of tick0.objects) {
-						fullState[obj.id] = deepClone(obj);
+		let fileData: string | null = replayDataOverride;
+		if (!fileData) {
+			await fetch(filePath, { cache: 'no-cache' })
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error(`Failed to fetch replay file: ${response.statusText}`);
 					}
-				}
-				this.cache.set(0, deepClone(fullState));
+					return response.text();
+				})
+				.then((data) => {
+					fileData = data;
+				})
+				.catch((err) => {
+					console.error('Error fetching replay file:', err);
+				});
+		}
 
-				for (let t = 1; t <= totalReplayTicks; t++) {
-					const tickData = this.replayData.ticks[t.toString()];
-					if (tickData?.objects) {
-						this.applyDiff(fullState, tickData);
-					}
-					if (t % this.cacheInterval === 0) {
-						this.cache.set(t, deepClone(fullState));
-					}
-				}
-				console.log(`💫 Replay loaded successfully! ✨ (${this.replayData.misc.team_results[0].name} 🤜 vs 🤛 ${this.replayData.misc.team_results[1].name} for ${totalReplayTicks} ticks)`);
-			})
-			.catch((err) => {
-				console.log('Failed to load Replay: ', err);
-			});
+		if (!fileData) {
+			throw new Error('No replay data available to load.');
+		}
+
+		this.replayData = JSON.parse(fileData) as ReplayData;
+		if (!this.replayData.ticks || !this.replayData.full_tick_amount) {
+			throw new Error('Invalid replay data format: missing ticks or full_tick_amount');
+		}
+		totalReplayTicks = this.replayData.full_tick_amount;
+
+		const fullState: State = {};
+		const tick0 = this.replayData.ticks['0'];
+		if (tick0?.objects) {
+			for (const obj of tick0.objects) {
+				fullState[obj.id] = deepClone(obj);
+			}
+		}
+		this.cache.set(0, deepClone(fullState));
+
+		for (let t = 1; t <= totalReplayTicks; t++) {
+			const tickData = this.replayData.ticks[t.toString()];
+			if (tickData?.objects) {
+				this.applyDiff(fullState, tickData);
+			}
+			if (t % this.cacheInterval === 0) {
+				this.cache.set(t, deepClone(fullState));
+			}
+		}
+		console.log(`💫 Replay loaded successfully! ✨ (${this.replayData.misc.team_results[0].name} 🤜 vs 🤛 ${this.replayData.misc.team_results[1].name} for ${totalReplayTicks} ticks)`);
 	}
 
 	private applyDiff(state: State, tickData: ReplayTick): void {
@@ -131,7 +151,7 @@ class ReplayLoader {
 let replayLoader: ReplayLoader | null = null;
 let replayInterval: ReturnType<typeof setInterval> | null = null;
 
-let gridMessageOverride = "";
+let gridMessageOverride = '';
 
 export function getGridMessageOverride() {
 	return gridMessageOverride.length > 0 ? gridMessageOverride : undefined;
@@ -158,11 +178,12 @@ export async function setupReplayLoader(filePath: string, cacheInterval = 25, up
 		clearInterval(replayInterval);
 	}
 	replayInterval = setInterval(async () => {
+		if (replayDataOverride) return;
 		try {
 			const head = await fetch(filePath, { method: 'HEAD', cache: 'no-cache' });
 
 			if (!head.ok) {
-				throw ('catch block time - lets reset the replayLoader');
+				throw 'catch block time - lets reset the replayLoader';
 			}
 
 			const etag = head.headers.get('ETag');
@@ -178,7 +199,7 @@ export async function setupReplayLoader(filePath: string, cacheInterval = 25, up
 				replayLoader = newReplayLoader;
 				resetTimeManager();
 			}
-			gridMessageOverride = "";
+			gridMessageOverride = '';
 		} catch (err) {
 			console.error('Error checking for updates:', err);
 			gridMessageOverride = "Couldn't fetch replay updates. There is an issue with the webserver, please reopen your VSCode devcontainer.";
@@ -227,3 +248,29 @@ export function getGameConfig(): GameConfig | undefined {
 
 	return replayLoader.getGameConfig();
 }
+
+window.addEventListener('drop', (e) => {
+	e.preventDefault();
+	if (!e.dataTransfer || !e.dataTransfer.files || e.dataTransfer.files.length === 0) {
+		console.error('No file dropped but drop event triggered.');
+		return;
+	}
+	const file = e.dataTransfer.files[0];
+	const reader = new FileReader();
+	reader.readAsText(file);
+	reader.onload = async () => {
+		const contents = reader.result as string;
+		if (contents) {
+			console.log('File loaded successfully');
+			replayDataOverride = contents;
+			const newReplayLoader = new ReplayLoader(25);
+			await newReplayLoader.loadReplay('dummy.json');
+			replayLoader = newReplayLoader;
+			resetTimeManager();
+		}
+	};
+	alert('File loaded successfully, please refresh the page to see the changes.');
+});
+window.addEventListener('dragover', (e) => {
+	e.preventDefault();
+});
