@@ -1,5 +1,10 @@
 window.addEventListener('DOMContentLoaded', async () => {
-	const replayFilePath = '../misc/replay_latest.json';
+	let replayFilePath = '../misc/replay_latest.json';
+	const urlParams = new URLSearchParams(window.location.search);
+	if (urlParams.has('replay')) {
+		replayFilePath = urlParams.get('replay') || replayFilePath;
+	}
+
 	const { setupReplayLoader } = await import('./replay_loader/replayLoader.js');
 	await setupReplayLoader(replayFilePath);
 
