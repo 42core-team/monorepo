@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>whee test</title>
+		<link rel="stylesheet" href="/css/styles.css" />
+	</head>
+	<body>
+		<script type="module" src="/js/main.js"></script>
+
+		<div class="container">
+			<div class="top-bar">
+				<!-- Time controls box -->
+				<div id="time-controls" class="time-controls">
+					<div class="controls-bar">
+						<button id="prev-tick-button"><img src="/assets/ui-svgs/tick_previous.svg" alt="Previous Tick" /></button>
+						<input type="range" id="tick-timeline-slider" min="0" max="100" value="0" />
+						<input type="number" id="tick-timeline-number-input" min="0" max="100" value="0" />
+						<button id="next-tick-button"><img src="/assets/ui-svgs/tick_next.svg" alt="Next Tick" /></button>
+					</div>
+					<div class="main-buttons">
+						<button id="skip-start-button"><img src="/assets/ui-svgs/skip_start.svg" alt="Jump to Start" /></button>
+						<button id="play-pause-button"><img src="/assets/ui-svgs/play.svg" alt="Play/Pause" id="playPauseIcon" /></button>
+						<button id="skip-end-button"><img src="/assets/ui-svgs/skip_end.svg" alt="Jump to End" /></button>
+					</div>
+					<div class="controls-bar">
+						<button id="speed-down-button"><img src="/assets/ui-svgs/speed_down.svg" alt="Decrease Playback Speed" /></button>
+						<input type="range" id="speed-slider" min="0.5" max="20" step="0.1" value="3" />
+						<input type="number" id="speed-number-input" min="0.5" max="20" step="0.1" value="3" />
+						<button id="speed-up-button"><img src="/assets/ui-svgs/speed_up.svg" alt="Increase Playback Speed" /></button>
+					</div>
+				</div>
+			</div>
+
+			<!-- SVG Output Canvas -->
+			<div class="game-area">
+				<svg id="svg-canvas" xmlns="http://www.w3.org/2000/svg"></svg>
+				<div id="tooltip"></div>
+			</div>
+		</div>
+	</body>
+</html>

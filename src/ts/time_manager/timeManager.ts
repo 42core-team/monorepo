@@ -1,8 +1,6 @@
 import { getTotalReplayTicks } from '../replay_loader/replayLoader.js';
 
-const playButton = document.getElementById('play-button') as HTMLButtonElement;
-const playRevButton = document.getElementById('play-rev-button') as HTMLButtonElement;
-const pauseButton = document.getElementById('pause-button') as HTMLButtonElement;
+const playButton = document.getElementById('play-pause-button') as HTMLButtonElement;
 
 const nextTickButton = document.getElementById('next-tick-button') as HTMLButtonElement;
 const prevTickButton = document.getElementById('prev-tick-button') as HTMLButtonElement;
@@ -15,20 +13,24 @@ const tickTimelineNumberInput = document.getElementById('tick-timeline-number-in
 
 const speedSlider = document.getElementById('speed-slider') as HTMLInputElement;
 const speedNumberInput = document.getElementById('speed-number-input') as HTMLInputElement;
+const speedDownButton = document.getElementById('speed-down-button') as HTMLButtonElement;
+const speedUpButton = document.getElementById('speed-up-button') as HTMLButtonElement;
+
+// consts
+
+const minSpeed = 0.5;
+const maxSpeed = 20;
+const speedIncrement = 0.5;
+const defaultSpeed = 3;
 
 // Time Tracking Variables
 
-enum PlayingStates {
-	Playing = 1,
-	NotPlaying = 0,
-	Reverse = -1,
-}
 export type tickData = {
 	tick: number;
 	tickProgress: number; // Fractional progress through current action (0–1)
 };
 
-let playing: PlayingStates = PlayingStates.NotPlaying;
+let playing: boolean = false;
 let tick: number = 0;
 let speedApS: number = 3; // Actions per Second
 
@@ -58,16 +60,18 @@ export async function setupTimeManager() {
 	// Setup event listeners
 
 	playButton.addEventListener('click', () => {
-		playing = PlayingStates.Playing;
-		lastTimestamp = Date.now(); // Start timing immediately
-	});
-	playRevButton.addEventListener('click', () => {
-		playing = PlayingStates.Reverse;
-		lastTimestamp = Date.now(); // Start timing immediately in reverse
-	});
-	pauseButton.addEventListener('click', () => {
-		playing = PlayingStates.NotPlaying;
-		lastTimestamp = null;
+		playing = !playing;
+
+		const playPauseIcon = document.getElementById('playPauseIcon') as HTMLImageElement;
+		if (playPauseIcon) {
+			playPauseIcon.src = playing ? '/assets/ui-svgs/pause.svg' : '/assets/ui-svgs/play.svg';
+		}
+
+		if (playing) {
+			lastTimestamp = Date.now(); // Start timing immediately
+		} else {
+			lastTimestamp = null; // Stop timing
+		}
 	});
 
 	nextTickButton.addEventListener('click', () => {
@@ -117,15 +121,26 @@ export async function setupTimeManager() {
 			speedSlider.value = speedApS.toString();
 		}
 	});
+	speedUpButton.addEventListener('click', () => {
+		if (speedApS < maxSpeed) {
+			speedApS += speedIncrement;
+			speedNumberInput.value = speedApS.toString();
+			speedSlider.value = speedApS.toString();
+		}
+	});
+	speedDownButton.addEventListener('click', () => {
+		if (speedApS > minSpeed) {
+			speedApS -= speedIncrement;
+			speedNumberInput.value = speedApS.toString();
+			speedSlider.value = speedApS.toString();
+		}
+	});
 
 	window.addEventListener('keydown', (event) => {
 		switch (event.key) {
 			case ' ':
-				if (playing === PlayingStates.NotPlaying) {
-					playButton.click();
-				} else {
-					pauseButton.click();
-				}
+				playButton.click();
+				break;
 			case 'r':
 			case 's':
 				skipStartButton.click();
@@ -157,7 +172,7 @@ export async function setupTimeManager() {
 
 export function getCurrentTickData(): tickData {
 	const now = Date.now();
-	if (playing === PlayingStates.NotPlaying) {
+	if (!playing) {
 		lastTimestamp = null;
 		return { tick, tickProgress: 0 };
 	}
@@ -167,7 +182,7 @@ export function getCurrentTickData(): tickData {
 	}
 	const dt = (now - lastTimestamp) / 1000; // seconds elapsed
 	lastTimestamp = now;
-	const delta = dt * speedApS * (playing as number);
+	const delta = dt * speedApS * (playing ? 1 : 0);
 	tickProgress += delta;
 
 	if (tickProgress > 1) {
@@ -176,7 +191,7 @@ export function getCurrentTickData(): tickData {
 			setTick(newTick);
 			tickProgress = tickProgress % 1;
 		} else {
-			playing = PlayingStates.NotPlaying;
+			playing = false;
 			tickProgress = 1;
 		}
 	}
@@ -187,7 +202,7 @@ export function getCurrentTickData(): tickData {
 			setTick(newTick);
 			tickProgress = (tickProgress % 1) + 1;
 		} else {
-			playing = PlayingStates.NotPlaying;
+			playing = false;
 			tickProgress = 0;
 		}
 	}

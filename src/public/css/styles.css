@@ -9,9 +9,13 @@
 	--cooldown-color: #0066ffff;
 }
 
+html,
 body {
 	margin: 0;
 	padding: 0;
+	height: 100%;
+	overflow: hidden;
+	overscroll-behavior: none;
 	font-family: 'JetBrains Mono', monospace;
 }
 
@@ -24,4 +28,78 @@ body {
 	border: 1px solid #333;
 	border-radius: 0 10px 10px 10px;
 	box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Structure */
+.container {
+	display: grid;
+	grid-template-rows: auto 1fr auto;
+	height: 100vh;
+}
+
+.game-area {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+#svg-canvas {
+	width: 100%;
+	height: auto;
+	aspect-ratio: 1 / 1;
+	max-height: 100%;
+	max-width: 100%;
+}
+/* Time Controls */
+#time-controls {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 0.5rem 1rem;
+	background-color: #cbcbcb;
+	border-radius: 0 0 20px 20px;
+	width: max-content;
+	margin: 0 auto;
+	position: relative;
+	margin-bottom: 20px;
+	outline: black solid 2px;
+}
+
+.controls-bar,
+.main-buttons {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin: 0 20px 0 20px;
+}
+
+#time-controls button {
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 0.5rem;
+}
+
+#time-controls button img {
+	width: 1.5rem;
+	height: auto;
+}
+
+#time-controls input[type='range'] {
+	width: 6rem;
+}
+
+#time-controls input[type='number'] {
+	width: 3rem;
+}
+
+.main-buttons button {
+	padding: 0.75rem;
+	background-color: #555;
+	border-radius: 4px;
 }
