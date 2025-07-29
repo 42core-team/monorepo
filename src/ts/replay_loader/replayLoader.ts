@@ -1,3 +1,4 @@
+import { resetTimeManager } from '../time_manager/timeManager.js';
 import type { TickAction } from './action.js';
 import type { GameConfig } from './config.js';
 import type { TickObject } from './object.js';
@@ -35,7 +36,7 @@ class ReplayLoader {
 	}
 
 	public async loadReplay(filePath: string): Promise<void> {
-		await fetch(filePath)
+		await fetch(filePath, { cache: 'no-cache' })
 			.then((response) => response.json())
 			.then((json) => {
 				this.replayData = json as ReplayData;
@@ -118,6 +119,10 @@ class ReplayLoader {
 		return { objects: Object.values(state), actions } as ReplayTick;
 	}
 
+	public resetReplayData() {
+		this.replayData = { misc: { team_results: [], game_end_reason: 0 }, ticks: {}, full_tick_amount: 0 };
+	}
+
 	public getGameConfig(): GameConfig | undefined {
 		return this.replayData.config;
 	}
@@ -126,8 +131,14 @@ class ReplayLoader {
 let replayLoader: ReplayLoader | null = null;
 let replayInterval: ReturnType<typeof setInterval> | null = null;
 
+let gridMessageOverride = "";
+
+export function getGridMessageOverride() {
+	return gridMessageOverride.length > 0 ? gridMessageOverride : undefined;
+}
+
 // loads replay and sets up periodic updates
-export async function setupReplayLoader(filePath: string, cacheInterval = 25, updateInterval = 1000): Promise<void> {
+export async function setupReplayLoader(filePath: string, cacheInterval = 25, updateInterval = 3000): Promise<void> {
 	replayLoader = new ReplayLoader(cacheInterval);
 
 	// initial load
@@ -136,7 +147,7 @@ export async function setupReplayLoader(filePath: string, cacheInterval = 25, up
 	// grab initial ETag
 	let lastEtag: string | null = null;
 	try {
-		const headRes = await fetch(filePath, { method: 'HEAD' });
+		const headRes = await fetch(filePath, { method: 'HEAD', cache: 'no-cache' });
 		lastEtag = headRes.headers.get('ETag');
 	} catch (err) {
 		console.warn('Failed to fetch initial ETag:', err);
@@ -148,7 +159,12 @@ export async function setupReplayLoader(filePath: string, cacheInterval = 25, up
 	}
 	replayInterval = setInterval(async () => {
 		try {
-			const head = await fetch(filePath, { method: 'HEAD' });
+			const head = await fetch(filePath, { method: 'HEAD', cache: 'no-cache' });
+
+			if (!head.ok) {
+				throw ('catch block time - lets reset the replayLoader');
+			}
+
 			const etag = head.headers.get('ETag');
 			if (!etag) {
 				console.warn('No ETag header present. This is a web server issue.');
@@ -157,16 +173,16 @@ export async function setupReplayLoader(filePath: string, cacheInterval = 25, up
 
 			if (etag !== lastEtag) {
 				lastEtag = etag;
-				console.log('🔄 Detected changes via ETag, reloading replay…');
-				if (replayLoader) {
-					await replayLoader.loadReplay(filePath);
-				} else {
-					console.error('ReplayLoader is not initialized.');
-				}
+				const newReplayLoader = new ReplayLoader(cacheInterval);
+				await newReplayLoader.loadReplay(filePath);
+				replayLoader = newReplayLoader;
+				resetTimeManager();
 			}
+			gridMessageOverride = "";
 		} catch (err) {
 			console.error('Error checking for updates:', err);
-			alert("Couldn't fetch replay updates. There is an issue with the webserver, please reopen your VSCode devcontainer.");
+			gridMessageOverride = "Couldn't fetch replay updates. There is an issue with the webserver, please reopen your VSCode devcontainer.";
+			replayLoader = null;
 		}
 	}, updateInterval);
 }

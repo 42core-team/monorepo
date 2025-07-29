@@ -1,5 +1,6 @@
+import { GameConfig } from '../replay_loader/config.js';
 import { formatObjectData, getBarMetrics, type TickObject } from '../replay_loader/object.js';
-import { getGameConfig, getNameOfUnitType, getStateAt } from '../replay_loader/replayLoader.js';
+import { getGameConfig, getGridMessageOverride, getNameOfUnitType, getStateAt } from '../replay_loader/replayLoader.js';
 import { getCurrentTickData } from '../time_manager/timeManager.js';
 
 const svgNS = 'http://www.w3.org/2000/svg';
@@ -45,7 +46,7 @@ if (!svgCanvasElement || !(svgCanvasElement instanceof SVGSVGElement)) {
 }
 const svgCanvas = svgCanvasElement as SVGSVGElement;
 const tooltipElement = document.getElementById('tooltip') as HTMLDivElement;
-const gameConfig = getGameConfig();
+let gameConfig: GameConfig | undefined;
 
 function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, scaleFactor: number = 1): void {
 	if (!gameConfig) {
@@ -153,6 +154,27 @@ function drawFrame(_timestamp: number): void {
 
 	cleanGrid();
 
+	let gridMessageOverride: string | undefined = getGridMessageOverride();
+
+	if (gridMessageOverride) {
+		const gridSize = gameConfig!.gridSize;
+
+		const text = document.createElementNS(svgNS, 'text');
+		text.textContent = gridMessageOverride;
+		text.setAttribute('x', (gridSize / 2).toString());
+		text.setAttribute('y', (gridSize / 2).toString());
+		text.setAttribute('font-family', 'sans-serif');
+		text.setAttribute('font-size', (gridSize / 14).toString());
+		text.setAttribute('font-weight', 'bold');
+		text.setAttribute('fill', 'rgba(0, 0, 0, 0.75)');
+		text.setAttribute('text-anchor', 'middle');
+		text.setAttribute('dominant-baseline', 'middle');
+		svgCanvas.appendChild(text);
+
+		window.requestAnimationFrame(drawFrame);
+		return;
+	}
+
 	for (const currObj of replayData.objects) {
 		let scale = 1;
 		let x = currObj.x;
@@ -160,12 +182,13 @@ function drawFrame(_timestamp: number): void {
 
 		let prevObj = null;
 		try {
-			prevObj = getStateAt(currentTickData.tick - 1)?.objects.find((o) => o.id === currObj.id);
-		} catch {}
+			if (currentTickData.tick - 1 >= 0)
+				prevObj = getStateAt(currentTickData.tick - 1)?.objects.find((o) => o.id === currObj.id);
+		} catch { }
 		let nextObj = null;
 		try {
 			nextObj = getStateAt(currentTickData.tick + 1)?.objects.find((o) => o.id === currObj.id);
-		} catch {}
+		} catch { }
 
 		const sineProgress = Math.sin((currentTickData.tickProgress * Math.PI) / 2);
 
@@ -189,6 +212,7 @@ function drawFrame(_timestamp: number): void {
 window.requestAnimationFrame(drawFrame);
 
 export async function setupRenderer(): Promise<void> {
+	gameConfig = getGameConfig();
 	if (!gameConfig) {
 		throw new Error('Game configuration not found. Cannot set up renderer.');
 	}

@@ -158,3 +158,13 @@ export function getCurrentTickData(): tickData {
 
 	return { tick, tickProgress };
 }
+
+export function resetTimeManager() {
+	setTick(0);
+	lastTimestamp = null;
+	tickProgress = 0;
+	tickTimelineSlider.max = (getTotalTicks() - 1).toString();
+	tickTimelineSlider.value = "0";
+	tickTimelineNumberInput.max = (getTotalTicks() - 1).toString();
+	tickTimelineNumberInput.value = "0";
+}
