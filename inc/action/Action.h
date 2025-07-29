@@ -19,6 +19,7 @@ using json = nlohmann::ordered_json;
 enum class ActionType
 {
 	MOVE,
+	ATTACK,
 	CREATE,
 	TRANSFER_MONEY,
 	BUILD
