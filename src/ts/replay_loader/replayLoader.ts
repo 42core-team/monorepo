@@ -163,12 +163,6 @@ class ReplayLoader {
 let replayLoader: ReplayLoader | null = null;
 let replayInterval: ReturnType<typeof setInterval> | null = null;
 
-let gridMessageOverride = '';
-
-export function getGridMessageOverride() {
-	return gridMessageOverride.length > 0 ? gridMessageOverride : undefined;
-}
-
 // loads replay and sets up periodic updates
 export async function setupReplayLoader(filePath: string, cacheInterval = 25, updateInterval = 3000): Promise<void> {
 	replayLoader = new ReplayLoader(cacheInterval);
@@ -211,10 +205,8 @@ export async function setupReplayLoader(filePath: string, cacheInterval = 25, up
 				replayLoader = newReplayLoader;
 				resetTimeManager();
 			}
-			gridMessageOverride = '';
 		} catch (err) {
 			console.error('Error checking for updates:', err);
-			gridMessageOverride = "Couldn't fetch replay updates. There is an issue with the webserver, please reopen your VSCode devcontainer.";
 			replayLoader = null;
 		}
 	}, updateInterval);

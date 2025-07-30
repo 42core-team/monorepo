@@ -1,6 +1,6 @@
 import { GameConfig } from '../replay_loader/config.js';
 import { formatObjectData, getBarMetrics, type TickObject } from '../replay_loader/object.js';
-import { getGameConfig, getGameMisc, getGridMessageOverride, getNameOfUnitType, getStateAt } from '../replay_loader/replayLoader.js';
+import { getGameConfig, getGameMisc, getNameOfUnitType, getStateAt } from '../replay_loader/replayLoader.js';
 import { getCurrentTickData } from '../time_manager/timeManager.js';
 
 const svgNS = 'http://www.w3.org/2000/svg';
@@ -157,28 +157,6 @@ function drawFrame(_timestamp: number): void {
 
 	for (const element of nonPersistentElements) {
 		element.classList.add('not-touched');
-	}
-
-	// TODO: this doesnt work at all lol
-	let gridMessageOverride: string | undefined = getGridMessageOverride();
-
-	if (gridMessageOverride) {
-		const gridSize = gameConfig!.gridSize;
-
-		const text = document.createElementNS(svgNS, 'text');
-		text.textContent = gridMessageOverride;
-		text.setAttribute('x', (gridSize / 2).toString());
-		text.setAttribute('y', (gridSize / 2).toString());
-		text.setAttribute('font-family', 'sans-serif');
-		text.setAttribute('font-size', (gridSize / 14).toString());
-		text.setAttribute('font-weight', 'bold');
-		text.setAttribute('fill', 'rgba(0, 0, 0, 0.75)');
-		text.setAttribute('text-anchor', 'middle');
-		text.setAttribute('dominant-baseline', 'middle');
-		svgCanvas.appendChild(text);
-
-		window.requestAnimationFrame(drawFrame);
-		return;
 	}
 
 	for (const currObj of replayData.objects) {
