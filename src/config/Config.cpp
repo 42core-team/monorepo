@@ -91,8 +91,8 @@ static GameConfig parseGameConfig()
 			unit.name = unitJson.value("name", "Unnamed");
 			unit.cost = unitJson.value("cost", 0);
 			unit.hp = unitJson.value("hp", 0);
-			unit.speed = unitJson.value("speed", 0);
-			unit.minSpeed = unitJson.value("minSpeed", 0);
+			unit.baseMoveCooldown = unitJson.value("baseMoveCooldown", 0);
+			unit.maxMoveCooldown = unitJson.value("maxMoveCooldown", 0);
 			unit.damageCore = unitJson.value("damageCore", 0);
 			unit.damageUnit = unitJson.value("damageUnit", 0);
 			unit.damageResource = unitJson.value("damageResource", 0);

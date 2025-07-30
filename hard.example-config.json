@@ -1,5 +1,5 @@
 {
-	"gridSize": 30,
+	"gridSize": 25,
 	"idleIncome": 0,
 	"idleIncomeTimeOut": 600,
 	"resourceHp": 50,
@@ -47,7 +47,7 @@
 			"cost": 100,
 			"hp": 15,
 			"baseMoveCooldown": 5,
-			"maxMoveCooldown": 15,
+			"maxMoveCooldown": 10,
 			"damageCore": 3,
 			"damageUnit": 2,
 			"damageResource": 10,
@@ -57,13 +57,13 @@
 		{
 			"name": "Carrier",
 			"cost": 125,
-			"hp": 20,
-			"baseMoveCooldown": 3,
-			"maxMoveCooldown": 5,
-			"damageCore": 3,
-			"damageUnit": 2,
-			"damageResource": 4,
-			"damageWall": 3,
+			"hp": 5,
+			"baseMoveCooldown": 0,
+			"maxMoveCooldown": 0,
+			"damageCore": 1,
+			"damageUnit": 1,
+			"damageResource": 2,
+			"damageWall": 1,
 			"buildType": 0
 		},
 		{
@@ -97,8 +97,8 @@
 			"y": 0
 		},
 		{
-			"x": 29,
-			"y": 29
+			"x": 24,
+			"y": 24
 		}
 	]
 }

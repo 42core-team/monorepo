@@ -19,17 +19,17 @@ void Unit::tick(unsigned long long tickCount)
 
 unsigned int Unit::calcMoveCooldown()
 {
-	unsigned int baseSpeed = Config::game().units[unit_type_].speed;
-	unsigned int minSpeed = Config::game().units[unit_type_].minSpeed;
+	unsigned int baseMoveCooldown = Config::game().units[unit_type_].baseMoveCooldown;
+	unsigned int maxMoveCooldown = Config::game().units[unit_type_].maxMoveCooldown;
 
 	float resourcePart = balance_ / (Config::game().resourceIncome / 4);
 	if (resourcePart < 1)
 		resourcePart = 1; // up to 1/4 resource balance does not slow down
 
-	unsigned int speed = baseSpeed * resourcePart;
+	unsigned int speed = baseMoveCooldown * resourcePart;
 
-	if (speed > minSpeed)
-		speed = minSpeed;
+	if (speed > maxMoveCooldown)
+		speed = maxMoveCooldown;
 
 	return speed + 1;
 }

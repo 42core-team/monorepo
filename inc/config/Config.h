@@ -58,8 +58,8 @@ struct UnitConfig
 	std::string name;
 	unsigned int cost;
 	unsigned int hp;
-	unsigned int speed; // timeout between moves in ticks
-	unsigned int minSpeed;
+	unsigned int baseMoveCooldown; // timeout between moves in ticks
+	unsigned int maxMoveCooldown;
 
 	unsigned int damageCore;
 	unsigned int damageUnit;
