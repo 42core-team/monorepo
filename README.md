@@ -15,7 +15,7 @@ This project includes Docker support for containerized deployment.
 docker build -t debug-visualizer .
 
 # Run the container
-docker run -p 8080:80 debug-visualizer
+docker run -p 8080:80 --rm debug-visualizer
 
 # Access the application at http://localhost:8080
 ```
