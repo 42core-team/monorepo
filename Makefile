@@ -29,7 +29,9 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@echo "✂️  Compiling $<..."
 	$(CXX) $(CXXFLAGS) $(INCLUDEDIRS) -c $< -o $@
 
-re: fclean all
+re:
+	$(MAKE) fclean
+	$(MAKE) all
 
 clean:
 	@echo "🧹 Cleaning up..."
