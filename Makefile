@@ -1,5 +1,8 @@
 CXX := clang++
 
+JOBS ?= $(shell nproc)
+MAKEFLAGS += -j$(JOBS)
+
 CXXFLAGS := -std=c++17 -Wall -Wextra -Werror -pthread -MMD -MP -fsanitize=address -g
 
 LDFLAGS := -pthread
