@@ -28,7 +28,9 @@ clean:
 fclean: clean
 	rm -rf $(LIBRARY)
 
-re: fclean all
+re:
+	$(MAKE) fclean
+	$(MAKE) all
 
 log:
 	find inc -type f -print -exec echo "====> {} <====" \; -exec cat {} \; || true
