@@ -78,11 +78,13 @@ export async function setupTimeManager() {
 	nextTickButton.addEventListener('click', () => {
 		if (tick < getTotalTicks() - 1) {
 			setTick(tick + 1);
+			tickProgress = 0;
 		}
 	});
 	prevTickButton.addEventListener('click', () => {
 		if (tick > 0) {
 			setTick(tick - 1);
+			tickProgress = 0;
 		}
 	});
 

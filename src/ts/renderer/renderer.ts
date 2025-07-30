@@ -122,10 +122,10 @@ function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, s
 	if (!img) {
 		img = document.createElementNS(svgNS, 'image');
 		img.setAttribute('data-obj-id', obj.id.toString());
-		img.setAttributeNS(xlinkNS, 'href', `/assets/object-svgs/${path}`);
 	}
 
 	img.classList.remove('not-touched');
+	img.setAttributeNS(xlinkNS, 'href', `/assets/object-svgs/${path}`);
 
 	let scale = 0.8;
 	if (obj.type === 2) {
