@@ -70,6 +70,9 @@ bool TransferMoneyAction::execute(Core *core)
 	if (!dstObj)
 		return dropMoney(core, srcObj);
 
+	if (srcObj->getId() == dstObj->getId())
+		return false; // can't transfer money to itself
+
 	// only active objects can transfer money
 	if (srcObj->getType() != ObjectType::Core && srcObj->getType() != ObjectType::Unit)
 		return false;
