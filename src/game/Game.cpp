@@ -151,7 +151,7 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 			{
 				if (!bridge->isDisconnected() && bridge->getTeamId() == core.getTeamId())
 				{
-					replayEncoder_.addTeamScore(bridge->getTeamId(), bridge->getTeamName(), Board::instance().getCoreCount() - 1);
+					replayEncoder_.addTeamScore(bridge->getTeamId(), bridge->getTeamName(), Board::instance().getCoreCount());
 					bridges_.erase(std::remove(bridges_.begin(), bridges_.end(), bridge), bridges_.end());
 					break;
 				}
