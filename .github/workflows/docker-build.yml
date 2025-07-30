@@ -22,10 +22,10 @@ jobs:
       matrix:
         include:
           - architecture: amd64
-            runner: [self-hosted, x64]
+            runner: ubuntu-24.04
             platform: linux/amd64
           - architecture: arm64
-            runner: [self-hosted, arm64]
+            runner: ubuntu-24.04-arm
             platform: linux/arm64
     outputs:
       images: ${{ steps.meta.outputs.tags }}
@@ -60,6 +60,27 @@ jobs:
             org.opencontainers.image.description=Debug visualizer web application
             org.opencontainers.image.vendor=${{ github.repository_owner }}
 
+      - name: Process tags for architecture
+        id: arch-tags
+        run: |
+          # Get the base tags and add architecture suffix to each
+          BASE_TAGS="${{ steps.meta.outputs.tags }}"
+          ARCH_TAGS=""
+          
+          while IFS= read -r tag; do
+            if [[ -n "$tag" ]]; then
+              if [[ -z "$ARCH_TAGS" ]]; then
+                ARCH_TAGS="${tag}-${{ matrix.architecture }}"
+              else
+                ARCH_TAGS="${ARCH_TAGS}\n${tag}-${{ matrix.architecture }}"
+              fi
+            fi
+          done <<< "$BASE_TAGS"
+          
+          echo "arch-tags<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$ARCH_TAGS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Build and push Docker image
         if: github.event_name == 'push'
         id: build
@@ -68,7 +89,7 @@ jobs:
           context: .
           platforms: ${{ matrix.platform }}
           push: true
-          tags: ${{ steps.meta.outputs.tags }}-${{ matrix.architecture }}
+          tags: ${{ steps.arch-tags.outputs.arch-tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -90,14 +111,14 @@ jobs:
           echo "Platform: ${{ matrix.platform }}"
           echo "Runner: ${{ matrix.runner }}"
           if [ "${{ github.event_name }}" == "push" ]; then
-            echo "Image tags: ${{ steps.meta.outputs.tags }}-${{ matrix.architecture }}"
+            echo "Image tags: ${{ steps.arch-tags.outputs.arch-tags }}"
           else
             echo "Test build completed for PR"
           fi
 
   merge:
     needs: build
-    runs-on: self-hosted
+    runs-on: ubuntu-24.04
     if: github.event_name == 'push'
     steps:
       - name: Checkout repository
