@@ -1,1 +1,3148 @@
-{"misc":{"team_results":[{"id":2,"name":"Gridmaster","place":0},{"id":1,"name":"Gridmaster","place":0}],"game_end_reason":0,"version":"1.0.0"},"ticks":{"0":{"objects":[{"id":0,"type":0,"x":0,"y":0,"hp":200,"teamId":1,"balance":300},{"id":124,"type":3,"x":14,"y":0,"hp":100},{"id":125,"type":2,"x":15,"y":0,"hp":50,"balance":260},{"id":126,"type":3,"x":16,"y":0,"hp":100},{"id":49,"type":3,"x":19,"y":0,"hp":100},{"id":146,"type":3,"x":24,"y":0,"hp":100},{"id":17,"type":3,"x":9,"y":1,"hp":100},{"id":18,"type":3,"x":10,"y":1,"hp":100},{"id":127,"type":3,"x":15,"y":1,"hp":100},{"id":50,"type":3,"x":20,"y":1,"hp":100},{"id":190,"type":4,"x":21,"y":1,"hp":1,"balance":200},{"id":147,"type":3,"x":24,"y":1,"hp":100},{"id":19,"type":3,"x":7,"y":2,"hp":100},{"id":182,"type":4,"x":8,"y":2,"hp":1,"balance":200},{"id":20,"type":3,"x":9,"y":2,"hp":100},{"id":21,"type":2,"x":10,"y":2,"hp":50,"balance":364},{"id":22,"type":3,"x":11,"y":2,"hp":100},{"id":154,"type":3,"x":16,"y":2,"hp":100},{"id":51,"type":3,"x":18,"y":2,"hp":100},{"id":52,"type":3,"x":19,"y":2,"hp":100},{"id":53,"type":3,"x":20,"y":2,"hp":100},{"id":159,"type":3,"x":22,"y":2,"hp":100},{"id":23,"type":3,"x":7,"y":3,"hp":100},{"id":24,"type":2,"x":8,"y":3,"hp":50,"balance":240},{"id":25,"type":2,"x":9,"y":3,"hp":50,"balance":260},{"id":26,"type":3,"x":10,"y":3,"hp":100},{"id":27,"type":3,"x":11,"y":3,"hp":100},{"id":54,"type":3,"x":18,"y":3,"hp":100},{"id":55,"type":2,"x":19,"y":3,"hp":50,"balance":364},{"id":56,"type":3,"x":20,"y":3,"hp":100},{"id":168,"type":3,"x":5,"y":4,"hp":100},{"id":28,"type":3,"x":7,"y":4,"hp":100},{"id":29,"type":3,"x":8,"y":4,"hp":100},{"id":30,"type":3,"x":9,"y":4,"hp":100},{"id":31,"type":2,"x":10,"y":4,"hp":50,"balance":364},{"id":32,"type":3,"x":11,"y":4,"hp":100},{"id":191,"type":4,"x":16,"y":4,"hp":1,"balance":200},{"id":57,"type":3,"x":18,"y":4,"hp":100},{"id":58,"type":3,"x":19,"y":4,"hp":100},{"id":59,"type":3,"x":20,"y":4,"hp":100},{"id":178,"type":4,"x":21,"y":4,"hp":1,"balance":200},{"id":175,"type":2,"x":23,"y":4,"hp":50,"balance":240},{"id":90,"type":3,"x":24,"y":4,"hp":100},{"id":156,"type":3,"x":4,"y":5,"hp":100},{"id":33,"type":4,"x":7,"y":5,"hp":1,"balance":200},{"id":34,"type":3,"x":10,"y":5,"hp":100},{"id":2,"type":3,"x":15,"y":5,"hp":100},{"id":160,"type":3,"x":20,"y":5,"hp":100},{"id":91,"type":3,"x":23,"y":5,"hp":100},{"id":157,"type":3,"x":24,"y":5,"hp":100},{"id":8,"type":4,"x":0,"y":6,"hp":1,"balance":200},{"id":3,"type":3,"x":14,"y":6,"hp":100},{"id":9,"type":2,"x":0,"y":7,"hp":50,"balance":200},{"id":128,"type":3,"x":6,"y":7,"hp":100},{"id":129,"type":3,"x":7,"y":7,"hp":100},{"id":155,"type":3,"x":12,"y":7,"hp":100},{"id":4,"type":3,"x":13,"y":7,"hp":100},{"id":177,"type":2,"x":14,"y":7,"hp":50,"balance":260},{"id":5,"type":4,"x":15,"y":7,"hp":1,"balance":200},{"id":183,"type":4,"x":19,"y":7,"hp":1,"balance":200},{"id":173,"type":2,"x":20,"y":7,"hp":50,"balance":200},{"id":130,"type":3,"x":6,"y":8,"hp":100},{"id":131,"type":2,"x":7,"y":8,"hp":50,"balance":260},{"id":132,"type":3,"x":8,"y":8,"hp":100},{"id":6,"type":3,"x":14,"y":8,"hp":100},{"id":153,"type":3,"x":16,"y":8,"hp":100},{"id":186,"type":4,"x":20,"y":8,"hp":1,"balance":200},{"id":107,"type":3,"x":24,"y":8,"hp":100},{"id":10,"type":2,"x":0,"y":9,"hp":50,"balance":220},{"id":193,"type":4,"x":1,"y":9,"hp":1,"balance":200},{"id":133,"type":3,"x":6,"y":9,"hp":100},{"id":134,"type":3,"x":8,"y":9,"hp":100},{"id":151,"type":3,"x":14,"y":9,"hp":100},{"id":7,"type":3,"x":15,"y":9,"hp":100},{"id":192,"type":4,"x":17,"y":9,"hp":1,"balance":200},{"id":189,"type":4,"x":18,"y":9,"hp":1,"balance":200},{"id":92,"type":2,"x":20,"y":9,"hp":50,"balance":240},{"id":93,"type":3,"x":21,"y":9,"hp":100},{"id":11,"type":3,"x":0,"y":10,"hp":100},{"id":12,"type":4,"x":1,"y":10,"hp":1,"balance":200},{"id":13,"type":3,"x":2,"y":10,"hp":100},{"id":167,"type":3,"x":6,"y":10,"hp":100},{"id":158,"type":3,"x":17,"y":10,"hp":100},{"id":94,"type":3,"x":18,"y":10,"hp":100},{"id":95,"type":3,"x":20,"y":10,"hp":100},{"id":108,"type":3,"x":23,"y":10,"hp":100},{"id":14,"type":3,"x":0,"y":11,"hp":100},{"id":161,"type":3,"x":7,"y":11,"hp":100},{"id":35,"type":3,"x":8,"y":11,"hp":100},{"id":96,"type":3,"x":17,"y":11,"hp":100},{"id":176,"type":2,"x":18,"y":11,"hp":50,"balance":364},{"id":97,"type":3,"x":19,"y":11,"hp":100},{"id":98,"type":2,"x":20,"y":11,"hp":50,"balance":364},{"id":99,"type":3,"x":21,"y":11,"hp":100},{"id":109,"type":3,"x":24,"y":11,"hp":100},{"id":15,"type":3,"x":0,"y":12,"hp":100},{"id":135,"type":3,"x":3,"y":12,"hp":100},{"id":136,"type":3,"x":4,"y":12,"hp":100},{"id":36,"type":3,"x":6,"y":12,"hp":100},{"id":37,"type":3,"x":9,"y":12,"hp":100},{"id":292,"type":3,"x":15,"y":12,"hp":100},{"id":291,"type":3,"x":18,"y":12,"hp":100},{"id":290,"type":3,"x":20,"y":12,"hp":100},{"id":289,"type":3,"x":21,"y":12,"hp":100},{"id":288,"type":3,"x":24,"y":12,"hp":100},{"id":287,"type":3,"x":0,"y":13,"hp":100},{"id":286,"type":3,"x":3,"y":13,"hp":100},{"id":285,"type":2,"x":4,"y":13,"hp":50,"balance":364},{"id":284,"type":3,"x":5,"y":13,"hp":100},{"id":283,"type":2,"x":6,"y":13,"hp":50,"balance":364},{"id":282,"type":3,"x":7,"y":13,"hp":100},{"id":281,"type":3,"x":16,"y":13,"hp":100},{"id":280,"type":3,"x":17,"y":13,"hp":100},{"id":279,"type":3,"x":24,"y":13,"hp":100},{"id":278,"type":3,"x":1,"y":14,"hp":100},{"id":277,"type":3,"x":4,"y":14,"hp":100},{"id":276,"type":3,"x":6,"y":14,"hp":100},{"id":275,"type":3,"x":7,"y":14,"hp":100},{"id":274,"type":3,"x":18,"y":14,"hp":100},{"id":273,"type":3,"x":22,"y":14,"hp":100},{"id":272,"type":4,"x":23,"y":14,"hp":1,"balance":200},{"id":271,"type":3,"x":24,"y":14,"hp":100},{"id":270,"type":3,"x":3,"y":15,"hp":100},{"id":269,"type":2,"x":4,"y":15,"hp":50,"balance":240},{"id":268,"type":4,"x":6,"y":15,"hp":1,"balance":200},{"id":267,"type":4,"x":7,"y":15,"hp":1,"balance":200},{"id":266,"type":3,"x":9,"y":15,"hp":100},{"id":265,"type":3,"x":10,"y":15,"hp":100},{"id":264,"type":3,"x":16,"y":15,"hp":100},{"id":263,"type":3,"x":18,"y":15,"hp":100},{"id":262,"type":4,"x":23,"y":15,"hp":1,"balance":200},{"id":261,"type":2,"x":24,"y":15,"hp":50,"balance":220},{"id":260,"type":3,"x":0,"y":16,"hp":100},{"id":259,"type":4,"x":4,"y":16,"hp":1,"balance":200},{"id":258,"type":3,"x":8,"y":16,"hp":100},{"id":257,"type":3,"x":10,"y":16,"hp":100},{"id":256,"type":3,"x":16,"y":16,"hp":100},{"id":255,"type":2,"x":17,"y":16,"hp":50,"balance":260},{"id":254,"type":3,"x":18,"y":16,"hp":100},{"id":253,"type":2,"x":4,"y":17,"hp":50,"balance":200},{"id":252,"type":4,"x":5,"y":17,"hp":1,"balance":200},{"id":251,"type":4,"x":9,"y":17,"hp":1,"balance":200},{"id":250,"type":2,"x":10,"y":17,"hp":50,"balance":260},{"id":249,"type":3,"x":11,"y":17,"hp":100},{"id":248,"type":3,"x":12,"y":17,"hp":100},{"id":247,"type":3,"x":17,"y":17,"hp":100},{"id":246,"type":3,"x":18,"y":17,"hp":100},{"id":245,"type":2,"x":24,"y":17,"hp":50,"balance":200},{"id":244,"type":3,"x":10,"y":18,"hp":100},{"id":243,"type":4,"x":24,"y":18,"hp":1,"balance":200},{"id":242,"type":3,"x":0,"y":19,"hp":100},{"id":241,"type":3,"x":1,"y":19,"hp":100},{"id":240,"type":3,"x":4,"y":19,"hp":100},{"id":239,"type":3,"x":9,"y":19,"hp":100},{"id":238,"type":3,"x":14,"y":19,"hp":100},{"id":237,"type":4,"x":17,"y":19,"hp":1,"balance":200},{"id":236,"type":3,"x":20,"y":19,"hp":100},{"id":235,"type":3,"x":0,"y":20,"hp":100},{"id":234,"type":2,"x":1,"y":20,"hp":50,"balance":240},{"id":233,"type":4,"x":3,"y":20,"hp":1,"balance":200},{"id":232,"type":3,"x":4,"y":20,"hp":100},{"id":231,"type":3,"x":5,"y":20,"hp":100},{"id":230,"type":3,"x":6,"y":20,"hp":100},{"id":229,"type":4,"x":8,"y":20,"hp":1,"balance":200},{"id":228,"type":3,"x":13,"y":20,"hp":100},{"id":227,"type":2,"x":14,"y":20,"hp":50,"balance":364},{"id":226,"type":3,"x":15,"y":20,"hp":100},{"id":225,"type":3,"x":16,"y":20,"hp":100},{"id":224,"type":3,"x":17,"y":20,"hp":100},{"id":223,"type":3,"x":19,"y":20,"hp":100},{"id":222,"type":3,"x":4,"y":21,"hp":100},{"id":221,"type":2,"x":5,"y":21,"hp":50,"balance":364},{"id":220,"type":3,"x":6,"y":21,"hp":100},{"id":219,"type":3,"x":13,"y":21,"hp":100},{"id":218,"type":3,"x":14,"y":21,"hp":100},{"id":217,"type":2,"x":15,"y":21,"hp":50,"balance":260},{"id":216,"type":2,"x":16,"y":21,"hp":50,"balance":240},{"id":215,"type":3,"x":17,"y":21,"hp":100},{"id":214,"type":3,"x":2,"y":22,"hp":100},{"id":213,"type":3,"x":4,"y":22,"hp":100},{"id":212,"type":3,"x":5,"y":22,"hp":100},{"id":211,"type":3,"x":6,"y":22,"hp":100},{"id":210,"type":3,"x":8,"y":22,"hp":100},{"id":209,"type":3,"x":13,"y":22,"hp":100},{"id":208,"type":2,"x":14,"y":22,"hp":50,"balance":364},{"id":207,"type":3,"x":15,"y":22,"hp":100},{"id":206,"type":4,"x":16,"y":22,"hp":1,"balance":200},{"id":205,"type":3,"x":17,"y":22,"hp":100},{"id":204,"type":3,"x":0,"y":23,"hp":100},{"id":203,"type":4,"x":3,"y":23,"hp":1,"balance":200},{"id":202,"type":3,"x":4,"y":23,"hp":100},{"id":201,"type":3,"x":9,"y":23,"hp":100},{"id":200,"type":3,"x":14,"y":23,"hp":100},{"id":199,"type":3,"x":15,"y":23,"hp":100},{"id":198,"type":3,"x":0,"y":24,"hp":100},{"id":197,"type":3,"x":5,"y":24,"hp":100},{"id":196,"type":3,"x":8,"y":24,"hp":100},{"id":195,"type":2,"x":9,"y":24,"hp":50,"balance":260},{"id":194,"type":3,"x":10,"y":24,"hp":100},{"id":1,"type":0,"x":24,"y":24,"hp":200,"teamId":2,"balance":300}]},"1":{"objects":[{"id":1,"balance":150},{"id":0,"balance":150},{"id":293,"type":1,"x":1,"y":0,"hp":25,"teamId":1,"unit_type":0,"balance":0,"moveCooldown":0},{"id":294,"type":1,"x":23,"y":24,"hp":25,"teamId":2,"unit_type":0,"balance":0,"moveCooldown":0}],"actions":[{"type":"create","unit_type":0},{"type":"create","unit_type":0}]},"2":{"objects":[{"id":296,"type":1,"x":24,"y":23,"hp":15,"teamId":2,"unit_type":1,"balance":0,"moveCooldown":0},{"id":1,"balance":50},{"id":295,"type":1,"x":0,"y":1,"hp":15,"teamId":1,"unit_type":1,"balance":0,"moveCooldown":0},{"id":0,"balance":50},{"id":293,"y":1},{"id":294,"y":23}],"actions":[{"type":"create","unit_type":1},{"type":"create","unit_type":1},{"type":"move","unit_id":293,"x":1,"y":1},{"type":"move","unit_id":294,"x":23,"y":23}]},"3":{"objects":[{"id":296,"y":22},{"id":295,"y":2},{"id":293,"y":2},{"id":294,"y":22}],"actions":[{"type":"move","unit_id":295,"x":0,"y":2},{"type":"move","unit_id":294,"x":23,"y":22},{"type":"move","unit_id":293,"x":1,"y":2},{"type":"move","unit_id":296,"x":24,"y":22}]},"4":{"objects":[{"id":296,"y":21},{"id":295,"y":3},{"id":293,"x":2},{"id":294,"x":22}],"actions":[{"type":"move","unit_id":293,"x":2,"y":2},{"type":"move","unit_id":294,"x":22,"y":22},{"type":"move","unit_id":295,"x":0,"y":3},{"type":"move","unit_id":296,"x":24,"y":21}]},"5":{"objects":[{"id":296,"y":20},{"id":295,"y":4},{"id":293,"x":3},{"id":294,"y":21}],"actions":[{"type":"move","unit_id":294,"x":22,"y":21},{"type":"move","unit_id":295,"x":0,"y":4},{"type":"move","unit_id":293,"x":3,"y":2},{"type":"move","unit_id":296,"x":24,"y":20}]},"6":{"objects":[{"id":296,"y":19},{"id":295,"y":5},{"id":293,"y":3},{"id":294,"x":21}],"actions":[{"type":"move","unit_id":295,"x":0,"y":5},{"type":"move","unit_id":296,"x":24,"y":19},{"type":"move","unit_id":293,"x":3,"y":3},{"type":"move","unit_id":294,"x":21,"y":21}]},"7":{"objects":[{"id":293,"y":4},{"id":294,"x":20}],"actions":[{"type":"move","unit_id":294,"x":20,"y":21},{"type":"move","unit_id":293,"x":3,"y":4}]},"8":{"objects":[{"id":293,"y":5},{"id":294,"x":19}],"actions":[{"type":"move","unit_id":293,"x":3,"y":5},{"type":"move","unit_id":294,"x":19,"y":21}]},"9":{"objects":[{"id":293,"y":6},{"id":294,"x":18}],"actions":[{"type":"move","unit_id":294,"x":18,"y":21},{"type":"move","unit_id":293,"x":3,"y":6}]},"10":{"objects":[{"id":293,"x":4},{"id":294,"y":20}],"actions":[{"type":"move","unit_id":294,"x":18,"y":20},{"type":"move","unit_id":293,"x":4,"y":6}]},"11":{"objects":[{"id":293,"x":5},{"id":294,"y":19}],"actions":[{"type":"move","unit_id":294,"x":18,"y":19},{"type":"move","unit_id":293,"x":5,"y":6}]},"12":{"objects":[{"id":293,"x":6},{"id":294,"y":18}],"actions":[{"type":"move","unit_id":294,"x":18,"y":18},{"type":"move","unit_id":293,"x":6,"y":6}]},"13":{"objects":[{"id":293,"x":7},{"id":294,"x":17}],"actions":[{"type":"move","unit_id":294,"x":17,"y":18},{"type":"move","unit_id":293,"x":7,"y":6}]},"14":{"objects":[{"id":293,"x":8},{"id":294,"x":16}],"actions":[{"type":"move","unit_id":294,"x":16,"y":18},{"type":"move","unit_id":293,"x":8,"y":6}]},"15":{"objects":[{"id":293,"y":7},{"id":294,"y":17}],"actions":[{"type":"move","unit_id":294,"x":16,"y":17},{"type":"move","unit_id":293,"x":8,"y":7}]},"16":{"objects":[{"id":293,"x":9},{"id":294,"x":15}],"actions":[{"type":"move","unit_id":293,"x":9,"y":7},{"type":"move","unit_id":294,"x":15,"y":17}]},"17":{"objects":[{"id":293,"y":8},{"id":294,"y":16}],"actions":[{"type":"move","unit_id":294,"x":15,"y":16},{"type":"move","unit_id":293,"x":9,"y":8}]},"18":{"objects":[{"id":293,"x":10},{"id":294,"x":14}],"actions":[{"type":"move","unit_id":294,"x":14,"y":16},{"type":"move","unit_id":293,"x":10,"y":8}]},"19":{"objects":[{"id":293,"x":11},{"id":294,"y":15}],"actions":[{"type":"move","unit_id":293,"x":11,"y":8},{"type":"move","unit_id":294,"x":14,"y":15}]},"20":{"objects":[{"id":293,"y":9},{"id":294,"y":14}],"actions":[{"type":"move","unit_id":293,"x":11,"y":9},{"type":"move","unit_id":294,"x":14,"y":14}]},"21":{"objects":[{"id":293,"y":10},{"id":294,"y":13}],"actions":[{"type":"move","unit_id":294,"x":14,"y":13},{"type":"move","unit_id":293,"x":11,"y":10}]},"22":{"objects":[{"id":293,"y":11},{"id":294,"y":12}],"actions":[{"type":"move","unit_id":294,"x":14,"y":12},{"type":"move","unit_id":293,"x":11,"y":11}]},"23":{"objects":[{"id":293,"x":12},{"id":294,"x":13}],"actions":[{"type":"move","unit_id":293,"x":12,"y":11},{"type":"move","unit_id":294,"x":13,"y":12}]},"24":{"objects":[{"id":293,"x":13},{"id":294,"x":12}],"actions":[{"type":"move","unit_id":293,"x":13,"y":11},{"type":"move","unit_id":294,"x":12,"y":12}]},"25":{"objects":[{"id":294,"y":11},{"id":293,"y":12}],"actions":[{"type":"move","unit_id":294,"x":12,"y":11},{"type":"move","unit_id":293,"x":13,"y":12}]},"26":{"objects":[{"id":294,"y":12,"hp":19}],"actions":[{"type":"move","unit_id":294,"x":12,"y":12},{"type":"attack","unit_id":293,"x":12,"y":12,"dmg":6}]},"27":{"objects":[{"id":294,"hp":13},{"id":293,"hp":19}],"actions":[{"type":"attack","unit_id":293,"x":12,"y":12,"dmg":6},{"type":"attack","unit_id":294,"x":13,"y":12,"dmg":6}]},"28":{"objects":[{"id":294,"hp":7},{"id":293,"hp":13}],"actions":[{"type":"attack","unit_id":294,"x":13,"y":12,"dmg":6},{"type":"attack","unit_id":293,"x":12,"y":12,"dmg":6}]},"29":{"objects":[{"id":294,"hp":1},{"id":293,"hp":7}],"actions":[{"type":"attack","unit_id":293,"x":12,"y":12,"dmg":6},{"type":"attack","unit_id":294,"x":13,"y":12,"dmg":6}]},"30":{"objects":[{"id":293,"hp":1},{"id":294,"state":"dead"}],"actions":[{"type":"attack","unit_id":293,"x":12,"y":12,"dmg":6},{"type":"attack","unit_id":294,"x":13,"y":12,"dmg":6}]},"31":{"objects":[{"id":293,"y":13}],"actions":[{"type":"move","unit_id":293,"x":13,"y":13}]},"32":{"objects":[{"id":293,"y":14}],"actions":[{"type":"move","unit_id":293,"x":13,"y":14}]},"33":{"objects":[{"id":293,"y":15}],"actions":[{"type":"move","unit_id":293,"x":13,"y":15}]},"34":{"objects":[{"id":293,"y":16}],"actions":[{"type":"move","unit_id":293,"x":13,"y":16}]},"35":{"objects":[{"id":293,"x":14}],"actions":[{"type":"move","unit_id":293,"x":14,"y":16}]},"36":{"objects":[{"id":293,"x":15}],"actions":[{"type":"move","unit_id":293,"x":15,"y":16}]},"37":{"objects":[{"id":293,"y":17}],"actions":[{"type":"move","unit_id":293,"x":15,"y":17}]},"38":{"objects":[{"id":293,"x":16}],"actions":[{"type":"move","unit_id":293,"x":16,"y":17}]},"39":{"objects":[{"id":293,"y":18}],"actions":[{"type":"move","unit_id":293,"x":16,"y":18}]},"40":{"objects":[{"id":293,"x":17}],"actions":[{"type":"move","unit_id":293,"x":17,"y":18}]},"41":{"objects":[{"id":293,"x":18}],"actions":[{"type":"move","unit_id":293,"x":18,"y":18}]},"42":{"objects":[{"id":293,"x":19}],"actions":[{"type":"move","unit_id":293,"x":19,"y":18}]},"43":{"objects":[{"id":293,"x":20}],"actions":[{"type":"move","unit_id":293,"x":20,"y":18}]},"44":{"objects":[{"id":293,"x":21}],"actions":[{"type":"move","unit_id":293,"x":21,"y":18}]},"45":{"objects":[{"id":293,"y":19}],"actions":[{"type":"move","unit_id":293,"x":21,"y":19}]},"46":{"objects":[{"id":293,"x":22}],"actions":[{"type":"move","unit_id":293,"x":22,"y":19}]},"47":{"objects":[{"id":293,"x":23}],"actions":[{"type":"move","unit_id":293,"x":23,"y":19}]},"48":{"objects":[{"id":296,"hp":9}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":19,"dmg":6}]},"49":{"objects":[{"id":296,"hp":3}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":19,"dmg":6}]},"50":{"objects":[{"id":296,"state":"dead"}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":19,"dmg":6}]},"51":{"objects":[{"id":293,"y":20}],"actions":[{"type":"move","unit_id":293,"x":23,"y":20}]},"52":{"objects":[{"id":293,"x":24}],"actions":[{"type":"move","unit_id":293,"x":24,"y":20}]},"53":{"objects":[{"id":293,"y":21}],"actions":[{"type":"move","unit_id":293,"x":24,"y":21}]},"54":{"objects":[{"id":293,"y":22}],"actions":[{"type":"move","unit_id":293,"x":24,"y":22}]},"55":{"objects":[{"id":293,"y":23}],"actions":[{"type":"move","unit_id":293,"x":24,"y":23}]},"56":{"objects":[{"id":1,"hp":190}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":24,"dmg":10}]},"57":{"objects":[{"id":1,"hp":180}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":24,"dmg":10}]},"58":{"objects":[{"id":1,"hp":170}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":24,"dmg":10}]},"59":{"objects":[{"id":1,"hp":160}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":24,"dmg":10}]},"60":{"objects":[{"id":1,"hp":150}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":24,"dmg":10}]},"61":{"objects":[{"id":1,"hp":140}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":24,"dmg":10}]},"62":{"objects":[{"id":1,"hp":130}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":24,"dmg":10}]},"63":{"objects":[{"id":1,"hp":120}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":24,"dmg":10}]},"64":{"objects":[{"id":1,"hp":110}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":24,"dmg":10}]},"65":{"objects":[{"id":1,"hp":100}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":24,"dmg":10}]},"66":{"objects":[{"id":1,"hp":90}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":24,"dmg":10}]},"67":{"objects":[{"id":1,"hp":80}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":24,"dmg":10}]},"68":{"objects":[{"id":1,"hp":70}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":24,"dmg":10}]},"69":{"objects":[{"id":1,"hp":60}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":24,"dmg":10}]},"70":{"objects":[{"id":1,"hp":50}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":24,"dmg":10}]},"71":{"objects":[{"id":1,"hp":40}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":24,"dmg":10}]},"72":{"objects":[{"id":1,"hp":30}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":24,"dmg":10}]},"73":{"objects":[{"id":1,"hp":20}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":24,"dmg":10}]},"74":{"objects":[{"id":1,"hp":10}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":24,"dmg":10}]},"75":{"objects":[{"id":1,"hp":0}],"actions":[{"type":"attack","unit_id":293,"x":24,"y":24,"dmg":10}]}},"config":{"gridSize":25,"idleIncome":0,"idleIncomeTimeOut":600,"resourceHp":50,"resourceIncome":200,"moneyObjIncome":75,"coreHp":200,"initialBalance":300,"wallHp":100,"wallBuildCost":20,"bombHp":50,"bombCountdown":25,"bombThrowCost":50,"bombReach":3,"bombDamage":50,"worldGenerator":"jigsaw","worldGeneratorConfig":{"templatePlaceAttemptCount":1000,"additionalWallPlaceAttemptCount":50,"mirrorMap":true,"resourceCount":35,"moneysCount":25,"minTemplateSpacing":1,"minCoreDistance":5,"baseResourceIncome":200,"resourceAdditionalIncomePerAdjacentWall":20,"resourceMultiplierIfFullySurrounded":1.3,"randomVariation":20},"units":[{"name":"Warrior","cost":150,"hp":25,"baseMoveCooldown":3,"maxMoveCooldown":12,"damageCore":10,"damageUnit":6,"damageResource":2,"damageWall":3,"buildType":0},{"name":"Miner","cost":100,"hp":15,"baseMoveCooldown":5,"maxMoveCooldown":15,"damageCore":3,"damageUnit":2,"damageResource":10,"damageWall":5,"buildType":0},{"name":"Carrier","cost":125,"hp":20,"baseMoveCooldown":3,"maxMoveCooldown":5,"damageCore":3,"damageUnit":2,"damageResource":4,"damageWall":3,"buildType":0},{"name":"Builder","cost":300,"hp":30,"baseMoveCooldown":2,"maxMoveCooldown":8,"damageCore":5,"damageUnit":3,"damageResource":2,"damageWall":3,"buildType":1},{"name":"Bomberman","cost":200,"hp":40,"baseMoveCooldown":1,"maxMoveCooldown":10,"damageCore":20,"damageUnit":10,"damageResource":5,"damageWall":10,"buildType":2}],"corePositions":[{"x":0,"y":0},{"x":24,"y":24}]},"full_tick_amount":75}
+{
+	"misc": {
+		"team_results": [
+			{
+				"id": 2,
+				"name": "YOUR TEAM NAME HERE",
+				"place": 1
+			},
+			{
+				"id": 1,
+				"name": "Gridmaster",
+				"place": 0
+			}
+		],
+		"game_end_reason": 0,
+		"version": "1.0.0"
+	},
+	"ticks": {
+		"0": {
+			"objects": [
+				{
+					"id": 0,
+					"type": 0,
+					"x": 0,
+					"y": 0,
+					"hp": 200,
+					"teamId": 1,
+					"balance": 300
+				},
+				{
+					"id": 96,
+					"type": 3,
+					"x": 6,
+					"y": 0,
+					"hp": 100
+				},
+				{
+					"id": 97,
+					"type": 3,
+					"x": 7,
+					"y": 0,
+					"hp": 100
+				},
+				{
+					"id": 98,
+					"type": 3,
+					"x": 8,
+					"y": 0,
+					"hp": 100
+				},
+				{
+					"id": 10,
+					"type": 3,
+					"x": 14,
+					"y": 0,
+					"hp": 100
+				},
+				{
+					"id": 11,
+					"type": 2,
+					"x": 15,
+					"y": 0,
+					"hp": 50,
+					"balance": 268
+				},
+				{
+					"id": 12,
+					"type": 2,
+					"x": 16,
+					"y": 0,
+					"hp": 50,
+					"balance": 234
+				},
+				{
+					"id": 13,
+					"type": 4,
+					"x": 17,
+					"y": 0,
+					"hp": 1,
+					"balance": 85
+				},
+				{
+					"id": 14,
+					"type": 3,
+					"x": 18,
+					"y": 0,
+					"hp": 100
+				},
+				{
+					"id": 15,
+					"type": 3,
+					"x": 19,
+					"y": 0,
+					"hp": 100
+				},
+				{
+					"id": 176,
+					"type": 2,
+					"x": 23,
+					"y": 0,
+					"hp": 50,
+					"balance": 149
+				},
+				{
+					"id": 200,
+					"type": 4,
+					"x": 24,
+					"y": 0,
+					"hp": 1,
+					"balance": 85
+				},
+				{
+					"id": 157,
+					"type": 3,
+					"x": 4,
+					"y": 1,
+					"hp": 100
+				},
+				{
+					"id": 16,
+					"type": 3,
+					"x": 12,
+					"y": 1,
+					"hp": 100
+				},
+				{
+					"id": 17,
+					"type": 3,
+					"x": 13,
+					"y": 1,
+					"hp": 100
+				},
+				{
+					"id": 18,
+					"type": 3,
+					"x": 14,
+					"y": 1,
+					"hp": 100
+				},
+				{
+					"id": 19,
+					"type": 3,
+					"x": 15,
+					"y": 1,
+					"hp": 100
+				},
+				{
+					"id": 20,
+					"type": 3,
+					"x": 16,
+					"y": 1,
+					"hp": 100
+				},
+				{
+					"id": 21,
+					"type": 3,
+					"x": 17,
+					"y": 1,
+					"hp": 100
+				},
+				{
+					"id": 22,
+					"type": 3,
+					"x": 18,
+					"y": 1,
+					"hp": 100
+				},
+				{
+					"id": 23,
+					"type": 3,
+					"x": 19,
+					"y": 1,
+					"hp": 100
+				},
+				{
+					"id": 24,
+					"type": 3,
+					"x": 20,
+					"y": 1,
+					"hp": 100
+				},
+				{
+					"id": 126,
+					"type": 3,
+					"x": 24,
+					"y": 1,
+					"hp": 100
+				},
+				{
+					"id": 178,
+					"type": 2,
+					"x": 5,
+					"y": 2,
+					"hp": 50,
+					"balance": 142
+				},
+				{
+					"id": 25,
+					"type": 3,
+					"x": 12,
+					"y": 2,
+					"hp": 100
+				},
+				{
+					"id": 26,
+					"type": 3,
+					"x": 14,
+					"y": 2,
+					"hp": 100
+				},
+				{
+					"id": 27,
+					"type": 3,
+					"x": 15,
+					"y": 2,
+					"hp": 100
+				},
+				{
+					"id": 28,
+					"type": 3,
+					"x": 16,
+					"y": 2,
+					"hp": 100
+				},
+				{
+					"id": 29,
+					"type": 3,
+					"x": 17,
+					"y": 2,
+					"hp": 100
+				},
+				{
+					"id": 30,
+					"type": 3,
+					"x": 18,
+					"y": 2,
+					"hp": 100
+				},
+				{
+					"id": 31,
+					"type": 2,
+					"x": 19,
+					"y": 2,
+					"hp": 50,
+					"balance": 392
+				},
+				{
+					"id": 32,
+					"type": 3,
+					"x": 20,
+					"y": 2,
+					"hp": 100
+				},
+				{
+					"id": 170,
+					"type": 3,
+					"x": 3,
+					"y": 3,
+					"hp": 100
+				},
+				{
+					"id": 33,
+					"type": 2,
+					"x": 13,
+					"y": 3,
+					"hp": 50,
+					"balance": 194
+				},
+				{
+					"id": 34,
+					"type": 2,
+					"x": 14,
+					"y": 3,
+					"hp": 50,
+					"balance": 281
+				},
+				{
+					"id": 35,
+					"type": 2,
+					"x": 19,
+					"y": 3,
+					"hp": 50,
+					"balance": 201
+				},
+				{
+					"id": 188,
+					"type": 2,
+					"x": 21,
+					"y": 3,
+					"hp": 50,
+					"balance": 155
+				},
+				{
+					"id": 55,
+					"type": 3,
+					"x": 24,
+					"y": 3,
+					"hp": 100
+				},
+				{
+					"id": 36,
+					"type": 2,
+					"x": 14,
+					"y": 4,
+					"hp": 50,
+					"balance": 201
+				},
+				{
+					"id": 37,
+					"type": 4,
+					"x": 17,
+					"y": 4,
+					"hp": 1,
+					"balance": 72
+				},
+				{
+					"id": 38,
+					"type": 3,
+					"x": 18,
+					"y": 4,
+					"hp": 100
+				},
+				{
+					"id": 2,
+					"type": 3,
+					"x": 4,
+					"y": 5,
+					"hp": 100
+				},
+				{
+					"id": 3,
+					"type": 3,
+					"x": 5,
+					"y": 5,
+					"hp": 100
+				},
+				{
+					"id": 4,
+					"type": 3,
+					"x": 6,
+					"y": 5,
+					"hp": 100
+				},
+				{
+					"id": 5,
+					"type": 3,
+					"x": 7,
+					"y": 5,
+					"hp": 100
+				},
+				{
+					"id": 6,
+					"type": 3,
+					"x": 8,
+					"y": 5,
+					"hp": 100
+				},
+				{
+					"id": 142,
+					"type": 3,
+					"x": 10,
+					"y": 5,
+					"hp": 100
+				},
+				{
+					"id": 143,
+					"type": 3,
+					"x": 11,
+					"y": 5,
+					"hp": 100
+				},
+				{
+					"id": 144,
+					"type": 3,
+					"x": 12,
+					"y": 5,
+					"hp": 100
+				},
+				{
+					"id": 201,
+					"type": 4,
+					"x": 21,
+					"y": 5,
+					"hp": 1,
+					"balance": 70
+				},
+				{
+					"id": 7,
+					"type": 3,
+					"x": 0,
+					"y": 6,
+					"hp": 100
+				},
+				{
+					"id": 8,
+					"type": 3,
+					"x": 1,
+					"y": 6,
+					"hp": 100
+				},
+				{
+					"id": 9,
+					"type": 3,
+					"x": 2,
+					"y": 6,
+					"hp": 100
+				},
+				{
+					"id": 184,
+					"type": 2,
+					"x": 9,
+					"y": 6,
+					"hp": 50,
+					"balance": 185
+				},
+				{
+					"id": 145,
+					"type": 3,
+					"x": 11,
+					"y": 6,
+					"hp": 100
+				},
+				{
+					"id": 158,
+					"type": 3,
+					"x": 13,
+					"y": 6,
+					"hp": 100
+				},
+				{
+					"id": 191,
+					"type": 4,
+					"x": 23,
+					"y": 6,
+					"hp": 1,
+					"balance": 75
+				},
+				{
+					"id": 141,
+					"type": 3,
+					"x": 24,
+					"y": 6,
+					"hp": 100
+				},
+				{
+					"id": 173,
+					"type": 2,
+					"x": 2,
+					"y": 7,
+					"hp": 50,
+					"balance": 227
+				},
+				{
+					"id": 164,
+					"type": 3,
+					"x": 3,
+					"y": 7,
+					"hp": 100
+				},
+				{
+					"id": 153,
+					"type": 3,
+					"x": 9,
+					"y": 7,
+					"hp": 100
+				},
+				{
+					"id": 154,
+					"type": 3,
+					"x": 12,
+					"y": 7,
+					"hp": 100
+				},
+				{
+					"id": 204,
+					"type": 4,
+					"x": 14,
+					"y": 7,
+					"hp": 1,
+					"balance": 75
+				},
+				{
+					"id": 71,
+					"type": 3,
+					"x": 15,
+					"y": 7,
+					"hp": 100
+				},
+				{
+					"id": 72,
+					"type": 3,
+					"x": 16,
+					"y": 7,
+					"hp": 100
+				},
+				{
+					"id": 162,
+					"type": 3,
+					"x": 21,
+					"y": 7,
+					"hp": 100
+				},
+				{
+					"id": 205,
+					"type": 4,
+					"x": 23,
+					"y": 7,
+					"hp": 1,
+					"balance": 72
+				},
+				{
+					"id": 172,
+					"type": 3,
+					"x": 5,
+					"y": 8,
+					"hp": 100
+				},
+				{
+					"id": 150,
+					"type": 3,
+					"x": 6,
+					"y": 8,
+					"hp": 100
+				},
+				{
+					"id": 119,
+					"type": 2,
+					"x": 8,
+					"y": 8,
+					"hp": 50,
+					"balance": 180
+				},
+				{
+					"id": 73,
+					"type": 3,
+					"x": 15,
+					"y": 8,
+					"hp": 100
+				},
+				{
+					"id": 74,
+					"type": 3,
+					"x": 16,
+					"y": 8,
+					"hp": 100
+				},
+				{
+					"id": 75,
+					"type": 3,
+					"x": 17,
+					"y": 8,
+					"hp": 100
+				},
+				{
+					"id": 76,
+					"type": 3,
+					"x": 18,
+					"y": 8,
+					"hp": 100
+				},
+				{
+					"id": 149,
+					"type": 3,
+					"x": 21,
+					"y": 8,
+					"hp": 100
+				},
+				{
+					"id": 51,
+					"type": 3,
+					"x": 23,
+					"y": 8,
+					"hp": 100
+				},
+				{
+					"id": 52,
+					"type": 3,
+					"x": 24,
+					"y": 8,
+					"hp": 100
+				},
+				{
+					"id": 195,
+					"type": 4,
+					"x": 7,
+					"y": 9,
+					"hp": 1,
+					"balance": 71
+				},
+				{
+					"id": 120,
+					"type": 3,
+					"x": 8,
+					"y": 9,
+					"hp": 100
+				},
+				{
+					"id": 121,
+					"type": 3,
+					"x": 9,
+					"y": 9,
+					"hp": 100
+				},
+				{
+					"id": 147,
+					"type": 3,
+					"x": 13,
+					"y": 9,
+					"hp": 100
+				},
+				{
+					"id": 77,
+					"type": 2,
+					"x": 16,
+					"y": 9,
+					"hp": 50,
+					"balance": 198
+				},
+				{
+					"id": 78,
+					"type": 3,
+					"x": 18,
+					"y": 9,
+					"hp": 100
+				},
+				{
+					"id": 169,
+					"type": 3,
+					"x": 20,
+					"y": 9,
+					"hp": 100
+				},
+				{
+					"id": 53,
+					"type": 3,
+					"x": 21,
+					"y": 9,
+					"hp": 100
+				},
+				{
+					"id": 54,
+					"type": 3,
+					"x": 22,
+					"y": 9,
+					"hp": 100
+				},
+				{
+					"id": 203,
+					"type": 4,
+					"x": 24,
+					"y": 9,
+					"hp": 1,
+					"balance": 76
+				},
+				{
+					"id": 122,
+					"type": 3,
+					"x": 9,
+					"y": 10,
+					"hp": 100
+				},
+				{
+					"id": 79,
+					"type": 3,
+					"x": 14,
+					"y": 10,
+					"hp": 100
+				},
+				{
+					"id": 80,
+					"type": 3,
+					"x": 15,
+					"y": 10,
+					"hp": 100
+				},
+				{
+					"id": 81,
+					"type": 3,
+					"x": 18,
+					"y": 10,
+					"hp": 100
+				},
+				{
+					"id": 151,
+					"type": 3,
+					"x": 2,
+					"y": 11,
+					"hp": 100
+				},
+				{
+					"id": 174,
+					"type": 2,
+					"x": 4,
+					"y": 11,
+					"hp": 50,
+					"balance": 137
+				},
+				{
+					"id": 82,
+					"type": 3,
+					"x": 14,
+					"y": 11,
+					"hp": 100
+				},
+				{
+					"id": 83,
+					"type": 3,
+					"x": 15,
+					"y": 11,
+					"hp": 100
+				},
+				{
+					"id": 84,
+					"type": 3,
+					"x": 17,
+					"y": 11,
+					"hp": 100
+				},
+				{
+					"id": 85,
+					"type": 3,
+					"x": 18,
+					"y": 11,
+					"hp": 100
+				},
+				{
+					"id": 161,
+					"type": 3,
+					"x": 19,
+					"y": 11,
+					"hp": 100
+				},
+				{
+					"id": 159,
+					"type": 3,
+					"x": 24,
+					"y": 11,
+					"hp": 100
+				},
+				{
+					"id": 39,
+					"type": 3,
+					"x": 2,
+					"y": 12,
+					"hp": 100
+				},
+				{
+					"id": 304,
+					"type": 3,
+					"x": 22,
+					"y": 12,
+					"hp": 100
+				},
+				{
+					"id": 303,
+					"type": 3,
+					"x": 0,
+					"y": 13,
+					"hp": 100
+				},
+				{
+					"id": 302,
+					"type": 3,
+					"x": 5,
+					"y": 13,
+					"hp": 100
+				},
+				{
+					"id": 301,
+					"type": 3,
+					"x": 6,
+					"y": 13,
+					"hp": 100
+				},
+				{
+					"id": 300,
+					"type": 3,
+					"x": 7,
+					"y": 13,
+					"hp": 100
+				},
+				{
+					"id": 299,
+					"type": 3,
+					"x": 9,
+					"y": 13,
+					"hp": 100
+				},
+				{
+					"id": 298,
+					"type": 3,
+					"x": 10,
+					"y": 13,
+					"hp": 100
+				},
+				{
+					"id": 297,
+					"type": 2,
+					"x": 20,
+					"y": 13,
+					"hp": 50,
+					"balance": 163
+				},
+				{
+					"id": 296,
+					"type": 3,
+					"x": 22,
+					"y": 13,
+					"hp": 100
+				},
+				{
+					"id": 295,
+					"type": 3,
+					"x": 6,
+					"y": 14,
+					"hp": 100
+				},
+				{
+					"id": 294,
+					"type": 3,
+					"x": 9,
+					"y": 14,
+					"hp": 100
+				},
+				{
+					"id": 293,
+					"type": 3,
+					"x": 10,
+					"y": 14,
+					"hp": 100
+				},
+				{
+					"id": 292,
+					"type": 3,
+					"x": 15,
+					"y": 14,
+					"hp": 100
+				},
+				{
+					"id": 291,
+					"type": 4,
+					"x": 0,
+					"y": 15,
+					"hp": 1,
+					"balance": 84
+				},
+				{
+					"id": 290,
+					"type": 3,
+					"x": 2,
+					"y": 15,
+					"hp": 100
+				},
+				{
+					"id": 289,
+					"type": 3,
+					"x": 3,
+					"y": 15,
+					"hp": 100
+				},
+				{
+					"id": 288,
+					"type": 3,
+					"x": 4,
+					"y": 15,
+					"hp": 100
+				},
+				{
+					"id": 287,
+					"type": 3,
+					"x": 6,
+					"y": 15,
+					"hp": 100
+				},
+				{
+					"id": 286,
+					"type": 2,
+					"x": 8,
+					"y": 15,
+					"hp": 50,
+					"balance": 195
+				},
+				{
+					"id": 285,
+					"type": 3,
+					"x": 11,
+					"y": 15,
+					"hp": 100
+				},
+				{
+					"id": 284,
+					"type": 3,
+					"x": 15,
+					"y": 15,
+					"hp": 100
+				},
+				{
+					"id": 283,
+					"type": 3,
+					"x": 16,
+					"y": 15,
+					"hp": 100
+				},
+				{
+					"id": 282,
+					"type": 4,
+					"x": 17,
+					"y": 15,
+					"hp": 1,
+					"balance": 69
+				},
+				{
+					"id": 281,
+					"type": 3,
+					"x": 0,
+					"y": 16,
+					"hp": 100
+				},
+				{
+					"id": 280,
+					"type": 3,
+					"x": 1,
+					"y": 16,
+					"hp": 100
+				},
+				{
+					"id": 279,
+					"type": 3,
+					"x": 3,
+					"y": 16,
+					"hp": 100
+				},
+				{
+					"id": 278,
+					"type": 3,
+					"x": 6,
+					"y": 16,
+					"hp": 100
+				},
+				{
+					"id": 277,
+					"type": 3,
+					"x": 7,
+					"y": 16,
+					"hp": 100
+				},
+				{
+					"id": 276,
+					"type": 3,
+					"x": 8,
+					"y": 16,
+					"hp": 100
+				},
+				{
+					"id": 275,
+					"type": 3,
+					"x": 9,
+					"y": 16,
+					"hp": 100
+				},
+				{
+					"id": 274,
+					"type": 2,
+					"x": 16,
+					"y": 16,
+					"hp": 50,
+					"balance": 177
+				},
+				{
+					"id": 273,
+					"type": 3,
+					"x": 18,
+					"y": 16,
+					"hp": 100
+				},
+				{
+					"id": 272,
+					"type": 3,
+					"x": 19,
+					"y": 16,
+					"hp": 100
+				},
+				{
+					"id": 271,
+					"type": 4,
+					"x": 1,
+					"y": 17,
+					"hp": 1,
+					"balance": 66
+				},
+				{
+					"id": 270,
+					"type": 3,
+					"x": 3,
+					"y": 17,
+					"hp": 100
+				},
+				{
+					"id": 269,
+					"type": 3,
+					"x": 8,
+					"y": 17,
+					"hp": 100
+				},
+				{
+					"id": 268,
+					"type": 3,
+					"x": 9,
+					"y": 17,
+					"hp": 100
+				},
+				{
+					"id": 267,
+					"type": 4,
+					"x": 10,
+					"y": 17,
+					"hp": 1,
+					"balance": 65
+				},
+				{
+					"id": 266,
+					"type": 3,
+					"x": 12,
+					"y": 17,
+					"hp": 100
+				},
+				{
+					"id": 265,
+					"type": 3,
+					"x": 15,
+					"y": 17,
+					"hp": 100
+				},
+				{
+					"id": 264,
+					"type": 3,
+					"x": 21,
+					"y": 17,
+					"hp": 100
+				},
+				{
+					"id": 263,
+					"type": 2,
+					"x": 22,
+					"y": 17,
+					"hp": 50,
+					"balance": 233
+				},
+				{
+					"id": 262,
+					"type": 3,
+					"x": 0,
+					"y": 18,
+					"hp": 100
+				},
+				{
+					"id": 261,
+					"type": 4,
+					"x": 1,
+					"y": 18,
+					"hp": 1,
+					"balance": 85
+				},
+				{
+					"id": 260,
+					"type": 3,
+					"x": 11,
+					"y": 18,
+					"hp": 100
+				},
+				{
+					"id": 259,
+					"type": 3,
+					"x": 13,
+					"y": 18,
+					"hp": 100
+				},
+				{
+					"id": 258,
+					"type": 2,
+					"x": 15,
+					"y": 18,
+					"hp": 50,
+					"balance": 180
+				},
+				{
+					"id": 257,
+					"type": 3,
+					"x": 22,
+					"y": 18,
+					"hp": 100
+				},
+				{
+					"id": 256,
+					"type": 3,
+					"x": 23,
+					"y": 18,
+					"hp": 100
+				},
+				{
+					"id": 255,
+					"type": 3,
+					"x": 24,
+					"y": 18,
+					"hp": 100
+				},
+				{
+					"id": 254,
+					"type": 4,
+					"x": 3,
+					"y": 19,
+					"hp": 1,
+					"balance": 66
+				},
+				{
+					"id": 253,
+					"type": 3,
+					"x": 12,
+					"y": 19,
+					"hp": 100
+				},
+				{
+					"id": 252,
+					"type": 3,
+					"x": 13,
+					"y": 19,
+					"hp": 100
+				},
+				{
+					"id": 251,
+					"type": 3,
+					"x": 14,
+					"y": 19,
+					"hp": 100
+				},
+				{
+					"id": 250,
+					"type": 3,
+					"x": 16,
+					"y": 19,
+					"hp": 100
+				},
+				{
+					"id": 249,
+					"type": 3,
+					"x": 17,
+					"y": 19,
+					"hp": 100
+				},
+				{
+					"id": 248,
+					"type": 3,
+					"x": 18,
+					"y": 19,
+					"hp": 100
+				},
+				{
+					"id": 247,
+					"type": 3,
+					"x": 19,
+					"y": 19,
+					"hp": 100
+				},
+				{
+					"id": 246,
+					"type": 3,
+					"x": 20,
+					"y": 19,
+					"hp": 100
+				},
+				{
+					"id": 245,
+					"type": 3,
+					"x": 6,
+					"y": 20,
+					"hp": 100
+				},
+				{
+					"id": 244,
+					"type": 4,
+					"x": 7,
+					"y": 20,
+					"hp": 1,
+					"balance": 68
+				},
+				{
+					"id": 243,
+					"type": 2,
+					"x": 10,
+					"y": 20,
+					"hp": 50,
+					"balance": 175
+				},
+				{
+					"id": 242,
+					"type": 3,
+					"x": 0,
+					"y": 21,
+					"hp": 100
+				},
+				{
+					"id": 241,
+					"type": 2,
+					"x": 3,
+					"y": 21,
+					"hp": 50,
+					"balance": 145
+				},
+				{
+					"id": 240,
+					"type": 2,
+					"x": 5,
+					"y": 21,
+					"hp": 50,
+					"balance": 188
+				},
+				{
+					"id": 239,
+					"type": 2,
+					"x": 10,
+					"y": 21,
+					"hp": 50,
+					"balance": 256
+				},
+				{
+					"id": 238,
+					"type": 2,
+					"x": 11,
+					"y": 21,
+					"hp": 50,
+					"balance": 183
+				},
+				{
+					"id": 237,
+					"type": 3,
+					"x": 21,
+					"y": 21,
+					"hp": 100
+				},
+				{
+					"id": 236,
+					"type": 3,
+					"x": 4,
+					"y": 22,
+					"hp": 100
+				},
+				{
+					"id": 235,
+					"type": 2,
+					"x": 5,
+					"y": 22,
+					"hp": 50,
+					"balance": 416
+				},
+				{
+					"id": 234,
+					"type": 3,
+					"x": 6,
+					"y": 22,
+					"hp": 100
+				},
+				{
+					"id": 233,
+					"type": 3,
+					"x": 7,
+					"y": 22,
+					"hp": 100
+				},
+				{
+					"id": 232,
+					"type": 3,
+					"x": 8,
+					"y": 22,
+					"hp": 100
+				},
+				{
+					"id": 231,
+					"type": 3,
+					"x": 9,
+					"y": 22,
+					"hp": 100
+				},
+				{
+					"id": 230,
+					"type": 3,
+					"x": 10,
+					"y": 22,
+					"hp": 100
+				},
+				{
+					"id": 229,
+					"type": 3,
+					"x": 12,
+					"y": 22,
+					"hp": 100
+				},
+				{
+					"id": 228,
+					"type": 2,
+					"x": 19,
+					"y": 22,
+					"hp": 50,
+					"balance": 148
+				},
+				{
+					"id": 227,
+					"type": 3,
+					"x": 0,
+					"y": 23,
+					"hp": 100
+				},
+				{
+					"id": 226,
+					"type": 3,
+					"x": 4,
+					"y": 23,
+					"hp": 100
+				},
+				{
+					"id": 225,
+					"type": 3,
+					"x": 5,
+					"y": 23,
+					"hp": 100
+				},
+				{
+					"id": 224,
+					"type": 3,
+					"x": 6,
+					"y": 23,
+					"hp": 100
+				},
+				{
+					"id": 223,
+					"type": 3,
+					"x": 7,
+					"y": 23,
+					"hp": 100
+				},
+				{
+					"id": 222,
+					"type": 3,
+					"x": 8,
+					"y": 23,
+					"hp": 100
+				},
+				{
+					"id": 221,
+					"type": 3,
+					"x": 9,
+					"y": 23,
+					"hp": 100
+				},
+				{
+					"id": 220,
+					"type": 3,
+					"x": 10,
+					"y": 23,
+					"hp": 100
+				},
+				{
+					"id": 219,
+					"type": 3,
+					"x": 11,
+					"y": 23,
+					"hp": 100
+				},
+				{
+					"id": 218,
+					"type": 3,
+					"x": 12,
+					"y": 23,
+					"hp": 100
+				},
+				{
+					"id": 217,
+					"type": 3,
+					"x": 20,
+					"y": 23,
+					"hp": 100
+				},
+				{
+					"id": 216,
+					"type": 4,
+					"x": 0,
+					"y": 24,
+					"hp": 1,
+					"balance": 70
+				},
+				{
+					"id": 215,
+					"type": 2,
+					"x": 1,
+					"y": 24,
+					"hp": 50,
+					"balance": 147
+				},
+				{
+					"id": 214,
+					"type": 3,
+					"x": 5,
+					"y": 24,
+					"hp": 100
+				},
+				{
+					"id": 213,
+					"type": 3,
+					"x": 6,
+					"y": 24,
+					"hp": 100
+				},
+				{
+					"id": 212,
+					"type": 4,
+					"x": 7,
+					"y": 24,
+					"hp": 1,
+					"balance": 76
+				},
+				{
+					"id": 211,
+					"type": 2,
+					"x": 8,
+					"y": 24,
+					"hp": 50,
+					"balance": 217
+				},
+				{
+					"id": 210,
+					"type": 2,
+					"x": 9,
+					"y": 24,
+					"hp": 50,
+					"balance": 261
+				},
+				{
+					"id": 209,
+					"type": 3,
+					"x": 10,
+					"y": 24,
+					"hp": 100
+				},
+				{
+					"id": 208,
+					"type": 3,
+					"x": 16,
+					"y": 24,
+					"hp": 100
+				},
+				{
+					"id": 207,
+					"type": 3,
+					"x": 17,
+					"y": 24,
+					"hp": 100
+				},
+				{
+					"id": 206,
+					"type": 3,
+					"x": 18,
+					"y": 24,
+					"hp": 100
+				},
+				{
+					"id": 1,
+					"type": 0,
+					"x": 24,
+					"y": 24,
+					"hp": 200,
+					"teamId": 2,
+					"balance": 300
+				}
+			]
+		},
+		"1": {
+			"objects": [
+				{
+					"id": 305,
+					"type": 1,
+					"x": 1,
+					"y": 0,
+					"hp": 25,
+					"teamId": 1,
+					"unit_type": 0,
+					"balance": 0,
+					"moveCooldown": 0
+				},
+				{
+					"id": 0,
+					"balance": 150
+				}
+			],
+			"actions": [
+				{
+					"type": "create",
+					"unit_type": 0
+				}
+			]
+		},
+		"2": {
+			"objects": [
+				{
+					"id": 305,
+					"y": 1
+				},
+				{
+					"id": 306,
+					"type": 1,
+					"x": 1,
+					"y": 0,
+					"hp": 15,
+					"teamId": 1,
+					"unit_type": 1,
+					"balance": 0,
+					"moveCooldown": 0
+				},
+				{
+					"id": 0,
+					"balance": 50
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 1,
+					"y": 1
+				},
+				{
+					"type": "create",
+					"unit_type": 1
+				}
+			]
+		},
+		"3": {
+			"objects": [
+				{
+					"id": 305,
+					"y": 2
+				},
+				{
+					"id": 306,
+					"x": 2
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 2,
+					"y": 0
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 1,
+					"y": 2
+				}
+			]
+		},
+		"4": {
+			"objects": [
+				{
+					"id": 305,
+					"y": 3
+				},
+				{
+					"id": 306,
+					"y": 1
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 2,
+					"y": 1
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 1,
+					"y": 3
+				}
+			]
+		},
+		"5": {
+			"objects": [
+				{
+					"id": 305,
+					"y": 4
+				},
+				{
+					"id": 306,
+					"x": 3
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 3,
+					"y": 1
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 1,
+					"y": 4
+				}
+			]
+		},
+		"6": {
+			"objects": [
+				{
+					"id": 305,
+					"x": 2
+				},
+				{
+					"id": 306,
+					"y": 2
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 2,
+					"y": 4
+				},
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 3,
+					"y": 2
+				}
+			]
+		},
+		"7": {
+			"objects": [
+				{
+					"id": 305,
+					"y": 5
+				},
+				{
+					"id": 306,
+					"x": 4
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 2,
+					"y": 5
+				},
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 4,
+					"y": 2
+				}
+			]
+		},
+		"8": {
+			"objects": [
+				{
+					"id": 305,
+					"x": 3
+				},
+				{
+					"id": 178,
+					"hp": 40
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 3,
+					"y": 5
+				},
+				{
+					"type": "attack",
+					"unit_id": 306,
+					"x": 5,
+					"y": 2,
+					"dmg": 10
+				}
+			]
+		},
+		"9": {
+			"objects": [
+				{
+					"id": 305,
+					"y": 6
+				},
+				{
+					"id": 178,
+					"hp": 30
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 3,
+					"y": 6
+				},
+				{
+					"type": "attack",
+					"unit_id": 306,
+					"x": 5,
+					"y": 2,
+					"dmg": 10
+				}
+			]
+		},
+		"10": {
+			"objects": [
+				{
+					"id": 305,
+					"x": 4
+				},
+				{
+					"id": 178,
+					"hp": 20
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 306,
+					"x": 5,
+					"y": 2,
+					"dmg": 10
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 4,
+					"y": 6
+				}
+			]
+		},
+		"11": {
+			"objects": [
+				{
+					"id": 178,
+					"hp": 10
+				},
+				{
+					"id": 305,
+					"y": 7
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 4,
+					"y": 7
+				},
+				{
+					"type": "attack",
+					"unit_id": 306,
+					"x": 5,
+					"y": 2,
+					"dmg": 10
+				}
+			]
+		},
+		"12": {
+			"objects": [
+				{
+					"id": 306,
+					"balance": 142
+				},
+				{
+					"id": 305,
+					"y": 8
+				},
+				{
+					"id": 178,
+					"state": "dead"
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 4,
+					"y": 8
+				},
+				{
+					"type": "attack",
+					"unit_id": 306,
+					"x": 5,
+					"y": 2,
+					"dmg": 10
+				}
+			]
+		},
+		"13": {
+			"objects": [
+				{
+					"id": 306,
+					"y": 3
+				},
+				{
+					"id": 305,
+					"y": 9
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 4,
+					"y": 3
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 4,
+					"y": 9
+				}
+			]
+		},
+		"14": {
+			"objects": [
+				{
+					"id": 306,
+					"y": 4
+				},
+				{
+					"id": 305,
+					"y": 10
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 4,
+					"y": 10
+				},
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 4,
+					"y": 4
+				}
+			]
+		},
+		"15": {
+			"objects": [
+				{
+					"id": 306,
+					"x": 3
+				},
+				{
+					"id": 305,
+					"x": 5
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 5,
+					"y": 10
+				},
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 3,
+					"y": 4
+				}
+			]
+		},
+		"16": {
+			"objects": [
+				{
+					"id": 306,
+					"y": 5
+				},
+				{
+					"id": 305,
+					"y": 11
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 5,
+					"y": 11
+				},
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 3,
+					"y": 5
+				}
+			]
+		},
+		"17": {
+			"objects": [
+				{
+					"id": 306,
+					"y": 6
+				},
+				{
+					"id": 305,
+					"x": 6
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 3,
+					"y": 6
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 6,
+					"y": 11
+				}
+			]
+		},
+		"18": {
+			"objects": [
+				{
+					"id": 306,
+					"x": 4
+				},
+				{
+					"id": 305,
+					"x": 7
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 4,
+					"y": 6
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 7,
+					"y": 11
+				}
+			]
+		},
+		"19": {
+			"objects": [
+				{
+					"id": 306,
+					"y": 7
+				},
+				{
+					"id": 305,
+					"x": 8
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 4,
+					"y": 7
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 8,
+					"y": 11
+				}
+			]
+		},
+		"20": {
+			"objects": [
+				{
+					"id": 306,
+					"y": 8
+				},
+				{
+					"id": 305,
+					"x": 9
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 4,
+					"y": 8
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 9,
+					"y": 11
+				}
+			]
+		},
+		"21": {
+			"objects": [
+				{
+					"id": 306,
+					"x": 3
+				},
+				{
+					"id": 305,
+					"x": 10
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 10,
+					"y": 11
+				},
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 3,
+					"y": 8
+				}
+			]
+		},
+		"22": {
+			"objects": [
+				{
+					"id": 306,
+					"x": 2
+				},
+				{
+					"id": 305,
+					"x": 11
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 11,
+					"y": 11
+				},
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 2,
+					"y": 8
+				}
+			]
+		},
+		"23": {
+			"objects": [
+				{
+					"id": 173,
+					"hp": 40
+				},
+				{
+					"id": 305,
+					"x": 12
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 306,
+					"x": 2,
+					"y": 7,
+					"dmg": 10
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 12,
+					"y": 11
+				}
+			]
+		},
+		"24": {
+			"objects": [
+				{
+					"id": 173,
+					"hp": 30
+				},
+				{
+					"id": 305,
+					"x": 13
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 306,
+					"x": 2,
+					"y": 7,
+					"dmg": 10
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 13,
+					"y": 11
+				}
+			]
+		},
+		"25": {
+			"objects": [
+				{
+					"id": 173,
+					"hp": 20
+				},
+				{
+					"id": 305,
+					"y": 12
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 306,
+					"x": 2,
+					"y": 7,
+					"dmg": 10
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 13,
+					"y": 12
+				}
+			]
+		},
+		"26": {
+			"objects": [
+				{
+					"id": 173,
+					"hp": 10
+				},
+				{
+					"id": 305,
+					"x": 14
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 306,
+					"x": 2,
+					"y": 7,
+					"dmg": 10
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 14,
+					"y": 12
+				}
+			]
+		},
+		"27": {
+			"objects": [
+				{
+					"id": 306,
+					"balance": 369
+				},
+				{
+					"id": 305,
+					"x": 15
+				},
+				{
+					"id": 173,
+					"state": "dead"
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 306,
+					"x": 2,
+					"y": 7,
+					"dmg": 10
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 15,
+					"y": 12
+				}
+			]
+		},
+		"28": {
+			"objects": [
+				{
+					"id": 306,
+					"x": 3
+				},
+				{
+					"id": 305,
+					"y": 13
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 3,
+					"y": 8
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 15,
+					"y": 13
+				}
+			]
+		},
+		"29": {
+			"objects": [
+				{
+					"id": 305,
+					"x": 16
+				},
+				{
+					"id": 306,
+					"y": 9
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 16,
+					"y": 13
+				},
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 3,
+					"y": 9
+				}
+			]
+		},
+		"30": {
+			"objects": [
+				{
+					"id": 305,
+					"x": 17
+				},
+				{
+					"id": 306,
+					"y": 10
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 3,
+					"y": 10
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 17,
+					"y": 13
+				}
+			]
+		},
+		"31": {
+			"objects": [
+				{
+					"id": 305,
+					"x": 18
+				},
+				{
+					"id": 306,
+					"x": 4
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 4,
+					"y": 10
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 18,
+					"y": 13
+				}
+			]
+		},
+		"32": {
+			"objects": [
+				{
+					"id": 305,
+					"y": 14
+				},
+				{
+					"id": 174,
+					"hp": 40
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 18,
+					"y": 14
+				},
+				{
+					"type": "attack",
+					"unit_id": 306,
+					"x": 4,
+					"y": 11,
+					"dmg": 10
+				}
+			]
+		},
+		"33": {
+			"objects": [
+				{
+					"id": 305,
+					"x": 19
+				},
+				{
+					"id": 174,
+					"hp": 30
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 306,
+					"x": 4,
+					"y": 11,
+					"dmg": 10
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 19,
+					"y": 14
+				}
+			]
+		},
+		"34": {
+			"objects": [
+				{
+					"id": 305,
+					"y": 15
+				},
+				{
+					"id": 174,
+					"hp": 20
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 19,
+					"y": 15
+				},
+				{
+					"type": "attack",
+					"unit_id": 306,
+					"x": 4,
+					"y": 11,
+					"dmg": 10
+				}
+			]
+		},
+		"35": {
+			"objects": [
+				{
+					"id": 305,
+					"x": 20
+				},
+				{
+					"id": 174,
+					"hp": 10
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 306,
+					"x": 4,
+					"y": 11,
+					"dmg": 10
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 20,
+					"y": 15
+				}
+			]
+		},
+		"36": {
+			"objects": [
+				{
+					"id": 305,
+					"y": 16
+				},
+				{
+					"id": 306,
+					"balance": 506
+				},
+				{
+					"id": 174,
+					"state": "dead"
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 20,
+					"y": 16
+				},
+				{
+					"type": "attack",
+					"unit_id": 306,
+					"x": 4,
+					"y": 11,
+					"dmg": 10
+				}
+			]
+		},
+		"37": {
+			"objects": [
+				{
+					"id": 305,
+					"y": 17
+				},
+				{
+					"id": 306,
+					"x": 3
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 20,
+					"y": 17
+				},
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 3,
+					"y": 10
+				}
+			]
+		},
+		"38": {
+			"objects": [
+				{
+					"id": 305,
+					"y": 18
+				},
+				{
+					"id": 306,
+					"x": 2
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 2,
+					"y": 10
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 20,
+					"y": 18
+				}
+			]
+		},
+		"39": {
+			"objects": [
+				{
+					"id": 305,
+					"x": 21
+				},
+				{
+					"id": 306,
+					"x": 1
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 21,
+					"y": 18
+				},
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 1,
+					"y": 10
+				}
+			]
+		},
+		"40": {
+			"objects": [
+				{
+					"id": 305,
+					"y": 19
+				},
+				{
+					"id": 306,
+					"y": 11
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 1,
+					"y": 11
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 21,
+					"y": 19
+				}
+			]
+		},
+		"41": {
+			"objects": [
+				{
+					"id": 305,
+					"x": 22
+				},
+				{
+					"id": 306,
+					"y": 12
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 22,
+					"y": 19
+				},
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 1,
+					"y": 12
+				}
+			]
+		},
+		"42": {
+			"objects": [
+				{
+					"id": 305,
+					"y": 20
+				},
+				{
+					"id": 306,
+					"y": 13
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 22,
+					"y": 20
+				},
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 1,
+					"y": 13
+				}
+			]
+		},
+		"43": {
+			"objects": [
+				{
+					"id": 305,
+					"y": 21
+				},
+				{
+					"id": 306,
+					"y": 14
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 22,
+					"y": 21
+				},
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 1,
+					"y": 14
+				}
+			]
+		},
+		"44": {
+			"objects": [
+				{
+					"id": 305,
+					"x": 23
+				},
+				{
+					"id": 306,
+					"y": 15
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 306,
+					"x": 1,
+					"y": 15
+				},
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 23,
+					"y": 21
+				}
+			]
+		},
+		"45": {
+			"objects": [
+				{
+					"id": 305,
+					"y": 22
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 23,
+					"y": 22
+				}
+			]
+		},
+		"46": {
+			"objects": [
+				{
+					"id": 305,
+					"y": 23
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 23,
+					"y": 23
+				}
+			]
+		},
+		"47": {
+			"objects": [
+				{
+					"id": 305,
+					"y": 24
+				}
+			],
+			"actions": [
+				{
+					"type": "move",
+					"unit_id": 305,
+					"x": 23,
+					"y": 24
+				}
+			]
+		},
+		"48": {
+			"objects": [
+				{
+					"id": 1,
+					"hp": 190
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 305,
+					"x": 24,
+					"y": 24,
+					"dmg": 10
+				}
+			]
+		},
+		"49": {
+			"objects": [
+				{
+					"id": 1,
+					"hp": 180
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 305,
+					"x": 24,
+					"y": 24,
+					"dmg": 10
+				}
+			]
+		},
+		"50": {
+			"objects": [
+				{
+					"id": 1,
+					"hp": 170
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 305,
+					"x": 24,
+					"y": 24,
+					"dmg": 10
+				}
+			]
+		},
+		"51": {
+			"objects": [
+				{
+					"id": 1,
+					"hp": 160
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 305,
+					"x": 24,
+					"y": 24,
+					"dmg": 10
+				}
+			]
+		},
+		"52": {
+			"objects": [
+				{
+					"id": 1,
+					"hp": 150
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 305,
+					"x": 24,
+					"y": 24,
+					"dmg": 10
+				}
+			]
+		},
+		"53": {
+			"objects": [
+				{
+					"id": 1,
+					"hp": 140
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 305,
+					"x": 24,
+					"y": 24,
+					"dmg": 10
+				}
+			]
+		},
+		"54": {
+			"objects": [
+				{
+					"id": 1,
+					"hp": 130
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 305,
+					"x": 24,
+					"y": 24,
+					"dmg": 10
+				}
+			]
+		},
+		"55": {
+			"objects": [
+				{
+					"id": 1,
+					"hp": 120
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 305,
+					"x": 24,
+					"y": 24,
+					"dmg": 10
+				}
+			]
+		},
+		"56": {
+			"objects": [
+				{
+					"id": 1,
+					"hp": 110
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 305,
+					"x": 24,
+					"y": 24,
+					"dmg": 10
+				}
+			]
+		},
+		"57": {
+			"objects": [
+				{
+					"id": 1,
+					"hp": 100
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 305,
+					"x": 24,
+					"y": 24,
+					"dmg": 10
+				}
+			]
+		},
+		"58": {
+			"objects": [
+				{
+					"id": 1,
+					"hp": 90
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 305,
+					"x": 24,
+					"y": 24,
+					"dmg": 10
+				}
+			]
+		},
+		"59": {
+			"objects": [
+				{
+					"id": 1,
+					"hp": 80
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 305,
+					"x": 24,
+					"y": 24,
+					"dmg": 10
+				}
+			]
+		},
+		"60": {
+			"objects": [
+				{
+					"id": 1,
+					"hp": 70
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 305,
+					"x": 24,
+					"y": 24,
+					"dmg": 10
+				}
+			]
+		},
+		"61": {
+			"objects": [
+				{
+					"id": 1,
+					"hp": 60
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 305,
+					"x": 24,
+					"y": 24,
+					"dmg": 10
+				}
+			]
+		},
+		"62": {
+			"objects": [
+				{
+					"id": 1,
+					"hp": 50
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 305,
+					"x": 24,
+					"y": 24,
+					"dmg": 10
+				}
+			]
+		},
+		"63": {
+			"objects": [
+				{
+					"id": 1,
+					"hp": 40
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 305,
+					"x": 24,
+					"y": 24,
+					"dmg": 10
+				}
+			]
+		},
+		"64": {
+			"objects": [
+				{
+					"id": 1,
+					"hp": 30
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 305,
+					"x": 24,
+					"y": 24,
+					"dmg": 10
+				}
+			]
+		},
+		"65": {
+			"objects": [
+				{
+					"id": 1,
+					"hp": 20
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 305,
+					"x": 24,
+					"y": 24,
+					"dmg": 10
+				}
+			]
+		},
+		"66": {
+			"objects": [
+				{
+					"id": 1,
+					"hp": 10
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 305,
+					"x": 24,
+					"y": 24,
+					"dmg": 10
+				}
+			]
+		},
+		"67": {
+			"objects": [
+				{
+					"id": 1,
+					"hp": 0
+				}
+			],
+			"actions": [
+				{
+					"type": "attack",
+					"unit_id": 305,
+					"x": 24,
+					"y": 24,
+					"dmg": 10
+				}
+			]
+		}
+	},
+	"config": {
+		"gridSize": 25,
+		"idleIncome": 0,
+		"idleIncomeTimeOut": 600,
+		"resourceHp": 50,
+		"resourceIncome": 200,
+		"moneyObjIncome": 75,
+		"coreHp": 200,
+		"initialBalance": 300,
+		"wallHp": 100,
+		"wallBuildCost": 20,
+		"bombHp": 50,
+		"bombCountdown": 25,
+		"bombThrowCost": 50,
+		"bombReach": 3,
+		"bombDamage": 50,
+		"worldGenerator": "jigsaw",
+		"worldGeneratorConfig": {
+			"templatePlaceAttemptCount": 1000,
+			"additionalWallPlaceAttemptCount": 50,
+			"mirrorMap": true,
+			"resourceCount": 35,
+			"moneysCount": 25,
+			"minTemplateSpacing": 1,
+			"minCoreDistance": 5,
+			"baseResourceIncome": 150,
+			"resourceAdditionalIncomePerAdjacentWall": 40,
+			"resourceMultiplierIfFullySurrounded": 1.3,
+			"randomResourceIncomeVariation": 30,
+			"randomMoneyIncomeVariation": 20
+		},
+		"units": [
+			{
+				"name": "Warrior",
+				"cost": 150,
+				"hp": 25,
+				"baseMoveCooldown": 3,
+				"maxMoveCooldown": 12,
+				"damageCore": 10,
+				"damageUnit": 6,
+				"damageResource": 2,
+				"damageWall": 3,
+				"buildType": 0
+			},
+			{
+				"name": "Miner",
+				"cost": 100,
+				"hp": 15,
+				"baseMoveCooldown": 5,
+				"maxMoveCooldown": 15,
+				"damageCore": 3,
+				"damageUnit": 2,
+				"damageResource": 10,
+				"damageWall": 5,
+				"buildType": 0
+			},
+			{
+				"name": "Carrier",
+				"cost": 125,
+				"hp": 20,
+				"baseMoveCooldown": 3,
+				"maxMoveCooldown": 5,
+				"damageCore": 3,
+				"damageUnit": 2,
+				"damageResource": 4,
+				"damageWall": 3,
+				"buildType": 0
+			},
+			{
+				"name": "Builder",
+				"cost": 300,
+				"hp": 30,
+				"baseMoveCooldown": 2,
+				"maxMoveCooldown": 8,
+				"damageCore": 5,
+				"damageUnit": 3,
+				"damageResource": 2,
+				"damageWall": 3,
+				"buildType": 1
+			},
+			{
+				"name": "Bomberman",
+				"cost": 200,
+				"hp": 40,
+				"baseMoveCooldown": 1,
+				"maxMoveCooldown": 10,
+				"damageCore": 20,
+				"damageUnit": 10,
+				"damageResource": 5,
+				"damageWall": 10,
+				"buildType": 2
+			}
+		],
+		"corePositions": [
+			{
+				"x": 0,
+				"y": 0
+			},
+			{
+				"x": 24,
+				"y": 24
+			}
+		]
+	},
+	"full_tick_amount": 67
+}
