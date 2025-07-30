@@ -1,6 +1,6 @@
 import { GameConfig } from '../replay_loader/config.js';
 import { formatObjectData, getBarMetrics, type TickObject } from '../replay_loader/object.js';
-import { getGameConfig, getGridMessageOverride, getNameOfUnitType, getStateAt } from '../replay_loader/replayLoader.js';
+import { getGameConfig, getGameMisc, getGridMessageOverride, getNameOfUnitType, getStateAt } from '../replay_loader/replayLoader.js';
 import { getCurrentTickData } from '../time_manager/timeManager.js';
 
 const svgNS = 'http://www.w3.org/2000/svg';
@@ -46,6 +46,9 @@ if (!svgCanvasElement || !(svgCanvasElement instanceof SVGSVGElement)) {
 }
 const svgCanvas = svgCanvasElement as SVGSVGElement;
 const tooltipElement = document.getElementById('tooltip') as HTMLDivElement;
+const teamOneElement = document.getElementById('team-one-name') as HTMLDivElement;
+const teamTwoElement = document.getElementById('team-two-name') as HTMLDivElement;
+
 let gameConfig: GameConfig | undefined;
 
 function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, scaleFactor: number = 1): void {
@@ -145,7 +148,6 @@ function cleanGrid(): void {
 
 function drawFrame(_timestamp: number): void {
 	const currentTickData = getCurrentTickData();
-	console.log(`Rendering tick: ${currentTickData.tick}, progress: ${currentTickData.tickProgress}`);
 	const replayData = getStateAt(currentTickData.tick);
 	if (!replayData) {
 		console.warn('No replay data available for the current tick.');
@@ -215,6 +217,11 @@ export async function setupRenderer(): Promise<void> {
 	gameConfig = getGameConfig();
 	if (!gameConfig) {
 		throw new Error('Game configuration not found. Cannot set up renderer.');
+	}
+
+	// Set team names
+	for (const team of getGameMisc()?.team_results ?? []) {
+		// search for core position based on team id
 	}
 
 	const gridSize = gameConfig.gridSize;

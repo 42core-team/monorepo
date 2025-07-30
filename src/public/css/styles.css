@@ -7,6 +7,7 @@
 	--hp-color: #c70202ff;
 	--balance-color: #008600ff;
 	--cooldown-color: #0066ffff;
+	--svg-canvas-scale: 100%;
 }
 
 html,
@@ -38,21 +39,39 @@ body {
 }
 
 .game-area {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	position: relative;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
+	display: grid;
+	grid-template-columns: auto max-content auto;
+	grid-template-rows: auto max-content auto;
+	place-items: center;
+}
+
+#team-one-name {
+	place-self: start end;
+}
+#team-two-name {
+	place-self: end start;
+}
+.teamName {
+	font-size: 1.5rem;
+	font-weight: bold;
+	color: #333;
+	text-align: center;
+	background-color: #f0f0f0;
+	padding: 0.5rem 1rem;
+	margin: 10px;
+	border-radius: 10px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	outline: 2px solid #ccc;
 }
 
 #svg-canvas {
-	width: 100%;
-	height: auto;
+	width: var(--svg-canvas-scale);
+	height: var(--svg-canvas-scale);
 	aspect-ratio: 1 / 1;
-	max-height: 100%;
-	max-width: 100%;
+	outline: 2px solid #ccc;
+	background-color: #f9f9f9;
+	border-radius: 10px;
+	margin: 10px 0 10px 0;
 }
 /* Time Controls */
 #time-controls {
@@ -61,13 +80,12 @@ body {
 	justify-content: space-between;
 	gap: 1rem;
 	padding: 0.5rem 1rem;
-	background-color: #cbcbcb;
+	background-color: #f0f0f0;
 	border-radius: 0 0 20px 20px;
 	width: max-content;
 	margin: 0 auto;
 	position: relative;
-	margin-bottom: 10px;
-	outline: black solid 2px;
+	outline: #ccc solid 2px;
 }
 
 .controls-bar,

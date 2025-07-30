@@ -8,6 +8,7 @@
 	</head>
 	<body>
 		<script type="module" src="/js/main.js"></script>
+		<script type="module" src="/js/renderer/layoutRenderer.js"></script>
 
 		<div class="container">
 			<div class="top-bar">
@@ -35,9 +36,11 @@
 
 			<!-- SVG Output Canvas -->
 			<div class="game-area">
+				<div class="teamName" id="team-one-name">Team One</div>
 				<svg id="svg-canvas" xmlns="http://www.w3.org/2000/svg"></svg>
-				<div id="tooltip"></div>
+				<div class="teamName" id="team-two-name">Team Two</div>
 			</div>
+			<div id="tooltip"></div>
 		</div>
 	</body>
 </html>

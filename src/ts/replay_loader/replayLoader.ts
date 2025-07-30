@@ -260,6 +260,13 @@ export function getGameConfig(): GameConfig | undefined {
 
 	return replayLoader.getGameConfig();
 }
+export function getGameMisc(): ReplayMisc | undefined {
+	if (!replayLoader) {
+		throw new Error('Replay not loaded. Please call loadReplay first.');
+	}
+
+	return replayLoader.getGameMisc();
+}
 
 export function getWinningTeamFormatted(): string {
 	if (!replayLoader) {
