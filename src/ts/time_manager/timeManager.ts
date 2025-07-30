@@ -139,38 +139,38 @@ export async function setupTimeManager() {
 		}
 	});
 
+	function adjustSpeed(delta: number) {
+		const newSpeed = Math.min(20, Math.max(1, speedApS + delta));
+		speedNumberInput.value = newSpeed.toString();
+		speedSlider.value = newSpeed.toString();
+		speedApS = newSpeed;
+	}
+
+	const keyBindings: Record<string, { action: () => void; button?: HTMLButtonElement }> = {
+		' ': { action: () => playButton.click(), button: playButton },
+		r: { action: () => skipStartButton.click(), button: skipStartButton },
+		s: { action: () => skipStartButton.click(), button: skipStartButton },
+		e: { action: () => skipEndButton.click(), button: skipEndButton },
+		ArrowRight: { action: () => nextTickButton.click(), button: nextTickButton },
+		ArrowLeft: { action: () => prevTickButton.click(), button: prevTickButton },
+		ArrowUp: { action: () => adjustSpeed(+0.5), button: speedUpButton },
+		ArrowDown: { action: () => adjustSpeed(-0.5), button: speedDownButton },
+	};
+
 	window.addEventListener('keydown', (event) => {
-		event.preventDefault();
-		switch (event.key) {
-			case ' ':
-				playButton.click();
-				break;
-			case 'r':
-			case 's':
-				skipStartButton.click();
-				break;
-			case 'e':
-				skipEndButton.click();
-				break;
-			case 'ArrowRight':
-				nextTickButton.click();
-				break;
-			case 'ArrowLeft':
-				prevTickButton.click();
-				break;
-			case 'ArrowUp':
-				if (speedApS >= 20) break;
-				speedNumberInput.value = (parseFloat(speedNumberInput.value) + 0.5).toString();
-				speedSlider.value = speedNumberInput.value;
-				speedApS = parseFloat(speedNumberInput.value);
-				break;
-			case 'ArrowDown':
-				if (speedApS < 1) break;
-				speedNumberInput.value = (parseFloat(speedNumberInput.value) - 0.5).toString();
-				speedSlider.value = speedNumberInput.value;
-				speedApS = parseFloat(speedNumberInput.value);
-				break;
+		if (event.ctrlKey || event.metaKey || event.altKey) return;
+		if (['INPUT', 'TEXTAREA', 'SELECT'].includes((event.target as HTMLElement).tagName)) return;
+
+		const binding = keyBindings[event.key];
+		if (!binding) return;
+
+		if (binding.button) {
+			binding.button.classList.add('active');
+			setTimeout(() => binding.button!.classList.remove('active'), 100);
 		}
+
+		binding.action();
+		event.preventDefault();
 	});
 }
 
