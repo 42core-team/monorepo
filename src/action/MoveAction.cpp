@@ -51,10 +51,16 @@ bool MoveAction::execute(Core * core)
 		return false;
 
 	Object * obj = Board::instance().getObjectAtPos(target_);
-	if (obj)
+	if (obj && obj->getType() != ObjectType::Money)
 		return false;
 	if (target_.distance(Board::instance().getObjectPositionById(unit->getId())) > 1)
 		return false;
+
+	if (obj && obj->getType() == ObjectType::Money)
+	{
+		unit->setBalance(unit->getBalance() + static_cast<Money*>(obj)->getBalance());
+		Board::instance().removeObjectById(obj->getId());
+	}
 
 	Board::instance().moveObjectById(unit->getId(), target_);
 	unit->resetMoveCooldown();

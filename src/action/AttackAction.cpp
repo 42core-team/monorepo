@@ -65,12 +65,6 @@ bool AttackAction::attackObj(Object *obj, Unit *unit) // returns object new hp, 
 		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageWall);
 		damage_ = Config::game().units[unit->getUnitType()].damageWall;
 	}
-	else if (obj->getType() == ObjectType::Money)
-	{
-		unit->setBalance(unit->getBalance() + ((Money *)obj)->getBalance());
-		Board::instance().removeObjectById(obj->getId());
-		damage_ = 1;
-	}
 	else if (obj->getType() == ObjectType::Bomb)
 	{
 		Bomb *bomb = (Bomb *)obj;
