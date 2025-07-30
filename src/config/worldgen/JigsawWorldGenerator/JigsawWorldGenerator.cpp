@@ -382,7 +382,7 @@ static void varyResourceIncome()
 		int adjacentWalls = 0;
 		for (auto& d : dirs) {
 			auto* o = board.getObjectAtPos({pos.x + d.x, pos.y + d.y});
-			if (o && o->getType() == ObjectType::Wall)
+			if (o && (o->getType() == ObjectType::Wall || o->getType() == ObjectType::Resource))
 				adjacentWalls++;
 		}
 
