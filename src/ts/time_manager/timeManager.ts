@@ -140,6 +140,7 @@ export async function setupTimeManager() {
 	});
 
 	window.addEventListener('keydown', (event) => {
+		event.preventDefault();
 		switch (event.key) {
 			case ' ':
 				playButton.click();
