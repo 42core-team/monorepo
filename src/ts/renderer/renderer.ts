@@ -222,6 +222,12 @@ export async function setupRenderer(): Promise<void> {
 	// Set team names
 	for (const team of getGameMisc()?.team_results ?? []) {
 		// search for core position based on team id
+		for (const obj of getStateAt(0)?.objects ?? []) {
+			if (obj.type === 0 && obj.teamId === team.id) {
+				if (obj.x === 0) teamOneElement.textContent = team.name;
+				else if (obj.x === gameConfig.gridSize - 1) teamTwoElement.textContent = team.name;
+			}
+		}
 	}
 
 	const gridSize = gameConfig.gridSize;

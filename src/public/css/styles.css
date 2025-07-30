@@ -40,8 +40,8 @@ body {
 
 .game-area {
 	display: grid;
-	grid-template-columns: auto max-content auto;
-	grid-template-rows: auto max-content auto;
+	grid-template-columns: 1fr max-content 1fr;
+	grid-template-rows: 1fr max-content 1fr;
 	place-items: center;
 }
 
