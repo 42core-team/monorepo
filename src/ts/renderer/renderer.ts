@@ -117,8 +117,15 @@ function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, s
 		}
 	}
 
-	const img = document.createElementNS(svgNS, 'image');
-	img.setAttributeNS(xlinkNS, 'href', `/assets/object-svgs/${path}`);
+	let img = document.querySelector(`image[data-obj-id="${obj.id}"]`) as SVGImageElement | null;
+
+	if (!img) {
+		img = document.createElementNS(svgNS, 'image');
+		img.setAttribute('data-obj-id', obj.id.toString());
+		img.setAttributeNS(xlinkNS, 'href', `/assets/object-svgs/${path}`);
+	}
+
+	img.classList.remove('not-touched');
 
 	let scale = 0.8;
 	if (obj.type === 2) {
@@ -128,7 +135,6 @@ function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, s
 	} else if (obj.type === 4) {
 		scale = 0.6; // Money
 	}
-
 	const offset = (1 - scale * scaleFactor) / 2;
 	img.removeAttribute('x');
 	img.removeAttribute('y');
@@ -136,14 +142,6 @@ function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, s
 	img.setAttribute('height', '1');
 	img.setAttribute('transform', `translate(${xOffset + offset},${yOffset + offset}) scale(${scale * scaleFactor})`);
 	svgCanvas.appendChild(img);
-}
-
-function cleanGrid(): void {
-	const nonPersistentElements = svgCanvas.querySelectorAll(':not(.persistent)');
-
-	for (const element of nonPersistentElements) {
-		svgCanvas.removeChild(element);
-	}
 }
 
 function drawFrame(_timestamp: number): void {
@@ -155,8 +153,13 @@ function drawFrame(_timestamp: number): void {
 		return;
 	}
 
-	cleanGrid();
+	const nonPersistentElements = svgCanvas.querySelectorAll(':not(.persistent)');
 
+	for (const element of nonPersistentElements) {
+		element.classList.add('not-touched');
+	}
+
+	// TODO: this doesnt work at all lol
 	let gridMessageOverride: string | undefined = getGridMessageOverride();
 
 	if (gridMessageOverride) {
@@ -207,6 +210,10 @@ function drawFrame(_timestamp: number): void {
 		}
 
 		drawObject(currObj, x, y, scale);
+	}
+
+	for (const element of svgCanvas.querySelectorAll('.not-touched')) {
+		element.remove();
 	}
 
 	window.requestAnimationFrame(drawFrame);

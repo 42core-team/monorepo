@@ -220,17 +220,52 @@ export async function setupReplayLoader(filePath: string, cacheInterval = 25, up
 	}, updateInterval);
 }
 
+let tempStateCache: { tick: number; state: ReplayTick; lastAccess: number }[] | null = null;
+const lastAccessThreshold = 10;
 export function getStateAt(tick: number): ReplayTick | null {
 	if (!replayLoader) {
 		throw new Error('Replay not loaded. Please call loadReplay first.');
 	}
 
+	if (tempStateCache) {
+		for (let i = 0; i < (tempStateCache?.length ?? 0); i++) {
+			tempStateCache[i].lastAccess++;
+		}
+		for (let i = tempStateCache.length - 1; i >= 0; i--) {
+			if (tempStateCache[i].lastAccess > lastAccessThreshold) {
+				tempStateCache.splice(i, 1);
+			}
+		}
+	}
+
+	// attempt to find in cache
+	if (tempStateCache) {
+		for (const cached of tempStateCache) {
+			if (cached.tick === tick) {
+				cached.lastAccess = 0;
+				return cached.state;
+			}
+		}
+	}
+
+	let result: ReplayTick | null = null;
+
 	try {
-		return replayLoader.getStateAt(tick);
+		result = replayLoader.getStateAt(tick);
+		if (!result) {
+			throw new Error(`No state found for tick ${tick}`);
+		}
+		if (tempStateCache) {
+			tempStateCache.push({ tick, state: result, lastAccess: 0 });
+		} else {
+			tempStateCache = [{ tick, state: result, lastAccess: 0 }];
+		}
 	} catch (err) {
 		console.log(err);
 		return null;
 	}
+
+	return result;
 }
 export function getTotalReplayTicks(): number {
 	if (!replayLoader) {
