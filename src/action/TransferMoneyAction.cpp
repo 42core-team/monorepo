@@ -49,10 +49,11 @@ bool TransferMoneyAction::dropMoney(Core *core, Object *srcObj)
 
 	if (srcUnit->getBalance() < amount_)
 		amount_ = srcUnit->getBalance();
+	if (amount_ <= 0)
+		return false;
 	srcUnit->setBalance(srcUnit->getBalance() - amount_);
 
-	Position pos = Board::instance().getObjectPositionById(srcObj->getId());
-	Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), amount_), pos);
+	Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), amount_), target_);
 
 	return true;
 }
