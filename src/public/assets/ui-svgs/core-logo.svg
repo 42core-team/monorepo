@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   fill="white"
+   height="32"
+   viewbox="8.593 0 10.814 21"
+   width="32"
+   class="mx-auto"
+   style="width:30%; height:auto; display:block; margin:0 auto;"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="core-logo.svg"
+   inkscape:version="1.4.2 (ebf0e940, 2025-05-08)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="9.9869391"
+     inkscape:cx="16.972167"
+     inkscape:cy="8.3609201"
+     inkscape:window-width="1408"
+     inkscape:window-height="882"
+     inkscape:window-x="211"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg1" />
+  <path
+     d="M 11.993861,27.736626 7.9103316,23.653217 V 15.955098 8.2569342 L 11.988771,4.178525 16.06721,0.10013078 l 4.088636,4.08858982 4.088575,4.088605 v 2.1564854 2.1565 H 22.317406 20.390347 V 11.208698 9.8270997 l -2.151365,-2.1513043 -2.15138,-2.1513043 -2.15138,2.1513043 -2.15138,2.1513043 v 6.2707383 6.270572 l 2.14632,2.146229 2.14632,2.146229 2.156425,-2.156501 2.15644,-2.1565 v -1.340694 -1.340846 h 1.927059 1.927015 l -0.0033,2.003641 -0.0033,2.003489 -4.080207,4.073289 -4.080177,4.073289 z m 2.498003,-5.577266 -1.544669,-1.544759 v -4.425229 -4.425047 l 1.54982,-1.549714 1.549804,-1.5496984 1.549804,1.5496984 1.549805,1.549714 v 4.425198 4.425229 l -1.54476,1.544608 c -0.84961,0.849641 -1.549351,1.54476 -1.554955,1.54476 -0.0056,0 -0.705284,-0.69527 -1.554849,-1.54476 z"
+     fill="#ffffff"
+     id="path1"
+     style="stroke-width:1.51047" />
+</svg>

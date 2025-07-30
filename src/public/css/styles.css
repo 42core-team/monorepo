@@ -121,3 +121,36 @@ body {
 	background-color: #555;
 	border-radius: 4px;
 }
+
+/* corner buttons */
+
+.corner-button {
+	position: absolute;
+	width: 7rem;
+	height: 7rem;
+	background-color: black;
+	background-size: 40%;
+	background-repeat: no-repeat;
+	transition: transform 0.1s ease-in-out;
+}
+.corner-button:hover {
+	transform: scale(1.1);
+}
+
+#corner-bottom-left {
+	bottom: 0;
+	left: 0;
+	background-image: url('/assets/ui-svgs/github-logo.svg');
+	clip-path: polygon(0 100%, 0 0, 100% 100%);
+	background-position: 17% 83%;
+	transform-origin: bottom left;
+}
+
+#corner-top-right {
+	top: 0;
+	right: 0;
+	background-image: url('/assets/ui-svgs/core-logo.svg');
+	clip-path: polygon(0 0, 100% 0, 100% 100%);
+	background-position: 83% 17%;
+	transform-origin: top right;
+}
