@@ -2,7 +2,7 @@
 
 #include "Unit.h"
 
-AttackAction::AttackAction(json msg) : Action(ActionType::ATTACK)
+AttackAction::AttackAction(json msg) : Action(ActionType::ATTACK), damage_(0)
 {
 	decodeJSON(msg);
 }

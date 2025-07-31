@@ -54,7 +54,7 @@ class Board
 		unsigned int grid_width_;
 		unsigned int grid_height_;
 
-		unsigned int next_object_id_ = 0;
+		unsigned int next_object_id_ = 1;
 
 
 	// @brief Board Iterator that only exposes valid objects
