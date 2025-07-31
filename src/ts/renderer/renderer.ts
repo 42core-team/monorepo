@@ -1,6 +1,6 @@
 import { GameConfig } from '../replay_loader/config.js';
 import { formatObjectData, getBarMetrics, type TickObject } from '../replay_loader/object.js';
-import { getGameConfig, getGameMisc, getNameOfUnitType, getStateAt } from '../replay_loader/replayLoader.js';
+import { getActionsByExecutor, getGameConfig, getGameMisc, getNameOfUnitType, getStateAt } from '../replay_loader/replayLoader.js';
 import { getCurrentTickData } from '../time_manager/timeManager.js';
 
 const svgNS = 'http://www.w3.org/2000/svg';
@@ -152,6 +152,7 @@ function drawFrame(_timestamp: number): void {
 		window.requestAnimationFrame(drawFrame);
 		return;
 	}
+	const actionsByExec = getActionsByExecutor(currentTickData.tick + 1);
 
 	const nonPersistentElements = svgCanvas.querySelectorAll(':not(.persistent)');
 
@@ -185,6 +186,22 @@ function drawFrame(_timestamp: number): void {
 		if (nextObj) {
 			x = currObj.x + (nextObj.x - currObj.x) * sineProgress;
 			y = currObj.y + (nextObj.y - currObj.y) * sineProgress;
+		}
+
+		// check attacks / build / transfer money
+		if (currObj.type === 1) {
+			const actions = actionsByExec[currObj.id] || [];
+			for (const action of actions) {
+				if (action.type === 'attack' || action.type === 'build' || action.type === 'transfer_money') {
+					let deltaX = action.x - currObj.x;
+					let deltaY = action.y - currObj.y;
+
+					let halfActionTickProgress = currentTickData.tickProgress > 0.5 ? 1 - currentTickData.tickProgress : currentTickData.tickProgress;
+
+					x += deltaX * halfActionTickProgress;
+					y += deltaY * halfActionTickProgress;
+				}
+			}
 		}
 
 		drawObject(currObj, x, y, scale);

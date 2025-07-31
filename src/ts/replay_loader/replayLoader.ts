@@ -147,6 +147,21 @@ class ReplayLoader {
 		return { objects: Object.values(state), actions } as ReplayTick;
 	}
 
+	public getActionsByExecutor(tick: number): Record<number, TickAction[]> {
+		const tickActions = this.replayData.ticks[tick]?.actions ?? [];
+		return tickActions.reduce(
+			(map, action) => {
+				const exec = 'unit_id' in action ? action.unit_id : 'source_id' in action ? action.source_id : undefined;
+				if (exec !== undefined) {
+					if (!map[exec]) map[exec] = [];
+					map[exec].push(action);
+				}
+				return map;
+			},
+			{} as Record<number, TickAction[]>
+		);
+	}
+
 	public resetReplayData() {
 		this.replayData = { misc: { team_results: [], game_end_reason: 0 }, ticks: {}, full_tick_amount: 0 };
 	}
@@ -258,6 +273,13 @@ export function getStateAt(tick: number): ReplayTick | null {
 	}
 
 	return result;
+}
+export function getActionsByExecutor(tick: number): Record<number, TickAction[]> {
+	if (!replayLoader) {
+		throw new Error('Replay not loaded. Please call loadReplay first.');
+	}
+
+	return replayLoader.getActionsByExecutor(tick);
 }
 export function getTotalReplayTicks(): number {
 	if (!replayLoader) {
