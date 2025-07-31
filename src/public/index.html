@@ -9,6 +9,8 @@
 	<body>
 		<script type="module" src="/js/main.js"></script>
 		<script type="module" src="/js/renderer/layoutRenderer.js"></script>
+		<script type="module" src="/js/renderer/fireworksRenderer.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/fireworks-js@2.x/dist/index.umd.js"></script>
 
 		<div class="container">
 			<div class="top-bar">
@@ -42,10 +44,12 @@
 			</div>
 			<div id="tooltip"></div>
 
-			<div id="win-display-box">
+			<div id="win-display-box" class="win-display">
 				<h1>🎖️🎉 Winner: <span id="winnername"></span> 🎈🏁</h1>
 				<h3>Win Reason: <span id="winreason"></span></h3>
 			</div>
+			<div id="background-darkener" class="win-display"></div>
+			<div class="fireworks win-display"></div>
 
 			<a href="https://github.com/42core-team" target="_blank">
 				<button id="corner-bottom-left" class="corner-button"></button>

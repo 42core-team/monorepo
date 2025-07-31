@@ -178,9 +178,9 @@ export async function setupTimeManager() {
 export function getCurrentTickData(): tickData {
 	if (winnerDisplay) {
 		if (tick == getTotalReplayTicks() - 1) {
-			winnerDisplay.style.display = 'block';
+			document.querySelectorAll<HTMLElement>('.win-display').forEach((elem) => (elem.style.display = 'block'));
 		} else {
-			winnerDisplay.style.display = 'none';
+			document.querySelectorAll<HTMLElement>('.win-display').forEach((elem) => (elem.style.display = 'none'));
 		}
 	}
 
