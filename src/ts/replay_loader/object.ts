@@ -139,7 +139,9 @@ export function getBarMetrics(obj: TickObject): { key: string; percentage: numbe
 		const minSpeed = cfg.units[obj.unit_type].maxMoveCooldown;
 		let resourcePart = obj.balance / (cfg.resourceIncome / 4);
 		if (resourcePart < 1) resourcePart = 1;
-		const defaultCd = Math.min(baseSpeed * resourcePart, minSpeed);
+		let defaultCd = Math.min(baseSpeed * resourcePart, minSpeed);
+
+		if (obj.moveCooldown > defaultCd) defaultCd = obj.moveCooldown;
 
 		metrics.push({
 			key: 'moveCooldown',
