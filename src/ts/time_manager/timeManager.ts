@@ -16,12 +16,13 @@ const speedNumberInput = document.getElementById('speed-number-input') as HTMLIn
 const speedDownButton = document.getElementById('speed-down-button') as HTMLButtonElement;
 const speedUpButton = document.getElementById('speed-up-button') as HTMLButtonElement;
 
+const winnerDisplay = document.getElementById('win-display-box') as HTMLDivElement;
+
 // consts
 
 const minSpeed = 0.5;
 const maxSpeed = 20;
 const speedIncrement = 0.5;
-const defaultSpeed = 3;
 
 // Time Tracking Variables
 
@@ -175,6 +176,14 @@ export async function setupTimeManager() {
 }
 
 export function getCurrentTickData(): tickData {
+	if (winnerDisplay) {
+		if (tick == getTotalReplayTicks() - 1) {
+			winnerDisplay.style.display = 'block';
+		} else {
+			winnerDisplay.style.display = 'none';
+		}
+	}
+
 	const now = Date.now();
 	if (!playing) {
 		lastTimestamp = null;
@@ -197,7 +206,6 @@ export function getCurrentTickData(): tickData {
 		} else {
 			setPlaying(false);
 			tickProgress = 1;
-			alert(`Game ended. Winning Team: ${getWinningTeamFormatted()}`);
 		}
 	}
 

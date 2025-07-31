@@ -3,6 +3,15 @@ import type { TickAction } from './action.js';
 import type { GameConfig } from './config.js';
 import type { TickObject } from './object.js';
 
+const winnerNameElement = document.getElementById('winnername') as HTMLSpanElement;
+const winReasonElement = document.getElementById('winreason') as HTMLSpanElement;
+const gameEndReasons: Record<number, string> = {
+	0: 'Core Destruction',
+	1: 'Game Timed Out - Decision via Core HP',
+	2: 'Game Timed Out - Decision via Total Unit HP',
+	3: 'Game Timed Out - Random Decision',
+};
+
 export interface ReplayTick {
 	objects: TickObject[];
 	actions: TickAction[];
@@ -68,6 +77,9 @@ class ReplayLoader {
 			throw new Error('Invalid replay data format: missing ticks or full_tick_amount');
 		}
 		totalReplayTicks = this.replayData.full_tick_amount;
+
+		winnerNameElement.innerHTML = this.replayData.misc.team_results.find((team) => team.place === 0)?.name || 'Unknown';
+		winReasonElement.innerHTML = gameEndReasons[this.replayData.misc.game_end_reason] || 'Unknown Reason';
 
 		const fullState: State = {};
 		const tick0 = this.replayData.ticks['0'];
