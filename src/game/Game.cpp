@@ -89,6 +89,10 @@ void Game::run()
 
 void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, std::chrono::steady_clock::time_point serverStartTime)
 {
+	// for (auto & obj : Board::instance())
+	// 	if (obj.getType() == ObjectType::Unit)
+	// 		std::cout << obj.getId() << " " << (int)obj.getType() << " " << (obj.getType() == ObjectType::Unit ? ((Unit &)obj).getTeamId() : 69) << std::endl;
+
 	// 1. EXECUTE ACTIONS
 
 	shuffle_vector(actions); // shuffle action execution order to ensure fairness

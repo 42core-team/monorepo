@@ -8,11 +8,6 @@ Resource::Resource(unsigned int id, unsigned int balance)
 			 ObjectType::Resource),
 	  balance_(balance) {}
 
-void Resource::getMined(Unit *miner)
-{
-	miner->addBalance(balance_);
-}
-
 void Resource::tick(unsigned long long tickCount)
 {
 	(void)tickCount;

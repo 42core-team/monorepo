@@ -57,7 +57,11 @@ bool AttackAction::attackObj(Object *obj, Unit *unit) // returns object new hp, 
 	{
 		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageResource);
 		if (obj->getHP() <= 0)
-			((Resource *)obj)->getMined(unit);
+		{
+			unsigned int balance = ((Resource *)obj)->getBalance();
+			Board::instance().removeObjectById(obj->getId());
+			Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), balance), target_pos_, true);
+		}
 		damage_ = Config::game().units[unit->getUnitType()].damageResource;
 	}
 	else if (obj->getType() == ObjectType::Wall)
