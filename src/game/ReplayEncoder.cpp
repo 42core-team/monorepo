@@ -1,4 +1,5 @@
 #include "ReplayEncoder.h"
+#include <cstdlib>
 
 #define REPLAY_VERSION std::string("1.0.0")
 
@@ -146,6 +147,10 @@ json ReplayEncoder::encodeMiscSection() const
 	}
 	miscSection["game_end_reason"] = static_cast<int>(gameEndReason_);
 	miscSection["version"] = REPLAY_VERSION;
+
+	const char *gameId = std::getenv("GAME_ID");
+	miscSection["game_id"] = gameId ? std::string(gameId) : "";
+
 	return miscSection;
 }
 
