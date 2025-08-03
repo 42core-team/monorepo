@@ -1,0 +1,11 @@
+{
+	"gameConfigFilePath": "/core/data/docker.game.config.json",
+	"replayFolderPaths": [
+		"/core/replays"
+	],
+	"dataFolderPath": "/core/data",
+	"timeoutTicks": 3000,
+	"timeoutMs": 3000,
+	"clientWaitTimeoutMs": 500,
+	"enableTerminalVisualizer": false
+}
