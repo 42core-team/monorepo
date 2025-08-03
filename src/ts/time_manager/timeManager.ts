@@ -1,4 +1,5 @@
-import { getTotalReplayTicks, getWinningTeamFormatted } from '../replay_loader/replayLoader.js';
+import { getTotalReplayTicks } from '../replay_loader/replayLoader.js';
+import { setRenderFireworks } from '../renderer/fireworksRenderer.js';
 
 const playButton = document.getElementById('play-pause-button') as HTMLButtonElement;
 
@@ -179,8 +180,10 @@ export function getCurrentTickData(): tickData {
 	if (winnerDisplay) {
 		if (tick == getTotalReplayTicks() - 1) {
 			document.querySelectorAll<HTMLElement>('.win-display').forEach((elem) => (elem.style.display = 'block'));
+			setRenderFireworks(true);
 		} else {
 			document.querySelectorAll<HTMLElement>('.win-display').forEach((elem) => (elem.style.display = 'none'));
+			setRenderFireworks(false);
 		}
 	}
 

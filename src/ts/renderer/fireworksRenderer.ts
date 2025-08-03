@@ -1,7 +1,5 @@
 declare const Fireworks: any;
 
-console.log('loading fireworks renderer');
-
 const container = document.querySelector('.fireworks');
 const fireworks = new Fireworks.default(container, {
 	autoresize: true,
@@ -16,12 +14,23 @@ const fireworks = new Fireworks.default(container, {
 	intensity: 25,
 	flickering: 30,
 	delay: { min: 60, max: 90 }, // control spawn rate
-	brightness: { min: 50, max: 70 },
+	brightness: { min: 50, max: 100 },
 	decay: { min: 0.015, max: 0.025 },
 });
 fireworks.start();
 
+let renderFireworks = false;
+let fireworkStrength = 1;
+
 (function loop() {
-	fireworks.launch(1);
-	setTimeout(loop, 250);
+	fireworks.launch(fireworkStrength);
+	if (fireworkStrength > 1) fireworkStrength--;
+	setTimeout(loop, 500);
 })();
+
+export function setRenderFireworks(render: boolean): void {
+	if (renderFireworks == false && render == true) {
+		fireworkStrength = 10;
+	}
+	renderFireworks = render;
+}

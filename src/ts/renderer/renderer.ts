@@ -147,14 +147,20 @@ function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, s
 let lastRenderTime = 0;
 const FPS = 30;
 const MIN_FRAME_INTERVAL = 1000 / FPS; // 30 FPS
-function drawFrame(timestamp: number): void {
-	if (timestamp - lastRenderTime < MIN_FRAME_INTERVAL) {
+function scheduleNextFrame(): void {
+	const now = performance.now();
+	const elapsed = now - lastRenderTime;
+	const delay = Math.max(0, MIN_FRAME_INTERVAL - elapsed);
+	if (delay > 0) {
+		setTimeout(() => {
+			window.requestAnimationFrame(drawFrame);
+		}, delay);
+	} else {
 		window.requestAnimationFrame(drawFrame);
-		return;
 	}
+}
+function drawFrame(timestamp: number): void {
 	lastRenderTime = timestamp;
-
-	console.log(timestamp);
 
 	const currentTickData = getCurrentTickData();
 	const replayData = getStateAt(currentTickData.tick);
@@ -222,9 +228,9 @@ function drawFrame(timestamp: number): void {
 		element.remove();
 	}
 
-	window.requestAnimationFrame(drawFrame);
+	scheduleNextFrame();
 }
-window.requestAnimationFrame(drawFrame);
+scheduleNextFrame();
 
 export async function setupRenderer(): Promise<void> {
 	gameConfig = getGameConfig();

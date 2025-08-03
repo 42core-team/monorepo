@@ -218,11 +218,13 @@ body {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	background-color: color-mix(in srgb, var(--core-purple) 20%, white);
-	color: #333;
+	backdrop-filter: blur(5px);
+	/* background-color: color-mix(in srgb, var(--core-purple) 20%, white); */
+	color: white;
 	padding: 20px;
 	border-radius: 10px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+	/* box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); */
+	outline: 5px solid color-mix(in srgb, var(--core-purple) 20%, white);
 	text-align: center;
 	z-index: 1000;
 }
@@ -233,7 +235,7 @@ body {
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	background-color: rgba(0, 0, 0, 0.5);
+	background-color: rgba(0, 0, 0, 0.75);
 	z-index: 500;
 	pointer-events: none;
 }
