@@ -5,7 +5,7 @@
 	],
 	"dataFolderPath": "/core/data",
 	"timeoutTicks": 3000,
-	"timeoutMs": 3000,
+	"timeoutMs": 60000,
 	"clientWaitTimeoutMs": 500,
 	"enableTerminalVisualizer": false
 }
