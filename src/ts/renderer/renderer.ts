@@ -224,6 +224,10 @@ function drawFrame(timestamp: number): void {
 		drawObject(currObj, x, y, scale);
 	}
 
+	if (tooltipElement.style.display === 'block' && lastSVGPoint) {
+		refreshTooltipFromSVGPoint(lastSVGPoint, lastClientX, lastClientY);
+	}
+
 	for (const element of svgCanvas.querySelectorAll('.not-touched')) {
 		element.remove();
 	}
@@ -232,6 +236,28 @@ function drawFrame(timestamp: number): void {
 }
 scheduleNextFrame();
 
+let lastSVGPoint: DOMPoint | null = null;
+let lastClientX = 0;
+let lastClientY = 0;
+
+function refreshTooltipFromSVGPoint(svgP: DOMPoint, clientX: number, clientY: number): void {
+	const tx = Math.floor(svgP.x);
+	const ty = Math.floor(svgP.y);
+	const currentObjects = getStateAt(getCurrentTickData().tick)?.objects || [];
+	const obj = currentObjects.find((o: TickObject) => o.x === tx && o.y === ty);
+
+	if (obj) {
+		const offsetX = 10;
+		const offsetY = clientY > window.innerHeight / 2 ? -tooltipElement.offsetHeight - 10 : 10;
+		tooltipElement.style.left = `${clientX + offsetX}px`;
+		tooltipElement.style.top = `${clientY + offsetY}px`;
+		tooltipElement.style.borderRadius = clientY > window.innerHeight / 2 ? '15px 15px 15px 0' : '0 15px 15px 15px';
+		tooltipElement.style.display = 'block';
+		tooltipElement.innerHTML = formatObjectData(obj);
+	} else {
+		tooltipElement.style.display = 'none';
+	}
+}
 export async function setupRenderer(): Promise<void> {
 	gameConfig = getGameConfig();
 	if (!gameConfig) {
@@ -282,23 +308,11 @@ export async function setupRenderer(): Promise<void> {
 		}
 		const svgP = pt.matrixTransform(ctm.inverse());
 
-		const tx = Math.floor(svgP.x),
-			ty = Math.floor(svgP.y);
+		lastSVGPoint = svgP;
+		lastClientX = e.pageX;
+		lastClientY = e.pageY;
 
-		const currentObjects = getStateAt(getCurrentTickData().tick)?.objects || [];
-		const obj = currentObjects.find((o: TickObject) => o.x === tx && o.y === ty);
-
-		if (obj) {
-			const offsetX = 10;
-			const offsetY = e.clientY > window.innerHeight / 2 ? -tooltipElement.offsetHeight - 10 : 10;
-			tooltipElement.style.left = `${e.pageX + offsetX}px`;
-			tooltipElement.style.top = `${e.pageY + offsetY}px`;
-			tooltipElement.style.borderRadius = e.clientY > window.innerHeight / 2 ? '15px 15px 15px 0' : '0 15px 15px 15px';
-			tooltipElement.style.display = 'block';
-			tooltipElement.innerHTML = formatObjectData(obj);
-		} else {
-			tooltipElement.style.display = 'none';
-		}
+		refreshTooltipFromSVGPoint(svgP, e.clientX, e.clientY);
 	});
 	const hideIfOutside = (e: MouseEvent) => {
 		const rect = svgCanvas.getBoundingClientRect();
