@@ -1,6 +1,6 @@
 #include "ReplayEncoder.h"
 
-#define REPLAY_VERSION std::string("1.0.0")
+#define REPLAY_VERSION std::string("1.0.1")
 
 json ReplayEncoder::diffObject(const json &currentObj, const json &previousObj)
 {
