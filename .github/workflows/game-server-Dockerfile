@@ -13,13 +13,16 @@ RUN make re
 FROM ubuntu:noble AS release
 RUN apt-get update && apt-get install -y \
     libcurl4 \
+    jq \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /core
 COPY --from=build-game /core/core ./core
 COPY --from=build-game /core/data ./data
+COPY --from=build-game /core/.github/workflows/entrypoint.sh ./entrypoint.sh
 
-RUN mkdir replays
+RUN mkdir replays && chmod +x ./entrypoint.sh
 
-ENTRYPOINT [ "./core", "./data/docker.server.config.json" ]
+ENTRYPOINT [ "./entrypoint.sh", "./core", "./data/docker.server.config.json" ]
 CMD [ "--default-arg" ]
