@@ -21,7 +21,16 @@ echo "REPLAY_FILE: $REPLAY_FILE"
 # Function to run the main game server
 run_game_server() {
     echo "Starting game server..."
-    exec "$@"
+    # Run the game server in the background and wait for it
+    "$@" &
+    local game_pid=$!
+
+    # Wait for the game server to finish
+    wait $game_pid
+    local exit_code=$?
+
+    echo "Game server finished with exit code: $exit_code"
+    return $exit_code
 }
 
 # Function to handle post-game processing
@@ -72,24 +81,6 @@ post_game_processing() {
     echo "=== Post-game processing completed ==="
 }
 
-# Trap to handle post-game processing when the main process exits
-cleanup() {
-    local exit_code=$?
-    echo "Game server exited with code: $exit_code"
-
-    # Only run post-game processing if either feature is enabled
-    if [[ "$UPLOAD_REPLAY" == "true" || "$SEND_RESULTS" == "true" ]]; then
-        post_game_processing
-    else
-        echo "No post-game processing enabled"
-    fi
-
-    exit $exit_code
-}
-
-# Set up signal handling
-trap cleanup EXIT INT TERM
-
 # Validate that required scripts exist if features are enabled
 if [[ "$UPLOAD_REPLAY" == "true" && ! -f "$UPLOAD_SCRIPT" ]]; then
     echo "Error: UPLOAD_REPLAY is enabled but script not found: $UPLOAD_SCRIPT"
@@ -106,4 +97,21 @@ fi
 [[ -f "$RABBITMQ_SCRIPT" ]] && chmod +x "$RABBITMQ_SCRIPT"
 
 # Run the main game server with all provided arguments
-run_game_server "$@"
+echo "Running game server with arguments: $*"
+if run_game_server "$@"; then
+    game_exit_code=0
+else
+    game_exit_code=$?
+fi
+
+echo "Game server exited with code: $game_exit_code"
+
+# Only run post-game processing if either feature is enabled
+if [[ "$UPLOAD_REPLAY" == "true" || "$SEND_RESULTS" == "true" ]]; then
+    post_game_processing
+else
+    echo "No post-game processing enabled"
+fi
+
+echo "Entrypoint script completed"
+exit $game_exit_code
