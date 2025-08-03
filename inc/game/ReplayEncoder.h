@@ -19,7 +19,6 @@ typedef enum game_end_reason_e {
 	GER_DEFEAT,
 	GER_CORE_HP,
 	GER_UNIT_HP,
-	GER_MONEY_IN_CORE,
 	GER_RANDOM
 }	game_end_reason_t;
 
