@@ -22,7 +22,6 @@ const fireworks = new Fireworks.default(container, {
 fireworks.start();
 
 (function loop() {
-	console.group('fireworks loop');
 	fireworks.launch(1);
 	setTimeout(loop, 250);
 })();

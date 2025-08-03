@@ -144,7 +144,18 @@ function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, s
 	svgCanvas.appendChild(img);
 }
 
-function drawFrame(_timestamp: number): void {
+let lastRenderTime = 0;
+const FPS = 30;
+const MIN_FRAME_INTERVAL = 1000 / FPS; // 30 FPS
+function drawFrame(timestamp: number): void {
+	if (timestamp - lastRenderTime < MIN_FRAME_INTERVAL) {
+		window.requestAnimationFrame(drawFrame);
+		return;
+	}
+	lastRenderTime = timestamp;
+
+	console.log(timestamp);
+
 	const currentTickData = getCurrentTickData();
 	const replayData = getStateAt(currentTickData.tick);
 	if (!replayData) {
