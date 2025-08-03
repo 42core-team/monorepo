@@ -14,9 +14,12 @@ FROM ubuntu:noble AS release
 RUN apt-get update && apt-get install -y \
     libcurl4 \
     && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /core
 COPY --from=build-game /core/core ./core
 COPY --from=build-game /core/data ./data
 
-ENTRYPOINT [ "./core" ]
+RUN mkdir replays
+
+ENTRYPOINT [ "./core", "./data/docker.server.config.json" ]
 CMD [ "--default-arg" ]

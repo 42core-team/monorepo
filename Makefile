@@ -58,3 +58,10 @@ logfiles:
 	done
 
 .PHONY: all clean fclean re run ren start
+
+# Test Dockerfile
+build-docker:
+	docker build -t game-server-test:latest -f ./.github/workflows/game-server-Dockerfile .
+
+run-docker:
+	docker run --rm -p 4242:4242 game-server-test:latest 1 2
