@@ -21,6 +21,28 @@
 #include "json.hpp"
 using json = nlohmann::ordered_json;
 
+static std::string sanitizeTeamName(const std::string& teamName, const std::string& defaultName = "Unnamed")
+{
+	constexpr size_t MAX_LEN = 16;
+	std::string sanitized;
+	sanitized.reserve(std::min(teamName.size(), MAX_LEN));
+	for (unsigned char uc : teamName)
+	{
+		if ((std::isalnum(uc) != 0) || uc == '_' || uc == '.' || uc == '-')
+		{
+			sanitized += static_cast<char>(uc);
+			if (sanitized.size() > MAX_LEN)
+				break;
+		}
+	}
+	if (sanitized.empty())
+	{
+		Logger::LogWarn("Team name '" + teamName + "' is invalid, using default name '" + defaultName + "'");
+		return defaultName;
+	}
+	return sanitized;
+}
+
 int main(int argc, char *argv[])
 {
 	if (argc < 4)
@@ -92,7 +114,7 @@ int main(int argc, char *argv[])
 			continue;
 		}
 		unsigned int teamId = loginMessage["id"];
-		std::string teamName = loginMessage["name"];
+		std::string teamName = sanitizeTeamName(loginMessage["name"], std::string("Team") + std::to_string(teamId));
 		bridge->setTeamId(teamId);
 		bridge->setTeamName(teamName);
 
