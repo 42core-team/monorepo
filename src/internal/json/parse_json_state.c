@@ -2,7 +2,7 @@
 
 static void core_static_updateObj(t_obj *existingObj, json_node *updates)
 {
-	if (updates->type != JSON_TYPE_ARRAY)
+	if (updates->type != JSON_TYPE_OBJECT)
 	{
 		char *updatesFormatted = json_to_string(updates);
 		printf("Error: Supplied json node is not an array. Got: %s\n", updatesFormatted);
@@ -63,7 +63,7 @@ static void core_static_updateObj(t_obj *existingObj, json_node *updates)
 
 static void core_static_applyObjToArray(json_node *new_obj)
 {
-	if (new_obj->type != JSON_TYPE_ARRAY)
+	if (new_obj->type != JSON_TYPE_OBJECT)
 		return; // empty obj, no updates
 
 	long unsigned int new_obj_id = -1;
@@ -84,20 +84,20 @@ static void core_static_applyObjToArray(json_node *new_obj)
 			new_obj_type = parameter->number;
 	}
 
-	// 1. LOOP: Id Matching
 	for (size_t index = 0; game.objects[index] != NULL; index++)
 	{
+		bool matching = true;
+		// Update obj -> id
 		if (game.objects[index]->id != new_obj_id)
-			continue;
-		core_static_updateObj(game.objects[index], new_obj);
-		return;
-	}
+			matching = false;
+		// Update uninitialized unit initially
+		if (new_obj_type != OBJ_UNIT || \
+				game.objects[index]->state != STATE_UNINITIALIZED || \
+				game.objects[index]->s_unit.unit_type != new_obj_unit_type || \
+				game.objects[index]->s_unit.team_id != new_obj_team_id)
+			matching = false;
+		if (!matching) continue;
 
-	// 2. LOOP: Placeholder matching
-	for (size_t index = 0; game.objects[index] != NULL; index++)
-	{
-		if (new_obj_type != OBJ_UNIT || game.objects[index]->s_unit.unit_type != new_obj_unit_type || game.objects[index]->s_unit.team_id != new_obj_team_id)
-			continue;
 		core_static_updateObj(game.objects[index], new_obj);
 		return;
 	}
@@ -107,7 +107,7 @@ static void core_static_applyObjToArray(json_node *new_obj)
 		printf("Error matching team units. This is never supposed to happen. Have you freed something you shouldn't have? Never free t_obj*s, just read them. Troublemaker: [id %lu, unit_type %lu, team %lu]\n", new_obj_id, new_obj_unit_type, new_obj_team_id);
 	}
 
-	// 3. Add to the back
+	// Add new obj
 	size_t arrLen = 0;
 	while (game.objects[arrLen] != NULL)
 		arrLen++;
@@ -115,6 +115,11 @@ static void core_static_applyObjToArray(json_node *new_obj)
 	game.objects[arrLen + 1] = NULL;
 	game.objects[arrLen] = malloc(sizeof(t_obj));
 	core_static_updateObj(game.objects[arrLen], new_obj);
+}
+
+bool all(const t_obj *obj)
+{
+	return obj;
 }
 
 void core_internal_parse_state(char *json)
@@ -164,6 +169,9 @@ void core_internal_parse_state(char *json)
 		}
 		game.objects[j] = NULL;
 	}
+
+	printf("parsed the following objects: ");
+	core_print_objects(all);
 
 	free_json(root);
 }
