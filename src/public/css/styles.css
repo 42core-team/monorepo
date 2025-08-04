@@ -100,6 +100,25 @@ body {
 	gap: 0.5rem;
 	margin: 0 20px 0 20px;
 }
+.slider-group {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+	width: 6rem;
+	box-sizing: border-box;
+}
+.slider-group label {
+	width: 100%;
+	font-size: 0.9rem;
+	font-weight: 600;
+	text-align: center;
+	line-height: 1.1;
+	margin: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
 
 #time-controls button {
 	background: none;
