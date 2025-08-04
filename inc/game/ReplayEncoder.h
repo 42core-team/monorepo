@@ -6,6 +6,8 @@ using json = nlohmann::ordered_json;
 
 #include "Logger.h"
 #include "Config.h"
+#include "Action.h"
+#include "Core.h"
 
 #include <fstream>
 
@@ -28,21 +30,17 @@ public:
 	ReplayEncoder() : ticks_(json::object()), lastTickCount_(0) {}
 	~ReplayEncoder() = default;
 
-	void addTickState(const json& state);
+	void addTickState(json &state, unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions);
 	void addTeamScore(unsigned int teamId, const std::string& teamName, unsigned int place);
 	void setGameEndReason(game_end_reason_t reason) { gameEndReason_ = reason; }
 	void includeConfig(json& config);
 
 	void exportReplay() const;
 	void saveReplay(const json &replayData) const;
-	void postReplay(const json &replayData) const;
 
 	static void verifyReplaySaveFolder();
 
 private:
-	json diffObjects(const json& currentObjects);
-	json diffObject(const json& currentObj, const json& previousObj);
-
 	json encodeMiscSection() const;
 
 	json ticks_;
