@@ -266,7 +266,7 @@ void core_action_attack(const t_obj *attacker, t_pos pos);
 void core_action_transferMoney(const t_obj *source, t_pos target_pos, unsigned long amount);
 
 /// @brief Builds a new object.
-/// @details Units can only build one tile up, down, left or right.
+/// @details Units can only build one tile up, down, left or right. Not all units can build, and they may build different things. Please consult config for details.
 /// @param builder The unit that should build a new object. What will be built depends on the buildType of the builder unit.
 /// @param pos The position where the object should be built.
 void core_action_build(const t_obj *builder, t_pos pos);
