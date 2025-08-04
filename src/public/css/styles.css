@@ -227,6 +227,7 @@ body {
 	outline: 5px solid color-mix(in srgb, var(--core-purple) 20%, white);
 	text-align: center;
 	z-index: 1000;
+	pointer-events: none;
 }
 
 #background-darkener {
@@ -247,5 +248,4 @@ body {
 	width: 100vw;
 	height: 100vh;
 	z-index: 600;
-	pointer-events: none;
 }

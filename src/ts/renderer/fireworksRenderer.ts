@@ -10,9 +10,10 @@ const fireworks = new Fireworks.default(container, {
 	particles: 40,
 	traceLength: 2,
 	traceSpeed: 6,
-	explosion: 4,
-	intensity: 25,
+	explosion: 10,
+	intensity: 60,
 	flickering: 30,
+	rocketsPoint: { min: 25, max: 75 },
 	delay: { min: 60, max: 90 }, // control spawn rate
 	brightness: { min: 50, max: 100 },
 	decay: { min: 0.015, max: 0.025 },
@@ -31,6 +32,7 @@ let fireworkStrength = 1;
 export function setRenderFireworks(render: boolean): void {
 	if (renderFireworks == false && render == true) {
 		fireworkStrength = 10;
+		fireworks.clear();
 	}
 	renderFireworks = render;
 }
