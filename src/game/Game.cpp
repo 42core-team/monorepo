@@ -2,7 +2,6 @@
 #include <memory>
 
 Game::Game(std::vector<unsigned int> team_ids)
-	: nextObjectId_(1)
 {
 	shuffle_vector(team_ids); // randomly assign core positions to ensure fairness
 	for (unsigned int i = 0; i < team_ids.size(); ++i)
@@ -267,9 +266,11 @@ void Game::killWorstPlayerOnTimeout()
 
 void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, unsigned long long tick)
 {
-	json state = encodeState(actions, tick);
-
-	replayEncoder_.addTickState(state);
+	json state = stateEncoder_.generateObjectDiff();
+	
+	replayEncoder_.addTickState(state, tick, actions);
+	
+	state["tick"] = tick;
 
 	for (auto& bridge : bridges_)
 		bridge->sendMessage(state);

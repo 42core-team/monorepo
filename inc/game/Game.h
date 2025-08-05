@@ -15,6 +15,7 @@
 #include "Action.h"
 #include "Utils.h"
 #include "ReplayEncoder.h"
+#include "StateEncoder.h"
 #include "Board.h"
 #include "Visualizer.h"
 
@@ -37,16 +38,15 @@ class Game
 
 		void killWorstPlayerOnTimeout();
 
-		json encodeState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, unsigned long long tick);
 		void sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, unsigned long long tick);
 		void sendConfig();
 
-		unsigned int nextObjectId_;
 		std::vector<std::unique_ptr<Bridge>> bridges_;
 
 		std::mt19937 rng_;
 
 		ReplayEncoder replayEncoder_;
+		StateEncoder stateEncoder_;
 };
 
 #include "Config.h"

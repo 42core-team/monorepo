@@ -3,94 +3,18 @@
 
 #define REPLAY_VERSION std::string("1.0.1")
 
-json ReplayEncoder::diffObject(const json &currentObj, const json &previousObj)
+void ReplayEncoder::addTickState(json &state, unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions)
 {
-	json diff;
-	diff["id"] = currentObj["id"];
-	bool diffFound = false;
-
-	for (auto it = currentObj.begin(); it != currentObj.end(); ++it)
+	if (actions.size() > 0)
 	{
-		const std::string &key = it.key();
-		if (key == "id" || (key == "moveCooldown" && currentObj.contains("moveCooldown") && previousObj.contains("moveCooldown") && currentObj["moveCooldown"] <= previousObj["moveCooldown"]))
-			continue;
-
-		if (previousObj.find(key) == previousObj.end() || previousObj.at(key) != it.value())
-		{
-			diff[key] = it.value();
-			diffFound = true;
-		}
-	}
-	return diffFound ? diff : json::object();
-}
-
-json ReplayEncoder::diffObjects(const json &currentObjects)
-{
-	json diffArray = json::array();
-
-	std::unordered_map<int, json> currentMap;
-	for (const auto &obj : currentObjects)
-	{
-		int id = obj["id"];
-		currentMap[id] = obj;
+		state["actions"] = json::array();
+		for (const auto &action : actions)
+			if (action.first)
+				state["actions"].push_back(action.first.get()->encodeJSON());
 	}
 
-	for (const auto &[id, currentObj] : currentMap)
-	{
-		auto it = previousObjects_.find(id);
-		if (it == previousObjects_.end())
-		{
-			diffArray.push_back(currentObj);
-		}
-		else
-		{
-			json objDiff = diffObject(currentObj, it->second);
-			if (objDiff.size() > 1)
-				diffArray.push_back(objDiff);
-		}
-	}
-
-	for (const auto &[id, prevObj] : previousObjects_)
-	{
-		if (currentMap.find(id) == currentMap.end())
-		{
-			json deadObj;
-			deadObj["id"] = id;
-			deadObj["state"] = "dead";
-			diffArray.push_back(deadObj);
-		}
-	}
-
-	return diffArray;
-}
-
-void ReplayEncoder::addTickState(const json &state)
-{
-	unsigned long long tick = state.value("tick", 0);
-
-	json currentObjects = state.value("objects", json::array());
-	json objectsDiff;
-	if (previousObjects_.empty())
-		objectsDiff = currentObjects;
-	else
-		objectsDiff = diffObjects(currentObjects);
-
-	previousObjects_.clear();
-	for (const auto &obj : currentObjects)
-	{
-		int id = obj["id"];
-		previousObjects_[id] = obj;
-	}
-
-	json actions = state.value("actions", json::array());
-
-	json tickDiff;
-	if (!objectsDiff.empty())
-		tickDiff["objects"] = objectsDiff;
-	if (!actions.empty())
-		tickDiff["actions"] = actions;
-	if (!tickDiff.empty())
-		ticks_[std::to_string(tick)] = tickDiff;
+	if (!state.empty())
+		ticks_[std::to_string(tick)] = state;
 
 	lastTickCount_ = tick;
 }

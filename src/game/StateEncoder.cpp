@@ -1,12 +1,9 @@
-#include "Game.h"
+#include "StateEncoder.h"
 
-json Game::encodeState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, unsigned long long tick)
+json StateEncoder::encodeFullState()
 {
-	json state;
+	json state = json::array();
 
-	state["tick"] = tick;
-
-	state["objects"] = json::array();
 	for (const Object & obj : Board::instance())
 	{
 		json o;
@@ -38,18 +35,83 @@ json Game::encodeState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &
 			o["countdown"] = ((Bomb &)obj).getCountdown();
 		}
 
-		state["objects"].push_back(o);
-	}
-
-	// append all actions that were executed without issues this turn
-	state["actions"] = json::array();
-	for (auto &action : actions)
-	{
-		if (action.first == nullptr)
-			continue;
-
-		state["actions"].push_back(action.first->encodeJSON());
+		state.push_back(o);
 	}
 
 	return state;
+}
+
+json StateEncoder::diffObject(const json &currentObj, const json &previousObj)
+{
+	json diff;
+	diff["id"] = currentObj["id"];
+	bool diffFound = false;
+
+	for (auto it = currentObj.begin(); it != currentObj.end(); ++it)
+	{
+		const std::string &key = it.key();
+		if (key == "id" || (key == "moveCooldown" && currentObj.contains("moveCooldown") && previousObj.contains("moveCooldown") && currentObj["moveCooldown"] <= previousObj["moveCooldown"]))
+			continue;
+
+		if (previousObj.find(key) == previousObj.end() || previousObj.at(key) != it.value())
+		{
+			diff[key] = it.value();
+			diffFound = true;
+		}
+	}
+	return diffFound ? diff : json::object();
+}
+
+json StateEncoder::diffObjects(const json &previousObjects, const json &currentObjects)
+{
+	json diffArray = json::array();
+
+	for (const auto &prevObj : previousObjects)
+	{
+		bool found = false;
+		for (const auto &currentObj : currentObjects)
+		{
+			if (prevObj["id"] == currentObj["id"])
+			{
+				json objDiff = diffObject(currentObj, prevObj);
+				if (!objDiff.empty())
+					diffArray.push_back(objDiff);
+				found = true;
+				break;
+			}
+		}
+		if (!found)
+		{
+			json deadObj;
+			deadObj["id"] = prevObj["id"];
+			deadObj["state"] = "dead";
+			diffArray.push_back(deadObj);
+		}
+	}
+	for (const auto &currentObj : currentObjects)
+	{
+		bool existed = false;
+		for (const auto &prevObj : previousObjects)
+			if (prevObj["id"] == currentObj["id"]) { existed = true; break; }
+		if (!existed)
+			diffArray.push_back(currentObj);
+	}
+
+	return diffArray;
+}
+
+json StateEncoder::generateObjectDiff()
+{
+	json returnJson = json::object();
+
+	json fullState = encodeFullState();
+	if (firstTick_)
+		returnJson["objects"] = fullState;
+	else
+		returnJson["objects"] = diffObjects(previousObjects_, fullState);
+	firstTick_ = false;
+
+	previousObjects_ = fullState;
+
+	return returnJson;
 }
