@@ -4,6 +4,7 @@ std::string Config::serverConfigFilePath = "";
 
 #include "JigsawWorldGenerator.h"
 #include "DistancedResourceWorldGenerator.h"
+#include "HardcodedWorldGenerator.h"
 
 static ServerConfig parseServerConfig()
 {
@@ -78,11 +79,13 @@ static GameConfig parseGameConfig()
 	config.bombReach = j.value("bombReach", 3);
 	config.bombDamage = j.value("bombDamage", 100);
 
-	std::string wgType = j.value("worldGenerator", "distanced_resources");
+	std::string wgType = j.value("worldGenerator", "jigsaw");
 	if (wgType == "jigsaw")
 		config.worldGenerator = std::make_unique<JigsawWorldGenerator>();
 	else if (wgType == "distanced_resources")
 		config.worldGenerator = std::make_unique<DistancedResourceWorldGenerator>();
+	else if (wgType == "hardcoded")
+		config.worldGenerator = std::make_unique<HardcodedWorldGenerator>();
 	else
 	{
 		Logger::Log(LogLevel::WARNING, "Unknown world generator type: \"" + wgType + "\". Using jigsaw as default.");
