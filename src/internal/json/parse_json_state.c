@@ -140,17 +140,8 @@ void core_internal_parse_state(char *json)
 
 	json_node *objects = json_find(root, "objects");
 	if (objects && objects->type == JSON_TYPE_ARRAY)
-	{
-		for (size_t i = 0; game.objects[i] != NULL; i++)
-			if (game.objects[i]->state == STATE_ALIVE)
-				game.objects[i]->state = STATE_DEAD;
 		for (int i = 0; objects->array != NULL && objects->array[i] != NULL; i++)
 			core_static_applyObjToArray(objects->array[i]);
-	}
-	else
-	{
-		printf("its nto an array? huh?\n");
-	}
 
 	// clean uninitialized units, as the server did not send them
 	if (game.objects && game.objects[0])
