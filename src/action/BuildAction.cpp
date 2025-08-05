@@ -40,7 +40,12 @@ bool BuildAction::execute(Core *core)
 	Object *builderObj = Board::instance().getObjectById(builder_id_);
 	if (builderObj == nullptr || builderObj->getType() != ObjectType::Unit)
 		return false;
+
 	Unit *builder = dynamic_cast<Unit *>(builderObj);
+
+	if (builder->getMoveCooldown() > 0)
+		return false;
+
 	BuildType buildType = Config::game().units[builder->getUnitType()].buildType;
 	if (buildType == BuildType::NONE)
 		return false;
@@ -50,6 +55,8 @@ bool BuildAction::execute(Core *core)
 
 	if (position_.distance(Board::instance().getObjectPositionById(builder->getId())) > 1)
 		return false;
+
+	builder->resetMoveCooldown();
 
 	if (buildType == BuildType::WALL)
 	{

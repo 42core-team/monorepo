@@ -46,12 +46,16 @@ bool TransferMoneyAction::dropMoney(Core *core, Object *srcObj)
 	Unit *srcUnit = (Unit *)srcObj;
 	if (srcUnit->getTeamId() != core->getTeamId())
 		return false;
+	if (srcUnit->getMoveCooldown() > 0)
+		return false;
 
 	if (srcUnit->getBalance() < amount_)
 		amount_ = srcUnit->getBalance();
 	if (amount_ <= 0)
 		return false;
 	srcUnit->setBalance(srcUnit->getBalance() - amount_);
+
+	srcUnit->resetMoveCooldown();
 
 	Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), amount_), target_);
 
@@ -103,6 +107,9 @@ bool TransferMoneyAction::execute(Core *core)
 		Unit *srcUnit = (Unit *)srcObj;
 		if (srcUnit->getTeamId() != core->getTeamId())
 			return false;
+		if (srcUnit->getMoveCooldown() > 0)
+			return false;
+		srcUnit->resetMoveCooldown();
 		if (srcUnit->getBalance() < amount)
 			amount = srcUnit->getBalance();
 		srcUnit->setBalance(srcUnit->getBalance() - amount);
