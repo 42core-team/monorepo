@@ -4,7 +4,7 @@ Resource::Resource(unsigned int id)
 	: Object(id, Config::game().resourceHp, ObjectType::Resource),
 	  balance_(Config::game().resourceIncome) {}
 Resource::Resource(unsigned int id, unsigned int balance)
-	: Object(id, static_cast<unsigned int>(std::round(double(balance) / Config::game().resourceIncome * Config::game().resourceHp)),
+	: Object(id, Config::game().resourceHp,
 			 ObjectType::Resource),
 	  balance_(balance) {}
 

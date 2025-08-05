@@ -493,10 +493,10 @@ void JigsawWorldGenerator::mirrorWorld()
 				Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), q);
 				break;
 			case ObjectType::Resource:
-				Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), q);
+				Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId(), ((Resource &)obj).getBalance()), q);
 				break;
 			case ObjectType::Money:
-				Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), q);
+				Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), ((Money &)obj).getBalance()), q);
 				break;
 			default:
 				Logger::Log(LogLevel::WARNING, "Unexpected object type during mirroring: " + std::to_string(static_cast<int>(obj.getType())));
@@ -543,6 +543,8 @@ void JigsawWorldGenerator::generateWorld()
 	Logger::Log("Step 4: Balancing moneys");
 	balanceObjectType(ObjectType::Money, Config::game().worldGeneratorConfig.value("moneysCount", 20));
 	Visualizer::visualizeGameState(0);
+	
+	varyResourceIncome();
 
 	if (mirrorMap)
 	{
@@ -555,7 +557,6 @@ void JigsawWorldGenerator::generateWorld()
 	clearPathBetweenCores();
 	Visualizer::visualizeGameState(0);
 
-	varyResourceIncome();
 
 	Logger::Log("World generation complete");
 }
