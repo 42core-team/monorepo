@@ -87,7 +87,13 @@ bool TransferMoneyAction::execute(Core *core)
 	// only adjacent objects can transfer money
 	Position srcPos = Board::instance().getObjectPositionById(srcObj->getId());
 	Position dstPos = Board::instance().getObjectPositionById(dstObj->getId());
-	if (srcPos.distance(dstPos) > 1)
+	unsigned int maxDist = 1;
+	if (srcObj->getType() == ObjectType::Unit && dstObj->getType() == ObjectType::Core)
+	{
+		Position firstEmptyGridCell = findFirstEmptyGridCell(dstPos);
+		maxDist = srcPos.distance(firstEmptyGridCell);
+	}
+	if (srcPos.distance(dstPos) > maxDist)
 		return false;
 
 	unsigned int amount = amount_;
