@@ -267,9 +267,10 @@ void Game::killWorstPlayerOnTimeout()
 void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, unsigned long long tick)
 {
 	json state = stateEncoder_.generateObjectDiff();
-	state["tick"] = tick;
-
+	
 	replayEncoder_.addTickState(state, tick, actions);
+	
+	state["tick"] = tick;
 
 	for (auto& bridge : bridges_)
 		bridge->sendMessage(state);
