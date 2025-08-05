@@ -21,7 +21,7 @@ public:
 		name = filepath;
 	}
 
-	MapTemplate getTransformedTemplate(std::default_random_engine &eng) const;
+	MapTemplate getTransformedTemplate(std::mt19937_64 &eng) const;
 
 	MapTemplate rotate90() const;
 

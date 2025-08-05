@@ -1,5 +1,6 @@
 {
-	"gridSize": 25,
+	"gridSize": 20,
+	"seed": 1,
 	"idleIncome": 0,
 	"idleIncomeTimeOut": 600,
 	"resourceHp": 50,
@@ -7,7 +8,7 @@
 	"moneyObjIncome": 75,
 	"coreHp": 200,
 	"initialBalance": 300,
-	"wallHp": 100,
+	"wallHp": 50,
 	"wallBuildCost": 20,
 	"bombHp": 50,
 	"bombCountdown": 25,
@@ -51,7 +52,7 @@
 			"damageCore": 3,
 			"damageUnit": 2,
 			"damageResource": 10,
-			"damageWall": 5,
+			"damageWall": 12,
 			"buildType": 0
 		},
 		{
@@ -97,8 +98,8 @@
 			"y": 0
 		},
 		{
-			"x": 24,
-			"y": 24
+			"x": 19,
+			"y": 19
 		}
 	]
 }

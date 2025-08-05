@@ -56,6 +56,13 @@ static GameConfig parseGameConfig()
 	json j = json::parse(inFile);
 
 	config.gridSize = j.value("gridSize", 25);
+	if (j.contains("seed") && j["seed"].is_number_unsigned())
+		config.seed = std::clamp(j["seed"].get<uint64_t>(), uint64_t{1}, uint64_t{UINT64_MAX});
+	else
+	{
+		Logger::LogErr("Incorrect seed format, please supply proper unsigned integer as seed.");
+		config.seed = 1;
+	}
 	config.idleIncome = j.value("idleIncome", 1);
 	config.idleIncomeTimeOut = j.value("idleIncomeTimeOut", 600);
 	config.resourceHp = j.value("resourceHp", 50);

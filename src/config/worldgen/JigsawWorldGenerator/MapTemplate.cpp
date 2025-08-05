@@ -61,7 +61,7 @@ MapTemplate MapTemplate::mirrorVertically() const
 	return result;
 }
 
-MapTemplate MapTemplate::getTransformedTemplate(std::default_random_engine &eng) const
+MapTemplate MapTemplate::getTransformedTemplate(std::mt19937_64 &eng) const
 {
 	MapTemplate result = *this;
 

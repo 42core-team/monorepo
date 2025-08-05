@@ -16,11 +16,10 @@ class DistancedResourceWorldGenerator : public WorldGenerator
 	public:
 		DistancedResourceWorldGenerator();
 
-		void generateWorld();
+		void generateWorld(unsigned int seed);
 
 	private:
-		std::default_random_engine eng_ = std::default_random_engine(time(nullptr));
+		std::mt19937_64 eng_ = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
 };
-
 
 #endif // DISTANCED_RESOURCE_WORLD_GENERATOR_H

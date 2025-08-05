@@ -6,7 +6,18 @@ Game::Game(std::vector<unsigned int> team_ids)
 	shuffle_vector(team_ids); // randomly assign core positions to ensure fairness
 	for (unsigned int i = 0; i < team_ids.size(); ++i)
 		Board::instance().addObject<Core>(Core(Board::instance().getNextObjectId(), team_ids[i]), Config::getCorePosition(i), true);
-	Config::game().worldGenerator->generateWorld();
+
+	unsigned int seed = Config::game().seed;
+	if (seed == 1) {
+		std::random_device rd;
+		uint64_t time_part = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+		std::seed_seq seq{ rd(), uint32_t(time_part), uint32_t(time_part >> 32) };
+		seq.generate(&seed, &seed + 1);
+	}
+	Logger::Log("Generating world with seed \"" + std::to_string(seed) + "\".");
+	Config::game().worldGenerator->generateWorld(seed);
+	replayEncoder_.getCustomData()["worldGeneratorSeed"] = seed;
+
 	Logger::Log("Game created with " + std::to_string(team_ids.size()) + " teams.");
 }
 Game::~Game() {}

@@ -34,6 +34,7 @@ public:
 	void addTeamScore(unsigned int teamId, const std::string& teamName, unsigned int place);
 	void setGameEndReason(game_end_reason_t reason) { gameEndReason_ = reason; }
 	void includeConfig(json& config);
+	json &getCustomData(void) { return customData_; }
 
 	void exportReplay() const;
 	void saveReplay(const json &replayData) const;
@@ -45,6 +46,7 @@ private:
 
 	json ticks_;
 	json config_;
+	json customData_;
 
 	std::unordered_map<int, json> previousObjects_;
 	unsigned long long lastTickCount_;

@@ -30,14 +30,14 @@ struct Rectangle {
 
 class JigsawWorldGenerator : public WorldGenerator {
 	public:
-		JigsawWorldGenerator(unsigned int seed = 0);
+		JigsawWorldGenerator();
 
-		void generateWorld();
+		void generateWorld(unsigned int seed);
 
 	private:
 		std::vector<MapTemplate> templates_;
 
-		std::default_random_engine eng_ = std::default_random_engine(std::chrono::system_clock::now().time_since_epoch().count());
+		std::mt19937_64 eng_ = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
 
 		void loadTemplates();
 
@@ -48,4 +48,5 @@ class JigsawWorldGenerator : public WorldGenerator {
 		void clearPathBetweenCores();
 		void placeWalls();
 		void mirrorWorld();
+		void varyResourceIncome();
 };

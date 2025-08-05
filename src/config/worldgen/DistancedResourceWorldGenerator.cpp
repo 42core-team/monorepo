@@ -4,9 +4,9 @@ DistancedResourceWorldGenerator::DistancedResourceWorldGenerator()
 {
 }
 
-void DistancedResourceWorldGenerator::generateWorld()
+void DistancedResourceWorldGenerator::generateWorld(unsigned int seed)
 {
-	Logger::Log("Generating world of type distanced resources.");
+	eng_ = std::mt19937_64(seed);
 
 	unsigned int width = Config::game().gridSize;
 	unsigned int height = Config::game().gridSize;

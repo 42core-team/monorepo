@@ -88,6 +88,8 @@ void ReplayEncoder::exportReplay() const
 
 	json replayData;
 	replayData["misc"] = encodeMiscSection();
+	for (auto& kv : customData_.items())
+		replayData["misc"][kv.key()] = kv.value();
 	replayData["ticks"] = ticks_;
 	replayData["config"] = config_;
 	replayData["full_tick_amount"] = lastTickCount_;

@@ -1,32 +1,20 @@
 #include "JigsawWorldGenerator.h"
 
-JigsawWorldGenerator::JigsawWorldGenerator(unsigned int seed)
+JigsawWorldGenerator::JigsawWorldGenerator()
 {
-	if (seed == 0)
-		seed = std::chrono::system_clock::now().time_since_epoch().count();
-	Logger::Log("JigsawWorldGenerator seed: " + std::to_string(seed));
-	eng_ = std::default_random_engine(seed);
 	loadTemplates();
 }
 
 void JigsawWorldGenerator::loadTemplates()
 {
-	for (const auto &entry : std::filesystem::directory_iterator(Config::server().dataFolderPath + "/jigsaw-templates"))
-	{
-		if (entry.path().extension() != ".txt")
-		{
-			Logger::Log(LogLevel::WARNING, "Skipping non-txt file: " + entry.path().string());
-			continue;
-		}
-		try
-		{
-			templates_.emplace_back(entry.path().string());
-		}
-		catch (const std::exception &e)
-		{
-			Logger::Log(LogLevel::ERROR, "Error loading template " + entry.path().string() + ": " + e.what());
-		}
-	}
+	const std::string templateFolder = Config::server().dataFolderPath + "/jigsaw-templates";
+	std::vector<std::string> files;
+	for (auto &e : std::filesystem::directory_iterator(templateFolder))
+		if (e.path().extension() == ".txt")
+			files.push_back(e.path().string());
+	std::sort(files.begin(), files.end());
+	for (auto &f : files)
+		templates_.emplace_back(f);
 	if (templates_.empty())
 	{
 		Logger::Log(LogLevel::ERROR, "No valid templates found in template folder.");
@@ -364,7 +352,7 @@ void JigsawWorldGenerator::clearPathBetweenCores()
 	}
 }
 
-static void varyResourceIncome()
+void JigsawWorldGenerator::varyResourceIncome()
 {
 	const int baseResourceIncome = Config::game().worldGeneratorConfig.value("baseResourceIncome", 200);
 	const int additionalIncomePerAdjacentWall = Config::game().worldGeneratorConfig.value("resourceAdditionalIncomePerAdjacentWall", 20);
@@ -393,7 +381,8 @@ static void varyResourceIncome()
 		if (randomVariation > 0)
 		{
 			int variation = randomVariation / 2;
-			income = income - variation + (std::rand() % randomVariation);
+			std::uniform_int_distribution<int> d(0, randomVariation - 1);
+			income = income - variation + d(eng_);
 		}
 
 		Resource & ResourceObj = static_cast<Resource &>(obj);
@@ -504,8 +493,10 @@ void JigsawWorldGenerator::mirrorWorld()
 	}
 }
 
-void JigsawWorldGenerator::generateWorld()
+void JigsawWorldGenerator::generateWorld(unsigned int seed)
 {
+	eng_ = std::mt19937_64(seed);
+
 	int templatePlaceAttemptCount = Config::game().worldGeneratorConfig.value("templatePlaceAttemptCount", 1000);
 	bool mirrorMap = Config::game().worldGeneratorConfig.value("mirrorMap", true);
 
