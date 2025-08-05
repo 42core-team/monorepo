@@ -87,12 +87,12 @@ static void core_static_applyObjToArray(json_node *new_obj)
 	for (size_t index = 0; game.objects[index] != NULL; index++)
 	{
 		// Update obj -> id
-		bool id_match = (game.objects[index]->id != new_obj_id);
+		bool id_match = (game.objects[index]->id == new_obj_id);
 		// Update uninitialized unit initially
-		bool spawn_unit_match = (new_obj_type != OBJ_UNIT || \
-				game.objects[index]->state != STATE_UNINITIALIZED || \
-				game.objects[index]->s_unit.unit_type != new_obj_unit_type || \
-				game.objects[index]->s_unit.team_id != new_obj_team_id);
+		bool spawn_unit_match = (new_obj_type == OBJ_UNIT && \
+				game.objects[index]->state == STATE_UNINITIALIZED && \
+				game.objects[index]->s_unit.unit_type == new_obj_unit_type && \
+				game.objects[index]->s_unit.team_id == new_obj_team_id);
 		if (id_match || spawn_unit_match)
 		{
 			core_static_updateObj(game.objects[index], new_obj);
