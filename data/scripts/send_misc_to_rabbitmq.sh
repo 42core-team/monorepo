@@ -58,11 +58,11 @@ send_to_rabbitmq() {
         -d "$PAYLOAD" \
         "$RABBITMQ_URL" \
         -w "\n%{http_code}")
-    
+
     # Extract HTTP code (last line) and response body
     HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
-    RESPONSE_BODY=$(echo "$RESPONSE" | head -n -1)
-    
+    RESPONSE_BODY=$(echo "$RESPONSE" | sed '$d')
+
     echo "$HTTP_CODE:$RESPONSE_BODY"
 }
 
@@ -70,15 +70,15 @@ send_to_rabbitmq() {
 echo "Sending wrapped misc data to RabbitMQ..."
 for attempt in $(seq 1 $MAX_RETRIES); do
     echo "Attempt $attempt/$MAX_RETRIES..."
-    
+
     RESULT=$(send_to_rabbitmq)
     HTTP_CODE=$(echo "$RESULT" | cut -d: -f1)
     RESPONSE_BODY=$(echo "$RESULT" | cut -d: -f2-)
-    
+
     if [[ "$HTTP_CODE" == "200" ]]; then
         echo "✓ Successfully sent wrapped misc data to RabbitMQ"
         echo "Response: $RESPONSE_BODY"
-        
+
         # Check if message was routed
         if echo "$RESPONSE_BODY" | jq -e '.routed == true' >/dev/null 2>&1; then
             echo "✓ Message was successfully routed to a queue"
@@ -86,14 +86,14 @@ for attempt in $(seq 1 $MAX_RETRIES); do
             echo "⚠ Warning: Message was accepted but not routed to any queue"
             echo "  This might mean no queue is bound to the exchange with routing key 'game_results'"
         fi
-        
+
         echo "Data sent:"
         echo "$WRAPPED_DATA" | jq .
         exit 0
     else
         echo "✗ Failed with HTTP code: $HTTP_CODE"
         echo "Response: $RESPONSE_BODY"
-        
+
         if [[ $attempt -lt $MAX_RETRIES ]]; then
             echo "Retrying in $RETRY_DELAY seconds..."
             sleep $RETRY_DELAY
