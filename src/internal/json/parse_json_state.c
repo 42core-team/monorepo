@@ -10,7 +10,7 @@ static void core_static_updateObj(t_obj *existingObj, json_node *updates)
 		return;
 	}
 
-	if (existingObj->state != STATE_DEAD)
+	if (existingObj->state == STATE_UNINITIALIZED)
 		existingObj->state = STATE_ALIVE; // units come alive on first update
 
 	for (int i = 0; updates->array && updates->array[i]; i++)
@@ -18,7 +18,6 @@ static void core_static_updateObj(t_obj *existingObj, json_node *updates)
 		json_node *property = updates->array[i];
 
 		// even non-changing properties are included so the function can also fully set all fields of an empty obj
-		// id, team id, unit type wont ever update
 		if (strncmp(property->key, "state", 5) == 0)
 		{
 			if (strncmp(property->string, "dead", 4) == 0)
@@ -113,17 +112,12 @@ static void core_static_applyObjToArray(json_node *new_obj)
 	game.objects[arrLen + 1] = NULL;
 	game.objects[arrLen] = malloc(sizeof(t_obj));
 	core_static_updateObj(game.objects[arrLen], new_obj);
-}
-
-bool all(const t_obj *obj)
-{
-	return obj;
+	game.objects[arrLen]->state = STATE_ALIVE;
 }
 
 void core_internal_parse_state(char *json)
 {
 	json_node *root = string_to_json(json);
-	printf("received json: %s\n", json);
 
 	if (game.objects == NULL)
 	{
@@ -158,9 +152,6 @@ void core_internal_parse_state(char *json)
 		}
 		game.objects[j] = NULL;
 	}
-
-	printf("parsed the following objects: ");
-	core_print_objects(all);
 
 	free_json(root);
 }
