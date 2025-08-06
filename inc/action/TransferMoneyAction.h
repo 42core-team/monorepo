@@ -14,7 +14,7 @@ class TransferMoneyAction : public Action
 	public:
 		TransferMoneyAction(json msg);
 
-		bool execute(Core * core);
+		std::string execute(Core * core);
 		void decodeJSON(json msg);
 		json encodeJSON();
 	
@@ -23,7 +23,7 @@ class TransferMoneyAction : public Action
 		Position target_;
 		unsigned int amount_;
 
-		bool dropMoney(Core * core, Object *srcObj);
+		std::string dropMoney(Core * core, Object *srcObj);
 };
 
 #endif // TRANSFER_MONEY_ACTION_H

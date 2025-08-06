@@ -24,7 +24,7 @@ class AttackAction : public Action
 		Position getTargetPos() const { return target_pos_; }
 		unsigned int getDamage() const { return damage_; }
 
-		bool execute(Core * core);
+		std::string execute(Core * core);
 		void decodeJSON(json msg);
 		json encodeJSON();
 	
@@ -33,7 +33,7 @@ class AttackAction : public Action
 		Position target_pos_;
 		unsigned int damage_;
 
-		bool attackObj(Object *obj, Unit * unit);
+		std::string attackObj(Object *obj, Unit * unit);
 };
 
 #endif // ATTACK_ACTION_H

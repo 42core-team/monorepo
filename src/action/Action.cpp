@@ -35,3 +35,16 @@ std::vector<std::unique_ptr<Action>> Action::parseActions(json msg)
 
 	return actions;
 }
+
+std::string Action::getActionName(ActionType type)
+{
+	switch (type)
+	{
+		case ActionType::MOVE: return "move";
+		case ActionType::ATTACK: return "attack";
+		case ActionType::CREATE: return "create";
+		case ActionType::TRANSFER_MONEY: return "transfer_money";
+		case ActionType::BUILD: return "build";
+		default: return "unknown";
+	}
+}

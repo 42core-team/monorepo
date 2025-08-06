@@ -35,26 +35,26 @@ json MoveAction::encodeJSON()
 	return js;
 }
 
-bool MoveAction::execute(Core * core)
+std::string MoveAction::execute(Core * core)
 {
 	if (!is_valid_)
-		return false;
+		return "invalid input";
 
 	Object * unitObj = Board::instance().getObjectById(getUnitId());
 	if (!unitObj || unitObj->getType() != ObjectType::Unit)
-		return false;
+		return "invalid or non-existing unit";
 	Unit * unit = (Unit *)unitObj;
 
 	if (unit->getMoveCooldown() > 0)
-		return false;
+		return "unit is on cooldown";
 	if (unit->getTeamId() != core->getTeamId())
-		return false;
+		return "unit does not belong to your team";
 
 	Object * obj = Board::instance().getObjectAtPos(target_);
 	if (obj && obj->getType() != ObjectType::Money)
-		return false;
+		return "invalid target object. should be Money or empty";
 	if (target_.distance(Board::instance().getObjectPositionById(unit->getId())) > 1)
-		return false;
+		return "invalid move";
 
 	if (obj && obj->getType() == ObjectType::Money)
 	{
@@ -65,5 +65,5 @@ bool MoveAction::execute(Core * core)
 	Board::instance().moveObjectById(unit->getId(), target_);
 	unit->resetMoveCooldown();
 
-	return true;
+	return "";
 }

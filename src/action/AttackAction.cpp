@@ -38,10 +38,10 @@ json AttackAction::encodeJSON()
 	return js;
 }
 
-bool AttackAction::attackObj(Object *obj, Unit *unit) // returns object new hp, 1 if no object present
+std::string AttackAction::attackObj(Object *obj, Unit *unit) // returns object new hp, 1 if no object present
 {
 	if (!obj)
-		return false;
+		return "no object at target position";
 	unit->resetMoveCooldown();
 	if (obj->getType() == ObjectType::Unit)
 	{
@@ -76,30 +76,27 @@ bool AttackAction::attackObj(Object *obj, Unit *unit) // returns object new hp, 
 		damage_ = 1;
 	}
 
-	return true;
+	return "";
 }
 
-bool AttackAction::execute(Core *core)
+std::string AttackAction::execute(Core *core)
 {
 	if (!is_valid_)
-		return false;
+		return "invalid input";
 
 	Object *unitObj = Board::instance().getObjectById(getUnitId());
 
 	if (!unitObj || unitObj->getType() != ObjectType::Unit)
-		return false;
+		return "invalid or non-existing unit";
 	Unit *unit = (Unit *)unitObj;
 	if (unit->getMoveCooldown() > 0)
-		return false;
+		return "unit is on cooldown";
 	if (unit->getTeamId() != core->getTeamId())
-		return false;
+		return "unit does not belong to your team";
 
 	Object *obj = Board::instance().getObjectAtPos(target_pos_);
 	if (!obj)
-		return false;
+		return "no object at target position";
 
-	if (!attackObj(obj, unit))
-		return false;
-
-	return true;
+	return attackObj(obj, unit);
 }

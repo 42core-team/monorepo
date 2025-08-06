@@ -25,24 +25,24 @@ json CreateAction::encodeJSON()
 	return js;
 }
 
-bool CreateAction::execute(Core *core)
+std::string CreateAction::execute(Core *core)
 {
 	if (!is_valid_)
-		return false;
+		return "invalid input";
 
 	Position closestEmptyPos = findFirstEmptyGridCell(Board::instance().getObjectPositionById(core->getId()));
 	if (!closestEmptyPos.isValid(Config::game().gridSize, Config::game().gridSize))
-		return false;
+		return "no valid position found";
 
-	if (unit_type_ >= Config::game().units.size())
-		return false;
+	if (unit_type_ >= Config::game().units.size() || unit_type_ < 0)
+		return "invalid unit type";
 
 	unsigned int unitCost = Config::getUnitConfig(unit_type_).cost;
 	if (core->getBalance() < unitCost)
-		return false;
+		return "insufficient funds";
 
 	Board::instance().addObject<Unit>(Unit(Board::instance().getNextObjectId(), core->getTeamId(), unit_type_), closestEmptyPos);
 	core->setBalance(core->getBalance() - unitCost);
 
-	return true;
+	return "";
 }

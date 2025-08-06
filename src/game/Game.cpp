@@ -99,9 +99,7 @@ void Game::run()
 
 void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, std::chrono::steady_clock::time_point serverStartTime)
 {
-	// for (auto & obj : Board::instance())
-	// 	if (obj.getType() == ObjectType::Unit)
-	// 		std::cout << obj.getId() << " " << (int)obj.getType() << " " << (obj.getType() == ObjectType::Unit ? ((Unit &)obj).getTeamId() : 69) << std::endl;
+	std::vector<std::pair<int,std::string>> failures; // errors for clients
 
 	// 1. EXECUTE ACTIONS
 
@@ -110,11 +108,18 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 	for (auto& ele : actions) {
 		auto& action = ele.first;
 		Core *core = ele.second;
+		if (!core || !action) {
+			action = nullptr;
+			continue;
+		}
 
-		if (!core || !action)
+		std::string err = action->execute(core);
+		if (!err.empty()) {
+			std::string fullErr = "Action Failure: " + Action::getActionName(action->getActionType()) + ": " + err + " (" + action->encodeJSON().dump() + ")";
+			Logger::LogWarn(fullErr);
+			failures.emplace_back(core->getTeamId(), fullErr);
 			action = nullptr;
-		else if (!action->execute(core))
-			action = nullptr;
+		}
 	}
 
 	// 2. UPDATE OBJECTS
@@ -151,7 +156,7 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 
 	// 4. SEND STATE
 
-	sendState(actions, tick);
+	sendState(actions, tick, failures);
 	Visualizer::visualizeGameState(tick);
 
 	// 5. REMOVE CORES
@@ -275,7 +280,7 @@ void Game::killWorstPlayerOnTimeout()
 	}
 }
 
-void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, unsigned long long tick)
+void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, unsigned long long tick, std::vector<std::pair<int,std::string>> &failures)
 {
 	json state = stateEncoder_.generateObjectDiff();
 	
@@ -284,7 +289,15 @@ void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &ac
 	state["tick"] = tick;
 
 	for (auto& bridge : bridges_)
-		bridge->sendMessage(state);
+	{
+		json teamState = state;
+		teamState["errors"] = json::array();
+		const int teamId = bridge->getTeamId();
+		for (const auto& failure : failures)
+			if (failure.first == teamId)
+				teamState["errors"].push_back(failure.second);
+		bridge->sendMessage(teamState);
+	}
 }
 void Game::sendConfig()
 {

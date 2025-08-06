@@ -20,7 +20,7 @@ class MoveAction : public Action
 		unsigned int getUnitId() const { return unit_id_; }
 		Position getTarget() const { return target_; }
 
-		bool execute(Core * core);
+		std::string execute(Core * core);
 		void decodeJSON(json msg);
 		json encodeJSON();
 	

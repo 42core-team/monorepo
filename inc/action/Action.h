@@ -35,8 +35,9 @@ public:
 	ActionType getActionType() const { return type_; }
 
 	static std::vector<std::unique_ptr<Action>> parseActions(json msg);
+	static std::string getActionName(ActionType type);
 
-	virtual bool execute(Core *core) = 0;
+	virtual std::string execute(Core *core) = 0;
 	virtual void decodeJSON(json msg) = 0;
 	virtual json encodeJSON() = 0;
 

@@ -38,7 +38,7 @@ class Game
 
 		void killWorstPlayerOnTimeout();
 
-		void sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, unsigned long long tick);
+		void sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, unsigned long long tick, std::vector<std::pair<int,std::string>> &failures);
 		void sendConfig();
 
 		std::vector<std::unique_ptr<Bridge>> bridges_;

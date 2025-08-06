@@ -32,57 +32,57 @@ json TransferMoneyAction::encodeJSON()
 	return js;
 }
 
-bool TransferMoneyAction::dropMoney(Core *core, Object *srcObj)
+std::string TransferMoneyAction::dropMoney(Core *core, Object *srcObj)
 {
 	if (srcObj->getType() != ObjectType::Unit)
-		return false;
+		return "only units can drop money on the floor";
 
 	if (Board::instance().getObjectPositionById(srcObj->getId()).distance(target_) > 1)
-		return false;
+		return "invalid drop position";
 
 	if (Board::instance().getObjectPositionById(srcObj->getId()) == target_)
-		return false;
+		return "invalid drop position";
 
 	Unit *srcUnit = (Unit *)srcObj;
 	if (srcUnit->getTeamId() != core->getTeamId())
-		return false;
+		return "can't drop money from another team";
 	if (srcUnit->getMoveCooldown() > 0)
-		return false;
+		return "unit is on cooldown";
 
 	if (srcUnit->getBalance() < amount_)
 		amount_ = srcUnit->getBalance();
 	if (amount_ <= 0)
-		return false;
+		return "invalid amount";
 	srcUnit->setBalance(srcUnit->getBalance() - amount_);
 
 	srcUnit->resetMoveCooldown();
 
 	Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), amount_), target_);
 
-	return true;
+	return "";
 }
 
-bool TransferMoneyAction::execute(Core *core)
+std::string TransferMoneyAction::execute(Core *core)
 {
 	if (!is_valid_)
-		return false;
+		return "invalid input";
 
 	Object *srcObj = Board::instance().getObjectById(source_id_);
 	if (!srcObj)
-		return false;
+		return "invalid source object";
 
 	Object *dstObj = Board::instance().getObjectAtPos(target_);
 	if (!dstObj)
 		return dropMoney(core, srcObj);
 
 	if (srcObj->getId() == dstObj->getId())
-		return false; // can't transfer money to itself
+		return "can't transfer money to yourself"; // can't transfer money to itself
 
 	// only active objects can transfer money
 	if (srcObj->getType() != ObjectType::Core && srcObj->getType() != ObjectType::Unit)
-		return false;
+		return "invalid source object type";
 	if (dstObj->getType() != ObjectType::Core && dstObj->getType() != ObjectType::Unit)
-		return false;
+		return "invalid destination object type";
 
 	// only adjacent objects can transfer money
 	Position srcPos = Board::instance().getObjectPositionById(srcObj->getId());
@@ -94,7 +94,7 @@ bool TransferMoneyAction::execute(Core *core)
 		maxDist = srcPos.distance(firstEmptyGridCell);
 	}
 	if (srcPos.distance(dstPos) > maxDist)
-		return false;
+		return "invalid transfer distance";
 
 	unsigned int amount = amount_;
 
@@ -103,7 +103,7 @@ bool TransferMoneyAction::execute(Core *core)
 	{
 		Core *srcCore = (Core *)srcObj;
 		if (srcCore->getTeamId() != core->getTeamId())
-			return false;
+			return "can't transfer money from another team core";
 		if (srcCore->getBalance() < amount)
 			amount = srcCore->getBalance();
 		srcCore->setBalance(srcCore->getBalance() - amount);
@@ -112,9 +112,9 @@ bool TransferMoneyAction::execute(Core *core)
 	{
 		Unit *srcUnit = (Unit *)srcObj;
 		if (srcUnit->getTeamId() != core->getTeamId())
-			return false;
+			return "can't transfer money from another team unit";
 		if (srcUnit->getMoveCooldown() > 0)
-			return false;
+			return "unit is on cooldown";
 		srcUnit->resetMoveCooldown();
 		if (srcUnit->getBalance() < amount)
 			amount = srcUnit->getBalance();
@@ -132,5 +132,5 @@ bool TransferMoneyAction::execute(Core *core)
 		dstUnit->setBalance(dstUnit->getBalance() + amount);
 	}
 
-	return true;
+	return "";
 }

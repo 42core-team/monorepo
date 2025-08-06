@@ -14,7 +14,7 @@ class BuildAction : public Action
 	public:
 		BuildAction(json msg);
 
-		bool execute(Core * core);
+		std::string execute(Core * core);
 		void decodeJSON(json msg);
 		json encodeJSON();
 
