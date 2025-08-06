@@ -30,13 +30,29 @@ const teamOneElement = document.getElementById('team-one-name') as HTMLDivElemen
 const teamTwoElement = document.getElementById('team-two-name') as HTMLDivElement;
 
 let gameConfig: GameConfig | undefined;
+const teamIdMapping: Map<number, AssetTeam> = new Map();
+
+function initializeTeamMapping(): void {
+	teamIdMapping.clear();
+	const firstTickObjects = getStateAt(0)?.objects ?? [];
+	const coreObjects = firstTickObjects.filter(obj => obj.type === 0);
+
+	coreObjects.forEach((core, index) => {
+		if (core.teamId !== undefined && index < 2) {
+			teamIdMapping.set(core.teamId, index as AssetTeam);
+		}
+	});
+}
+
+function getTeamIndex(teamId: number | undefined): AssetTeam {
+	if (teamId === undefined) { return 0; }
+	return teamIdMapping.get(teamId) ?? 0;
+}
 
 function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, scaleFactor: number = 1): void {
 	if (!gameConfig) {
 		throw new Error('Game configuration not found. Cannot draw objects.');
 	}
-
-	// metric bars background
 
 	const metrics = getBarMetrics(obj);
 	metrics.forEach(({ key, percentage }, i) => {
@@ -72,7 +88,7 @@ function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, s
 		case 0: {
 			// Core
 			const cores = svgAssets[0];
-			const teamIndex = ((obj.teamId ?? 1) - 1) as AssetTeam;
+			const teamIndex = getTeamIndex(obj.teamId);
 			path = cores[teamIndex];
 			break;
 		}
@@ -82,7 +98,7 @@ function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, s
 				throw new Error(`Unit object ${obj.id} missing unit_type 🤯`);
 			}
 			const unitName = getNameOfUnitType(unitType);
-			const teamIndex = ((obj.teamId ?? 1) - 1) as AssetTeam;
+			const teamIndex = getTeamIndex(obj.teamId);
 			const unitNameLower = unitName.toLowerCase();
 			path = `units/${unitNameLower}/${teamIndex + 1}.svg`;
 			break;
@@ -249,9 +265,9 @@ export async function setupRenderer(): Promise<void> {
 		throw new Error('Game configuration not found. Cannot set up renderer.');
 	}
 
-	// Set team names
+	initializeTeamMapping();
+
 	for (const team of getGameMisc()?.team_results ?? []) {
-		// search for core position based on team id
 		for (const obj of getStateAt(0)?.objects ?? []) {
 			if (obj.type === 0 && obj.teamId === team.id) {
 				if (obj.x === 0) teamOneElement.textContent = `${team.name}(${team.id})`;
