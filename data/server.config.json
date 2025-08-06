@@ -1,5 +1,5 @@
 {
-	"gameConfigFilePath": "/core/data/docker.game.config.json",
+	"gameConfigFilePath": "/core/data/game.config.json",
 	"replayFolderPaths": [
 		"/core/replays"
 	],

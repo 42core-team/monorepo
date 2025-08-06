@@ -24,5 +24,5 @@ COPY --from=build-game /core/.github/workflows/entrypoint.sh ./entrypoint.sh
 
 RUN mkdir replays && chmod +x ./entrypoint.sh
 
-ENTRYPOINT [ "./entrypoint.sh", "./core", "./data/docker.server.config.json" ]
+ENTRYPOINT [ "./entrypoint.sh", "./core", "./data/server.config.json" ]
 CMD [ "--default-arg" ]

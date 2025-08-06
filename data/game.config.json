@@ -1,5 +1,6 @@
 {
   "gridSize": 25,
+  "seed": 1,
   "idleIncome": 1,
   "idleIncomeTimeOut": 600,
   "resourceHp": 50,
