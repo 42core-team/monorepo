@@ -215,8 +215,14 @@ function drawFrame(timestamp: number): void {
 
 					let halfActionTickProgress = currentTickData.tickProgress > 0.5 ? 1 - currentTickData.tickProgress : currentTickData.tickProgress;
 
-					x += deltaX * halfActionTickProgress;
-					y += deltaY * halfActionTickProgress;
+					let offsetX = deltaX * halfActionTickProgress;
+					let offsetY = deltaY * halfActionTickProgress;
+
+					if (offsetX > 0.5) offsetX = 0.5;
+					if (offsetY > 0.5) offsetY = 0.5;
+
+					x += offsetX;
+					y += offsetY;
 				}
 			}
 		}
