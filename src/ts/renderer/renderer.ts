@@ -1,4 +1,4 @@
-import { GameConfig } from '../replay_loader/config.js';
+import type { GameConfig } from '../replay_loader/config.js';
 import { formatObjectData, getBarMetrics, type TickObject } from '../replay_loader/object.js';
 import { getActionsByExecutor, getGameConfig, getGameMisc, getNameOfUnitType, getStateAt } from '../replay_loader/replayLoader.js';
 import { getCurrentTickData } from '../time_manager/timeManager.js';
@@ -13,26 +13,6 @@ const svgAssets = {
 		1: 'cores/2.svg',
 	},
 	1: {
-		Warrior: {
-			0: 'units/warrior/1.svg',
-			1: 'units/warrior/2.svg',
-		},
-		Miner: {
-			0: 'units/miner/1.svg',
-			1: 'units/miner/2.svg',
-		},
-		Builder: {
-			0: 'units/builder/1.svg',
-			1: 'units/builder/2.svg',
-		},
-		Carrier: {
-			0: 'units/carrier/1.svg',
-			1: 'units/carrier/2.svg',
-		},
-		Bomberman: {
-			0: 'units/bomberman/1.svg',
-			1: 'units/bomberman/2.svg',
-		},
 	},
 	2: 'resource.svg',
 	3: 'wall.svg',
@@ -97,15 +77,14 @@ function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, s
 			break;
 		}
 		case 1: {
-			// Unit
-			const units = svgAssets[1];
 			const unitType = obj.unit_type;
 			if (obj.unit_type === undefined) {
 				throw new Error(`Unit object ${obj.id} missing unit_type 🤯`);
 			}
 			const unitName = getNameOfUnitType(unitType);
 			const teamIndex = ((obj.teamId ?? 1) - 1) as AssetTeam;
-			path = units[unitName as keyof typeof units][teamIndex];
+			const unitNameLower = unitName.toLowerCase();
+			path = `units/${unitNameLower}/${teamIndex + 1}.svg`;
 			break;
 		}
 		case 2:
@@ -185,11 +164,11 @@ function drawFrame(timestamp: number): void {
 		let prevObj = null;
 		try {
 			if (currentTickData.tick - 1 >= 0) prevObj = getStateAt(currentTickData.tick - 1)?.objects.find((o) => o.id === currObj.id);
-		} catch {}
+		} catch { }
 		let nextObj = null;
 		try {
 			nextObj = getStateAt(currentTickData.tick + 1)?.objects.find((o) => o.id === currObj.id);
-		} catch {}
+		} catch { }
 
 		const sineProgress = Math.sin((currentTickData.tickProgress * Math.PI) / 2);
 
@@ -210,10 +189,10 @@ function drawFrame(timestamp: number): void {
 			const actions = actionsByExec[currObj.id] || [];
 			for (const action of actions) {
 				if (action.type === 'attack' || action.type === 'build' || action.type === 'transfer_money') {
-					let deltaX = action.x - currObj.x;
-					let deltaY = action.y - currObj.y;
+					const deltaX = action.x - currObj.x;
+					const deltaY = action.y - currObj.y;
 
-					let halfActionTickProgress = currentTickData.tickProgress > 0.5 ? 1 - currentTickData.tickProgress : currentTickData.tickProgress;
+					const halfActionTickProgress = currentTickData.tickProgress > 0.5 ? 1 - currentTickData.tickProgress : currentTickData.tickProgress;
 
 					let offsetX = deltaX * halfActionTickProgress;
 					let offsetY = deltaY * halfActionTickProgress;
@@ -275,8 +254,8 @@ export async function setupRenderer(): Promise<void> {
 		// search for core position based on team id
 		for (const obj of getStateAt(0)?.objects ?? []) {
 			if (obj.type === 0 && obj.teamId === team.id) {
-				if (obj.x === 0) teamOneElement.textContent = team.name + `(${team.id})`;
-				else if (obj.x === gameConfig.gridSize - 1) teamTwoElement.textContent = team.name + `(${team.id})`;
+				if (obj.x === 0) teamOneElement.textContent = `${team.name}(${team.id})`;
+				else if (obj.x === gameConfig.gridSize - 1) teamTwoElement.textContent = `${team.name}(${team.id})`;
 			}
 		}
 	}
@@ -327,5 +306,5 @@ export async function setupRenderer(): Promise<void> {
 		}
 	};
 	document.addEventListener('mousemove', hideIfOutside);
-	window.addEventListener('blur', () => (tooltipElement.style.display = 'none'));
+	window.addEventListener('blur', () => { tooltipElement.style.display = 'none'; });
 }
