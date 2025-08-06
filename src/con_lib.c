@@ -85,7 +85,9 @@ int	core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 		if (debug)
 		{
 			json_node *node = string_to_json(msg);
-			printf("Received: %s\n", json_to_formatted_string(node));
+			char *formatted = json_to_formatted_string(node);
+			printf("Received: %s\n", formatted);
+			free(formatted);
 			free_json(node);
 		}
 		core_internal_parse_state(msg);

@@ -153,5 +153,16 @@ void core_internal_parse_state(char *json)
 		game.objects[j] = NULL;
 	}
 
+	// print errors from last tick if there were any
+	json_node *errors = json_find(root, "errors");
+	if (errors && errors->type == JSON_TYPE_ARRAY)
+	{
+		for (int i = 0; errors->array != NULL && errors->array[i] != NULL; i++)
+		{
+			json_node *error = errors->array[i];
+			printf("\033[31m%s\033[0m\n", error->string);
+		}
+	}
+
 	free_json(root);
 }
