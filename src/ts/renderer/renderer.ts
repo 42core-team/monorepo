@@ -32,7 +32,7 @@ const teamTwoElement = document.getElementById('team-two-name') as HTMLDivElemen
 let gameConfig: GameConfig | undefined;
 const teamIdMapping: Map<number, AssetTeam> = new Map();
 
-function initializeTeamMapping(): void {
+export function initializeTeamMapping(): void {
 	teamIdMapping.clear();
 	const firstTickObjects = getStateAt(0)?.objects ?? [];
 	const coreObjects = firstTickObjects.filter(obj => obj.type === 0);
@@ -264,8 +264,6 @@ export async function setupRenderer(): Promise<void> {
 	if (!gameConfig) {
 		throw new Error('Game configuration not found. Cannot set up renderer.');
 	}
-
-	initializeTeamMapping();
 
 	for (const team of getGameMisc()?.team_results ?? []) {
 		for (const obj of getStateAt(0)?.objects ?? []) {

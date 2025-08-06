@@ -1,3 +1,4 @@
+import { initializeTeamMapping } from '../renderer/renderer.js';
 import { resetTimeManager } from '../time_manager/timeManager.js';
 import type { TickAction } from './action.js';
 import type { GameConfig } from './config.js';
@@ -230,6 +231,7 @@ export async function setupReplayLoader(filePath: string, cacheInterval = 25, up
 				const newReplayLoader = new ReplayLoader(cacheInterval);
 				await newReplayLoader.loadReplay(filePath);
 				replayLoader = newReplayLoader;
+				initializeTeamMapping();
 				resetTimeManager();
 			}
 		} catch (err) {
