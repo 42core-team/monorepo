@@ -309,6 +309,8 @@ export function getNameOfUnitType(unitType: number): string {
 		throw new Error('GameConfig is missing! Did loadReplay parse config?');
 	}
 	if (!Array.isArray(cfg.units) || unitType < 0 || unitType >= cfg.units.length) {
+		console.error(`Invalid unitType index: ${unitType}. Available unit indices: 0-${cfg.units.length - 1}`);
+		console.error('Available units:', cfg.units.map((u, i) => `${i}: ${u.name}`));
 		throw new Error(`Invalid unitType index: ${unitType}`);
 	}
 	return cfg.units[unitType].name;

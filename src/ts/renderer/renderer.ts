@@ -105,7 +105,15 @@ function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, s
 			}
 			const unitName = getNameOfUnitType(unitType);
 			const teamIndex = ((obj.teamId ?? 1) - 1) as AssetTeam;
-			path = units[unitName as keyof typeof units][teamIndex];
+
+			// Check if the unit type exists in our assets
+			if (!(unitName in units)) {
+				console.error(`Unknown unit type "${unitName}" for unit ${obj.id}. Available unit types:`, Object.keys(units));
+				// Fallback to Warrior if unit type is unknown
+				path = units.Warrior[teamIndex];
+			} else {
+				path = units[unitName as keyof typeof units][teamIndex];
+			}
 			break;
 		}
 		case 2:
@@ -115,6 +123,17 @@ function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, s
 			path = svgAssets[obj.type as 2 | 3 | 4 | 5];
 			break;
 		}
+		default: {
+			console.error(`Unknown object type: ${(obj as any).type} for object ${(obj as any).id}`);
+			path = 'resource.svg'; // fallback
+			break;
+		}
+	}
+
+	// Additional safety check
+	if (!path || path === undefined) {
+		console.error(`Path is undefined for object ${obj.id} of type ${obj.type}`);
+		path = 'resource.svg'; // fallback
 	}
 
 	let img = document.querySelector(`image[data-obj-id="${obj.id}"]`) as SVGImageElement | null;
