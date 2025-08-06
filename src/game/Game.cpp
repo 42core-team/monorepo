@@ -69,6 +69,7 @@ void Game::run()
 							action.second = nullptr; // invalidate actions for this team
 						}
 					}
+					replayEncoder_.addTeamScore(bb->getTeamId(), bb->getTeamName(), Board::instance().getCoreCount());
 					it = bridges_.erase(it);
 				} else {
 					++it;
