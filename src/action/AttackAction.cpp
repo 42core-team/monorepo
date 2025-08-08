@@ -89,6 +89,8 @@ std::string AttackAction::execute(Core *core)
 	if (!unitObj || unitObj->getType() != ObjectType::Unit)
 		return "invalid or non-existing unit";
 	Unit *unit = (Unit *)unitObj;
+	if (Board::instance().getObjectPositionById(unit->getId()).distance(target_pos_) > 1)
+		return "unit is too far away";
 	if (unit->getMoveCooldown() > 0)
 		return "unit is on cooldown";
 	if (unit->getTeamId() != core->getTeamId())
