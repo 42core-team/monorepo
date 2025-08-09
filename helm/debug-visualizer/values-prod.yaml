@@ -3,9 +3,17 @@ replicaCount: 2
 ingress:
   enabled: true
   className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
   hosts:
     - host: visualizer.coregame.de
       paths:
         - path: /
           pathType: Prefix
+  tls:
+    - hosts:
+        - visualizer.coregame.de
+      secretName: visualizer-coregame-de-tls
 
