@@ -5,6 +5,7 @@ std::string Config::serverConfigFilePath = "";
 #include "JigsawWorldGenerator.h"
 #include "DistancedResourceWorldGenerator.h"
 #include "HardcodedWorldGenerator.h"
+#include "EmptyWorldGenerator.h"
 
 static ServerConfig parseServerConfig()
 {
@@ -86,6 +87,8 @@ static GameConfig parseGameConfig()
 		config.worldGenerator = std::make_unique<DistancedResourceWorldGenerator>();
 	else if (wgType == "hardcoded")
 		config.worldGenerator = std::make_unique<HardcodedWorldGenerator>();
+	else if (wgType == "empty")
+		config.worldGenerator = std::make_unique<EmptyWorldGenerator>();
 	else
 	{
 		Logger::Log(LogLevel::WARNING, "Unknown world generator type: \"" + wgType + "\". Using jigsaw as default.");
