@@ -273,6 +273,13 @@ export async function setupRenderer(): Promise<void> {
 		throw new Error('Game configuration not found. Cannot set up renderer.');
 	}
 
+	if (!(svgCanvas as any).dataset.renderLoopStarted) {
+		scheduleNextFrame();
+		(svgCanvas as any).dataset.renderLoopStarted = '1';
+	}
+
+	teamOneElement.textContent = '';
+	teamTwoElement.textContent = '';
 	for (const team of getGameMisc()?.team_results ?? []) {
 		for (const obj of getStateAt(0)?.objects ?? []) {
 			if (obj.type === 0 && obj.teamId === team.id) {
@@ -282,14 +289,14 @@ export async function setupRenderer(): Promise<void> {
 		}
 	}
 
-	scheduleNextFrame();
+	svgCanvas.querySelectorAll('.persistent').forEach((el) => el.remove());
+	svgCanvas.querySelectorAll(':not(.persistent)').forEach((el) => el.remove());
 
 	const gridSize = gameConfig.gridSize;
 	svgCanvas.setAttribute('width', gridSize.toString());
 	svgCanvas.setAttribute('height', gridSize.toString());
 	svgCanvas.setAttribute('viewBox', `0 0 ${gridSize} ${gridSize}`);
 
-	// populate with chess tiles
 	for (let y = 0; y < gridSize; y++) {
 		for (let x = 0; x < gridSize; x++) {
 			const rect = document.createElementNS(svgNS, 'rect');
@@ -305,32 +312,34 @@ export async function setupRenderer(): Promise<void> {
 		}
 	}
 
-	svgCanvas.addEventListener('mousemove', (e) => {
-		const pt = svgCanvas.createSVGPoint();
-		pt.x = e.clientX;
-		pt.y = e.clientY;
-
-		const ctm = svgCanvas.getScreenCTM();
-		if (!ctm) {
+	if (!(svgCanvas as any).dataset.listenersBound) {
+		svgCanvas.addEventListener('mousemove', (e) => {
+			const pt = svgCanvas.createSVGPoint();
+			pt.x = e.clientX;
+			pt.y = e.clientY;
+			const ctm = svgCanvas.getScreenCTM();
+			if (!ctm) {
+				tooltipElement.style.display = 'none';
+				return;
+			}
+			const svgP = pt.matrixTransform(ctm.inverse());
+			lastSVGPoint = svgP;
+			lastClientX = e.pageX;
+			lastClientY = e.pageY;
+			refreshTooltipFromSVGPoint(svgP, e.clientX, e.clientY);
+		});
+		const hideIfOutside = (e: MouseEvent) => {
+			const rect = svgCanvas.getBoundingClientRect();
+			if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) {
+				tooltipElement.style.display = 'none';
+			}
+		};
+		document.addEventListener('mousemove', hideIfOutside);
+		window.addEventListener('blur', () => {
 			tooltipElement.style.display = 'none';
-			return;
-		}
-		const svgP = pt.matrixTransform(ctm.inverse());
+		});
+		(svgCanvas as any).dataset.listenersBound = '1';
+	}
 
-		lastSVGPoint = svgP;
-		lastClientX = e.pageX;
-		lastClientY = e.pageY;
-
-		refreshTooltipFromSVGPoint(svgP, e.clientX, e.clientY);
-	});
-	const hideIfOutside = (e: MouseEvent) => {
-		const rect = svgCanvas.getBoundingClientRect();
-		if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) {
-			tooltipElement.style.display = 'none';
-		}
-	};
-	document.addEventListener('mousemove', hideIfOutside);
-	window.addEventListener('blur', () => {
-		tooltipElement.style.display = 'none';
-	});
+	isInitialRender = true;
 }

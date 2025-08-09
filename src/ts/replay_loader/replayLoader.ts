@@ -1,4 +1,4 @@
-import { initializeTeamMapping } from '../renderer/renderer.js';
+import { initializeTeamMapping, setupRenderer } from '../renderer/renderer.js';
 import { resetTimeManager } from '../time_manager/timeManager.js';
 import type { TickAction } from './action.js';
 import type { GameConfig } from './config.js';
@@ -221,6 +221,7 @@ async function resetReplay(reason: string = 'reset'): Promise<void> {
 	replayLoader = newReplayLoader;
 	initializeTeamMapping();
 	resetTimeManager();
+	setupRenderer();
 	console.debug(`Replay reset (${reason}). override=${Boolean(replayDataOverride)} etag=${lastEtag}`);
 }
 
