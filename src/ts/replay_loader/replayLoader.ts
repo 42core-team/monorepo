@@ -55,6 +55,14 @@ function deepClone<T>(obj: T): T {
 	return JSON.parse(JSON.stringify(obj));
 }
 
+function forceHttps(url: string): string {
+	const u = new URL(url, location.href);
+	if (location.protocol === 'https:' && u.protocol !== 'https:') {
+		u.protocol = 'https:';
+	}
+	return u.toString();
+}
+
 class ReplayLoader {
 	private replayData: ReplayData = emptyReplayData;
 	private cache: Map<number, State> = new Map<number, State>();
@@ -67,7 +75,7 @@ class ReplayLoader {
 	public async loadReplay(filePath: string): Promise<void> {
 		let fileData: string | null = replayDataOverride;
 		if (!fileData) {
-			await fetch(filePath, { cache: 'no-cache' })
+			await fetch(forceHttps(filePath), { cache: 'no-cache' })
 				.then((response) => {
 					if (!response.ok) {
 						throw new Error(`Failed to fetch replay file: ${response.statusText}`);
@@ -90,7 +98,7 @@ class ReplayLoader {
 		if (!this.replayData.ticks || !this.replayData.full_tick_amount) {
 			throw new Error('Invalid replay data format: missing ticks or full_tick_amount');
 		}
-		if (this.replayData.misc.version != expectedReplayVersion) {
+		if (this.replayData.misc.version !== expectedReplayVersion) {
 			alert('Unsupported replay version. Things might stop working unexpectedly.');
 			console.error(`Expected version: ${expectedReplayVersion}, but got: ${this.replayData.misc.version}`);
 		}
@@ -237,7 +245,7 @@ export async function setupReplayLoader(filePath: string, cacheInterval = 25, up
 	// grab initial ETag
 	lastEtag = null;
 	try {
-		const headRes = await fetch(filePath, { method: 'HEAD', cache: 'no-cache' });
+		const headRes = await fetch(forceHttps(filePath), { method: 'HEAD', cache: 'no-cache' });
 		if (headRes.ok) {
 			lastEtag = headRes.headers.get('ETag');
 		} else {
@@ -254,7 +262,7 @@ export async function setupReplayLoader(filePath: string, cacheInterval = 25, up
 	replayInterval = setInterval(async () => {
 		if (!currentFilePath) return;
 		try {
-			const head = await fetch(currentFilePath, { method: 'HEAD', cache: 'no-cache' });
+			const head = await fetch(forceHttps(currentFilePath), { method: 'HEAD', cache: 'no-cache' });
 
 			if (!head.ok) {
 				console.error('Couldnt fetch current replay etag.');
