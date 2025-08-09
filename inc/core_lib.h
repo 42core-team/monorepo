@@ -17,8 +17,8 @@ typedef enum e_obj_type
 	OBJ_UNIT,
 	OBJ_RESOURCE,
 	OBJ_WALL,
-	OBJ_MONEY,
-	OBJ_BOMB
+	OBJ_MONEY //,
+	// OBJ_BOMB
 } t_obj_type;
 
 /// @brief Object state.
@@ -35,9 +35,9 @@ typedef enum e_unit_type
 {
 	UNIT_WARRIOR = 0,
 	UNIT_MINER = 1,
-	UNIT_CARRIER = 2,
-	UNIT_BUILDER = 3,
-	UNIT_BOMBERMAN = 4
+	UNIT_CARRIER = 2 //,
+	// UNIT_BUILDER = 3,
+	// UNIT_BOMBERMAN = 4
 } t_unit_type;
 
 typedef struct s_pos
@@ -85,11 +85,11 @@ typedef struct s_obj
 			/// @brief The amount of money the resource / money contains.
 			unsigned long balance;
 		} s_resource_money;
-		struct
-		{
-			/// @brief How much longer the bomb will take to explode.
-			unsigned long countdown;
-		} s_bomb;
+		// struct
+		// {
+		// 	/// @brief How much longer the bomb will take to explode.
+		// 	unsigned long countdown;
+		// } s_bomb;
 	};
 } t_obj;
 
