@@ -2,7 +2,7 @@
 
 #include "Unit.h"
 
-AttackAction::AttackAction(json msg) : Action(ActionType::ATTACK), damage_(0)
+AttackAction::AttackAction(json msg) : Action(ActionType::ATTACK)
 {
 	decodeJSON(msg);
 }
@@ -33,7 +33,6 @@ json AttackAction::encodeJSON()
 	js["unit_id"] = unit_id_;
 	js["x"] = target_pos_.x;
 	js["y"] = target_pos_.y;
-	js["dmg"] = damage_;
 
 	return js;
 }
@@ -46,12 +45,10 @@ std::string AttackAction::attackObj(Object *obj, Unit *unit) // returns object n
 	if (obj->getType() == ObjectType::Unit)
 	{
 		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageUnit);
-		damage_ = Config::game().units[unit->getUnitType()].damageUnit;
 	}
 	else if (obj->getType() == ObjectType::Core)
 	{
 		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageCore);
-		damage_ = Config::game().units[unit->getUnitType()].damageCore;
 	}
 	else if (obj->getType() == ObjectType::Resource)
 	{
@@ -62,18 +59,15 @@ std::string AttackAction::attackObj(Object *obj, Unit *unit) // returns object n
 			Board::instance().removeObjectById(obj->getId());
 			Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), balance), target_pos_, true);
 		}
-		damage_ = Config::game().units[unit->getUnitType()].damageResource;
 	}
 	else if (obj->getType() == ObjectType::Wall)
 	{
 		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageWall);
-		damage_ = Config::game().units[unit->getUnitType()].damageWall;
 	}
 	else if (obj->getType() == ObjectType::Bomb)
 	{
 		Bomb *bomb = (Bomb *)obj;
 		bomb->explode();
-		damage_ = 1;
 	}
 
 	return "";
