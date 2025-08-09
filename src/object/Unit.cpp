@@ -13,23 +13,18 @@ void Unit::tick(unsigned long long tickCount)
 	{
 		move_cooldown_--;
 		if (calcMoveCooldown() < move_cooldown_)
-			move_cooldown_ = calcMoveCooldown();
+			move_cooldown_ = std::max(1u, calcMoveCooldown());
 	}
 }
 
 unsigned int Unit::calcMoveCooldown()
 {
-	unsigned int baseMoveCooldown = Config::game().units[unit_type_].baseMoveCooldown;
-	unsigned int maxMoveCooldown = Config::game().units[unit_type_].maxMoveCooldown;
+	const auto& u = Config::game().units[unit_type_];
+	unsigned int step = std::max(1u, u.balancePerCooldownStep);
+	unsigned int steps = balance_ / step;
 
-	float resourcePart = balance_ / (Config::game().resourceIncome / 4);
-	if (resourcePart < 1)
-		resourcePart = 1; // up to 1/4 resource balance does not slow down
+	unsigned int cd = u.baseMoveCooldown + steps;
+	if (u.maxMoveCooldown > 0 && cd > u.maxMoveCooldown) cd = u.maxMoveCooldown;
 
-	unsigned int speed = baseMoveCooldown * resourcePart;
-
-	if (speed > maxMoveCooldown)
-		speed = maxMoveCooldown;
-
-	return speed + 1;
+	return std::max(1u, cd);
 }

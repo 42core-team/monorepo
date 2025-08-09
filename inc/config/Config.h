@@ -62,6 +62,7 @@ struct UnitConfig
 	unsigned int hp;
 	unsigned int baseMoveCooldown; // timeout between moves in ticks
 	unsigned int maxMoveCooldown;
+	unsigned int balancePerCooldownStep; // move cooldown = base move cooldown + balance / balancePerCooldownStep
 
 	unsigned int damageCore;
 	unsigned int damageUnit;
