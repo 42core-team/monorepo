@@ -70,10 +70,10 @@ void DistancedResourceWorldGenerator::generateWorld(unsigned int seed)
 		switch (obj.getType())
 		{
 			case ObjectType::Resource:
-				Board::instance().addObject<Resource>(Resource(obj.getId()), newPos);
+				Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), newPos);
 				break;
 			case ObjectType::Money:
-				Board::instance().addObject<Money>(Money(obj.getId()), newPos);
+				Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), newPos);
 				break;
 			default:
 				Logger::Log("Unknown object type while mirroring: " + std::to_string(static_cast<int>(obj.getType())));

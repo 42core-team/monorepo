@@ -1,60 +1,71 @@
 {
-  "gridSize": 25,
-  "seed": 1,
-  "idleIncome": 1,
-  "idleIncomeTimeOut": 600,
-  "resourceHp": 50,
-  "resourceIncome": 200,
-  "resourceCount": 50,
-  "moneyObjIncome": 100,
-  "coreHp": 200,
-  "initialBalance": 400,
-  "wallHp": 100,
-  "wallBuildCost": 20,
-  "bombHp": 50,
-  "bombCountdown": 10,
-  "bombThrowCost": 50,
-  "bombReach": 3,
-  "bombDamage": 50,
-  "worldGenerator": "distanced_resources",
-  "worldGeneratorConfig": {
-    "moneyChance": 4,
-    "resourceOrMoneyCount": 35
-  },
-  "units": [
-    {
-      "name": "Warrior",
-      "cost": 150,
-      "hp": 25,
-      "baseMoveCooldown": 3,
-      "maxMoveCooldown": 5,
-      "damageCore": 10,
-      "damageUnit": 6,
-      "damageResource": 2,
-      "damageWall": 3,
-      "buildType": 0
-    },
-    {
-      "name": "Miner",
-      "cost": 100,
-      "hp": 15,
-      "baseMoveCooldown": 5,
-      "maxMoveCooldown": 8,
-      "damageCore": 3,
-      "damageUnit": 2,
-      "damageResource": 10,
-      "damageWall": 5,
-      "buildType": 0
-    }
-  ],
-  "corePositions": [
-    {
-      "x": 0,
-      "y": 0
-    },
-    {
-      "x": 24,
-      "y": 24
-    }
-  ]
+	"gridSize": 20,
+	"seed": 1,
+	"idleIncome": 0,
+	"idleIncomeTimeOut": 0,
+	"resourceHp": 50,
+	"resourceIncome": 200,
+	"moneyObjIncome": 100,
+	"coreHp": 200,
+	"initialBalance": 200,
+	"wallHp": 50,
+	"wallBuildCost": 20,
+	"bombHp": 50,
+	"bombCountdown": 10,
+	"bombThrowCost": 50,
+	"bombReach": 3,
+	"bombDamage": 50,
+	"worldGenerator": "distanced_resources",
+	"worldGeneratorConfig": {
+		"moneyChance": 4,
+		"resourceOrMoneyCount": 35
+	},
+	"units": [
+		{
+			"name": "Warrior",
+			"cost": 150,
+			"hp": 35,
+			"baseMoveCooldown": 3,
+			"maxMoveCooldown": 5,
+			"damageCore": 10,
+			"damageUnit": 6,
+			"damageResource": 4,
+			"damageWall": 5,
+			"buildType": 0
+		},
+		{
+			"name": "Miner",
+			"cost": 100,
+			"hp": 20,
+			"baseMoveCooldown": 5,
+			"maxMoveCooldown": 10,
+			"damageCore": 3,
+			"damageUnit": 2,
+			"damageResource": 10,
+			"damageWall": 12,
+			"buildType": 0
+		},
+		{
+			"name": "Carrier",
+			"cost": 200,
+			"hp": 10,
+			"baseMoveCooldown": 1,
+			"maxMoveCooldown": 1,
+			"damageCore": 1,
+			"damageUnit": 1,
+			"damageResource": 1,
+			"damageWall": 1,
+			"buildType": 0
+		}
+	],
+	"corePositions": [
+		{
+			"x": 0,
+			"y": 0
+		},
+		{
+			"x": 19,
+			"y": 19
+		}
+	]
 }
