@@ -130,6 +130,12 @@ void core_internal_parse_state(char *json)
 		game.objects[0] = NULL;
 	}
 
+	// update move cooldowns
+	for (size_t i = 0; game.objects[i]; i++)
+		if (game.objects[i]->type == OBJ_UNIT)
+			if (game.objects[i]->s_unit.move_cooldown > 0)
+				game.objects[i]->s_unit.move_cooldown--;
+
 	game.elapsed_ticks = (unsigned long)json_find(root, "tick")->number;
 
 	json_node *objects = json_find(root, "objects");
