@@ -32,6 +32,11 @@ if [[ "$MISC_DATA" == "null" || -z "$MISC_DATA" ]]; then
     exit 1
 fi
 
+# Add BOT_ID_MAPPING from env (expects a JSON string)
+if [[ -n "${BOT_ID_MAPPING:-}" ]]; then
+    MISC_DATA=$(jq --argjson bot_id_mapping "$BOT_ID_MAPPING" '. + {BOT_ID_MAPPING: $bot_id_mapping}' <<<"$MISC_DATA")
+fi
+
 # Wrap misc data in the required pattern structure
 WRAPPED_DATA=$(jq -n \
   --argjson misc_data "$MISC_DATA" \
