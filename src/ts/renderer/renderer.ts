@@ -1,7 +1,7 @@
 import type { GameConfig } from '../replay_loader/config.js';
 import { formatObjectData, getBarMetrics, type TickObject } from '../replay_loader/object.js';
 import { getActionsByExecutor, getGameConfig, getGameMisc, getNameOfUnitType, getStateAt } from '../replay_loader/replayLoader.js';
-import { getCurrentTickData } from '../time_manager/timeManager.js';
+import { getCurrentTickData, isDirty } from '../time_manager/timeManager.js';
 
 const svgNS = 'http://www.w3.org/2000/svg';
 const xlinkNS = 'http://www.w3.org/1999/xlink';
@@ -156,8 +156,15 @@ function scheduleNextFrame(): void {
 		window.requestAnimationFrame(drawFrame);
 	}
 }
+let isInitialRender = true;
 function drawFrame(timestamp: number): void {
 	lastRenderTime = timestamp;
+
+	if (!isDirty() && !isInitialRender) {
+		scheduleNextFrame();
+		return;
+	}
+	isInitialRender = false;
 
 	const currentTickData = getCurrentTickData();
 	const replayData = getStateAt(currentTickData.tick);

@@ -35,6 +35,7 @@ export type tickData = {
 let playing: boolean = false;
 let tick: number = 0;
 let speedApS: number = 5; // Actions per Second
+let renderDirty: boolean = true; // true when a rendering-update worthy change has occurred
 
 // Live playback state
 let lastTimestamp: number | null = null;
@@ -50,6 +51,7 @@ function setTick(tickValue: number) {
 	tick = tickValue;
 	tickTimelineSlider.value = tick.toString();
 	tickTimelineNumberInput.value = tick.toString();
+	renderDirty = true;
 }
 function setPlaying(isPlaying: boolean) {
 	playing = isPlaying;
@@ -199,6 +201,7 @@ export function getCurrentTickData(): tickData {
 	const dt = (now - lastTimestamp) / 1000; // seconds elapsed
 	lastTimestamp = now;
 	const delta = dt * speedApS * (playing ? 1 : 0);
+	if (delta != 0) renderDirty = true;
 	tickProgress += delta;
 
 	if (tickProgress > 1) {
@@ -213,6 +216,10 @@ export function getCurrentTickData(): tickData {
 	}
 
 	return { tick, tickProgress };
+}
+
+export function isDirty(): boolean {
+	return renderDirty;
 }
 
 export function resetTimeManager() {
