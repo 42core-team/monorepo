@@ -55,8 +55,8 @@ static void core_static_updateObj(t_obj *existingObj, json_node *updates)
 		}
 		else if (strncmp(property->key, "moveCooldown", 12) == 0)
 			existingObj->s_unit.move_cooldown = property->number;
-		else if (strncmp(property->key, "countdown", 9) == 0)
-			existingObj->s_bomb.countdown = property->number;
+		// else if (strncmp(property->key, "countdown", 9) == 0)
+		// 	existingObj->s_bomb.countdown = property->number;
 	}
 }
 

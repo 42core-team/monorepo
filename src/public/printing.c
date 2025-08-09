@@ -10,8 +10,8 @@ void core_print_object(const t_obj *obj)
 		obj->type == OBJ_UNIT ? "Unit" : 
 		obj->type == OBJ_RESOURCE ? "Resource" :
 		obj->type == OBJ_WALL ? "Wall" : 
-		obj->type == OBJ_MONEY ? "Money" :
-		obj->type == OBJ_BOMB ? "Bomb" : "Unknown");
+		obj->type == OBJ_MONEY ? "Money" : "Unknown");
+		// obj->type == OBJ_BOMB ? "Bomb" : "Unknown");
 	printf("State: %s\n", obj->state == STATE_UNINITIALIZED ? "Uninitialized" :
 		obj->state == STATE_ALIVE ? "Alive" : 
 		obj->state == STATE_DEAD ? "Dead" : "Unknown");
@@ -34,9 +34,9 @@ void core_print_object(const t_obj *obj)
 		case OBJ_MONEY:
 			printf("Balance: %lu\n", obj->s_resource_money.balance);
 			break;
-		case OBJ_BOMB:
-			printf("Countdown: %lu\n", obj->s_bomb.countdown);
-			break;
+		// case OBJ_BOMB:
+		// 	printf("Countdown: %lu\n", obj->s_bomb.countdown);
+		// 	break;
 		default:
 			break;
 	}
