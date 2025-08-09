@@ -31,7 +31,7 @@ const teamTwoElement = document.getElementById('team-two-name') as HTMLDivElemen
 let gameConfig: GameConfig | undefined;
 const teamIdMapping: Map<number, AssetTeam> = new Map(); // number / asset id
 
-export function initializeTeamMapping(): void {
+function initializeTeamMapping(): void {
 	teamIdMapping.clear();
 	const firstTickObjects = getStateAt(0)?.objects ?? [];
 	const coreObjects = firstTickObjects.filter((obj) => obj.type === 0);
@@ -311,6 +311,8 @@ export async function setupRenderer(): Promise<void> {
 			svgCanvas.appendChild(rect);
 		}
 	}
+
+	initializeTeamMapping();
 
 	if (!(svgCanvas as any).dataset.listenersBound) {
 		svgCanvas.addEventListener('mousemove', (e) => {
