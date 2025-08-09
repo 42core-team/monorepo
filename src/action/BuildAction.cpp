@@ -42,6 +42,8 @@ std::string BuildAction::execute(Core *core)
 		return "invalid or non-existing unit";
 
 	Unit *builder = dynamic_cast<Unit *>(builderObj);
+	if (builder->getTeamId() != core->getTeamId())
+		return "unit does not belong to your team";
 
 	if (builder->getMoveCooldown() > 0)
 		return "unit is on cooldown";
@@ -56,12 +58,11 @@ std::string BuildAction::execute(Core *core)
 	if (position_.distance(Board::instance().getObjectPositionById(builder->getId())) > 1)
 		return "invalid position. must be up, down, left or right of the unit";
 
-	builder->resetMoveCooldown();
-
 	if (buildType == BuildType::WALL)
 	{
 		if (builder->getBalance() < Config::game().wallBuildCost)
 			return "insufficient funds";
+		builder->resetMoveCooldown();
 		builder->setBalance(builder->getBalance() - Config::game().wallBuildCost);
 		Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), position_);
 	}
@@ -69,6 +70,7 @@ std::string BuildAction::execute(Core *core)
 	{
 		if (builder->getBalance() < Config::game().bombThrowCost)
 			return "insufficient funds";
+		builder->resetMoveCooldown();
 		builder->setBalance(builder->getBalance() - Config::game().bombThrowCost);
 		Board::instance().addObject<Bomb>(Bomb(Board::instance().getNextObjectId()), position_);
 	}
