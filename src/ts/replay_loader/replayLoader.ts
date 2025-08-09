@@ -4,6 +4,7 @@ import type { TickAction } from './action.js';
 import type { GameConfig } from './config.js';
 import type { TickObject } from './object.js';
 
+const expectedReplayVersion = '1.0.1';
 const winnerNameElement = document.getElementById('winnername') as HTMLSpanElement;
 const winReasonElement = document.getElementById('winreason') as HTMLSpanElement;
 const gameEndReasons: Record<number, string> = {
@@ -22,11 +23,23 @@ export interface ReplayData {
 	misc: {
 		team_results: { id: number; name: string; place: number }[];
 		game_end_reason: number;
+		version: string;
+		worldGeneratorSeed: number;
 	};
 	ticks: { [tick: string]: ReplayTick };
 	full_tick_amount: number;
 	config?: GameConfig;
 }
+const emptyReplayData: ReplayData = {
+	misc: {
+		team_results: [],
+		game_end_reason: 0,
+		version: '',
+		worldGeneratorSeed: 0,
+	},
+	ticks: {},
+	full_tick_amount: 0,
+};
 
 type State = Record<number, TickObject>;
 type ReplayMisc = {
@@ -43,7 +56,7 @@ function deepClone<T>(obj: T): T {
 }
 
 class ReplayLoader {
-	private replayData: ReplayData = { misc: { team_results: [], game_end_reason: 0 }, ticks: {}, full_tick_amount: 0 };
+	private replayData: ReplayData = emptyReplayData;
 	private cache: Map<number, State> = new Map<number, State>();
 	private cacheInterval: number;
 
@@ -76,6 +89,10 @@ class ReplayLoader {
 		this.replayData = JSON.parse(fileData) as ReplayData;
 		if (!this.replayData.ticks || !this.replayData.full_tick_amount) {
 			throw new Error('Invalid replay data format: missing ticks or full_tick_amount');
+		}
+		if (this.replayData.misc.version != expectedReplayVersion) {
+			alert('Unsupported replay version. Things might stop working unexpectedly.');
+			console.error(`Expected version: ${expectedReplayVersion}, but got: ${this.replayData.misc.version}`);
 		}
 		totalReplayTicks = this.replayData.full_tick_amount;
 
@@ -176,7 +193,7 @@ class ReplayLoader {
 	}
 
 	public resetReplayData() {
-		this.replayData = { misc: { team_results: [], game_end_reason: 0 }, ticks: {}, full_tick_amount: 0 };
+		this.replayData = emptyReplayData;
 	}
 
 	public getGameConfig(): GameConfig | undefined {
