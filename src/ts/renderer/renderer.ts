@@ -12,8 +12,7 @@ const svgAssets = {
 		0: 'cores/1.svg',
 		1: 'cores/2.svg',
 	},
-	1: {
-	},
+	1: {},
 	2: 'resource.svg',
 	3: 'wall.svg',
 	4: 'money.svg',
@@ -30,12 +29,13 @@ const teamOneElement = document.getElementById('team-one-name') as HTMLDivElemen
 const teamTwoElement = document.getElementById('team-two-name') as HTMLDivElement;
 
 let gameConfig: GameConfig | undefined;
-const teamIdMapping: Map<number, AssetTeam> = new Map();
+const teamIdMapping: Map<number, AssetTeam> = new Map(); // number / asset id
 
 export function initializeTeamMapping(): void {
 	teamIdMapping.clear();
 	const firstTickObjects = getStateAt(0)?.objects ?? [];
-	const coreObjects = firstTickObjects.filter(obj => obj.type === 0);
+	const coreObjects = firstTickObjects.filter((obj) => obj.type === 0);
+	if (coreObjects.length < 1) console.error('Couldnt source first tick data to determine intended team asset ids.');
 
 	coreObjects.forEach((core, index) => {
 		if (core.teamId !== undefined && index < 2) {
@@ -45,7 +45,9 @@ export function initializeTeamMapping(): void {
 }
 
 function getTeamIndex(teamId: number | undefined): AssetTeam {
-	if (teamId === undefined) { return 0; }
+	if (teamId === undefined) {
+		return 0;
+	}
 	return teamIdMapping.get(teamId) ?? 0;
 }
 
@@ -180,11 +182,11 @@ function drawFrame(timestamp: number): void {
 		let prevObj = null;
 		try {
 			if (currentTickData.tick - 1 >= 0) prevObj = getStateAt(currentTickData.tick - 1)?.objects.find((o) => o.id === currObj.id);
-		} catch { }
+		} catch {}
 		let nextObj = null;
 		try {
 			nextObj = getStateAt(currentTickData.tick + 1)?.objects.find((o) => o.id === currObj.id);
-		} catch { }
+		} catch {}
 
 		const sineProgress = Math.sin((currentTickData.tickProgress * Math.PI) / 2);
 
@@ -235,7 +237,6 @@ function drawFrame(timestamp: number): void {
 
 	scheduleNextFrame();
 }
-scheduleNextFrame();
 
 let lastSVGPoint: DOMPoint | null = null;
 let lastClientX = 0;
@@ -273,6 +274,8 @@ export async function setupRenderer(): Promise<void> {
 			}
 		}
 	}
+
+	scheduleNextFrame();
 
 	const gridSize = gameConfig.gridSize;
 	svgCanvas.setAttribute('width', gridSize.toString());
@@ -320,5 +323,7 @@ export async function setupRenderer(): Promise<void> {
 		}
 	};
 	document.addEventListener('mousemove', hideIfOutside);
-	window.addEventListener('blur', () => { tooltipElement.style.display = 'none'; });
+	window.addEventListener('blur', () => {
+		tooltipElement.style.display = 'none';
+	});
 }

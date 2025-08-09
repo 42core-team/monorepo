@@ -191,18 +191,38 @@ class ReplayLoader {
 let replayLoader: ReplayLoader | null = null;
 let replayInterval: ReturnType<typeof setInterval> | null = null;
 
-// loads replay and sets up periodic updates
-export async function setupReplayLoader(filePath: string, cacheInterval = 25, updateInterval = 3000): Promise<void> {
-	replayLoader = new ReplayLoader(cacheInterval);
+let currentFilePath: string | null = null;
+let currentCacheInterval = 25;
+let lastEtag: string | null = null;
 
-	// initial load
-	await replayLoader.loadReplay(filePath);
+async function resetReplay(reason: string = 'reset'): Promise<void> {
+	if (!currentFilePath) {
+		throw new Error('No file path set for replay.');
+	}
+	const newReplayLoader = new ReplayLoader(currentCacheInterval);
+	await newReplayLoader.loadReplay(currentFilePath);
+	replayLoader = newReplayLoader;
+	initializeTeamMapping();
+	resetTimeManager();
+	console.debug(`Replay reset (${reason}). override=${Boolean(replayDataOverride)} etag=${lastEtag}`);
+}
+
+export async function setupReplayLoader(filePath: string, cacheInterval = 25, updateInterval = 3000): Promise<void> {
+	currentFilePath = filePath;
+	currentCacheInterval = cacheInterval;
+
+	// initial load (via central reset)
+	await resetReplay('initial');
 
 	// grab initial ETag
-	let lastEtag: string | null = null;
+	lastEtag = null;
 	try {
 		const headRes = await fetch(filePath, { method: 'HEAD', cache: 'no-cache' });
-		lastEtag = headRes.headers.get('ETag');
+		if (headRes.ok) {
+			lastEtag = headRes.headers.get('ETag');
+		} else {
+			console.warn('Failed to fetch initial ETag:', headRes.status, headRes.statusText);
+		}
 	} catch (err) {
 		console.warn('Failed to fetch initial ETag:', err);
 	}
@@ -212,12 +232,12 @@ export async function setupReplayLoader(filePath: string, cacheInterval = 25, up
 		clearInterval(replayInterval);
 	}
 	replayInterval = setInterval(async () => {
-		if (replayDataOverride) return;
+		if (!currentFilePath) return;
 		try {
-			const head = await fetch(filePath, { method: 'HEAD', cache: 'no-cache' });
+			const head = await fetch(currentFilePath, { method: 'HEAD', cache: 'no-cache' });
 
 			if (!head.ok) {
-				throw 'catch block time - lets reset the replayLoader';
+				console.error('Couldnt fetch current replay etag.');
 			}
 
 			const etag = head.headers.get('ETag');
@@ -226,17 +246,17 @@ export async function setupReplayLoader(filePath: string, cacheInterval = 25, up
 				return;
 			}
 
+			// if ETag changes, clear local override and reset via the single path
 			if (etag !== lastEtag) {
 				lastEtag = etag;
-				const newReplayLoader = new ReplayLoader(cacheInterval);
-				await newReplayLoader.loadReplay(filePath);
-				replayLoader = newReplayLoader;
-				initializeTeamMapping();
-				resetTimeManager();
+				// make override non-permanent: clear it on remote update
+				if (replayDataOverride) {
+					replayDataOverride = null;
+				}
+				await resetReplay('etag-change');
 			}
 		} catch (err) {
 			console.error('Error checking for updates:', err);
-			replayLoader = null;
 		}
 	}, updateInterval);
 }
@@ -358,10 +378,7 @@ window.addEventListener('drop', (e) => {
 		if (contents) {
 			console.log('File loaded successfully');
 			replayDataOverride = contents;
-			const newReplayLoader = new ReplayLoader(25);
-			await newReplayLoader.loadReplay('dummy.json');
-			replayLoader = newReplayLoader;
-			resetTimeManager();
+			await resetReplay('file-drop');
 		}
 	};
 	alert('File loaded successfully, please refresh the page to see the changes.');
