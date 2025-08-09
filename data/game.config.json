@@ -4,7 +4,7 @@
 	"idleIncome": 0,
 	"idleIncomeTimeOut": 0,
 	"resourceHp": 50,
-	"resourceIncome": 200,
+	"resourceIncome": 250,
 	"moneyObjIncome": 100,
 	"coreHp": 200,
 	"initialBalance": 200,
@@ -18,7 +18,9 @@
 	"worldGenerator": "distanced_resources",
 	"worldGeneratorConfig": {
 		"resourceCount": 20,
+		"resourceBalanceVariation": 100,
 		"moneyCount": 10,
+		"moneyBalanceVariation": 50,
 		"wallCount": 30,
 		"coreBuffer": 3
 	},

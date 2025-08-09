@@ -26,7 +26,11 @@ void DistancedResourceWorldGenerator::generateWorld(unsigned int seed)
 
 	unsigned int gridSize = Config::game().gridSize;
 	int resourceCount = Config::game().worldGeneratorConfig.value("resourceCount", 20);
+	int resourceBalanceVariation = Config::game().worldGeneratorConfig.value("resourceBalanceVariation", 10);
+	int resourceIncome = Config::game().resourceIncome;
 	int moneyCount = Config::game().worldGeneratorConfig.value("moneyCount", 10);
+	int moneyBalanceVariation = Config::game().worldGeneratorConfig.value("moneyBalanceVariation", 5);
+	int moneyIncome = Config::game().moneyObjIncome;
 	int wallCount = Config::game().worldGeneratorConfig.value("wallCount", 10);
 	int coreBuffer = Config::game().worldGeneratorConfig.value("coreBuffer", 3);
 
@@ -44,13 +48,15 @@ void DistancedResourceWorldGenerator::generateWorld(unsigned int seed)
 		if (Board::instance().getObjectAtPos(p)) return false;
 		if (positionHasNeighbours(p, N)) return false;
 		if (withinCoreBuffer(p)) return false;
+		unsigned int randomResourceBalance = resourceIncome + std::uniform_int_distribution<>(-resourceBalanceVariation, resourceBalanceVariation)(eng_);
+		unsigned int randomMoneyBalance = moneyIncome + std::uniform_int_distribution<>(-moneyBalanceVariation, moneyBalanceVariation)(eng_);
 		switch (t)
 		{
 			case ObjectType::Resource:
-				Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), p);
+				Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId(), randomResourceBalance), p);
 				return true;
 			case ObjectType::Money:
-				Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), p);
+				Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), randomMoneyBalance), p);
 				return true;
 			case ObjectType::Wall:
 				Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), p);
