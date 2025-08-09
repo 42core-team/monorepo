@@ -106,6 +106,7 @@ static GameConfig parseGameConfig()
 			unit.hp = unitJson.value("hp", 0);
 			unit.baseMoveCooldown = unitJson.value("baseMoveCooldown", 0);
 			unit.maxMoveCooldown = unitJson.value("maxMoveCooldown", 0);
+			unit.balancePerCooldownStep = std::max(1u, unitJson.value("balancePerCooldownStep", 1u));
 			unit.damageCore = unitJson.value("damageCore", 0);
 			unit.damageUnit = unitJson.value("damageUnit", 0);
 			unit.damageResource = unitJson.value("damageResource", 0);

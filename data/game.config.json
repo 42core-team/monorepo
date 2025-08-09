@@ -56,7 +56,7 @@
 			"cost": 200,
 			"hp": 10,
 			"baseMoveCooldown": 0,
-			"maxMoveCooldown": 0,
+			"maxMoveCooldown": 1,
 			"balancePerCooldownStep": 500,
 			"damageCore": 0,
 			"damageUnit": 0,
