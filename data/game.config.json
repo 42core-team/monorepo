@@ -58,10 +58,10 @@
 			"baseMoveCooldown": 0,
 			"maxMoveCooldown": 1,
 			"balancePerCooldownStep": 500,
-			"damageCore": 1,
+			"damageCore": 0,
 			"damageUnit": 0,
 			"damageResource": 0,
-			"damageWall": 0,
+			"damageWall": 3,
 			"buildType": 0
 		}
 	],
