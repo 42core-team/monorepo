@@ -1,0 +1,11 @@
+replicaCount: 1
+
+ingress:
+  enabled: true
+  className: "nginx"
+  hosts:
+    - host: dev.visualizer.coregame.de
+      paths:
+        - path: /
+          pathType: Prefix
+
