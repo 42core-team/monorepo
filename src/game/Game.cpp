@@ -83,12 +83,16 @@ void Game::run()
 	}
 
 	// determine winner
-	for (const auto& bridge : bridges_)
+	for (const Object & obj : Board::instance())
 	{
-		if (!bridge->isDisconnected())
+		if (obj.getType() == ObjectType::Core && obj.getHP() > 0)
 		{
-			replayEncoder_.addTeamScore(bridge->getTeamId(), bridge->getTeamName(), 0); // 0 = won
-			Logger::Log("Team " + std::to_string(bridge->getTeamId()) + " (" + bridge->getTeamName() + ") won the game!");
+			unsigned int tid = static_cast<const Core&>(obj).getTeamId();
+			std::string name = "Team" + std::to_string(tid);
+			for (const auto& b : bridges_)
+				if (b->getTeamId() == tid) { name = b->getTeamName(); break; }
+			replayEncoder_.addTeamScore(tid, name, 0);
+			Logger::Log("Team " + std::to_string(tid) + " (" + name + ") won the game!");
 		}
 	}
 
@@ -169,7 +173,7 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 			Core &core = (Core &)obj;
 			for (auto &bridge : bridges_)
 			{
-				if (!bridge->isDisconnected() && bridge->getTeamId() == core.getTeamId())
+				if (bridge->getTeamId() == core.getTeamId())
 				{
 					replayEncoder_.addTeamScore(bridge->getTeamId(), bridge->getTeamName(), Board::instance().getCoreCount());
 					bridges_.erase(std::remove(bridges_.begin(), bridges_.end(), bridge), bridges_.end());
