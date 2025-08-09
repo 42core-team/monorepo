@@ -4,6 +4,7 @@
 #include "WorldGenerator.h"
 #include "Board.h"
 #include "Money.h"
+#include "Wall.h"
 #include "Resource.h"
 #include "Logger.h"
 

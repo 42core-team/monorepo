@@ -45,11 +45,11 @@ struct Position
 		return std::abs(x - other.x) + std::abs(y - other.y);
 	}
 
-	static Position random(int maxX, int maxY)
+	static Position random(int maxSizeSquare)
 	{
 		static std::default_random_engine eng = std::default_random_engine(time(nullptr));
-		std::uniform_int_distribution<int> posX(0, maxX);
-		std::uniform_int_distribution<int> posY(0, maxY);
+		std::uniform_int_distribution<int> posX(0, maxSizeSquare);
+		std::uniform_int_distribution<int> posY(0, maxSizeSquare);
 		return Position(posX(eng), posY(eng));
 	}
 };

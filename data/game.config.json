@@ -17,8 +17,10 @@
 	"bombDamage": 50,
 	"worldGenerator": "distanced_resources",
 	"worldGeneratorConfig": {
-		"moneyChance": 4,
-		"resourceOrMoneyCount": 35
+		"resourceCount": 20,
+		"moneyCount": 10,
+		"wallCount": 30,
+		"coreBuffer": 3
 	},
 	"units": [
 		{
