@@ -258,7 +258,8 @@ jobs:
         id: image
         run: |
           BRANCH="${{ github.ref_name }}"
-          TAG="${BRANCH}-${{ github.sha }}"
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          TAG="${BRANCH}-sha-${SHORT_SHA}"
           echo "repo=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}" >> $GITHUB_OUTPUT
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
           echo "Deploying image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${TAG}"
