@@ -41,11 +41,10 @@ class JigsawWorldGenerator : public WorldGenerator {
 
 		void loadTemplates();
 
-		bool tryPlaceTemplate(const MapTemplate &temp, int posX, int posY, bool force);
+		bool tryPlaceTemplate(const MapTemplate &temp, int posX, int posY, bool force = false);
 		bool canPlaceTemplate(const MapTemplate &temp, int posX, int posY);
 
 		void balanceObjectType(ObjectType type, int amount);
-		void clearPathBetweenCores();
 		void placeWalls();
 		void mirrorWorld();
 		void varyResourceIncome();

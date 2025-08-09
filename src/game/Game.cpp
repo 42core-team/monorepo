@@ -116,7 +116,7 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 
 		std::string err = action->execute(core);
 		if (!err.empty()) {
-			std::string fullErr = "Action Failure: " + Action::getActionName(action->getActionType()) + ": " + err + " (" + action->encodeJSON().dump() + ")";
+			std::string fullErr = "Action Failure: " + Action::getActionName(action->getActionType()) + ": " + err + " (" + action->encodeJSON().dump() + ") (" + std::to_string(tick) + ")";
 			Logger::LogWarn(fullErr);
 			failures.emplace_back(core->getTeamId(), fullErr);
 			action = nullptr;

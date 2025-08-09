@@ -59,7 +59,7 @@ bool JigsawWorldGenerator::canPlaceTemplate(const MapTemplate &temp, int posX, i
 	}
 	return true;
 }
-bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, int posY, bool force = false)
+bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, int posY, bool force)
 {
 	if (!canPlaceTemplate(temp, posX, posY) && !force)
 		return false;
@@ -219,8 +219,8 @@ void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 			rerollLikeliness -= wallsCount * 5;
 
 			// higher likelihood near non-core corners
-			int bottomLeftDistance = pos.distance(Position(0, Config::game().gridSize));
-			int topRightDistance = pos.distance(Position(Config::game().gridSize, 0));
+			int bottomLeftDistance = pos.distance(Position(0, Config::game().gridSize - 1));
+			int topRightDistance = pos.distance(Position(Config::game().gridSize - 1, 0));
 			int cornerDist = bottomLeftDistance < topRightDistance ? bottomLeftDistance : topRightDistance;
 			rerollLikeliness -= Config::game().gridSize - cornerDist;
 
@@ -240,115 +240,6 @@ void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 				addCount--;
 			}
 		}
-	}
-}
-
-void JigsawWorldGenerator::clearPathBetweenCores()
-{
-	Position start;
-	Position end;
-
-	unsigned short coreNbr = 0;
-	for (const Object & obj :Board::instance())
-	{
-		if (obj.getType() != ObjectType::Core)
-			continue;
-		if (coreNbr == 0)
-			start = Board::instance().getObjectPositionById(obj.getId());
-		else
-			end = Board::instance().getObjectPositionById(obj.getId());
-		coreNbr++;
-	}
-
-	int W = Config::game().gridSize;
-	int H = Config::game().gridSize;
-
-	auto getCost = [](int x, int y) -> int
-	{
-		Position pos(x, y);
-		Object *obj = Board::instance().getObjectAtPos(pos);
-		return (obj == nullptr || obj->getType() == ObjectType::Core) ? 0 : 1;
-	};
-
-	std::vector<int> dist(W * H, INT_MAX);
-	std::vector<std::pair<int, int>> prev(W * H, {-1, -1});
-	auto index = [W](int x, int y) -> int
-	{ return y * W + x; };
-
-	struct Node
-	{
-		int x, y, cost;
-	};
-	auto cmp = [](const Node &a, const Node &b)
-	{ return a.cost > b.cost; };
-	std::priority_queue<Node, std::vector<Node>, decltype(cmp)> pq(cmp);
-
-	dist[index(start.x, start.y)] = 0;
-	pq.push({start.x, start.y, 0});
-
-	std::vector<std::pair<int, int>> directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
-
-	bool found = false;
-	while (!pq.empty())
-	{
-		Node cur = pq.top();
-		pq.pop();
-
-		if (cur.x == end.x && cur.y == end.y)
-		{
-			found = true;
-			break;
-		}
-
-		if (cur.cost > dist[index(cur.x, cur.y)])
-			continue;
-
-		for (const auto &d : directions)
-		{
-			int nx = cur.x + d.first;
-			int ny = cur.y + d.second;
-			if (nx < 0 || ny < 0 || nx >= W || ny >= H)
-				continue;
-			int cost = getCost(nx, ny);
-			int newCost = cur.cost + cost;
-			if (newCost < dist[index(nx, ny)])
-			{
-				dist[index(nx, ny)] = newCost;
-				prev[index(nx, ny)] = {cur.x, cur.y};
-				pq.push({nx, ny, newCost});
-			}
-		}
-	}
-
-	if (!found)
-		Logger::Log(LogLevel::WARNING, "No viable path found between cores. Carving a new one.");
-	
-
-	std::vector<Position> path;
-	int cx = end.x, cy = end.y;
-	while (!(cx == start.x && cy == start.y))
-	{
-		path.push_back(Position(cx, cy));
-		auto p = prev[index(cx, cy)];
-		cx = p.first;
-		cy = p.second;
-	}
-	path.push_back(start);
-	std::reverse(path.begin(), path.end());
-
-	for (const auto &pos : path)
-	{
-		for (const Object & obj : Board::instance())
-			if (Board::instance().getObjectPositionById(obj.getId()) == pos && obj.getType() != ObjectType::Core)
-				Board::instance().removeObjectById(obj.getId());
-
-		if (!Config::game().worldGeneratorConfig.value("mirrorMap", true))
-			continue;
-
-		Position mirrorPos((W - 1) - pos.x, (H - 1) - pos.y);
-		for (const Object & obj : Board::instance())
-			if (Board::instance().getObjectPositionById(obj.getId()) == mirrorPos && obj.getType() != ObjectType::Core)
-				Board::instance().removeObjectById(obj.getId());
 	}
 }
 
@@ -543,11 +434,6 @@ void JigsawWorldGenerator::generateWorld(unsigned int seed)
 		mirrorWorld();
 		Visualizer::visualizeGameState(0);
 	}
-
-	Logger::Log("Step 6: Clearing at least 1 path between cores.");
-	clearPathBetweenCores();
-	Visualizer::visualizeGameState(0);
-
 
 	Logger::Log("World generation complete");
 }

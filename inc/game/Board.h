@@ -27,7 +27,7 @@ class Board
 		{
 			static_assert(std::is_base_of<Object, T>::value, "T must be a subclass of Object");
 			unsigned int vecPos = gridPosToVecPos(pos);
-			if (vecPos > grid_height_ * grid_width_ || (objects_[vecPos] != nullptr && !force))
+			if (vecPos > objects_.size() || (objects_[vecPos] != nullptr && !force))
 				return false;
 			objects_[vecPos] = std::make_unique<T>(object);
 			return true;

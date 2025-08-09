@@ -27,7 +27,7 @@ bool Board::removeObjectAtPos(const Position & pos)
 	if (!pos.isValid(grid_width_, grid_height_))
 		return false;
 	unsigned int vecPos = gridPosToVecPos(pos);
-	if (vecPos > grid_height_ * grid_width_ || objects_[vecPos] == nullptr)
+	if (vecPos > objects_.size() || objects_[vecPos] == nullptr)
 		return false;
 	objects_[vecPos] = nullptr;
 	return true;

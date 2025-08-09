@@ -7,7 +7,7 @@ void Bomb::explode()
 {
 	int bombReach = Config::game().bombReach;
 	Position bombPos = Board::instance().getObjectPositionById(this->getId());
-	for (int i = 0; i < bombReach; i++) // pos X
+	for (int i = 1; i < bombReach; i++) // pos X
 	{
 		Object *obj = Board::instance().getObjectAtPos(Position(bombPos.x + i, bombPos.y));
 		if (!obj)
@@ -16,7 +16,7 @@ void Bomb::explode()
 			break;
 		obj->setHP(obj->getHP() - Config::game().bombDamage);
 	}
-	for (int i = 0; i < bombReach; i++) // pos Y
+	for (int i = 1; i < bombReach; i++) // pos Y
 	{
 		Object *obj = Board::instance().getObjectAtPos(Position(bombPos.x, bombPos.y + i));
 		if (!obj)
@@ -25,7 +25,7 @@ void Bomb::explode()
 			break;
 		obj->setHP(obj->getHP() - Config::game().bombDamage);
 	}
-	for (int i = 0; i < bombReach; i++) // neg X
+	for (int i = 1; i < bombReach; i++) // neg X
 	{
 		Object *obj = Board::instance().getObjectAtPos(Position(bombPos.x - i, bombPos.y));
 		if (!obj)
@@ -34,7 +34,7 @@ void Bomb::explode()
 			break;
 		obj->setHP(obj->getHP() - Config::game().bombDamage);
 	}
-	for (int i = 0; i < bombReach; i++) // neg Y
+	for (int i = 1; i < bombReach; i++) // neg Y
 	{
 		Object *obj = Board::instance().getObjectAtPos(Position(bombPos.x, bombPos.y - i));
 		if (!obj)

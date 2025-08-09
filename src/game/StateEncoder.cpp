@@ -26,9 +26,13 @@ json StateEncoder::encodeFullState()
 			o["balance"] = ((Unit &)obj).getBalance();
 			o["moveCooldown"] = ((Unit &)obj).getMoveCooldown();
 		}
-		if (obj.getType() == ObjectType::Resource || obj.getType() == ObjectType::Money)
+		if (obj.getType() == ObjectType::Resource)
 		{
 			o["balance"] = ((Resource &)obj).getBalance();
+		}
+		if (obj.getType() == ObjectType::Money)
+		{
+			o["balance"] = ((Money &)obj).getBalance();
 		}
 		if (obj.getType() == ObjectType::Bomb)
 		{

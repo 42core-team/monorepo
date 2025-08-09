@@ -31,7 +31,7 @@ static std::string sanitizeTeamName(const std::string& teamName, const std::stri
 		if ((std::isalnum(uc) != 0) || uc == '_' || uc == '.' || uc == '-')
 		{
 			sanitized += static_cast<char>(uc);
-			if (sanitized.size() > MAX_LEN)
+			if (sanitized.size() >= MAX_LEN)
 				break;
 		}
 	}

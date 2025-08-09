@@ -57,7 +57,7 @@ std::string AttackAction::attackObj(Object *obj, Unit *unit) // returns object n
 		{
 			unsigned int balance = ((Resource *)obj)->getBalance();
 			Board::instance().removeObjectById(obj->getId());
-			Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), balance), target_pos_, true);
+			Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), balance), target_pos_);
 		}
 	}
 	else if (obj->getType() == ObjectType::Wall)
