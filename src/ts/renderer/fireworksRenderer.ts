@@ -19,14 +19,53 @@ const fireworks = new Fireworks.default(container, {
 	decay: { min: 0.015, max: 0.025 },
 });
 fireworks.start();
-
 let renderFireworks = false;
 let fireworkStrength = 1;
+let isActive = true;
 
+// Helpers
+function isWindowMinimized(): boolean {
+	return window.outerWidth === 0 && window.outerHeight === 0;
+}
+function shouldRun(): boolean {
+	const visible = document.visibilityState === 'visible' && !document.hidden;
+	return visible && !isWindowMinimized() && renderFireworks;
+}
+function applyActivity(): void {
+	const nextActive = shouldRun();
+
+	if (nextActive && !isActive) {
+		isActive = true;
+		fireworks.start?.();
+	} else if (!nextActive && isActive) {
+		isActive = false;
+		fireworks.clear();
+		fireworks.stop?.();
+	}
+}
+
+// hooks
+document.addEventListener('visibilitychange', applyActivity);
+window.addEventListener('focus', applyActivity);
+window.addEventListener('blur', applyActivity);
+window.addEventListener('resize', applyActivity);
+window.addEventListener('pagehide', () => {
+	fireworks.clear();
+	fireworks.stop?.();
+	isActive = false;
+});
+window.addEventListener('beforeunload', () => {
+	fireworks.clear();
+	fireworks.stop?.();
+});
+
+// start setup
 (function loop() {
-	fireworks.launch(fireworkStrength);
-	if (fireworkStrength > 1) fireworkStrength--;
-	setTimeout(loop, 500);
+	if (isActive) {
+		fireworks.launch(fireworkStrength);
+		if (fireworkStrength > 1) fireworkStrength--;
+	}
+	setTimeout(loop, isActive ? 500 : 1500);
 })();
 
 export function setRenderFireworks(render: boolean): void {
@@ -35,4 +74,5 @@ export function setRenderFireworks(render: boolean): void {
 		fireworks.clear();
 	}
 	renderFireworks = render;
+	applyActivity();
 }
