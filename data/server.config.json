@@ -1,9 +1,7 @@
 {
 	"gameConfigFilePath": "./data/game.config.json",
 	"replayFolderPaths": [
-		"replays",
-		"debug-visualizer/src/public/misc",
-		"3d-visualizer/static/replays"
+		"replays"
 	],
 	"dataFolderPath": "core/data",
 	"timeoutTicks": 10000,
