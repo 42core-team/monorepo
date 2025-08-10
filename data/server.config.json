@@ -1,5 +1,5 @@
 {
-	"gameConfigFilePath": "game.config.json",
+	"gameConfigFilePath": "./data/game.config.json",
 	"replayFolderPaths": [
 		"replays",
 		"debug-visualizer/src/public/misc",
