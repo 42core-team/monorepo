@@ -255,16 +255,16 @@ function refreshTooltipFromSVGPoint(svgP: DOMPoint, clientX: number, clientY: nu
 	const currentObjects = getStateAt(getCurrentTickData().tick)?.objects || [];
 	const obj = currentObjects.find((o: TickObject) => o.x === tx && o.y === ty);
 
+	const offsetX = 10;
+	const offsetY = clientY > window.innerHeight / 2 ? -tooltipElement.offsetHeight - 10 : 10;
+	tooltipElement.style.left = `${clientX + offsetX}px`;
+	tooltipElement.style.top = `${clientY + offsetY}px`;
+	tooltipElement.style.borderRadius = clientY > window.innerHeight / 2 ? '15px 15px 15px 0' : '0 15px 15px 15px';
+	tooltipElement.style.display = 'block';
 	if (obj) {
-		const offsetX = 10;
-		const offsetY = clientY > window.innerHeight / 2 ? -tooltipElement.offsetHeight - 10 : 10;
-		tooltipElement.style.left = `${clientX + offsetX}px`;
-		tooltipElement.style.top = `${clientY + offsetY}px`;
-		tooltipElement.style.borderRadius = clientY > window.innerHeight / 2 ? '15px 15px 15px 0' : '0 15px 15px 15px';
-		tooltipElement.style.display = 'block';
 		tooltipElement.innerHTML = formatObjectData(obj);
 	} else {
-		tooltipElement.style.display = 'none';
+		tooltipElement.innerHTML = `📍 Position: [${tx}, ${ty}]`;
 	}
 }
 export async function setupRenderer(): Promise<void> {

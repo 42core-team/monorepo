@@ -177,7 +177,9 @@ export async function setupTimeManager() {
 		if (!binding) return;
 		if (binding.button) {
 			binding.button.classList.add('active');
-			setTimeout(() => binding.button!.classList.remove('active'), 100);
+			setTimeout(() => {
+				if (binding.button) binding.button.classList.remove('active');
+			}, 100);
 		}
 		binding.action();
 		event.preventDefault();
@@ -197,11 +199,15 @@ export async function setupTimeManager() {
 
 export function getCurrentTickData(): tickData {
 	if (winnerDisplay) {
-		if (tick == getTotalReplayTicks() - 1) {
-			document.querySelectorAll<HTMLElement>('.win-display').forEach((elem) => (elem.style.display = 'block'));
+		if (tick === getTotalReplayTicks() - 1) {
+			document.querySelectorAll<HTMLElement>('.win-display').forEach((elem) => {
+				elem.style.display = 'block';
+			});
 			setRenderFireworks(true);
 		} else {
-			document.querySelectorAll<HTMLElement>('.win-display').forEach((elem) => (elem.style.display = 'none'));
+			document.querySelectorAll<HTMLElement>('.win-display').forEach((elem) => {
+				elem.style.display = 'none';
+			});
 			setRenderFireworks(false);
 		}
 	}
@@ -218,7 +224,7 @@ export function getCurrentTickData(): tickData {
 	const dt = (now - lastTimestamp) / 1000; // seconds elapsed
 	lastTimestamp = now;
 	const delta = dt * speedApS * (playing ? 1 : 0);
-	if (delta != 0) renderDirty = true;
+	if (delta !== 0) renderDirty = true;
 	tickProgress += delta;
 
 	if (tickProgress > 1) {
