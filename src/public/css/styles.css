@@ -77,6 +77,13 @@ body {
 	margin: 10px 0 10px 0;
 }
 
+#svg-canvas image.team-1 {
+	opacity: 0.5;
+}
+#svg-canvas image.team-0 {
+	opacity: 1;
+}
+
 /* Time Controls */
 #time-controls {
 	display: flex;

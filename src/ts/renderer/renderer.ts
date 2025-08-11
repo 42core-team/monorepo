@@ -122,6 +122,10 @@ function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, s
 	}
 
 	img.classList.remove('not-touched');
+	if (obj.type === 0 || obj.type === 1) {
+		const teamIndexForClass = getTeamIndex(obj.teamId);
+		img.classList.add(`team-${teamIndexForClass}`);
+	}
 	img.setAttributeNS(xlinkNS, 'href', `/assets/object-svgs/${path}`);
 
 	let scale = 0.8;
