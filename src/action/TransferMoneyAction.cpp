@@ -84,15 +84,11 @@ std::string TransferMoneyAction::execute(Core *core)
 	if (dstObj->getType() != ObjectType::Core && dstObj->getType() != ObjectType::Unit)
 		return "invalid destination object type";
 
-	// only adjacent objects can transfer money
+	// only as-close-together-as-possible objects can transfer money
 	Position srcPos = Board::instance().getObjectPositionById(srcObj->getId());
 	Position dstPos = Board::instance().getObjectPositionById(dstObj->getId());
-	unsigned int maxDist = 1;
-	if (srcObj->getType() == ObjectType::Unit && dstObj->getType() == ObjectType::Core)
-	{
-		Position firstEmptyGridCell = findFirstEmptyGridCell(dstPos);
-		maxDist = srcPos.distance(firstEmptyGridCell);
-	}
+	Position firstEmptyGridCell = findFirstEmptyGridCell(dstPos);
+	unsigned int maxDist = dstPos.distance(firstEmptyGridCell);
 	if (srcPos.distance(dstPos) > maxDist)
 		return "invalid transfer distance";
 
