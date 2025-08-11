@@ -33,15 +33,20 @@ const teamIdMapping: Map<number, AssetTeam> = new Map(); // number / asset id
 
 function initializeTeamMapping(): void {
 	teamIdMapping.clear();
-	const firstTickObjects = getStateAt(0)?.objects ?? [];
-	const coreObjects = firstTickObjects.filter((obj) => obj.type === 0);
-	if (coreObjects.length < 1) console.error('Couldnt source first tick data to determine intended team asset ids.');
+	const objs = getStateAt(0)?.objects ?? [];
+	const cores = objs.filter((o) => o.type === 0);
+	if (cores.length < 2) return;
 
-	coreObjects.forEach((core, index) => {
-		if (core.teamId !== undefined && index < 2) {
-			teamIdMapping.set(core.teamId, index as AssetTeam);
-		}
-	});
+	cores.sort((a, b) => a.x - b.x || a.y - b.y);
+	const leftCore = cores[0];
+	const rightCore = cores[1];
+
+	const flip = Math.random() < 0.5;
+	const teamForLight = flip ? leftCore.teamId : rightCore.teamId;
+	const teamForDark = flip ? rightCore.teamId : leftCore.teamId;
+
+	if (teamForLight !== undefined) teamIdMapping.set(teamForLight, 1);
+	if (teamForDark !== undefined) teamIdMapping.set(teamForDark, 0);
 }
 
 function getTeamIndex(teamId: number | undefined): AssetTeam {
@@ -122,9 +127,9 @@ function drawObject(obj: TickObject, xOffset: number = 0, yOffset: number = 0, s
 	}
 
 	img.classList.remove('not-touched');
+	img.classList.remove('team-0', 'team-1');
 	if (obj.type === 0 || obj.type === 1) {
-		const teamIndexForClass = getTeamIndex(obj.teamId);
-		img.classList.add(`team-${teamIndexForClass}`);
+		img.classList.add(`team-${getTeamIndex(obj.teamId)}`);
 	}
 	img.setAttributeNS(xlinkNS, 'href', `/assets/object-svgs/${path}`);
 
