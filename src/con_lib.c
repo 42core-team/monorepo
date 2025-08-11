@@ -10,6 +10,26 @@ static bool core_static_isMyCore(const t_obj *obj)
 	return (obj->s_core.team_id == game.my_team_id);
 }
 
+static void core_static_awaitEnterPress(void)
+{
+	if (!isatty(STDIN_FILENO))
+		return;
+	printf("The game has ended! But who won?...\n");
+	printf("Press ENTER to reveal the result...\n");
+	fflush(stdout);
+	fd_set rfds;
+	FD_ZERO(&rfds);
+	FD_SET(STDIN_FILENO, &rfds);
+	struct timeval tv;
+	tv.tv_sec = 30;
+	tv.tv_usec = 0;
+	int rv = select(STDIN_FILENO + 1, &rfds, NULL, NULL, &tv);
+	if (rv > 0) {
+		int c;
+		while ((c = getchar()) != '\n' && c != EOF) {}
+	}
+}
+
 /**
  * @brief Starts the connection to the server. This function should be called before any other function from this library.
  *
@@ -99,6 +119,7 @@ int	core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 	}
 
 	// handle game end
+	core_static_awaitEnterPress();
 	if (my_core && my_core->hp > 0)
 		printf("Game over! You won!\n");
 	else
