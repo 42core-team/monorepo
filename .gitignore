@@ -1,2 +1,4 @@
 con_lib.a
 obj
+docs/html
+docs/xml

@@ -40,12 +40,16 @@ typedef enum e_unit_type
 	// UNIT_BOMBERMAN = 4
 } t_unit_type;
 
+/// @brief Position structure for 2D coordinates
 typedef struct s_pos
 {
+	/// @brief X coordinate
 	unsigned short x;
+	/// @brief Y coordinate
 	unsigned short y;
 } t_pos;
 
+/// @brief Game object structure representing all entities in the game
 typedef struct s_obj
 {
 	/// @brief Type of the obj
@@ -130,6 +134,7 @@ typedef struct s_unit_config
 	/// @brief Whether the unit can build walls or bombs.
 	bool can_build;
 } t_unit_config;
+/// @brief Game configuration structure containing all game settings
 typedef struct s_config
 {
 	/// @brief The width & height of the map.
