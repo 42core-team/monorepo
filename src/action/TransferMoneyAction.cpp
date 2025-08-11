@@ -114,7 +114,7 @@ std::string TransferMoneyAction::execute(Core *core)
 		srcUnit->resetMoveCooldown();
 		if (srcUnit->getBalance() < amount_)
 			amount_ = srcUnit->getBalance();
-		if (srcUnit->getBalance() >= 0)
+		if (srcUnit->getBalance() <= 0)
 			return "invalid amount";
 		srcUnit->setBalance(srcUnit->getBalance() - amount_);
 	}
