@@ -88,6 +88,11 @@ export async function setupTimeManager() {
 	}
 
 	playButton.addEventListener('click', () => {
+		if (Math.floor(Math.random() * 100) === 0) {
+			window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+			return;
+		}
+
 		playing = !playing;
 		const playPauseIcon = document.getElementById('playPauseIcon') as HTMLImageElement;
 		if (playPauseIcon) playPauseIcon.src = playing ? '/assets/ui-svgs/pause.svg' : '/assets/ui-svgs/play.svg';
