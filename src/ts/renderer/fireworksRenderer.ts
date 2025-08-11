@@ -18,10 +18,9 @@ const fireworks = new Fireworks.default(container, {
 	brightness: { min: 50, max: 100 },
 	decay: { min: 0.015, max: 0.025 },
 });
-fireworks.start();
 let renderFireworks = false;
 let fireworkStrength = 1;
-let isActive = true;
+let isActive = false;
 
 // Helpers
 function isWindowMinimized(): boolean {
