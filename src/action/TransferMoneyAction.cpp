@@ -92,17 +92,17 @@ std::string TransferMoneyAction::execute(Core *core)
 	if (srcPos.distance(dstPos) > maxDist)
 		return "invalid transfer distance";
 
-	unsigned int amount = amount_;
-
 	// cant transfer someone else's money
 	if (srcObj->getType() == ObjectType::Core)
 	{
 		Core *srcCore = (Core *)srcObj;
 		if (srcCore->getTeamId() != core->getTeamId())
 			return "can't transfer money from another team core";
-		if (srcCore->getBalance() < amount)
-			amount = srcCore->getBalance();
-		srcCore->setBalance(srcCore->getBalance() - amount);
+		if (srcCore->getBalance() < amount_)
+			amount_ = srcCore->getBalance();
+		if (srcCore->getBalance() <= 0)
+			return "invalid amount";
+		srcCore->setBalance(srcCore->getBalance() - amount_);
 	}
 	if (srcObj->getType() == ObjectType::Unit)
 	{
@@ -112,20 +112,22 @@ std::string TransferMoneyAction::execute(Core *core)
 		if (srcUnit->getMoveCooldown() > 0)
 			return "unit is on cooldown";
 		srcUnit->resetMoveCooldown();
-		if (srcUnit->getBalance() < amount)
-			amount = srcUnit->getBalance();
-		srcUnit->setBalance(srcUnit->getBalance() - amount);
+		if (srcUnit->getBalance() < amount_)
+			amount_ = srcUnit->getBalance();
+		if (srcUnit->getBalance() >= 0)
+			return "invalid amount";
+		srcUnit->setBalance(srcUnit->getBalance() - amount_);
 	}
 
 	if (dstObj->getType() == ObjectType::Core)
 	{
 		Core *dstCore = (Core *)dstObj;
-		dstCore->setBalance(dstCore->getBalance() + amount);
+		dstCore->setBalance(dstCore->getBalance() + amount_);
 	}
 	if (dstObj->getType() == ObjectType::Unit)
 	{
 		Unit *dstUnit = (Unit *)dstObj;
-		dstUnit->setBalance(dstUnit->getBalance() + amount);
+		dstUnit->setBalance(dstUnit->getBalance() + amount_);
 	}
 
 	return "";
