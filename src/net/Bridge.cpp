@@ -172,7 +172,7 @@ void Bridge::writeLoop()
 				size_t remaining = msg.size();
 				while (remaining > 0)
 				{
-					ssize_t n = ::write(socket_fd_, data, remaining);
+					ssize_t n = ::send(socket_fd_, data, remaining, MSG_NOSIGNAL);
 					if (n < 0)
 					{
 						Logger::Log(LogLevel::WARNING, std::string("Write error: ") + std::string(strerror(errno)) + ". Disconnecting " + std::to_string(team_id_) + ".");
