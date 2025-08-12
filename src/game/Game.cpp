@@ -16,7 +16,7 @@ Game::Game(std::vector<unsigned int> team_ids)
 	}
 	Logger::Log("Generating world with seed \"" + std::to_string(seed) + "\".");
 	Config::game().worldGenerator->generateWorld(seed);
-	replayEncoder_.getCustomData()["worldGeneratorSeed"] = seed;
+	ReplayEncoder::instance().getCustomData()["worldGeneratorSeed"] = seed;
 
 	Logger::Log("Game created with " + std::to_string(team_ids.size()) + " teams.");
 }
@@ -69,7 +69,11 @@ void Game::run()
 							action.second = nullptr; // invalidate actions for this team
 						}
 					}
-					replayEncoder_.addTeamScore(bb->getTeamId(), bb->getTeamName(), Board::instance().getCoreCount());
+					if (bb->isDisconnected())
+						ReplayEncoder::instance().setDeathReason(bb->getTeamId(), death_reason_t::DISCONNECTED);
+					else
+						ReplayEncoder::instance().setDeathReason(bb->getTeamId(), death_reason_t::TIMEOUT_SENDING_DATA);
+					ReplayEncoder::instance().setPlace(bb->getTeamId(), Board::instance().getCoreCount());
 					it = bridges_.erase(it);
 				} else {
 					++it;
@@ -91,15 +95,14 @@ void Game::run()
 			std::string name = "Team" + std::to_string(tid);
 			for (const auto& b : bridges_)
 				if (b->getTeamId() == tid) { name = b->getTeamName(); break; }
-			replayEncoder_.addTeamScore(tid, name, 0);
+			ReplayEncoder::instance().setDeathReason(tid, death_reason_t::NONE_SURVIVED);
+			ReplayEncoder::instance().setPlace(tid, 0);
 			Logger::Log("Team " + std::to_string(tid) + " (" + name + ") won the game!");
 		}
 	}
 
 	Logger::Log("Game ended! Saving replay...");
-	json config = Config::encodeConfig();
-	replayEncoder_.includeConfig(config);
-	replayEncoder_.exportReplay();
+	ReplayEncoder::instance().exportReplay();
 }
 
 void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, std::chrono::steady_clock::time_point serverStartTime)
@@ -121,7 +124,7 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 		std::string err = action->execute(core);
 		if (!err.empty()) {
 			std::string fullErr = "Tick " + std::to_string(tick) +  ": Action Failure: " + Action::getActionName(action->getActionType()) + ": " + err + " (" + action->encodeJSON().dump() + ")";
-			Logger::LogWarn(fullErr);
+			// Logger::LogWarn(fullErr);
 			failures.emplace_back(core->getTeamId(), fullErr);
 			action = nullptr;
 		}
@@ -166,19 +169,22 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 
 	// 5. REMOVE CORES
 	// connection libs must receive one final state json with their core at 0 hp to realize they lost
+	std::vector<unsigned> removeTeamIds;
 	for (auto &obj : Board::instance())
 	{
 		if (obj.getType() == ObjectType::Core && obj.getHP() <= 0)
+			removeTeamIds.push_back(static_cast<Core&>(obj).getTeamId());
+	}
+	for (unsigned tid : removeTeamIds)
+	{
+		for (auto it = bridges_.begin(); it != bridges_.end(); ++it)
 		{
-			Core &core = (Core &)obj;
-			for (auto &bridge : bridges_)
+			if ((*it)->getTeamId() == tid)
 			{
-				if (bridge->getTeamId() == core.getTeamId())
-				{
-					replayEncoder_.addTeamScore(bridge->getTeamId(), bridge->getTeamName(), Board::instance().getCoreCount());
-					bridges_.erase(std::remove(bridges_.begin(), bridges_.end(), bridge), bridges_.end());
-					break;
-				}
+				ReplayEncoder::instance().setDeathReason(tid, death_reason_t::CORE_DESTROYED);
+				ReplayEncoder::instance().setPlace(tid, Board::instance().getCoreCount());
+				bridges_.erase(it);
+				break;
 			}
 		}
 	}
@@ -213,7 +219,7 @@ void Game::killWorstPlayerOnTimeout()
 	{
 		Logger::Log("Killing core of team " + std::to_string(weakest->getTeamId()) + " due to timeout (least core hp).");
 		weakest->setHP(0);
-		replayEncoder_.setGameEndReason(GER_CORE_HP);
+		ReplayEncoder::instance().setDeathReason(weakest->getTeamId(), death_reason_t::TIMEOUT_CORE_HP);
 		return ;
 	}
 
@@ -247,7 +253,7 @@ void Game::killWorstPlayerOnTimeout()
 	if (minUnitHpCore && !tie)
 	{
 		Logger::Log("Killing core of team " + std::to_string(minUnitHpCore->getTeamId()) + " due to timeout (least unit hp total).");
-		replayEncoder_.setGameEndReason(GER_UNIT_HP);
+		ReplayEncoder::instance().setDeathReason(minUnitHpCore->getTeamId(), death_reason_t::TIMEOUT_UNIT_HP);
 		minUnitHpCore->setHP(0);
 		return ;
 	}
@@ -274,7 +280,7 @@ void Game::killWorstPlayerOnTimeout()
 	{
 		unsigned int teamId = ((Core*)randomCore)->getTeamId();
 		Logger::Log("Killing core of team " + std::to_string(teamId) + " due to timeout (random pick).");
-		replayEncoder_.setGameEndReason(GER_RANDOM);
+		ReplayEncoder::instance().setDeathReason(teamId, death_reason_t::TIMEOUT_RANDOM);
 		randomCore->setHP(0);
 		return ;
 	}
@@ -289,7 +295,7 @@ void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &ac
 {
 	json state = stateEncoder_.generateObjectDiff();
 	
-	replayEncoder_.addTickState(state, tick, actions);
+	ReplayEncoder::instance().addTickState(state, tick, actions);
 	
 	state["tick"] = tick;
 

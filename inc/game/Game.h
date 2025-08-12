@@ -45,7 +45,6 @@ class Game
 
 		std::mt19937 rng_;
 
-		ReplayEncoder replayEncoder_;
 		StateEncoder stateEncoder_;
 };
 

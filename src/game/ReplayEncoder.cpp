@@ -1,7 +1,9 @@
 #include "ReplayEncoder.h"
 #include <cstdlib>
 
-#define REPLAY_VERSION std::string("1.0.1")
+#define REPLAY_VERSION std::string("1.1.1")
+
+ReplayEncoder& ReplayEncoder::instance() { static ReplayEncoder inst; return inst; }
 
 void ReplayEncoder::addTickState(json &state, unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions)
 {
@@ -19,14 +21,35 @@ void ReplayEncoder::addTickState(json &state, unsigned long long tick, std::vect
 	lastTickCount_ = tick;
 }
 
-void ReplayEncoder::addTeamScore(unsigned int teamId, const std::string &teamName, unsigned int place)
+void ReplayEncoder::registerExpectedTeam(unsigned int teamId)
 {
-	team_data_t teamData;
-	teamData.teamId = teamId;
-	teamData.teamName = teamName;
-	teamData.place = place;
+	if (!teamData_.count(teamId)) teamData_[teamId].teamId = teamId;
+}
+void ReplayEncoder::setTeamName(unsigned int teamId, const std::string& teamName)
+{
+	registerExpectedTeam(teamId);
+	teamData_[teamId].teamName = teamName;
+}
+void ReplayEncoder::markConnectedInitially(unsigned int teamId, bool connected)
+{
+	registerExpectedTeam(teamId);
+	teamData_[teamId].connectedInitially = connected;
+}
+void ReplayEncoder::setDeathReason(unsigned int teamId, death_reason_t reason)
+{
+	registerExpectedTeam(teamId);
+	if (static_cast<int>(teamData_[teamId].deathReason) < 4) // dont overwrite timeout death reasons
+		teamData_[teamId].deathReason = reason;
+}
+void ReplayEncoder::setPlace(unsigned int teamId, unsigned int place)
+{
+	registerExpectedTeam(teamId);
+	teamData_[teamId].place = place;
+}
 
-	teamData_.push_back(teamData);
+bool ReplayEncoder::wasConnectedInitially(unsigned int teamId) const {
+	auto it = teamData_.find(teamId);
+	return it != teamData_.end() && it->second.connectedInitially;
 }
 
 void ReplayEncoder::includeConfig(json &config)
@@ -60,18 +83,24 @@ void ReplayEncoder::verifyReplaySaveFolder()
 json ReplayEncoder::encodeMiscSection() const
 {
 	json miscSection;
-	miscSection["team_results"] = json::array();
-	for (const auto &team : teamData_)
-	{
-		json teamJson;
-		teamJson["id"] = team.teamId;
-		teamJson["name"] = team.teamName;
-		teamJson["place"] = team.place;
-		miscSection["team_results"].push_back(teamJson);
-	}
-	miscSection["game_end_reason"] = static_cast<int>(gameEndReason_);
-	miscSection["version"] = REPLAY_VERSION;
 
+	json players = json::array();
+	for (const auto& kv : teamData_)
+	{
+		const auto& p = kv.second;
+		json pj;
+		pj["id"] = p.teamId;
+		pj["name"] = p.teamName;
+		pj["place"] = p.place;
+		if (p.connectedInitially)
+			pj["death_reason"] = static_cast<int>(p.deathReason);
+		else
+			pj["death_reason"] = static_cast<int>(death_reason_t::DID_NOT_CONNECT);
+		players.push_back(pj);
+	}
+	miscSection["team_results"] = players;
+
+	miscSection["version"] = REPLAY_VERSION;
 	const char *gameId = std::getenv("GAME_ID");
 	miscSection["game_id"] = gameId ? std::string(gameId) : "";
 
@@ -98,17 +127,6 @@ void ReplayEncoder::exportReplay() const
 }
 void ReplayEncoder::saveReplay(const json &replayData) const
 {
-	// std::string filePath = replaySaveFolder_ + "/replay_" + std::to_string(std::chrono::system_clock::now().time_since_epoch().count()) + ".json";
-	// std::ofstream outFile(filePath);
-	// if (!outFile.is_open())
-	// {
-	// 	Logger::Log(LogLevel::ERROR, "Could not open replay file for writing: " + filePath);
-	// 	return;
-	// }
-
-	// outFile << replayData.dump();
-	// outFile.close();
-
 	for (const std::string &replaySaveFolder : Config::server().replayFolderPaths)
 	{
 		std::string latestPath = replaySaveFolder + "/replay_latest.json";

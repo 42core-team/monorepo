@@ -54,6 +54,8 @@ int main(int argc, char *argv[])
 	Config::setServerConfigFilePath(argv[1]);
 	Config::server();
 	Config::game(); // Would exit if config file is invalid & initializes config
+	json encodedConfig = Config::encodeConfig();
+	ReplayEncoder::instance().includeConfig(encodedConfig);
 
 	ReplayEncoder::verifyReplaySaveFolder();
 
@@ -74,6 +76,9 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	for (unsigned int teamId : expectedTeamIds)
+		ReplayEncoder::instance().registerExpectedTeam(teamId);
+
 	std::string teamIdsStr = "Expected team IDs: ";
 	for (unsigned int teamId : expectedTeamIds)
 		teamIdsStr += std::to_string(teamId) + " ";
@@ -90,10 +95,6 @@ int main(int argc, char *argv[])
 		int client_fd = server.acceptClient(client_addr);
 		if (client_fd < 0)
 		{
-			if (errno == EAGAIN || errno == EWOULDBLOCK) {
-				Logger::Log(LogLevel::ERROR, "Timed out waiting for client connections.");
-				return 1;
-			}
 			Logger::Log(LogLevel::WARNING, "accept failed: " + std::string(strerror(errno)));
 			continue;
 		}
@@ -118,6 +119,7 @@ int main(int argc, char *argv[])
 		std::string teamName = sanitizeTeamName(loginMessage["name"], std::string("Team") + std::to_string(teamId));
 		bridge->setTeamId(teamId);
 		bridge->setTeamName(teamName);
+		ReplayEncoder::instance().setTeamName(teamId, teamName);
 
 		if (std::find(expectedTeamIds.begin(), expectedTeamIds.end(), teamId) == expectedTeamIds.end())
 		{
@@ -132,19 +134,40 @@ int main(int argc, char *argv[])
 
 		bridges[teamId] = std::move(bridge);
 		Logger::Log("Accepted team " + std::to_string(teamId));
+		ReplayEncoder::instance().markConnectedInitially(teamId, true);
+	}
+	std::vector<unsigned int> connectedTeamIds;
+	for (const unsigned int teamId : expectedTeamIds)
+	{
+		if (bridges.find(teamId) != bridges.end())
+		{
+			if (bridges[teamId]->isDisconnected())
+			{
+				ReplayEncoder::instance().setDeathReason(teamId, death_reason_t::DISCONNECTED);
+				ReplayEncoder::instance().setPlace(teamId, expectedTeamIds.size());
+				expectedTeamIds.erase(std::remove(expectedTeamIds.begin(), expectedTeamIds.end(), teamId), expectedTeamIds.end());
+			}
+			else
+			{
+				connectedTeamIds.push_back(teamId);
+			}
+		}
+		else
+		{
+			ReplayEncoder::instance().setDeathReason(teamId, death_reason_t::DID_NOT_CONNECT);
+			ReplayEncoder::instance().setPlace(teamId, expectedTeamIds.size());
+			expectedTeamIds.erase(std::remove(expectedTeamIds.begin(), expectedTeamIds.end(), teamId), expectedTeamIds.end());
+		}
 	}
 
 	Logger::Log("All expected teams have connected. Preparing to start the game...");
 
-	Game game(expectedTeamIds);
+	Game game(connectedTeamIds);
 
 	for (auto& pair : bridges)
 		game.addBridge(std::move(pair.second));
 
-	std::thread gameThread([&game]()
-						   { game.run(); });
-
-	gameThread.join();
+	game.run();
 
 	return 0;
 }
