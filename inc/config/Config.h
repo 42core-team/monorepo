@@ -80,6 +80,7 @@ struct ServerConfig
 	unsigned int timeoutTicks;
 	unsigned int timeoutMs;
 	unsigned int clientWaitTimeoutMs;
+	unsigned int clientConnectTimeoutMs;
 	bool enableTerminalVisualizer;
 };
 

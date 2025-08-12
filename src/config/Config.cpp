@@ -40,6 +40,7 @@ static ServerConfig parseServerConfig()
 	config.timeoutTicks = j.value("timeoutTicks", 3000);
 	config.timeoutMs = j.value("timeoutMs", 3000);
 	config.clientWaitTimeoutMs = j.value("clientWaitTimeoutMs", 500);
+	config.clientConnectTimeoutMs = j.value("clientConnectTimeoutMs", 30000);
 	config.enableTerminalVisualizer = j.value("enableTerminalVisualizer", false);
 
 	return config;

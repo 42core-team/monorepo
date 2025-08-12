@@ -90,6 +90,10 @@ int main(int argc, char *argv[])
 		int client_fd = server.acceptClient(client_addr);
 		if (client_fd < 0)
 		{
+			if (errno == EAGAIN || errno == EWOULDBLOCK) {
+				Logger::Log(LogLevel::ERROR, "Timed out waiting for client connections.");
+				return 1;
+			}
 			Logger::Log(LogLevel::WARNING, "accept failed: " + std::string(strerror(errno)));
 			continue;
 		}

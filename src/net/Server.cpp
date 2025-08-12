@@ -1,9 +1,12 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <sys/select.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include "Logger.h"
 #include "Server.h"
+#include "Config.h"
 
 Server::Server(int port) : sock_fd(socket(AF_INET, SOCK_STREAM, 0)) {
   if (sock_fd < 0) {
@@ -59,6 +62,26 @@ int Server::getSock() const {
  * @return -1  On error.
  */
 int Server::acceptClient(std::string& name) const {
+  fd_set rfds;
+  FD_ZERO(&rfds);
+  FD_SET(sock_fd, &rfds);
+
+  timeval tv{};
+  unsigned int ms = Config::server().clientConnectTimeoutMs;
+  tv.tv_sec = ms / 1000;
+  tv.tv_usec = static_cast<suseconds_t>((ms % 1000) * 1000);
+
+  int sel = select(sock_fd + 1, &rfds, nullptr, nullptr, &tv);
+  if (sel < 0) {
+    Logger::Log(LogLevel::ERROR, "select() failed while waiting for client.");
+    return -1;
+  }
+  if (sel == 0) {
+    errno = EAGAIN;
+    Logger::Log(LogLevel::WARNING, "Timed out waiting for client connection.");
+    return -1;
+  }
+
   sockaddr_in client_addr;
   socklen_t client_len = sizeof(client_addr);
   int client_fd = accept(sock_fd, reinterpret_cast<sockaddr*>(&client_addr), &client_len);
@@ -68,8 +91,6 @@ int Server::acceptClient(std::string& name) const {
     return -1;
   }
 
-  // fill the out-parameter name with the client connection address
   name = std::string(inet_ntoa(client_addr.sin_addr));
-
   return client_fd;
 }
