@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 		if (client_fd < 0)
 		{
 			Logger::Log(LogLevel::WARNING, "accept failed: " + std::string(strerror(errno)));
-			continue;
+			break;
 		}
 
 		Logger::Log("Accepted connection from " + client_addr);
