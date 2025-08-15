@@ -136,27 +136,21 @@ int main(int argc, char *argv[])
 		Logger::Log("Accepted team " + std::to_string(teamId));
 		ReplayEncoder::instance().markConnectedInitially(teamId, true);
 	}
+	size_t placeCounter = expectedTeamIds.size() - 1;
 	std::vector<unsigned int> connectedTeamIds;
-	for (const unsigned int teamId : expectedTeamIds)
-	{
-		if (bridges.find(teamId) != bridges.end())
-		{
-			if (bridges[teamId]->isDisconnected())
-			{
-				ReplayEncoder::instance().setDeathReason(teamId, death_reason_t::DISCONNECTED);
-				ReplayEncoder::instance().setPlace(teamId, expectedTeamIds.size() - 1);
-				expectedTeamIds.erase(std::remove(expectedTeamIds.begin(), expectedTeamIds.end(), teamId), expectedTeamIds.end());
-			}
-			else
-			{
-				connectedTeamIds.push_back(teamId);
-			}
-		}
-		else
-		{
+	for (unsigned int teamId : expectedTeamIds) {
+		if (bridges.find(teamId) == bridges.end()) {
 			ReplayEncoder::instance().setDeathReason(teamId, death_reason_t::DID_NOT_CONNECT);
-			ReplayEncoder::instance().setPlace(teamId, expectedTeamIds.size() - 1);
-			expectedTeamIds.erase(std::remove(expectedTeamIds.begin(), expectedTeamIds.end(), teamId), expectedTeamIds.end());
+			ReplayEncoder::instance().setPlace(teamId, placeCounter--);
+		}
+	}
+	for (unsigned int teamId : expectedTeamIds) {
+		auto it = bridges.find(teamId);
+		if (it != bridges.end() && it->second->isDisconnected()) {
+			ReplayEncoder::instance().setDeathReason(teamId, death_reason_t::DISCONNECTED);
+			ReplayEncoder::instance().setPlace(teamId, placeCounter--);
+		} else if (it != bridges.end()) {
+			connectedTeamIds.push_back(teamId);
 		}
 	}
 
