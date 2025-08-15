@@ -61,9 +61,9 @@ public:
 private:
 	json encodeMiscSection() const;
 
-	json ticks_;
-	json config_;
-	json customData_;
+	json ticks_ = json::array();
+	json config_ = json::object();
+	json customData_ = json::object();
 
 	unsigned long long lastTickCount_;
 	std::unordered_map<unsigned int, team_data_t> teamData_;

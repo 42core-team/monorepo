@@ -182,7 +182,11 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 			if ((*it)->getTeamId() == tid)
 			{
 				ReplayEncoder::instance().setDeathReason(tid, death_reason_t::CORE_DESTROYED);
-				ReplayEncoder::instance().setPlace(tid, Board::instance().getCoreCount());
+				unsigned int place = Board::instance().getCoreCount();
+				ReplayEncoder::instance().setPlace(tid, place);
+				if (place == 0) {
+					ReplayEncoder::instance().setDeathReason(tid, death_reason_t::NONE_SURVIVED);
+				}
 				bridges_.erase(it);
 				break;
 			}
