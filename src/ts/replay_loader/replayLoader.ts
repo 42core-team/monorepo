@@ -4,14 +4,18 @@ import type { TickAction } from './action.js';
 import type { GameConfig } from './config.js';
 import type { TickObject } from './object.js';
 
-const expectedReplayVersion = '1.0.1';
+const expectedReplayVersion = '1.1.1';
 const winnerNameElement = document.getElementById('winnername') as HTMLSpanElement;
 const winReasonElement = document.getElementById('winreason') as HTMLSpanElement;
-const gameEndReasons: Record<number, string> = {
-	0: 'Core Destruction',
-	1: 'Game Timed Out - Decision via Core HP',
-	2: 'Game Timed Out - Decision via Total Unit HP',
-	3: 'Game Timed Out - Random Decision',
+const deathReasons: Record<number, string> = {
+	0: 'Survived',
+	1: 'Core destruction',
+	2: 'Unexpectedly Disconnected',
+	3: 'Did not connect to gameserver',
+	4: 'Timeout while sending data',
+	5: 'Game timed out - Decision via Core HP',
+	6: 'Game timed out - Decision via Unit HP',
+	7: 'Game timed out - Random Decision',
 };
 
 export interface ReplayTick {
@@ -21,8 +25,7 @@ export interface ReplayTick {
 
 export interface ReplayData {
 	misc: {
-		team_results: { id: number; name: string; place: number }[];
-		game_end_reason: number;
+		team_results: { id: number; name: string; place: number; death_reason: number }[];
 		version: string;
 		worldGeneratorSeed: number;
 	};
@@ -33,7 +36,6 @@ export interface ReplayData {
 const emptyReplayData: ReplayData = {
 	misc: {
 		team_results: [],
-		game_end_reason: 0,
 		version: '',
 		worldGeneratorSeed: 0,
 	},
@@ -43,8 +45,7 @@ const emptyReplayData: ReplayData = {
 
 type State = Record<number, TickObject>;
 type ReplayMisc = {
-	team_results: { id: number; name: string; place: number }[];
-	game_end_reason: number;
+	team_results: { id: number; name: string; place: number; death_reason: number }[];
 };
 
 export let totalReplayTicks = 0;
@@ -104,8 +105,20 @@ class ReplayLoader {
 		}
 		totalReplayTicks = this.replayData.full_tick_amount;
 
+		console.group('Win reason debug');
+		console.log('deathReasons map:');
+		Object.keys(deathReasons)
+			.sort((a, b) => Number(a) - Number(b))
+			.forEach((k) => {
+				console.log(`${k} -> ${deathReasons[Number(k)]}`);
+			});
+
 		winnerNameElement.innerHTML = this.replayData.misc.team_results.find((team) => team.place === 0)?.name || 'Unknown';
-		winReasonElement.innerHTML = gameEndReasons[this.replayData.misc.game_end_reason] || 'Unknown Reason';
+		for (const team of this.replayData.misc.team_results) {
+			if (team.place === 0) continue;
+			console.log(`Getting win reason for team: ${JSON.stringify(team)} - ${deathReasons[team.death_reason]}`);
+			winReasonElement.innerHTML += `Place: ${team.place}: ${team.name} (Death Reason: ${deathReasons[team.death_reason]})<br>`;
+		}
 
 		const fullState: State = {};
 		const tick0 = this.replayData.ticks['0'];
