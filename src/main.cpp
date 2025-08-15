@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
 			if (bridges[teamId]->isDisconnected())
 			{
 				ReplayEncoder::instance().setDeathReason(teamId, death_reason_t::DISCONNECTED);
-				ReplayEncoder::instance().setPlace(teamId, expectedTeamIds.size());
+				ReplayEncoder::instance().setPlace(teamId, expectedTeamIds.size() - 1);
 				expectedTeamIds.erase(std::remove(expectedTeamIds.begin(), expectedTeamIds.end(), teamId), expectedTeamIds.end());
 			}
 			else
@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
 		else
 		{
 			ReplayEncoder::instance().setDeathReason(teamId, death_reason_t::DID_NOT_CONNECT);
-			ReplayEncoder::instance().setPlace(teamId, expectedTeamIds.size());
+			ReplayEncoder::instance().setPlace(teamId, expectedTeamIds.size() - 1);
 			expectedTeamIds.erase(std::remove(expectedTeamIds.begin(), expectedTeamIds.end(), teamId), expectedTeamIds.end());
 		}
 	}
