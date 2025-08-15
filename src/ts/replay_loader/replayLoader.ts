@@ -109,7 +109,8 @@ class ReplayLoader {
 		winReasonElement.innerHTML = '';
 		for (const team of this.replayData.misc.team_results) {
 			if (team.place === 0) continue;
-			winReasonElement.innerHTML += `Place ${team.place + 1}: ${team.name} (Death Reason: ${deathReasons[team.death_reason]})<br>`;
+			const teamName = team.name || `Team ${team.id}`;
+			winReasonElement.innerHTML += `Place ${team.place + 1}: ${teamName} (Death Reason: ${deathReasons[team.death_reason]})<br>`;
 		}
 
 		const fullState: State = {};
