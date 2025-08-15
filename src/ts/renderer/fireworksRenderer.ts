@@ -6,7 +6,7 @@ const fireworks = new Fireworks.default(container, {
 	opacity: 0.6,
 	acceleration: 1.02,
 	friction: 0.98,
-	gravity: 0.8,
+	gravity: 0,
 	particles: 40,
 	traceLength: 2,
 	traceSpeed: 6,
@@ -14,12 +14,13 @@ const fireworks = new Fireworks.default(container, {
 	intensity: 60,
 	flickering: 30,
 	rocketsPoint: { min: 25, max: 75 },
-	delay: { min: 60, max: 90 }, // control spawn rate
+	delay: { min: 1000000000, max: 1000000000 },
 	brightness: { min: 50, max: 100 },
 	decay: { min: 0.015, max: 0.025 },
 });
 let renderFireworks = false;
 let fireworkStrength = 1;
+let fireworkDelay = 2000;
 let isActive = false;
 
 // Helpers
@@ -64,12 +65,32 @@ window.addEventListener('beforeunload', () => {
 		fireworks.launch(fireworkStrength);
 		if (fireworkStrength > 1) fireworkStrength--;
 	}
-	setTimeout(loop, isActive ? 500 : 1500);
+	setTimeout(loop, isActive ? fireworkDelay : 1500);
 })();
+
+type Mode = 'SWISS' | 'ELIMINATION' | 'QUEUE';
+function getFireworkStrengthFromUrlParameters(): number {
+	const p = new URLSearchParams(window.location.search);
+	const mode = (p.get('mode') || 'QUEUE').toUpperCase() as Mode;
+	const round = Number(p.get('round'));
+	const maxRounds = Number(p.get('maxRounds'));
+
+	if (mode == 'QUEUE' || !mode) return 1;
+	fireworkDelay = 750;
+	if (mode == 'SWISS') return 2;
+	fireworkDelay = 250;
+	if (mode == 'ELIMINATION' && round >= maxRounds - 1) return 30;
+	fireworkDelay = 500;
+	if (mode == 'ELIMINATION' && round >= maxRounds - 3) return 5;
+	fireworkDelay = 625;
+	if (mode == 'ELIMINATION') return 3;
+	fireworkDelay = 2000;
+	return 1;
+}
 
 export function setRenderFireworks(render: boolean): void {
 	if (renderFireworks == false && render == true) {
-		fireworkStrength = 10;
+		fireworkStrength = getFireworkStrengthFromUrlParameters();
 		fireworks.clear();
 	}
 	renderFireworks = render;
