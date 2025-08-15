@@ -96,7 +96,7 @@ class ReplayLoader {
 		}
 
 		this.replayData = JSON.parse(fileData) as ReplayData;
-		if (!this.replayData.ticks || !this.replayData.full_tick_amount) {
+		if (!this.replayData.ticks || typeof this.replayData.full_tick_amount !== 'number') {
 			throw new Error('Invalid replay data format: missing ticks or full_tick_amount');
 		}
 		if (this.replayData.misc.version !== expectedReplayVersion) {
@@ -105,19 +105,11 @@ class ReplayLoader {
 		}
 		totalReplayTicks = this.replayData.full_tick_amount;
 
-		console.group('Win reason debug');
-		console.log('deathReasons map:');
-		Object.keys(deathReasons)
-			.sort((a, b) => Number(a) - Number(b))
-			.forEach((k) => {
-				console.log(`${k} -> ${deathReasons[Number(k)]}`);
-			});
-
 		winnerNameElement.innerHTML = this.replayData.misc.team_results.find((team) => team.place === 0)?.name || 'Unknown';
+		winReasonElement.innerHTML = '';
 		for (const team of this.replayData.misc.team_results) {
 			if (team.place === 0) continue;
-			console.log(`Getting win reason for team: ${JSON.stringify(team)} - ${deathReasons[team.death_reason]}`);
-			winReasonElement.innerHTML += `Place: ${team.place}: ${team.name} (Death Reason: ${deathReasons[team.death_reason]})<br>`;
+			winReasonElement.innerHTML += `Place ${team.place}: ${team.name} (Death Reason: ${deathReasons[team.death_reason]})<br>`;
 		}
 
 		const fullState: State = {};
@@ -243,6 +235,7 @@ async function resetReplay(reason: string = 'reset'): Promise<void> {
 	const newReplayLoader = new ReplayLoader(currentCacheInterval);
 	await newReplayLoader.loadReplay(currentFilePath);
 	replayLoader = newReplayLoader;
+	tempStateCache = null;
 	resetTimeManager();
 	setupRenderer();
 	console.debug(`Replay reset (${reason}). override=${Boolean(replayDataOverride)} etag=${lastEtag}`);

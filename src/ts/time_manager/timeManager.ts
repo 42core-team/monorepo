@@ -204,17 +204,14 @@ export async function setupTimeManager() {
 
 export function getCurrentTickData(): tickData {
 	if (winnerDisplay) {
-		if (tick === getTotalReplayTicks() - 1) {
-			document.querySelectorAll<HTMLElement>('.win-display').forEach((elem) => {
-				elem.style.display = 'block';
-			});
-			setRenderFireworks(true);
-		} else {
-			document.querySelectorAll<HTMLElement>('.win-display').forEach((elem) => {
-				elem.style.display = 'none';
-			});
-			setRenderFireworks(false);
-		}
+		const total = getTotalReplayTicks();
+		const atEnd = total === 0 || tick === total - 1;
+
+		document.querySelectorAll<HTMLElement>('.win-display').forEach((elem) => {
+			elem.style.display = atEnd ? 'block' : 'none';
+		});
+
+		setRenderFireworks(atEnd);
 	}
 
 	const now = Date.now();

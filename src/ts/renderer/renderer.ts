@@ -289,13 +289,20 @@ export async function setupRenderer(): Promise<void> {
 
 	teamOneElement.textContent = '';
 	teamTwoElement.textContent = '';
-	for (const team of getGameMisc()?.team_results ?? []) {
-		for (const obj of getStateAt(0)?.objects ?? []) {
-			if (obj.type === 0 && obj.teamId === team.id) {
-				if (obj.x === 0) teamOneElement.textContent = `${team.name}(${team.id})`;
-				else if (obj.x === gameConfig.gridSize - 1) teamTwoElement.textContent = `${team.name}(${team.id})`;
+
+	if ((getStateAt(0)?.objects ?? []).some((o) => o.type === 0)) {
+		for (const team of getGameMisc()?.team_results ?? []) {
+			for (const obj of getStateAt(0)?.objects ?? []) {
+				if (obj.type === 0 && obj.teamId === team.id) {
+					if (obj.x === 0) teamOneElement.textContent = `${team.name}(${team.id})`;
+					else if (obj.x === gameConfig.gridSize - 1) teamTwoElement.textContent = `${team.name}(${team.id})`;
+				}
 			}
 		}
+	} else {
+		const misc = getGameMisc();
+		if (misc?.team_results?.[0]) teamOneElement.textContent = `${misc.team_results[0].name}(${misc.team_results[0].id})`;
+		if (misc?.team_results?.[1]) teamTwoElement.textContent = `${misc.team_results[1].name}(${misc.team_results[1].id})`;
 	}
 
 	svgCanvas.querySelectorAll('.persistent').forEach((el) => el.remove());
