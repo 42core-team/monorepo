@@ -1,3 +1,5 @@
+const svgCanvas = document.getElementById('svg-canvas') as HTMLElement;
+
 window.addEventListener('DOMContentLoaded', async () => {
 	let replayFilePath = '../misc/replay_latest.json';
 	const urlParams = new URLSearchParams(window.location.search);
@@ -13,4 +15,12 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 	const { setupRenderer } = await import('./renderer/renderer.js');
 	await setupRenderer();
+
+	function updateSvgSize() {
+		const svgHeight = window.innerHeight - svgCanvas.getBoundingClientRect().top;
+		document.documentElement.style.setProperty('--svg-canvas-scale', `${svgHeight - 24}px`);
+	}
+	window.addEventListener('resize', updateSvgSize);
+	window.addEventListener('load', updateSvgSize);
+	updateSvgSize();
 });
