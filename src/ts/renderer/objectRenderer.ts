@@ -1,6 +1,7 @@
 import { getBarMetrics, TickObject } from '../replay_loader/object.js';
 import { getActionsByExecutor, getNameOfUnitType, getStateAt } from '../replay_loader/replayLoader.js';
 import { getCurrentTickData } from '../time_manager/timeManager.js';
+import { EaseInOutTimingCurve } from './animationUtil.js';
 
 const svgNS = 'http://www.w3.org/2000/svg';
 const xlinkNS = 'http://www.w3.org/1999/xlink';
@@ -49,7 +50,7 @@ function getTeamIndex(teamId: number | undefined): AssetTeam {
 
 // object
 
-export function drawObject(svgCanvas: SVGSVGElement, obj: TickObject, xOffset: number = 0, yOffset: number = 0, scaleFactor: number = 1): void {
+function drawObject(svgCanvas: SVGSVGElement, obj: TickObject, xOffset: number = 0, yOffset: number = 0, scaleFactor: number = 1): void {
 	const metrics = getBarMetrics(obj);
 	metrics.forEach(({ key, percentage }, i) => {
 		const height = 1 / metrics.length;
@@ -156,18 +157,18 @@ export function calcAndDrawObject(currObj: TickObject, svgCanvas: SVGSVGElement)
 		nextObj = getStateAt(currentTickData.tick + 1)?.objects.find((o) => o.id === currObj.id);
 	} catch {}
 
-	const sineProgress = Math.sin((currentTickData.tickProgress * Math.PI) / 2);
+	const easeInOutProgress = new EaseInOutTimingCurve().getValue(currentTickData.tickProgress);
 
 	if (!prevObj || prevObj.state === 'dead') {
-		scale = sineProgress;
+		scale = easeInOutProgress;
 	}
 	if (!nextObj || nextObj.state === 'dead') {
-		scale = 1 - sineProgress;
+		scale = 1 - easeInOutProgress;
 	}
 	// check movement
 	if (nextObj) {
-		x = currObj.x + (nextObj.x - currObj.x) * sineProgress;
-		y = currObj.y + (nextObj.y - currObj.y) * sineProgress;
+		x = currObj.x + (nextObj.x - currObj.x) * easeInOutProgress;
+		y = currObj.y + (nextObj.y - currObj.y) * easeInOutProgress;
 	}
 
 	// check attacks / build / transfer money

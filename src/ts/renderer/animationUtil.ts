@@ -21,14 +21,14 @@ abstract class TimingCurve {
 	}
 }
 
-class LinearTimingCurve extends TimingCurve {
+export class LinearTimingCurve extends TimingCurve {
 	protected curve: timingCurvePoints = [
 		{ realTime: 0, animationProgress: 0 },
 		{ realTime: 1, animationProgress: 1 },
 	];
 }
 
-class EaseInOutTimingCurve extends TimingCurve {
+export class EaseInOutTimingCurve extends TimingCurve {
 	protected curve: timingCurvePoints = [
 		{ realTime: 0, animationProgress: 0 },
 		{ realTime: 0.25, animationProgress: 0.125 },
@@ -38,7 +38,7 @@ class EaseInOutTimingCurve extends TimingCurve {
 	];
 }
 
-class MidTickIncreaseTimingCurve extends TimingCurve {
+export class MidTickIncreaseTimingCurve extends TimingCurve {
 	protected curve: timingCurvePoints = [
 		{ realTime: 0.4, animationProgress: 0 },
 		{ realTime: 0.6, animationProgress: 1 },
