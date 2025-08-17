@@ -3,7 +3,6 @@ type timingCurvePoints = { realTime: number; animationProgress: number }[];
 abstract class TimingCurve {
 	protected abstract curve: timingCurvePoints;
 	public getValue(t: number): number {
-		if (t < 0 || t > 1) throw new RangeError(`t (${t}) must be between 0 and 1 inclusive`);
 		const pts = this.curve;
 		if (pts.length === 0) return t;
 		if (t <= pts[0].realTime) return pts[0].animationProgress;
@@ -36,6 +35,11 @@ export class EaseInOutTimingCurve extends TimingCurve {
 		{ realTime: 0.75, animationProgress: 0.875 },
 		{ realTime: 1, animationProgress: 1 },
 	];
+	public getValue(t: number): number {
+		if (t <= 0) return 0;
+		if (t >= 1) return 1;
+		return 0.5 - 0.5 * Math.cos(Math.PI * t);
+	}
 }
 
 export class MidTickIncreaseTimingCurve extends TimingCurve {

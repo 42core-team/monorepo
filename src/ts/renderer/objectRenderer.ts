@@ -1,6 +1,6 @@
 import { getBarMetrics, TickObject } from '../replay_loader/object.js';
 import { getActionsByExecutor, getNameOfUnitType, getStateAt } from '../replay_loader/replayLoader.js';
-import { getCurrentTickData } from '../time_manager/timeManager.js';
+import { getCurrentTickData, tickData } from '../time_manager/timeManager.js';
 import { EaseInOutTimingCurve } from './animationUtil.js';
 
 const svgNS = 'http://www.w3.org/2000/svg';
@@ -149,8 +149,7 @@ function drawObject(svgCanvas: SVGSVGElement, obj: TickObject, xOffset: number =
 	svgCanvas.appendChild(img);
 }
 
-export function calcAndDrawObject(currObj: TickObject, svgCanvas: SVGSVGElement): void {
-	const currentTickData = getCurrentTickData();
+export function calcAndDrawObject(currObj: TickObject, svgCanvas: SVGSVGElement, currentTickData: tickData): void {
 	const actionsByExec = getActionsByExecutor(currentTickData.tick + 1);
 
 	let scale = 1;
