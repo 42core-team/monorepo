@@ -15,6 +15,8 @@ public:
 
 	void tick(unsigned long long tickCount);
 
+	void tickMoveCooldown();
+
 	unsigned int getUnitType() const { return unit_type_; }
 	unsigned int getTeamId() const { return team_id_; }
 	unsigned int getBalance() const { return balance_; }

@@ -192,6 +192,13 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 			}
 		}
 	}
+
+	// 6. MOVECOOLDOWN DECREMENT FOR UNITS
+	// must happen AFTER state send cause clients also do it locally for replay efficiency, otherwise we get a server/client desync with two decrements in one tick when moveCooldown is reset
+	// this helped me get it: https://chatgpt.com/share/68a18ed4-e860-800d-9c93-1f7d03cdff94
+	for (auto &obj : Board::instance())
+		if (obj.getType() == ObjectType::Unit)
+			static_cast<Unit&>(obj).tickMoveCooldown();
 }
 
 void Game::killWorstPlayerOnTimeout()

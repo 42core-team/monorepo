@@ -9,6 +9,10 @@ Unit::Unit(unsigned int id, unsigned int teamId, unsigned int unit_type)
 void Unit::tick(unsigned long long tickCount)
 {
 	(void)tickCount;
+}
+
+void Unit::tickMoveCooldown()
+{
 	if (move_cooldown_ > 0)
 	{
 		move_cooldown_--;
