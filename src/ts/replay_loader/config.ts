@@ -4,6 +4,7 @@ export interface UnitConfig {
 	hp: number;
 	baseMoveCooldown: number;
 	maxMoveCooldown: number;
+	balancePerCooldownStep: number;
 	damageCore: number;
 	damageUnit: number;
 	damageResource: number;
