@@ -27,5 +27,5 @@ export interface GameConfig {
 	bombReach: number;
 	bombDamage: number;
 	units: UnitConfig[];
-	corePositions: { x: number; y: number }[]; // 💥 included in JSON
+	corePositions: { x: number; y: number }[];
 }
