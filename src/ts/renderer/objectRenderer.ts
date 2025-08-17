@@ -19,6 +19,15 @@ const svgAssets = {
 	5: 'core.svg',
 } as const;
 
+// type BarDrawingInstructions = {
+// 	opacity: number; // 0 -> 1
+// 	topBorder: number;
+// 	bottomBorder: number;
+// 	leftBorder: number;
+// 	rightBorder: number;
+// 	completion: number; // 0 -> 100 %
+// };
+
 // team mapping utils
 
 const teamIdMapping: Map<number, AssetTeam> = new Map(); // number / asset id

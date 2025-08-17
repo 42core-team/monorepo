@@ -89,7 +89,7 @@ export async function setupTimeManager() {
 
 	playButton.addEventListener('click', () => {
 		if (Math.floor(Math.random() * 100) === 0) {
-			window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+			window.location.href = 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&controls=0&loop=1&playlist=dQw4w9WgXcQ&rel=0&modestbranding=1&playsinline=1';
 			return;
 		}
 
