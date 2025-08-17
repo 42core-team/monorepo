@@ -1,7 +1,7 @@
-import { getBarMetrics, TickObject } from '../replay_loader/object.js';
+import { getBarMetrics, TickObject, MoneyObject } from '../replay_loader/object.js';
 import { getActionsByExecutor, getNameOfUnitType, getStateAt } from '../replay_loader/replayLoader.js';
-import { getCurrentTickData, tickData } from '../time_manager/timeManager.js';
-import { EaseInOutTimingCurve } from './animationUtil.js';
+import { tickData } from '../time_manager/timeManager.js';
+import { EaseInOutTimingCurve, MidTickIncreaseTimingCurve } from './animationUtil.js';
 
 const svgNS = 'http://www.w3.org/2000/svg';
 const xlinkNS = 'http://www.w3.org/1999/xlink';
@@ -59,8 +59,24 @@ function getTeamIndex(teamId: number | undefined): AssetTeam {
 
 // object
 
-function drawObject(svgCanvas: SVGSVGElement, obj: TickObject, xOffset: number = 0, yOffset: number = 0, scaleFactor: number = 1): void {
-	const metrics = getBarMetrics(obj);
+function drawObject(
+	svgCanvas: SVGSVGElement,
+	obj: TickObject,
+	xOffset: number = 0,
+	yOffset: number = 0,
+	scaleFactor: number = 1,
+	nextTickMetrics: boolean,
+	nextTickObj: TickObject | null | undefined
+): void {
+	let metrics: {
+		key: string;
+		percentage: number;
+	}[];
+	if (nextTickMetrics && nextTickObj) {
+		metrics = getBarMetrics(nextTickObj);
+	} else {
+		metrics = getBarMetrics(obj);
+	}
 	metrics.forEach(({ key, percentage }, i) => {
 		const height = 1 / metrics.length;
 		const yPosition = yOffset + i * height;
@@ -166,12 +182,13 @@ export function calcAndDrawObject(currObj: TickObject, svgCanvas: SVGSVGElement,
 	} catch {}
 
 	const easeInOutProgress = new EaseInOutTimingCurve().getValue(currentTickData.tickProgress);
+	const midTickIncreaseProgress = new MidTickIncreaseTimingCurve().getValue(currentTickData.tickProgress);
 
 	if (!prevObj || prevObj.state === 'dead') {
 		scale = easeInOutProgress;
 	}
 	if (!nextObj || nextObj.state === 'dead') {
-		scale = 1 - easeInOutProgress;
+		scale = 1 - midTickIncreaseProgress;
 	}
 	// check movement
 	if (nextObj) {
@@ -187,7 +204,7 @@ export function calcAndDrawObject(currObj: TickObject, svgCanvas: SVGSVGElement,
 				const deltaX = action.x - currObj.x;
 				const deltaY = action.y - currObj.y;
 
-				const halfActionTickProgress = currentTickData.tickProgress > 0.5 ? 1 - currentTickData.tickProgress : currentTickData.tickProgress;
+				const halfActionTickProgress = easeInOutProgress > 0.5 ? 1 - easeInOutProgress : easeInOutProgress;
 
 				let offsetX = deltaX * halfActionTickProgress;
 				let offsetY = deltaY * halfActionTickProgress;
@@ -201,5 +218,5 @@ export function calcAndDrawObject(currObj: TickObject, svgCanvas: SVGSVGElement,
 		}
 	}
 
-	drawObject(svgCanvas, currObj, x, y, scale);
+	drawObject(svgCanvas, currObj, x, y, scale, currentTickData.tickProgress > 0.5, nextObj);
 }
