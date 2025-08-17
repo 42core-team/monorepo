@@ -4,6 +4,7 @@ export interface UnitConfig {
 	hp: number;
 	baseMoveCooldown: number;
 	maxMoveCooldown: number;
+	balancePerCooldownStep: number;
 	damageCore: number;
 	damageUnit: number;
 	damageResource: number;
@@ -27,5 +28,5 @@ export interface GameConfig {
 	bombReach: number;
 	bombDamage: number;
 	units: UnitConfig[];
-	corePositions: { x: number; y: number }[]; // 💥 included in JSON
+	corePositions: { x: number; y: number }[];
 }

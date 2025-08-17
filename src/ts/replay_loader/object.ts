@@ -1,3 +1,4 @@
+import { getConfigFileParsingDiagnostics } from 'typescript';
 import { getGameConfig } from './replayLoader.js';
 
 export interface BaseObject {
@@ -132,20 +133,18 @@ export function getBarMetrics(obj: TickObject): { key: string; percentage: numbe
 	}
 
 	// Move Cooldown
-	if (obj.type === 1 && obj.moveCooldown > 0) {
+	if (obj.type === 1) {
 		const cfg = getGameConfig();
 		if (!cfg) return metrics;
-		const baseSpeed = cfg.units[obj.unit_type].baseMoveCooldown;
-		const minSpeed = cfg.units[obj.unit_type].maxMoveCooldown;
-		let resourcePart = obj.balance / (cfg.resourceIncome / 4);
-		if (resourcePart < 1) resourcePart = 1;
-		let defaultCd = Math.min(baseSpeed * resourcePart, minSpeed);
-
-		if (obj.moveCooldown > defaultCd) defaultCd = obj.moveCooldown;
-
+		const u = cfg.units[obj.unit_type];
+		const step = Math.max(1, u.balancePerCooldownStep);
+		let calc = u.baseMoveCooldown + Math.floor(obj.balance / step);
+		if (u.maxMoveCooldown > 0 && calc > u.maxMoveCooldown) calc = u.maxMoveCooldown;
+		calc = Math.max(1, calc);
+		let denom = Math.max(calc, obj.moveCooldown);
 		metrics.push({
 			key: 'moveCooldown',
-			percentage: (obj.moveCooldown / defaultCd) * 100,
+			percentage: (obj.moveCooldown / denom) * 100,
 		});
 	}
 

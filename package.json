@@ -2,7 +2,7 @@
 	"name": "core-debug-visualizer",
 	"scripts": {
 		"dev": "tsc --watch & npm run serve",
-		"serve": "tsc && http-server src/public -p 8080 -H \"Cache-Control: no-cache\" -o html/index.html",
+		"serve": "tsc && http-server src/public -p 8080 -H \"Cache-Control: no-cache\" -o index.html",
 		"build": "tsc"
 	},
 	"dependencies": {
