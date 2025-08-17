@@ -19,14 +19,63 @@ const svgAssets = {
 	5: 'core.svg',
 } as const;
 
-// type BarDrawingInstructions = {
-// 	opacity: number; // 0 -> 1
-// 	topBorder: number;
-// 	bottomBorder: number;
-// 	leftBorder: number;
-// 	rightBorder: number;
-// 	completion: number; // 0 -> 100 %
-// };
+// metric bar interpolator
+
+type BarDrawingInstructions = {
+	opacity: number;
+	topBorder: number;
+	bottomBorder: number;
+	leftBorder: number;
+	rightBorder: number;
+	completion: number;
+	key: string;
+};
+
+function computeSmoothBarInstructions(curr: TickObject, next: TickObject | null | undefined, xOffset: number, yOffset: number, progress: number): BarDrawingInstructions[] {
+	const ORDER = ['hp', 'balance', 'moveCooldown'] as const;
+	const toMap = (arr: { key: string; percentage: number }[]) => Object.fromEntries(arr.map(({ key, percentage }) => [key, percentage / 100]));
+	const currList = getBarMetrics(curr);
+	const nextList = next ? getBarMetrics(next) : currList;
+	const currMap = toMap(currList);
+	const nextMap = toMap(nextList);
+
+	const p = Math.max(0, Math.min(1, progress));
+	const out: BarDrawingInstructions[] = [];
+
+	const union = ORDER.filter((k) => k in currMap || k in nextMap);
+	const currCount = currList.length;
+	const nextCount = nextList.length;
+
+	const heights = union.map((k) => {
+		const hc = k in currMap ? (currCount > 0 ? 1 / currCount : 0) : 0;
+		const hn = k in nextMap ? (nextCount > 0 ? 1 / nextCount : 0) : 0;
+		return hc + (hn - hc) * p;
+	});
+
+	let acc = yOffset;
+	for (let i = 0; i < union.length; i++) {
+		const key = union[i];
+		const h = heights[i];
+		const top = acc;
+		const bottom = acc + h;
+		acc = bottom;
+
+		const currPerc = key in currMap ? currMap[key] : 0;
+		const nextPerc = key in nextMap ? nextMap[key] : 0;
+		const width = currPerc + (nextPerc - currPerc) * p;
+
+		out.push({
+			key,
+			opacity: 1,
+			topBorder: top,
+			bottomBorder: bottom,
+			leftBorder: xOffset,
+			rightBorder: xOffset + width,
+			completion: width * 100,
+		});
+	}
+	return out;
+}
 
 // team mapping utils
 
@@ -59,48 +108,28 @@ function getTeamIndex(teamId: number | undefined): AssetTeam {
 
 // object
 
-function drawObject(
-	svgCanvas: SVGSVGElement,
-	obj: TickObject,
-	xOffset: number = 0,
-	yOffset: number = 0,
-	scaleFactor: number = 1,
-	nextTickMetrics: boolean,
-	nextTickObj: TickObject | null | undefined
-): void {
-	let metrics: {
-		key: string;
-		percentage: number;
-	}[];
-	if (nextTickMetrics && nextTickObj) {
-		metrics = getBarMetrics(nextTickObj);
-	} else {
-		metrics = getBarMetrics(obj);
-	}
-	metrics.forEach(({ key, percentage }, i) => {
-		const height = 1 / metrics.length;
-		const yPosition = yOffset + i * height;
-
-		const color = key === 'hp' ? 'var(--hp-color)' : key === 'balance' ? 'var(--balance-color)' : 'var(--cooldown-color)';
+function drawObject(svgCanvas: SVGSVGElement, obj: TickObject, xOffset: number = 0, yOffset: number = 0, scaleFactor: number = 1, metricBars: BarDrawingInstructions[]): void {
+	for (const bar of metricBars) {
+		const color = bar.key === 'hp' ? 'var(--hp-color)' : bar.key === 'balance' ? 'var(--balance-color)' : 'var(--cooldown-color)';
 
 		const bg = document.createElementNS(svgNS, 'rect');
 		bg.setAttribute('x', xOffset.toString());
-		bg.setAttribute('y', yPosition.toString());
+		bg.setAttribute('y', bar.topBorder.toString());
 		bg.setAttribute('width', '1');
-		bg.setAttribute('height', height.toString());
+		bg.setAttribute('height', String(bar.bottomBorder - bar.topBorder));
 		bg.setAttribute('fill', color);
-		bg.setAttribute('fill-opacity', `${0.3 * scaleFactor}`);
+		bg.setAttribute('fill-opacity', String(0.3 * scaleFactor));
 		svgCanvas.appendChild(bg);
 
 		const fg = document.createElementNS(svgNS, 'rect');
-		fg.setAttribute('x', xOffset.toString());
-		fg.setAttribute('y', yPosition.toString());
-		fg.setAttribute('width', String(percentage / 100));
-		fg.setAttribute('height', height.toString());
-		fg.setAttribute('fill-opacity', `${0.7 * scaleFactor}`);
+		fg.setAttribute('x', bar.leftBorder.toString());
+		fg.setAttribute('y', bar.topBorder.toString());
+		fg.setAttribute('width', String(Math.max(0, bar.rightBorder - bar.leftBorder)));
+		fg.setAttribute('height', String(bar.bottomBorder - bar.topBorder));
 		fg.setAttribute('fill', color);
+		fg.setAttribute('fill-opacity', String(0.7 * scaleFactor));
 		svgCanvas.appendChild(fg);
-	});
+	}
 
 	// object icon
 
@@ -218,5 +247,7 @@ export function calcAndDrawObject(currObj: TickObject, svgCanvas: SVGSVGElement,
 		}
 	}
 
-	drawObject(svgCanvas, currObj, x, y, scale, currentTickData.tickProgress > 0.5, nextObj);
+	let metricBars: BarDrawingInstructions[] = computeSmoothBarInstructions(currObj, nextObj, x, y, new MidTickIncreaseTimingCurve().getValue(currentTickData.tickProgress));
+
+	drawObject(svgCanvas, currObj, x, y, scale, metricBars);
 }
