@@ -236,6 +236,29 @@ body {
 	transform-origin: top right;
 }
 
+#fullscreen-toggle-button.floating-control {
+	position: fixed;
+	right: 16px;
+	bottom: 16px;
+	z-index: 1000;
+	background: #fff;
+	border: 1px solid #d0d0d0;
+	border-radius: 10px;
+	padding: 10px 14px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+	cursor: pointer;
+	line-height: 1;
+}
+#fullscreen-toggle-button.floating-control:active,
+#fullscreen-toggle-button.floating-control.active {
+	transform: translateY(1px);
+}
+#fullscreen-toggle-button #fullscreen-icon {
+	width: 18px;
+	height: 18px;
+	display: block;
+}
+
 /* Winner Display */
 
 #win-display-box {

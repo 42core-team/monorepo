@@ -19,6 +19,8 @@ const speedUpButton = document.getElementById('speed-up-button') as HTMLButtonEl
 
 const winnerDisplay = document.getElementById('win-display-box') as HTMLDivElement;
 
+const fullscreenToggleButton = document.getElementById('fullscreen-toggle-button') as HTMLButtonElement;
+
 // consts
 
 const minSpeed = 0.5;
@@ -59,6 +61,44 @@ function setPlaying(isPlaying: boolean) {
 	if (playPauseIcon) {
 		playPauseIcon.src = playing ? '/assets/ui-svgs/pause.svg' : '/assets/ui-svgs/play.svg';
 	}
+}
+
+// Fullscreen handling
+
+function isFullscreen(): boolean {
+	const d = document as any;
+	return Boolean(document.fullscreenElement || d.webkitFullscreenElement);
+}
+async function enterFullscreen(): Promise<void> {
+	const el: any = document.documentElement as any;
+	const req = el.requestFullscreen || el.webkitRequestFullscreen;
+	if (req) {
+		try {
+			await req.call(el);
+		} catch {}
+	}
+}
+async function exitFullscreen(): Promise<void> {
+	const d: any = document as any;
+	const exit = document.exitFullscreen || d.webkitExitFullscreen;
+	if (exit) {
+		try {
+			await exit.call(document);
+		} catch {}
+	}
+}
+function updateFullscreenUI(): void {
+	const icon = document.getElementById('fullscreen-icon') as HTMLImageElement | null;
+	const active = isFullscreen();
+	if (icon) {
+		icon.src = active ? '/assets/ui-svgs/fullscreen-close.svg' : '/assets/ui-svgs/fullscreen-open.svg';
+		icon.alt = active ? 'Exit Fullscreen' : 'Enter Fullscreen';
+	}
+	if (fullscreenToggleButton) fullscreenToggleButton.setAttribute('aria-pressed', active ? 'true' : 'false');
+}
+function toggleFullscreen(): void {
+	if (isFullscreen()) exitFullscreen();
+	else enterFullscreen();
 }
 
 // External Functions
@@ -173,6 +213,7 @@ export async function setupTimeManager() {
 		ArrowLeft: { action: () => prevTickButton.click(), button: prevTickButton },
 		ArrowUp: { action: () => setSpeedLocal(speedApS + speedIncrement), button: speedUpButton },
 		ArrowDown: { action: () => setSpeedLocal(speedApS - speedIncrement), button: speedDownButton },
+		f: { action: () => toggleFullscreen(), button: fullscreenToggleButton },
 	};
 
 	window.addEventListener('keydown', (event) => {
@@ -200,6 +241,12 @@ export async function setupTimeManager() {
 		speedSlider.value = String(speedApS);
 		speedNumberInput.value = String(speedApS);
 	});
+
+	// setup fullscreen handling
+	fullscreenToggleButton?.addEventListener('click', () => toggleFullscreen());
+	document.addEventListener('fullscreenchange', updateFullscreenUI);
+	(document as any).addEventListener('webkitfullscreenchange', updateFullscreenUI);
+	updateFullscreenUI();
 }
 
 export function getCurrentTickData(): tickData {
