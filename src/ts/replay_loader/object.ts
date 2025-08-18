@@ -1,5 +1,4 @@
-import { getConfigFileParsingDiagnostics } from 'typescript';
-import { getGameConfig } from './replayLoader.js';
+import { getGameConfig } from './replayLoader';
 
 export interface BaseObject {
 	id: number;
@@ -141,7 +140,7 @@ export function getBarMetrics(obj: TickObject): { key: string; percentage: numbe
 		let calc = u.baseMoveCooldown + Math.floor(obj.balance / step);
 		if (u.maxMoveCooldown > 0 && calc > u.maxMoveCooldown) calc = u.maxMoveCooldown;
 		calc = Math.max(1, calc);
-		let denom = Math.max(calc, obj.moveCooldown);
+		const denom = Math.max(calc, obj.moveCooldown);
 		metrics.push({
 			key: 'moveCooldown',
 			percentage: (obj.moveCooldown / denom) * 100,

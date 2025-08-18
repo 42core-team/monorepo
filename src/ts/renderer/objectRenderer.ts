@@ -1,6 +1,6 @@
-import { getBarMetrics, TickObject, MoneyObject } from '../replay_loader/object.js';
-import { getActionsByExecutor, getNameOfUnitType, getStateAt } from '../replay_loader/replayLoader.js';
-import { tickData } from '../time_manager/timeManager.js';
+import { getBarMetrics, type TickObject } from '../replay_loader/object';
+import { getActionsByExecutor, getNameOfUnitType, getStateAt } from '../replay_loader/replayLoader';
+import type { tickData } from '../time_manager/timeManager';
 import { EaseInOutTimingCurve, MidTickIncreaseTimingCurve } from './animationUtil.js';
 
 const svgNS = 'http://www.w3.org/2000/svg';

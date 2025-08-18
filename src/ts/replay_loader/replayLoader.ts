@@ -1,8 +1,8 @@
-import { setupRenderer } from '../renderer/renderer.js';
-import { resetTimeManager } from '../time_manager/timeManager.js';
-import type { TickAction } from './action.js';
-import type { GameConfig } from './config.js';
-import type { TickObject } from './object.js';
+import { setupRenderer } from '../renderer/renderer';
+import { resetTimeManager } from '../time_manager/timeManager';
+import type { TickAction } from './action';
+import type { GameConfig } from './config';
+import type { TickObject } from './object';
 
 const expectedReplayVersion = '1.1.1';
 const winnerNameElement = document.getElementById('winnername') as HTMLSpanElement;

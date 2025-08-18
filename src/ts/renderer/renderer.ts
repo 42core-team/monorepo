@@ -1,8 +1,8 @@
-import type { GameConfig } from '../replay_loader/config.js';
-import { formatObjectData, type TickObject } from '../replay_loader/object.js';
-import { getGameConfig, getGameMisc, getStateAt } from '../replay_loader/replayLoader.js';
-import { getCurrentTickData, isDirty } from '../time_manager/timeManager.js';
-import { calcAndDrawObject, initializeTeamMapping } from './objectRenderer.js';
+import type { GameConfig } from '../replay_loader/config';
+import { formatObjectData, type TickObject } from '../replay_loader/object';
+import { getGameConfig, getGameMisc, getStateAt } from '../replay_loader/replayLoader';
+import { getCurrentTickData, isDirty } from '../time_manager/timeManager';
+import { calcAndDrawObject, initializeTeamMapping } from './objectRenderer';
 
 const svgNS = 'http://www.w3.org/2000/svg';
 

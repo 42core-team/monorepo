@@ -1,5 +1,5 @@
-import { getTotalReplayTicks } from '../replay_loader/replayLoader.js';
-import { setRenderFireworks } from '../renderer/fireworksRenderer.js';
+import { setRenderFireworks } from '../renderer/fireworksRenderer';
+import { getTotalReplayTicks } from '../replay_loader/replayLoader';
 
 const playButton = document.getElementById('play-pause-button') as HTMLButtonElement;
 
