@@ -104,7 +104,9 @@ export function startPlayback(): void {
 // Fullscreen handling
 
 function isFullscreen(): boolean {
-	return Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+	return Boolean(
+		document.fullscreenElement || document.webkitFullscreenElement,
+	);
 }
 async function enterFullscreen(): Promise<void> {
 	const el = document.documentElement;
@@ -112,7 +114,7 @@ async function enterFullscreen(): Promise<void> {
 	if (req) {
 		try {
 			await req.call(el);
-		} catch { }
+		} catch {}
 	}
 }
 async function exitFullscreen(): Promise<void> {
@@ -120,7 +122,7 @@ async function exitFullscreen(): Promise<void> {
 	if (exit) {
 		try {
 			await exit.call(document);
-		} catch { }
+		} catch {}
 	}
 }
 function updateFullscreenUI(): void {
@@ -322,10 +324,7 @@ export async function setupTimeManager() {
 	// setup fullscreen handling
 	fullscreenToggleButton?.addEventListener("click", () => toggleFullscreen());
 	document.addEventListener("fullscreenchange", updateFullscreenUI);
-	document.addEventListener(
-		"webkitfullscreenchange",
-		updateFullscreenUI,
-	);
+	document.addEventListener("webkitfullscreenchange", updateFullscreenUI);
 	updateFullscreenUI();
 }
 

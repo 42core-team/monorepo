@@ -1,6 +1,6 @@
 // TypeScript global window overrides for debug-visualizer
 
-export { };
+export {};
 
 declare global {
 	interface Window {

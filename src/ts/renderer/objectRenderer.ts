@@ -247,13 +247,13 @@ export function calcAndDrawObject(
 			prevObj = getStateAt(currentTickData.tick - 1)?.objects.find(
 				(o) => o.id === currObj.id,
 			);
-	} catch { }
+	} catch {}
 	let nextObj: TickObject | undefined;
 	try {
 		nextObj = getStateAt(currentTickData.tick + 1)?.objects.find(
 			(o) => o.id === currObj.id,
 		);
-	} catch { }
+	} catch {}
 
 	const easeInOutProgress = new EaseInOutTimingCurve().getValue(
 		currentTickData.tickProgress,
