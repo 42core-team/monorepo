@@ -7,15 +7,22 @@
 		"preview": "vite preview --open",
 		"format": "biome format --write --no-errors-on-unmatched",
 		"lint": "biome lint --write --no-errors-on-unmatched",
-		"fix": "npm run format && npm run lint",
-		"check": "biome check --write --no-errors-on-unmatched"
+		"check": "biome check --write --no-errors-on-unmatched",
+		"fix": "npm run format && npm run lint && npm run check",
+		"prepare": "husky"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.1.2",
-		"prettier": "^3.6.2",
+		"husky": "^9.1.7",
+		"lint-staged": "^16.1.5",
 		"vite": "^7.1.2"
 	},
 	"dependencies": {
 		"fireworks-js": "^2.10.8"
+	},
+	"lint-staged": {
+		"*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [
+			"npm run fix"
+		]
 	}
 }
