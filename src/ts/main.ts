@@ -1,31 +1,33 @@
-const svgCanvas = document.getElementById('svg-canvas') as HTMLElement;
+const svgCanvas = document.getElementById("svg-canvas") as HTMLElement;
 
-window.addEventListener('DOMContentLoaded', async () => {
+window.addEventListener("DOMContentLoaded", async () => {
 	// load url parameters
 
-	let replayFilePath = '/misc/replay_latest.json';
+	let replayFilePath = "/misc/replay_latest.json";
 	const urlParams = new URLSearchParams(window.location.search);
-	if (urlParams.has('replay')) {
-		replayFilePath = urlParams.get('replay') || replayFilePath;
+	if (urlParams.has("replay")) {
+		replayFilePath = urlParams.get("replay") || replayFilePath;
 	}
 
-	const speedParam = urlParams.get('speed');
+	const speedParam = urlParams.get("speed");
 	if (speedParam) {
 		const v = parseFloat(speedParam);
-		if (!Number.isNaN(v)) localStorage.setItem('tm.speed', String(v));
+		if (!Number.isNaN(v)) localStorage.setItem("tm.speed", String(v));
 	}
 
-	const autoplayRaw = urlParams.getAll('autoplay');
+	const autoplayRaw = urlParams.getAll("autoplay");
 	const autoplayList = autoplayRaw
-		.flatMap((s) => s.split(','))
+		.flatMap((s) => s.split(","))
 		.map((s) => s.trim())
 		.filter(Boolean);
 
 	// project imports
 
-	const { setupReplayLoader } = await import('./replay_loader/replayLoader.js');
-	const { setupTimeManager, startPlayback, isAtEnd } = await import('./time_manager/timeManager.js');
-	const { setupRenderer } = await import('./renderer/renderer.js');
+	const { setupReplayLoader } = await import("./replay_loader/replayLoader.js");
+	const { setupTimeManager, startPlayback, isAtEnd } = await import(
+		"./time_manager/timeManager.js"
+	);
+	const { setupRenderer } = await import("./renderer/renderer.js");
 
 	// autoplay enabled
 
@@ -61,10 +63,14 @@ window.addEventListener('DOMContentLoaded', async () => {
 	// svg layout height renderer
 
 	function updateSvgSize() {
-		const svgHeight = window.innerHeight - svgCanvas.getBoundingClientRect().top;
-		document.documentElement.style.setProperty('--svg-canvas-scale', `${svgHeight - 24}px`);
+		const svgHeight =
+			window.innerHeight - svgCanvas.getBoundingClientRect().top;
+		document.documentElement.style.setProperty(
+			"--svg-canvas-scale",
+			`${svgHeight - 24}px`,
+		);
 	}
-	window.addEventListener('resize', updateSvgSize);
-	window.addEventListener('load', updateSvgSize);
+	window.addEventListener("resize", updateSvgSize);
+	window.addEventListener("load", updateSvgSize);
 	updateSvgSize();
 });

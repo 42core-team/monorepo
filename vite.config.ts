@@ -1,10 +1,10 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from "vite";
 
 export default defineConfig({
-	server: { open: '/index.html' },
+	server: { open: "/index.html" },
 	build: {
-		outDir: 'dist',
-		assetsDir: 'assets',
+		outDir: "dist",
+		assetsDir: "assets",
 		sourcemap: true,
 	},
 });
