@@ -63,6 +63,16 @@ function setPlaying(isPlaying: boolean) {
 	}
 }
 
+export function isAtEnd(): boolean {
+	const total = getTotalReplayTicks();
+	return total === 0 || (tick === total - 1 && tickProgress >= 1);
+}
+
+export function startPlayback(): void {
+	setPlaying(true);
+	lastTimestamp = Date.now();
+}
+
 // Fullscreen handling
 
 function isFullscreen(): boolean {
