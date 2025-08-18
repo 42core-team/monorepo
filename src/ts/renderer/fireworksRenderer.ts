@@ -1,4 +1,8 @@
-let fireworks: any | null = null;
+import Fireworks from "fireworks-js";
+
+window.Fireworks = Fireworks;
+
+let fireworks: Fireworks | null = null;
 let renderFireworks = false;
 let fireworkStrength = 1;
 let fireworkDelay = 2000;
@@ -16,10 +20,9 @@ function shouldRun(): boolean {
 function ensureFireworks(): void {
 	if (fireworks) return;
 	const globalFW = window.Fireworks;
-	const Ctor = globalFW?.default ?? globalFW;
 	const container = document.querySelector(".fireworks") as HTMLElement | null;
-	if (!Ctor || !container) return;
-	fireworks = new Ctor(container, {
+	if (!globalFW || !container) return;
+	fireworks = new globalFW(container, {
 		autoresize: true,
 		opacity: 0.6,
 		acceleration: 1.02,
@@ -70,7 +73,7 @@ window.addEventListener("beforeunload", () => {
 (function loop() {
 	if (isActive) {
 		ensureFireworks();
-		fireworks?.launch?.(fireworkStrength);
+		(fireworks as Fireworks | null)?.launch?.(fireworkStrength);
 		if (fireworkStrength > 1) fireworkStrength--;
 	}
 	setTimeout(loop, isActive ? fireworkDelay : 1500);

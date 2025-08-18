@@ -4,8 +4,7 @@ export {};
 
 declare global {
 	interface Window {
-		// Add custom properties or methods used in the app here
-		// All standard properties (like location, addEventListener) are already included
+		Fireworks: typeof import("fireworks-js").default;
 	}
 	interface Document {
 		webkitFullscreenElement: Element | null;
