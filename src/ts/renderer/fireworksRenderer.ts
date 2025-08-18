@@ -15,7 +15,7 @@ function shouldRun(): boolean {
 
 function ensureFireworks(): void {
 	if (fireworks) return;
-	const globalFW = (window as any).Fireworks;
+	const globalFW = (window).Fireworks;
 	const Ctor = globalFW?.default ?? globalFW;
 	const container = document.querySelector(".fireworks") as HTMLElement | null;
 	if (!Ctor || !container) return;

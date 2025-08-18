@@ -241,19 +241,19 @@ export function calcAndDrawObject(
 	let x = currObj.x;
 	let y = currObj.y;
 
-	let prevObj = null;
+	let prevObj: TickObject | undefined;
 	try {
 		if (currentTickData.tick - 1 >= 0)
 			prevObj = getStateAt(currentTickData.tick - 1)?.objects.find(
 				(o) => o.id === currObj.id,
 			);
-	} catch {}
-	let nextObj = null;
+	} catch { }
+	let nextObj: TickObject | undefined;
 	try {
 		nextObj = getStateAt(currentTickData.tick + 1)?.objects.find(
 			(o) => o.id === currObj.id,
 		);
-	} catch {}
+	} catch { }
 
 	const easeInOutProgress = new EaseInOutTimingCurve().getValue(
 		currentTickData.tickProgress,
@@ -301,7 +301,7 @@ export function calcAndDrawObject(
 		}
 	}
 
-	let metricBars: BarDrawingInstructions[] = computeSmoothBarInstructions(
+	const metricBars: BarDrawingInstructions[] = computeSmoothBarInstructions(
 		currObj,
 		nextObj,
 		x,

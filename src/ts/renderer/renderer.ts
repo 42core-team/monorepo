@@ -113,9 +113,9 @@ export async function setupRenderer(): Promise<void> {
 		throw new Error("Game configuration not found. Cannot set up renderer.");
 	}
 
-	if (!(svgCanvas as any).dataset.renderLoopStarted) {
+	if (!svgCanvas.dataset.renderLoopStarted) {
 		scheduleNextFrame();
-		(svgCanvas as any).dataset.renderLoopStarted = "1";
+		svgCanvas.dataset.renderLoopStarted = "1";
 	}
 
 	teamOneElement.textContent = "";
@@ -165,7 +165,7 @@ export async function setupRenderer(): Promise<void> {
 
 	initializeTeamMapping();
 
-	if (!(svgCanvas as any).dataset.listenersBound) {
+	if (!svgCanvas.dataset.listenersBound) {
 		svgCanvas.addEventListener("mousemove", (e) => {
 			const pt = svgCanvas.createSVGPoint();
 			pt.x = e.clientX;
@@ -196,7 +196,7 @@ export async function setupRenderer(): Promise<void> {
 		window.addEventListener("blur", () => {
 			tooltipElement.style.display = "none";
 		});
-		(svgCanvas as any).dataset.listenersBound = "1";
+		svgCanvas.dataset.listenersBound = "1";
 	}
 
 	isInitialRender = true;
