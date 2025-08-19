@@ -8,7 +8,6 @@
 		"format": "biome format --write --no-errors-on-unmatched",
 		"lint": "biome lint --write --no-errors-on-unmatched",
 		"check": "biome check --write --no-errors-on-unmatched",
-		"fix": "npm run format && npm run lint && npm run check",
 		"prepare": "husky"
 	},
 	"devDependencies": {
@@ -22,7 +21,7 @@
 	},
 	"lint-staged": {
 		"*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [
-			"npm run fix"
+			"biome check --write --no-errors-on-unmatched"
 		]
 	}
 }
