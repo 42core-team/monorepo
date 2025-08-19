@@ -28,10 +28,10 @@
 	--svg-icon-fill: #000000;
 }
 :root[data-theme="dark"] {
-	--panel-bg: #1f1f23;
-	--panel-outline: #3a3a3f;
-	--panel-track: #4a4a50;
-	--panel-thumb: var(--core-purple);
+	--panel-bg: #4d4d73;
+	--panel-outline: #9f9fe3;
+	--panel-track: #6f6fd6;
+	--panel-thumb: color-mix(in srgb, var(--core-purple) 30%, white);
 
 	--text: #e8e8ea;
 
@@ -136,10 +136,6 @@ svg path {
 	flex-wrap: nowrap;
 }
 
-.control-row.primary button {
-	background-color: #555;
-}
-
 .control-panel button {
 	background: none;
 	border: none;
@@ -148,9 +144,21 @@ svg path {
 	border-radius: 4px;
 }
 
-.control-panel button:active,
-.control-panel button.active {
-	background-color: color-mix(in srgb, var(--core-purple) 40%, white);
+:root[data-theme="light"] .control-panel button.active,
+:root[data-theme="light"] .control-panel button:active {
+	background-color: color-mix(in srgb, var(--core-purple) 30%, white);
+}
+:root[data-theme="dark"] .control-panel button.active,
+:root[data-theme="dark"] .control-panel button:active {
+	background-color: color-mix(in srgb, var(--core-purple) 80%, black);
+}
+:root[data-theme="light"] .icon-button.active,
+:root[data-theme="light"] .icon-button:active {
+	background-color: color-mix(in srgb, var(--core-purple) 30%, white);
+}
+:root[data-theme="dark"] .icon-button.active,
+:root[data-theme="dark"] .icon-button:active {
+	background-color: color-mix(in srgb, var(--core-purple) 80%, black);
 }
 
 .control-panel button img {
