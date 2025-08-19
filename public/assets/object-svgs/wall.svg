@@ -15,9 +15,6 @@
      id="defs1" />
   <sodipodi:namedview
      id="namedview1"
-     pagecolor="#ffffff"
-     bordercolor="#000000"
-     borderopacity="0.25"
      inkscape:showpageshadow="2"
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
@@ -34,6 +31,5 @@
      inkscape:current-layer="svg1" />
   <path
      id="rect2"
-     style="fill:#000000;fill-opacity:1"
      d="M 30 0 L 30 75 L 224 75 L 224 0 L 30 0 z M 254 0 L 254 75 L 448 75 L 448 0 L 254 0 z M 0 105 L 0 225 L 150 225 L 150 105 L 0 105 z M 180 105 L 180 225 L 374 225 L 374 105 L 180 105 z M 404 105 L 404 225 L 448 225 L 448 105 L 404 105 z M 0 255 L 0 373 L 76 373 L 76 255 L 0 255 z M 106 255 L 106 373 L 300 373 L 300 255 L 106 255 z M 330 255 L 330 373 L 448 373 L 448 255 L 330 255 z M 30 403 L 30 448 L 224 448 L 224 403 L 30 403 z M 254 403 L 254 448 L 448 448 L 448 403 L 254 403 z " />
 </svg>
