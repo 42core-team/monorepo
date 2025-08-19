@@ -67,7 +67,7 @@ export function formatObjectData(obj: TickObject): string {
 	});
 	lines.push({ line: `#️⃣ ID: ${obj.id}`, priority: 5, color: "black" });
 	lines.push({
-		line: `📍 Position: [${obj.x}, ${obj.y}]`,
+		line: `📍 Position: [x: ${obj.x}, y: ${obj.y}]`,
 		priority: 6,
 		color: "black",
 	});

@@ -104,7 +104,7 @@ function refreshTooltipFromSVGPoint(
 	if (obj) {
 		tooltipElement.innerHTML = formatObjectData(obj);
 	} else {
-		tooltipElement.innerHTML = `📍 Position: [${tx}, ${ty}]`;
+		tooltipElement.innerHTML = `📍 Position: [x: ${tx}, y: ${ty}]`;
 	}
 }
 export async function setupRenderer(): Promise<void> {
