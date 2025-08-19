@@ -4,6 +4,9 @@
 		format("truetype");
 }
 
+:root {
+	--svg-canvas-scale: 100%;
+}
 :root[data-theme="light"] {
 	--hp-color: #c70202ff;
 	--balance-color: #008600ff;
@@ -19,6 +22,8 @@
 	--text: #333333;
 
 	--app-bg: color-mix(in srgb, var(--core-purple) 20%, white);
+
+	--svg-icon-fill: #000000;
 }
 :root[data-theme="dark"] {
 	--panel-bg: #1f1f23;
@@ -29,6 +34,8 @@
 	--text: #e8e8ea;
 
 	--app-bg: #0f0f12;
+
+	--svg-icon-fill: #ffffff;
 }
 
 html,
@@ -53,6 +60,10 @@ body {
 	border-radius: 0 10px 10px 10px;
 	box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.3);
 	pointer-events: none;
+}
+
+svg path {
+	fill: var(--svg-icon-fill);
 }
 
 /* Structure */
@@ -89,8 +100,8 @@ body {
 }
 
 #svg-canvas {
-	width: 100%;
-	height: 100%;
+	width: var(--svg-canvas-scale);
+	height: var(--svg-canvas-scale);
 	aspect-ratio: 1 / 1;
 	outline: 2px solid #ccc;
 	background-color: #f9f9f9;

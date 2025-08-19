@@ -25,6 +25,9 @@ function updateThemeUI(mode: ThemeMode): void {
 		themeIcon.alt = isDark ? "Switch to Light Mode" : "Switch to Dark Mode";
 	}
 }
+export function loadSavedTheme(): void {
+	applyTheme(getSavedTheme());
+}
 export function toggleTheme(): void {
 	const next = getSavedTheme() === "dark" ? "light" : "dark";
 	applyTheme(next);

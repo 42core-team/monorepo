@@ -1,3 +1,5 @@
+import { loadSavedTheme } from "./input_manager/themeManager.js";
+
 const svgCanvas = document.getElementById("svg-canvas") as HTMLElement;
 
 window.addEventListener("DOMContentLoaded", async () => {
@@ -73,4 +75,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 	window.addEventListener("resize", updateSvgSize);
 	window.addEventListener("load", updateSvgSize);
 	updateSvgSize();
+
+	// theme
+	loadSavedTheme();
 });
