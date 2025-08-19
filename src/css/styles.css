@@ -37,7 +37,8 @@ body {
     overflow: hidden;
     overscroll-behavior: none;
     font-family: "JetBrains Mono", monospace;
-    background-color: color-mix(in srgb, var(--core-purple) 20%, white);
+    color: var(--text);
+    background-color: var(--app-bg);
 }
 
 /* SVG Output Canvas */
@@ -75,7 +76,7 @@ body {
 .teamName {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #333;
+    color: var(--text);
     text-align: center;
     background-color: #f0f0f0;
     padding: 0.5rem 1rem;
@@ -96,32 +97,48 @@ body {
 }
 
 /* Time Controls */
-#time-controls {
+.control-panel {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: 1rem;
     padding: 0.5rem 1rem;
-    background-color: #f0f0f0;
+    background-color: var(--panel-bg);
     border-radius: 0 0 20px 20px;
-    z-index: 5000;
+    outline: 2px solid var(--panel-outline);
     width: max-content;
     margin: 0 auto;
-    position: relative;
-    outline: #ccc solid 2px;
+    z-index: 5000;
 }
 
-.controls-bar,
-.main-buttons {
+.control-row {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin: 0 20px 0 20px;
+    margin: 0 20px;
+    flex-wrap: nowrap;
 }
 
-.main-buttons button {
-    padding: 0.75rem;
+.control-row.primary button {
     background-color: #555;
+}
+
+.control-panel button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+.control-panel button:active,
+.control-panel button.active {
+    background-color: color-mix(in srgb, var(--accent) 40%, white);
+}
+
+.control-panel button img {
+    width: 1.5rem;
+    height: auto;
 }
 
 .slider-group {
@@ -129,9 +146,10 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 2px;
-    width: 6rem;
+    width: 7rem;
     box-sizing: border-box;
 }
+
 .slider-group label {
     width: 100%;
     font-size: 0.9rem;
@@ -144,76 +162,82 @@ body {
     text-overflow: ellipsis;
 }
 
-#time-controls button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0.5rem;
+.control-panel input[type="number"] {
+    width: 3.25rem;
+    color: var(--text);
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-outline);
     border-radius: 4px;
-}
-#time-controls button:active,
-#time-controls button.active {
-    background-color: color-mix(in srgb, var(--core-purple) 40%, white);
+    padding: 0.25rem 0.35rem;
 }
 
-#time-controls button img {
-    width: 1.5rem;
-    height: auto;
-}
-
-#time-controls input[type="range"] {
+.control-panel input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
-    width: 6rem;
+    width: 7rem;
     height: 0.5rem;
-    background: #a4a4a4;
+    background: var(--panel-track);
     border-radius: 0.25rem;
 }
 
-#time-controls input[type="range"]::-webkit-slider-runnable-track {
+.control-panel input[type="range"]::-webkit-slider-runnable-track {
     height: 100%;
-    background: #a4a4a4;
+    background: var(--panel-track);
     border-radius: 0.25rem;
 }
 
-#time-controls input[type="range"]::-webkit-slider-thumb {
+.control-panel input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 1rem;
     height: 1rem;
     margin-top: -0.25rem;
-    background: var(--core-purple);
+    background: var(--panel-thumb);
     border-radius: 50%;
     cursor: pointer;
 }
 
-#time-controls input[type="range"] {
-    -moz-appearance: none;
-    appearance: none;
-}
-
-#time-controls input[type="range"]::-moz-range-track {
+.control-panel input[type="range"]::-moz-range-track {
     height: 0.5rem;
-    background: #ddd;
+    background: var(--panel-track);
     border-radius: 0.25rem;
 }
 
-#time-controls input[type="range"]::-moz-range-progress {
-    background: var(--core-purple);
+.control-panel input[type="range"]::-moz-range-progress {
+    background: var(--panel-thumb);
     height: 0.5rem;
     border-radius: 0.25rem;
 }
 
-#time-controls input[type="range"]::-moz-range-thumb {
+.control-panel input[type="range"]::-moz-range-thumb {
     width: 1rem;
     height: 1rem;
-    background: var(--core-purple);
+    background: var(--panel-thumb);
     border: none;
     border-radius: 50%;
     cursor: pointer;
 }
 
-#time-controls input[type="number"] {
-    width: 3rem;
+.top-bar {
+    display: grid;
+    grid-template-columns: auto max-content auto;
+    align-items: start;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0;
+}
+
+.icon-button {
+    padding: 0.5rem 0.6rem;
+    background-color: var(--panel-bg);
+    outline: 2px solid var(--panel-outline);
+    border: none;
+    border-radius: 0 0 12px 12px;
+    cursor: pointer;
+}
+.icon-button > img {
+    width: 1.5rem;
+    height: 1.5rem;
+    display: block;
 }
 
 /* corner buttons */

@@ -31,8 +31,8 @@
                 </button>
 
                 <!-- Time controls box -->
-                <div id="time-controls" class="control-panel primary">
-                    <div class="controls-bar">
+                <div id="time-controls" class="control-panel">
+                    <div class="control-row">
                         <button id="prev-tick-button">
                             <img
                                 src="/assets/ui-svgs/tick_previous.svg"
@@ -63,7 +63,8 @@
                             />
                         </button>
                     </div>
-                    <div class="main-buttons">
+
+                    <div class="control-row primary">
                         <button id="skip-start-button">
                             <img
                                 src="/assets/ui-svgs/skip_start.svg"
@@ -84,7 +85,8 @@
                             />
                         </button>
                     </div>
-                    <div class="controls-bar">
+
+                    <div class="control-row">
                         <button id="speed-down-button">
                             <img
                                 src="/assets/ui-svgs/speed_down.svg"
@@ -129,7 +131,7 @@
                 >
                     <img
                         id="theme-icon"
-                        src="/assets/ui-svgs/theme.svg"
+                        src="/assets/ui-svgs/dark-mode-moon.svg"
                         alt="Toggle Theme"
                     />
                 </button>
@@ -160,20 +162,6 @@
             <a href="https://coregame.de/" target="_blank">
                 <button id="corner-top-right" class="corner-button"></button>
             </a>
-
-            <button
-                id="fullscreen-toggle-button"
-                class="floating-control"
-                title="Toggle Fullscreen"
-                aria-label="Toggle Fullscreen"
-                aria-pressed="false"
-            >
-                <img
-                    id="fullscreen-icon"
-                    src="/assets/ui-svgs/fullscreen-open.svg"
-                    alt="Enter Fullscreen"
-                />
-            </button>
         </div>
     </body>
 </html>
