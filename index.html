@@ -15,8 +15,23 @@
 
         <div class="container">
             <div class="top-bar">
+                <!-- Fullscreen Toggle Button -->
+                <button
+                    id="fullscreen-toggle-button"
+                    class="icon-button icon-left"
+                    title="Toggle Fullscreen"
+                    aria-label="Toggle Fullscreen"
+                    aria-pressed="false"
+                >
+                    <img
+                        id="fullscreen-icon"
+                        src="/assets/ui-svgs/fullscreen-open.svg"
+                        alt="Enter Fullscreen"
+                    />
+                </button>
+
                 <!-- Time controls box -->
-                <div id="time-controls" class="time-controls">
+                <div id="time-controls" class="control-panel primary">
                     <div class="controls-bar">
                         <button id="prev-tick-button">
                             <img
@@ -103,6 +118,21 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- Dark Mode Toggle Button -->
+                <button
+                    id="theme-toggle-button"
+                    class="icon-button icon-right"
+                    title="Toggle Theme"
+                    aria-label="Toggle Theme"
+                    aria-pressed="false"
+                >
+                    <img
+                        id="theme-icon"
+                        src="/assets/ui-svgs/theme.svg"
+                        alt="Toggle Theme"
+                    />
+                </button>
             </div>
 
             <!-- SVG Output Canvas -->

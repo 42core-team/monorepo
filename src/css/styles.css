@@ -1,274 +1,291 @@
 @font-face {
-	font-family: "JetBrains Mono";
-	src: url("/assets/fonts/JetBrainsMonoNerdFontMono-Regular.ttf")
-		format("truetype");
+    font-family: "JetBrains Mono";
+    src: url("/assets/fonts/JetBrainsMonoNerdFontMono-Regular.ttf")
+        format("truetype");
 }
 
 :root {
-	--hp-color: #c70202ff;
-	--balance-color: #008600ff;
-	--cooldown-color: #0066ffff;
-	--svg-canvas-scale: 100%;
-	--core-purple: #6a0dad;
+    --hp-color: #c70202ff;
+    --balance-color: #008600ff;
+    --cooldown-color: #0066ffff;
+    --svg-canvas-scale: 100%;
+    --core-purple: #6a0dad;
+}
+:root {
+    --accent: #6a0dad;
+    --panel-bg: #f0f0f0;
+    --panel-outline: #cccccc;
+    --panel-track: #a4a4a4;
+    --panel-thumb: var(--accent);
+    --text: #333333;
+    --app-bg: color-mix(in srgb, var(--accent) 20%, white);
+}
+body.theme-dark {
+    --panel-bg: #1f1f23;
+    --panel-outline: #3a3a3f;
+    --panel-track: #4a4a50;
+    --panel-thumb: var(--accent);
+    --text: #e8e8ea;
+    --app-bg: #0f0f12;
 }
 
 html,
 body {
-	margin: 0;
-	padding: 0;
-	height: 100%;
-	overflow: hidden;
-	overscroll-behavior: none;
-	font-family: "JetBrains Mono", monospace;
-	background-color: color-mix(in srgb, var(--core-purple) 20%, white);
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+    font-family: "JetBrains Mono", monospace;
+    background-color: color-mix(in srgb, var(--core-purple) 20%, white);
 }
 
 /* SVG Output Canvas */
 #tooltip {
-	position: fixed;
-	display: none;
-	padding: 10px;
-	background: white;
-	border: 1px solid #333;
-	border-radius: 0 10px 10px 10px;
-	box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.3);
-	pointer-events: none;
+    position: fixed;
+    display: none;
+    padding: 10px;
+    background: white;
+    border: 1px solid #333;
+    border-radius: 0 10px 10px 10px;
+    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
 }
 
 /* Structure */
 .container {
-	display: grid;
-	grid-template-rows: auto 1fr auto;
-	height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100vh;
 }
 
 .game-area {
-	display: grid;
-	grid-template-columns: 1fr max-content 1fr;
-	grid-template-rows: 1fr max-content 1fr;
-	place-items: center;
+    display: grid;
+    grid-template-columns: 1fr max-content 1fr;
+    grid-template-rows: 1fr max-content 1fr;
+    place-items: center;
 }
 
 #team-one-name {
-	place-self: start end;
+    place-self: start end;
 }
 #team-two-name {
-	place-self: end start;
+    place-self: end start;
 }
 .teamName {
-	font-size: 1.5rem;
-	font-weight: bold;
-	color: #333;
-	text-align: center;
-	background-color: #f0f0f0;
-	padding: 0.5rem 1rem;
-	margin: 10px;
-	border-radius: 10px;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	outline: 2px solid #ccc;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    background-color: #f0f0f0;
+    padding: 0.5rem 1rem;
+    margin: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    outline: 2px solid #ccc;
 }
 
 #svg-canvas {
-	width: var(--svg-canvas-scale);
-	height: var(--svg-canvas-scale);
-	aspect-ratio: 1 / 1;
-	outline: 2px solid #ccc;
-	background-color: #f9f9f9;
-	border-radius: 10px;
-	margin: 10px 0 10px 0;
+    width: var(--svg-canvas-scale);
+    height: var(--svg-canvas-scale);
+    aspect-ratio: 1 / 1;
+    outline: 2px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    margin: 10px 0 10px 0;
 }
 
 /* Time Controls */
 #time-controls {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 1rem;
-	padding: 0.5rem 1rem;
-	background-color: #f0f0f0;
-	border-radius: 0 0 20px 20px;
-	z-index: 5000;
-	width: max-content;
-	margin: 0 auto;
-	position: relative;
-	outline: #ccc solid 2px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #f0f0f0;
+    border-radius: 0 0 20px 20px;
+    z-index: 5000;
+    width: max-content;
+    margin: 0 auto;
+    position: relative;
+    outline: #ccc solid 2px;
 }
 
 .controls-bar,
 .main-buttons {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	margin: 0 20px 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 20px 0 20px;
 }
 
 .main-buttons button {
-	padding: 0.75rem;
-	background-color: #555;
+    padding: 0.75rem;
+    background-color: #555;
 }
 
 .slider-group {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 2px;
-	width: 6rem;
-	box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    width: 6rem;
+    box-sizing: border-box;
 }
 .slider-group label {
-	width: 100%;
-	font-size: 0.9rem;
-	font-weight: 600;
-	text-align: center;
-	line-height: 1.1;
-	margin: 0;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+    width: 100%;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.1;
+    margin: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 #time-controls button {
-	background: none;
-	border: none;
-	cursor: pointer;
-	padding: 0.5rem;
-	border-radius: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
 }
 #time-controls button:active,
 #time-controls button.active {
-	background-color: color-mix(in srgb, var(--core-purple) 40%, white);
+    background-color: color-mix(in srgb, var(--core-purple) 40%, white);
 }
 
 #time-controls button img {
-	width: 1.5rem;
-	height: auto;
+    width: 1.5rem;
+    height: auto;
 }
 
 #time-controls input[type="range"] {
-	-webkit-appearance: none;
-	appearance: none;
-	width: 6rem;
-	height: 0.5rem;
-	background: #a4a4a4;
-	border-radius: 0.25rem;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 6rem;
+    height: 0.5rem;
+    background: #a4a4a4;
+    border-radius: 0.25rem;
 }
 
 #time-controls input[type="range"]::-webkit-slider-runnable-track {
-	height: 100%;
-	background: #a4a4a4;
-	border-radius: 0.25rem;
+    height: 100%;
+    background: #a4a4a4;
+    border-radius: 0.25rem;
 }
 
 #time-controls input[type="range"]::-webkit-slider-thumb {
-	-webkit-appearance: none;
-	width: 1rem;
-	height: 1rem;
-	margin-top: -0.25rem;
-	background: var(--core-purple);
-	border-radius: 50%;
-	cursor: pointer;
+    -webkit-appearance: none;
+    width: 1rem;
+    height: 1rem;
+    margin-top: -0.25rem;
+    background: var(--core-purple);
+    border-radius: 50%;
+    cursor: pointer;
 }
 
 #time-controls input[type="range"] {
-	-moz-appearance: none;
-	appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 
 #time-controls input[type="range"]::-moz-range-track {
-	height: 0.5rem;
-	background: #ddd;
-	border-radius: 0.25rem;
+    height: 0.5rem;
+    background: #ddd;
+    border-radius: 0.25rem;
 }
 
 #time-controls input[type="range"]::-moz-range-progress {
-	background: var(--core-purple);
-	height: 0.5rem;
-	border-radius: 0.25rem;
+    background: var(--core-purple);
+    height: 0.5rem;
+    border-radius: 0.25rem;
 }
 
 #time-controls input[type="range"]::-moz-range-thumb {
-	width: 1rem;
-	height: 1rem;
-	background: var(--core-purple);
-	border: none;
-	border-radius: 50%;
-	cursor: pointer;
+    width: 1rem;
+    height: 1rem;
+    background: var(--core-purple);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
 }
 
 #time-controls input[type="number"] {
-	width: 3rem;
+    width: 3rem;
 }
 
 /* corner buttons */
 
 .corner-button {
-	position: absolute;
-	width: 7rem;
-	height: 7rem;
-	background-color: var(--core-purple);
-	background-size: 40%;
-	background-repeat: no-repeat;
-	transition: transform 0.1s ease-in-out;
-	z-index: 750;
+    position: absolute;
+    width: 7rem;
+    height: 7rem;
+    background-color: var(--core-purple);
+    background-size: 40%;
+    background-repeat: no-repeat;
+    transition: transform 0.1s ease-in-out;
+    z-index: 750;
 }
 .corner-button:hover {
-	transform: scale(1.1);
+    transform: scale(1.1);
 }
 
 #corner-bottom-left {
-	bottom: 0;
-	left: 0;
-	background-image: url("/assets/ui-svgs/github-logo.svg");
-	clip-path: polygon(0 100%, 0 0, 100% 100%);
-	background-position: 17% 83%;
-	transform-origin: bottom left;
+    bottom: 0;
+    left: 0;
+    background-image: url("/assets/ui-svgs/github-logo.svg");
+    clip-path: polygon(0 100%, 0 0, 100% 100%);
+    background-position: 17% 83%;
+    transform-origin: bottom left;
 }
 
 #corner-top-right {
-	top: 0;
-	right: 0;
-	background-image: url("/assets/ui-svgs/core-logo.svg");
-	clip-path: polygon(0 0, 100% 0, 100% 100%);
-	background-position: 83% 17%;
-	transform-origin: top right;
+    top: 0;
+    right: 0;
+    background-image: url("/assets/ui-svgs/core-logo.svg");
+    clip-path: polygon(0 0, 100% 0, 100% 100%);
+    background-position: 83% 17%;
+    transform-origin: top right;
 }
 
 /* Winner Display */
 
 #win-display-box {
-	display: none;
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	backdrop-filter: blur(5px);
-	/* background-color: color-mix(in srgb, var(--core-purple) 20%, white); */
-	color: white;
-	padding: 20px;
-	border-radius: 10px;
-	/* box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); */
-	outline: 5px solid color-mix(in srgb, var(--core-purple) 20%, white);
-	text-align: center;
-	z-index: 1000;
-	pointer-events: none;
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    backdrop-filter: blur(5px);
+    /* background-color: color-mix(in srgb, var(--core-purple) 20%, white); */
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    /* box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); */
+    outline: 5px solid color-mix(in srgb, var(--core-purple) 20%, white);
+    text-align: center;
+    z-index: 1000;
+    pointer-events: none;
 }
 
 #background-darkener {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100vw;
-	height: 100vh;
-	background-color: rgba(0, 0, 0, 0.75);
-	z-index: 500;
-	pointer-events: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 500;
+    pointer-events: none;
 }
 
 .fireworks {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100vw;
-	height: 100vh;
-	z-index: 600;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 600;
 }
