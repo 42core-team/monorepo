@@ -25,7 +25,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 	const { setupReplayLoader } = await import("./replay_loader/replayLoader.js");
 	const { setupTimeManager, startPlayback, isAtEnd } = await import(
-		"./time_manager/timeManager.js"
+		"./input_manager/timeManager.js"
 	);
 	const { setupRenderer } = await import("./renderer/renderer.js");
 

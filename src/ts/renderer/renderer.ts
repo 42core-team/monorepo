@@ -1,3 +1,4 @@
+import { getCurrentTickData, isDirty } from "../input_manager/timeManager";
 import type { GameConfig } from "../replay_loader/config";
 import { formatObjectData, type TickObject } from "../replay_loader/object";
 import {
@@ -5,7 +6,6 @@ import {
 	getGameMisc,
 	getStateAt,
 } from "../replay_loader/replayLoader";
-import { getCurrentTickData, isDirty } from "../time_manager/timeManager";
 import { calcAndDrawObject, initializeTeamMapping } from "./objectRenderer";
 
 const svgNS = "http://www.w3.org/2000/svg";

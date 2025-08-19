@@ -4,28 +4,30 @@
 		format("truetype");
 }
 
-:root {
+:root[data-theme="light"] {
 	--hp-color: #c70202ff;
 	--balance-color: #008600ff;
 	--cooldown-color: #0066ffff;
-	--svg-canvas-scale: 100%;
+
 	--core-purple: #6a0dad;
-}
-:root {
-	--accent: #6a0dad;
+
 	--panel-bg: #f0f0f0;
 	--panel-outline: #cccccc;
 	--panel-track: #a4a4a4;
-	--panel-thumb: var(--accent);
+	--panel-thumb: var(--core-purple);
+
 	--text: #333333;
-	--app-bg: color-mix(in srgb, var(--accent) 20%, white);
+
+	--app-bg: color-mix(in srgb, var(--core-purple) 20%, white);
 }
-body.theme-dark {
+:root[data-theme="dark"] {
 	--panel-bg: #1f1f23;
 	--panel-outline: #3a3a3f;
 	--panel-track: #4a4a50;
-	--panel-thumb: var(--accent);
+	--panel-thumb: var(--core-purple);
+
 	--text: #e8e8ea;
+
 	--app-bg: #0f0f12;
 }
 
@@ -87,8 +89,8 @@ body {
 }
 
 #svg-canvas {
-	width: var(--svg-canvas-scale);
-	height: var(--svg-canvas-scale);
+	width: 100%;
+	height: 100%;
 	aspect-ratio: 1 / 1;
 	outline: 2px solid #ccc;
 	background-color: #f9f9f9;
@@ -133,7 +135,7 @@ body {
 
 .control-panel button:active,
 .control-panel button.active {
-	background-color: color-mix(in srgb, var(--accent) 40%, white);
+	background-color: color-mix(in srgb, var(--core-purple) 40%, white);
 }
 
 .control-panel button img {
