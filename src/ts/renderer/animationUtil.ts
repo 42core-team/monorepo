@@ -12,8 +12,13 @@ abstract class TimingCurve {
 			const a = pts[i],
 				b = pts[i + 1];
 			if (t >= a.realTime && t <= b.realTime) {
-				const u = b.realTime === a.realTime ? 1 : (t - a.realTime) / (b.realTime - a.realTime);
-				return a.animationProgress + u * (b.animationProgress - a.animationProgress);
+				const u =
+					b.realTime === a.realTime
+						? 1
+						: (t - a.realTime) / (b.realTime - a.realTime);
+				return (
+					a.animationProgress + u * (b.animationProgress - a.animationProgress)
+				);
 			}
 		}
 		return last.animationProgress;

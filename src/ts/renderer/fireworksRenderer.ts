@@ -1,4 +1,8 @@
-let fireworks: any | null = null;
+import Fireworks from "fireworks-js";
+
+window.Fireworks = Fireworks;
+
+let fireworks: Fireworks | null = null;
 let renderFireworks = false;
 let fireworkStrength = 1;
 let fireworkDelay = 2000;
@@ -9,17 +13,16 @@ function isWindowMinimized(): boolean {
 }
 
 function shouldRun(): boolean {
-	const visible = document.visibilityState === 'visible' && !document.hidden;
+	const visible = document.visibilityState === "visible" && !document.hidden;
 	return visible && !isWindowMinimized() && renderFireworks;
 }
 
 function ensureFireworks(): void {
 	if (fireworks) return;
-	const globalFW = (window as any).Fireworks;
-	const Ctor = globalFW?.default ?? globalFW;
-	const container = document.querySelector('.fireworks') as HTMLElement | null;
-	if (!Ctor || !container) return;
-	fireworks = new Ctor(container, {
+	const globalFW = window.Fireworks;
+	const container = document.querySelector(".fireworks") as HTMLElement | null;
+	if (!globalFW || !container) return;
+	fireworks = new globalFW(container, {
 		autoresize: true,
 		opacity: 0.6,
 		acceleration: 1.02,
@@ -51,18 +54,18 @@ function applyActivity(): void {
 	}
 }
 
-document.addEventListener('visibilitychange', applyActivity);
-window.addEventListener('focus', applyActivity);
-window.addEventListener('blur', applyActivity);
-window.addEventListener('resize', applyActivity);
-window.addEventListener('pageshow', applyActivity);
-window.addEventListener('load', applyActivity);
-window.addEventListener('pagehide', () => {
+document.addEventListener("visibilitychange", applyActivity);
+window.addEventListener("focus", applyActivity);
+window.addEventListener("blur", applyActivity);
+window.addEventListener("resize", applyActivity);
+window.addEventListener("pageshow", applyActivity);
+window.addEventListener("load", applyActivity);
+window.addEventListener("pagehide", () => {
 	fireworks?.clear?.();
 	fireworks?.stop?.();
 	isActive = false;
 });
-window.addEventListener('beforeunload', () => {
+window.addEventListener("beforeunload", () => {
 	fireworks?.clear?.();
 	fireworks?.stop?.();
 });
@@ -70,28 +73,28 @@ window.addEventListener('beforeunload', () => {
 (function loop() {
 	if (isActive) {
 		ensureFireworks();
-		fireworks?.launch?.(fireworkStrength);
+		(fireworks as Fireworks | null)?.launch?.(fireworkStrength);
 		if (fireworkStrength > 1) fireworkStrength--;
 	}
 	setTimeout(loop, isActive ? fireworkDelay : 1500);
 })();
 
-type Mode = 'SWISS' | 'ELIMINATION' | 'QUEUE';
+type Mode = "SWISS" | "ELIMINATION" | "QUEUE";
 
 function getFireworkStrengthFromUrlParameters(): number {
 	const p = new URLSearchParams(window.location.search);
-	const mode = (p.get('mode') || 'QUEUE').toUpperCase() as Mode;
-	const round = Number(p.get('round'));
-	const maxRounds = Number(p.get('maxRounds'));
-	if (mode === 'QUEUE' || !mode) return 1;
+	const mode = (p.get("mode") || "QUEUE").toUpperCase() as Mode;
+	const round = Number(p.get("round"));
+	const maxRounds = Number(p.get("maxRounds"));
+	if (mode === "QUEUE" || !mode) return 1;
 	fireworkDelay = 750;
-	if (mode === 'SWISS') return 2;
+	if (mode === "SWISS") return 2;
 	fireworkDelay = 250;
-	if (mode === 'ELIMINATION' && round >= maxRounds - 1) return 30;
+	if (mode === "ELIMINATION" && round >= maxRounds - 1) return 30;
 	fireworkDelay = 500;
-	if (mode === 'ELIMINATION' && round >= maxRounds - 3) return 5;
+	if (mode === "ELIMINATION" && round >= maxRounds - 3) return 5;
 	fireworkDelay = 625;
-	if (mode === 'ELIMINATION') return 3;
+	if (mode === "ELIMINATION") return 3;
 	fireworkDelay = 2000;
 	return 1;
 }

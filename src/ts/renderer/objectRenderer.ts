@@ -1,22 +1,29 @@
-import { getBarMetrics, TickObject, MoneyObject } from '../replay_loader/object.js';
-import { getActionsByExecutor, getNameOfUnitType, getStateAt } from '../replay_loader/replayLoader.js';
-import { tickData } from '../time_manager/timeManager.js';
-import { EaseInOutTimingCurve, MidTickIncreaseTimingCurve } from './animationUtil.js';
+import { getBarMetrics, type TickObject } from "../replay_loader/object";
+import {
+	getActionsByExecutor,
+	getNameOfUnitType,
+	getStateAt,
+} from "../replay_loader/replayLoader";
+import type { tickData } from "../time_manager/timeManager";
+import {
+	EaseInOutTimingCurve,
+	MidTickIncreaseTimingCurve,
+} from "./animationUtil.js";
 
-const svgNS = 'http://www.w3.org/2000/svg';
-const xlinkNS = 'http://www.w3.org/1999/xlink';
+const svgNS = "http://www.w3.org/2000/svg";
+const xlinkNS = "http://www.w3.org/1999/xlink";
 
 export type AssetTeam = 0 | 1;
 const svgAssets = {
 	0: {
-		0: 'cores/1.svg',
-		1: 'cores/2.svg',
+		0: "cores/1.svg",
+		1: "cores/2.svg",
 	},
 	1: {},
-	2: 'resource.svg',
-	3: 'wall.svg',
-	4: 'money.svg',
-	5: 'core.svg',
+	2: "resource.svg",
+	3: "wall.svg",
+	4: "money.svg",
+	5: "core.svg",
 } as const;
 
 // metric bar interpolator
@@ -31,9 +38,18 @@ type BarDrawingInstructions = {
 	key: string;
 };
 
-function computeSmoothBarInstructions(curr: TickObject, next: TickObject | null | undefined, xOffset: number, yOffset: number, progress: number): BarDrawingInstructions[] {
-	const ORDER = ['hp', 'balance', 'moveCooldown'] as const;
-	const toMap = (arr: { key: string; percentage: number }[]) => Object.fromEntries(arr.map(({ key, percentage }) => [key, percentage / 100]));
+function computeSmoothBarInstructions(
+	curr: TickObject,
+	next: TickObject | null | undefined,
+	xOffset: number,
+	yOffset: number,
+	progress: number,
+): BarDrawingInstructions[] {
+	const ORDER = ["hp", "balance", "moveCooldown"] as const;
+	const toMap = (arr: { key: string; percentage: number }[]) =>
+		Object.fromEntries(
+			arr.map(({ key, percentage }) => [key, percentage / 100]),
+		);
 	const currList = getBarMetrics(curr);
 	const nextList = next ? getBarMetrics(next) : currList;
 	const currMap = toMap(currList);
@@ -108,26 +124,41 @@ function getTeamIndex(teamId: number | undefined): AssetTeam {
 
 // object
 
-function drawObject(svgCanvas: SVGSVGElement, obj: TickObject, xOffset: number = 0, yOffset: number = 0, scaleFactor: number = 1, metricBars: BarDrawingInstructions[]): void {
+function drawObject(
+	svgCanvas: SVGSVGElement,
+	obj: TickObject,
+	xOffset: number = 0,
+	yOffset: number = 0,
+	scaleFactor: number = 1,
+	metricBars: BarDrawingInstructions[],
+): void {
 	for (const bar of metricBars) {
-		const color = bar.key === 'hp' ? 'var(--hp-color)' : bar.key === 'balance' ? 'var(--balance-color)' : 'var(--cooldown-color)';
+		const color =
+			bar.key === "hp"
+				? "var(--hp-color)"
+				: bar.key === "balance"
+					? "var(--balance-color)"
+					: "var(--cooldown-color)";
 
-		const bg = document.createElementNS(svgNS, 'rect');
-		bg.setAttribute('x', xOffset.toString());
-		bg.setAttribute('y', bar.topBorder.toString());
-		bg.setAttribute('width', '1');
-		bg.setAttribute('height', String(bar.bottomBorder - bar.topBorder));
-		bg.setAttribute('fill', color);
-		bg.setAttribute('fill-opacity', String(0.3 * scaleFactor));
+		const bg = document.createElementNS(svgNS, "rect");
+		bg.setAttribute("x", xOffset.toString());
+		bg.setAttribute("y", bar.topBorder.toString());
+		bg.setAttribute("width", "1");
+		bg.setAttribute("height", String(bar.bottomBorder - bar.topBorder));
+		bg.setAttribute("fill", color);
+		bg.setAttribute("fill-opacity", String(0.3 * scaleFactor));
 		svgCanvas.appendChild(bg);
 
-		const fg = document.createElementNS(svgNS, 'rect');
-		fg.setAttribute('x', bar.leftBorder.toString());
-		fg.setAttribute('y', bar.topBorder.toString());
-		fg.setAttribute('width', String(Math.max(0, bar.rightBorder - bar.leftBorder)));
-		fg.setAttribute('height', String(bar.bottomBorder - bar.topBorder));
-		fg.setAttribute('fill', color);
-		fg.setAttribute('fill-opacity', String(0.7 * scaleFactor));
+		const fg = document.createElementNS(svgNS, "rect");
+		fg.setAttribute("x", bar.leftBorder.toString());
+		fg.setAttribute("y", bar.topBorder.toString());
+		fg.setAttribute(
+			"width",
+			String(Math.max(0, bar.rightBorder - bar.leftBorder)),
+		);
+		fg.setAttribute("height", String(bar.bottomBorder - bar.topBorder));
+		fg.setAttribute("fill", color);
+		fg.setAttribute("fill-opacity", String(0.7 * scaleFactor));
 		svgCanvas.appendChild(fg);
 	}
 
@@ -163,19 +194,21 @@ function drawObject(svgCanvas: SVGSVGElement, obj: TickObject, xOffset: number =
 		}
 	}
 
-	let img = document.querySelector(`image[data-obj-id="${obj.id}"]`) as SVGImageElement | null;
+	let img = document.querySelector(
+		`image[data-obj-id="${obj.id}"]`,
+	) as SVGImageElement | null;
 
 	if (!img) {
-		img = document.createElementNS(svgNS, 'image');
-		img.setAttribute('data-obj-id', obj.id.toString());
+		img = document.createElementNS(svgNS, "image");
+		img.setAttribute("data-obj-id", obj.id.toString());
 	}
 
-	img.classList.remove('not-touched');
-	img.classList.remove('team-0', 'team-1');
+	img.classList.remove("not-touched");
+	img.classList.remove("team-0", "team-1");
 	if (obj.type === 0 || obj.type === 1) {
 		img.classList.add(`team-${getTeamIndex(obj.teamId)}`);
 	}
-	img.setAttributeNS(xlinkNS, 'href', `/assets/object-svgs/${path}`);
+	img.setAttributeNS(xlinkNS, "href", `/assets/object-svgs/${path}`);
 
 	let scale = 0.8;
 	if (obj.type === 2) {
@@ -186,37 +219,53 @@ function drawObject(svgCanvas: SVGSVGElement, obj: TickObject, xOffset: number =
 		scale = 0.6; // Money
 	}
 	const offset = (1 - scale * scaleFactor) / 2;
-	img.removeAttribute('x');
-	img.removeAttribute('y');
-	img.setAttribute('width', '1');
-	img.setAttribute('height', '1');
-	img.setAttribute('transform', `translate(${xOffset + offset},${yOffset + offset}) scale(${scale * scaleFactor})`);
+	img.removeAttribute("x");
+	img.removeAttribute("y");
+	img.setAttribute("width", "1");
+	img.setAttribute("height", "1");
+	img.setAttribute(
+		"transform",
+		`translate(${xOffset + offset},${yOffset + offset}) scale(${scale * scaleFactor})`,
+	);
 	svgCanvas.appendChild(img);
 }
 
-export function calcAndDrawObject(currObj: TickObject, svgCanvas: SVGSVGElement, currentTickData: tickData): void {
+export function calcAndDrawObject(
+	currObj: TickObject,
+	svgCanvas: SVGSVGElement,
+	currentTickData: tickData,
+): void {
 	const actionsByExec = getActionsByExecutor(currentTickData.tick + 1);
 
 	let scale = 1;
 	let x = currObj.x;
 	let y = currObj.y;
 
-	let prevObj = null;
+	let prevObj: TickObject | undefined;
 	try {
-		if (currentTickData.tick - 1 >= 0) prevObj = getStateAt(currentTickData.tick - 1)?.objects.find((o) => o.id === currObj.id);
+		if (currentTickData.tick - 1 >= 0)
+			prevObj = getStateAt(currentTickData.tick - 1)?.objects.find(
+				(o) => o.id === currObj.id,
+			);
 	} catch {}
-	let nextObj = null;
+	let nextObj: TickObject | undefined;
 	try {
-		nextObj = getStateAt(currentTickData.tick + 1)?.objects.find((o) => o.id === currObj.id);
+		nextObj = getStateAt(currentTickData.tick + 1)?.objects.find(
+			(o) => o.id === currObj.id,
+		);
 	} catch {}
 
-	const easeInOutProgress = new EaseInOutTimingCurve().getValue(currentTickData.tickProgress);
-	const midTickIncreaseProgress = new MidTickIncreaseTimingCurve().getValue(currentTickData.tickProgress);
+	const easeInOutProgress = new EaseInOutTimingCurve().getValue(
+		currentTickData.tickProgress,
+	);
+	const midTickIncreaseProgress = new MidTickIncreaseTimingCurve().getValue(
+		currentTickData.tickProgress,
+	);
 
-	if (!prevObj || prevObj.state === 'dead') {
+	if (!prevObj || prevObj.state === "dead") {
 		scale = easeInOutProgress;
 	}
-	if (!nextObj || nextObj.state === 'dead') {
+	if (!nextObj || nextObj.state === "dead") {
 		scale = 1 - midTickIncreaseProgress;
 	}
 	// check movement
@@ -229,11 +278,16 @@ export function calcAndDrawObject(currObj: TickObject, svgCanvas: SVGSVGElement,
 	if (currObj.type === 1) {
 		const actions = actionsByExec[currObj.id] || [];
 		for (const action of actions) {
-			if (action.type === 'attack' || action.type === 'build' || action.type === 'transfer_money') {
+			if (
+				action.type === "attack" ||
+				action.type === "build" ||
+				action.type === "transfer_money"
+			) {
 				const deltaX = action.x - currObj.x;
 				const deltaY = action.y - currObj.y;
 
-				const halfActionTickProgress = easeInOutProgress > 0.5 ? 1 - easeInOutProgress : easeInOutProgress;
+				const halfActionTickProgress =
+					easeInOutProgress > 0.5 ? 1 - easeInOutProgress : easeInOutProgress;
 
 				let offsetX = deltaX * halfActionTickProgress;
 				let offsetY = deltaY * halfActionTickProgress;
@@ -247,7 +301,13 @@ export function calcAndDrawObject(currObj: TickObject, svgCanvas: SVGSVGElement,
 		}
 	}
 
-	let metricBars: BarDrawingInstructions[] = computeSmoothBarInstructions(currObj, nextObj, x, y, new MidTickIncreaseTimingCurve().getValue(currentTickData.tickProgress));
+	const metricBars: BarDrawingInstructions[] = computeSmoothBarInstructions(
+		currObj,
+		nextObj,
+		x,
+		y,
+		new MidTickIncreaseTimingCurve().getValue(currentTickData.tickProgress),
+	);
 
 	drawObject(svgCanvas, currObj, x, y, scale, metricBars);
 }

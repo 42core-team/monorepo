@@ -1,5 +1,4 @@
-import { getConfigFileParsingDiagnostics } from 'typescript';
-import { getGameConfig } from './replayLoader.js';
+import { getGameConfig } from "./replayLoader";
 
 export interface BaseObject {
 	id: number;
@@ -36,41 +35,87 @@ export interface BombObject extends BaseObject {
 	type: 5; // Bomb
 	countdown: number;
 }
-export type TickObject = CoreObject | UnitObject | ResourceObject | WallObject | MoneyObject | BombObject;
+export type TickObject =
+	| CoreObject
+	| UnitObject
+	| ResourceObject
+	| WallObject
+	| MoneyObject
+	| BombObject;
 
 const objectTypeNames = {
-	0: 'Core',
-	1: 'Unit',
-	2: 'Resource',
-	3: 'Wall',
-	4: 'Money',
-	5: 'Bomb',
+	0: "Core",
+	1: "Unit",
+	2: "Resource",
+	3: "Wall",
+	4: "Money",
+	5: "Bomb",
 };
 
 export function formatObjectData(obj: TickObject): string {
 	const lines: { line: string; priority: number; color: string }[] = [];
 
-	lines.push({ line: `❤️ HP: ${obj.hp}`, priority: 0, color: 'var(--hp-color)' });
-	lines.push({ line: `❓ Object Type: ${objectTypeNames[obj.type] || 'Unknown'}`, priority: 4, color: 'black' });
-	lines.push({ line: `#️⃣ ID: ${obj.id}`, priority: 5, color: 'black' });
-	lines.push({ line: `📍 Position: [${obj.x}, ${obj.y}]`, priority: 6, color: 'black' });
+	lines.push({
+		line: `❤️ HP: ${obj.hp}`,
+		priority: 0,
+		color: "var(--hp-color)",
+	});
+	lines.push({
+		line: `❓ Object Type: ${objectTypeNames[obj.type] || "Unknown"}`,
+		priority: 4,
+		color: "black",
+	});
+	lines.push({ line: `#️⃣ ID: ${obj.id}`, priority: 5, color: "black" });
+	lines.push({
+		line: `📍 Position: [${obj.x}, ${obj.y}]`,
+		priority: 6,
+		color: "black",
+	});
 
 	switch (obj.type) {
 		case 0:
-			lines.push({ line: `🏁 Team ID: ${obj.teamId}`, priority: 5, color: 'black' });
-			lines.push({ line: `💰 Balance: ${obj.balance}`, priority: 1, color: 'var(--balance-color)' });
+			lines.push({
+				line: `🏁 Team ID: ${obj.teamId}`,
+				priority: 5,
+				color: "black",
+			});
+			lines.push({
+				line: `💰 Balance: ${obj.balance}`,
+				priority: 1,
+				color: "var(--balance-color)",
+			});
 			break;
 		case 1:
-			lines.push({ line: `🏁 Team ID: ${obj.teamId}`, priority: 5, color: 'black' });
-			lines.push({ line: `💰 Balance: ${obj.balance}`, priority: 1, color: 'var(--balance-color)' });
-			lines.push({ line: `🔢 Move Cooldown: ${obj.moveCooldown}`, priority: 2, color: 'var(--cooldown-color)' });
+			lines.push({
+				line: `🏁 Team ID: ${obj.teamId}`,
+				priority: 5,
+				color: "black",
+			});
+			lines.push({
+				line: `💰 Balance: ${obj.balance}`,
+				priority: 1,
+				color: "var(--balance-color)",
+			});
+			lines.push({
+				line: `🔢 Move Cooldown: ${obj.moveCooldown}`,
+				priority: 2,
+				color: "var(--cooldown-color)",
+			});
 			break;
 		case 4:
 		case 2:
-			lines.push({ line: `💰 Balance: ${obj.balance}`, priority: 1, color: 'var(--balance-color)' });
+			lines.push({
+				line: `💰 Balance: ${obj.balance}`,
+				priority: 1,
+				color: "var(--balance-color)",
+			});
 			break;
 		case 5:
-			lines.push({ line: `💣 Explosion Countdown: ${obj.countdown}`, priority: -1, color: 'black' });
+			lines.push({
+				line: `💣 Explosion Countdown: ${obj.countdown}`,
+				priority: -1,
+				color: "black",
+			});
 			break;
 	}
 
@@ -80,16 +125,18 @@ export function formatObjectData(obj: TickObject): string {
 	let prevPriority = -Infinity;
 	for (const { line, priority, color } of lines) {
 		if (prevPriority <= 2 && priority >= 3) {
-			result.push('');
+			result.push("");
 		}
 		result.push(`<span style="color: ${color}">${line}</span>`);
 		prevPriority = priority;
 	}
 
-	return result.join('<br>');
+	return result.join("<br>");
 }
 
-export function getBarMetrics(obj: TickObject): { key: string; percentage: number }[] {
+export function getBarMetrics(
+	obj: TickObject,
+): { key: string; percentage: number }[] {
 	const metrics: { key: string; percentage: number }[] = [];
 
 	// HP
@@ -114,7 +161,7 @@ export function getBarMetrics(obj: TickObject): { key: string; percentage: numbe
 	}
 	if (obj.hp < maxHP && maxHP !== -1) {
 		metrics.push({
-			key: 'hp',
+			key: "hp",
 			percentage: (obj.hp / maxHP) * 100,
 		});
 	}
@@ -127,7 +174,7 @@ export function getBarMetrics(obj: TickObject): { key: string; percentage: numbe
 			maxBalance = obj.balance;
 		}
 		metrics.push({
-			key: 'balance',
+			key: "balance",
 			percentage: (obj.balance / maxBalance) * 100,
 		});
 	}
@@ -139,11 +186,12 @@ export function getBarMetrics(obj: TickObject): { key: string; percentage: numbe
 		const u = cfg.units[obj.unit_type];
 		const step = Math.max(1, u.balancePerCooldownStep);
 		let calc = u.baseMoveCooldown + Math.floor(obj.balance / step);
-		if (u.maxMoveCooldown > 0 && calc > u.maxMoveCooldown) calc = u.maxMoveCooldown;
+		if (u.maxMoveCooldown > 0 && calc > u.maxMoveCooldown)
+			calc = u.maxMoveCooldown;
 		calc = Math.max(1, calc);
-		let denom = Math.max(calc, obj.moveCooldown);
+		const denom = Math.max(calc, obj.moveCooldown);
 		metrics.push({
-			key: 'moveCooldown',
+			key: "moveCooldown",
 			percentage: (obj.moveCooldown / denom) * 100,
 		});
 	}

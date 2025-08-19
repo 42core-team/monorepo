@@ -1,25 +1,49 @@
-import { getTotalReplayTicks } from '../replay_loader/replayLoader.js';
-import { setRenderFireworks } from '../renderer/fireworksRenderer.js';
+import { setRenderFireworks } from "../renderer/fireworksRenderer";
+import { getTotalReplayTicks } from "../replay_loader/replayLoader";
 
-const playButton = document.getElementById('play-pause-button') as HTMLButtonElement;
+const playButton = document.getElementById(
+	"play-pause-button",
+) as HTMLButtonElement;
 
-const nextTickButton = document.getElementById('next-tick-button') as HTMLButtonElement;
-const prevTickButton = document.getElementById('prev-tick-button') as HTMLButtonElement;
+const nextTickButton = document.getElementById(
+	"next-tick-button",
+) as HTMLButtonElement;
+const prevTickButton = document.getElementById(
+	"prev-tick-button",
+) as HTMLButtonElement;
 
-const skipStartButton = document.getElementById('skip-start-button') as HTMLButtonElement;
-const skipEndButton = document.getElementById('skip-end-button') as HTMLButtonElement;
+const skipStartButton = document.getElementById(
+	"skip-start-button",
+) as HTMLButtonElement;
+const skipEndButton = document.getElementById(
+	"skip-end-button",
+) as HTMLButtonElement;
 
-const tickTimelineSlider = document.getElementById('tick-timeline-slider') as HTMLInputElement;
-const tickTimelineNumberInput = document.getElementById('tick-timeline-number-input') as HTMLInputElement;
+const tickTimelineSlider = document.getElementById(
+	"tick-timeline-slider",
+) as HTMLInputElement;
+const tickTimelineNumberInput = document.getElementById(
+	"tick-timeline-number-input",
+) as HTMLInputElement;
 
-const speedSlider = document.getElementById('speed-slider') as HTMLInputElement;
-const speedNumberInput = document.getElementById('speed-number-input') as HTMLInputElement;
-const speedDownButton = document.getElementById('speed-down-button') as HTMLButtonElement;
-const speedUpButton = document.getElementById('speed-up-button') as HTMLButtonElement;
+const speedSlider = document.getElementById("speed-slider") as HTMLInputElement;
+const speedNumberInput = document.getElementById(
+	"speed-number-input",
+) as HTMLInputElement;
+const speedDownButton = document.getElementById(
+	"speed-down-button",
+) as HTMLButtonElement;
+const speedUpButton = document.getElementById(
+	"speed-up-button",
+) as HTMLButtonElement;
 
-const winnerDisplay = document.getElementById('win-display-box') as HTMLDivElement;
+const winnerDisplay = document.getElementById(
+	"win-display-box",
+) as HTMLDivElement;
 
-const fullscreenToggleButton = document.getElementById('fullscreen-toggle-button') as HTMLButtonElement;
+const fullscreenToggleButton = document.getElementById(
+	"fullscreen-toggle-button",
+) as HTMLButtonElement;
 
 // consts
 
@@ -57,9 +81,13 @@ function setTick(tickValue: number) {
 }
 function setPlaying(isPlaying: boolean) {
 	playing = isPlaying;
-	const playPauseIcon = document.getElementById('playPauseIcon') as HTMLImageElement;
+	const playPauseIcon = document.getElementById(
+		"playPauseIcon",
+	) as HTMLImageElement;
 	if (playPauseIcon) {
-		playPauseIcon.src = playing ? '/assets/ui-svgs/pause.svg' : '/assets/ui-svgs/play.svg';
+		playPauseIcon.src = playing
+			? "/assets/ui-svgs/pause.svg"
+			: "/assets/ui-svgs/play.svg";
 	}
 }
 
@@ -76,11 +104,12 @@ export function startPlayback(): void {
 // Fullscreen handling
 
 function isFullscreen(): boolean {
-	const d = document as any;
-	return Boolean(document.fullscreenElement || d.webkitFullscreenElement);
+	return Boolean(
+		document.fullscreenElement || document.webkitFullscreenElement,
+	);
 }
 async function enterFullscreen(): Promise<void> {
-	const el: any = document.documentElement as any;
+	const el = document.documentElement;
 	const req = el.requestFullscreen || el.webkitRequestFullscreen;
 	if (req) {
 		try {
@@ -89,8 +118,7 @@ async function enterFullscreen(): Promise<void> {
 	}
 }
 async function exitFullscreen(): Promise<void> {
-	const d: any = document as any;
-	const exit = document.exitFullscreen || d.webkitExitFullscreen;
+	const exit = document.exitFullscreen || document.webkitExitFullscreen;
 	if (exit) {
 		try {
 			await exit.call(document);
@@ -98,13 +126,21 @@ async function exitFullscreen(): Promise<void> {
 	}
 }
 function updateFullscreenUI(): void {
-	const icon = document.getElementById('fullscreen-icon') as HTMLImageElement | null;
+	const icon = document.getElementById(
+		"fullscreen-icon",
+	) as HTMLImageElement | null;
 	const active = isFullscreen();
 	if (icon) {
-		icon.src = active ? '/assets/ui-svgs/fullscreen-close.svg' : '/assets/ui-svgs/fullscreen-open.svg';
-		icon.alt = active ? 'Exit Fullscreen' : 'Enter Fullscreen';
+		icon.src = active
+			? "/assets/ui-svgs/fullscreen-close.svg"
+			: "/assets/ui-svgs/fullscreen-open.svg";
+		icon.alt = active ? "Exit Fullscreen" : "Enter Fullscreen";
 	}
-	if (fullscreenToggleButton) fullscreenToggleButton.setAttribute('aria-pressed', active ? 'true' : 'false');
+	if (fullscreenToggleButton)
+		fullscreenToggleButton.setAttribute(
+			"aria-pressed",
+			active ? "true" : "false",
+		);
 }
 function toggleFullscreen(): void {
 	if (isFullscreen()) exitFullscreen();
@@ -115,7 +151,7 @@ function toggleFullscreen(): void {
 
 export async function setupTimeManager() {
 	const total = Math.max(1, getTotalTicks());
-	const s = parseFloat(localStorage.getItem('tm.speed') || '');
+	const s = parseFloat(localStorage.getItem("tm.speed") || "");
 	if (!Number.isNaN(s)) {
 		const stepped = Math.round(s / speedIncrement) * speedIncrement;
 		speedApS = Math.min(maxSpeed, Math.max(minSpeed, stepped));
@@ -123,8 +159,8 @@ export async function setupTimeManager() {
 	tick = 0;
 	tickTimelineSlider.max = String(total - 1);
 	tickTimelineNumberInput.max = String(total - 1);
-	tickTimelineSlider.value = '0';
-	tickTimelineNumberInput.value = '0';
+	tickTimelineSlider.value = "0";
+	tickTimelineNumberInput.value = "0";
 	speedSlider.value = String(speedApS);
 	speedNumberInput.value = String(speedApS);
 
@@ -133,23 +169,29 @@ export async function setupTimeManager() {
 		speedApS = Math.min(maxSpeed, Math.max(minSpeed, stepped));
 		speedSlider.value = String(speedApS);
 		speedNumberInput.value = String(speedApS);
-		localStorage.setItem('tm.speed', String(speedApS));
+		localStorage.setItem("tm.speed", String(speedApS));
 		renderDirty = true;
 	}
 
-	playButton.addEventListener('click', () => {
-		if (Math.floor(Math.random() * 100) === 0) {
-			window.location.href = 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&controls=0&loop=1&playlist=dQw4w9WgXcQ&rel=0&modestbranding=1&playsinline=1';
+	playButton.addEventListener("click", () => {
+		if (Math.floor(Math.random() * 420) === 0) {
+			window.location.href =
+				"https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&controls=0&loop=1&playlist=dQw4w9WgXcQ&rel=0&modestbranding=1&playsinline=1";
 			return;
 		}
 
 		playing = !playing;
-		const playPauseIcon = document.getElementById('playPauseIcon') as HTMLImageElement;
-		if (playPauseIcon) playPauseIcon.src = playing ? '/assets/ui-svgs/pause.svg' : '/assets/ui-svgs/play.svg';
+		const playPauseIcon = document.getElementById(
+			"playPauseIcon",
+		) as HTMLImageElement;
+		if (playPauseIcon)
+			playPauseIcon.src = playing
+				? "/assets/ui-svgs/pause.svg"
+				: "/assets/ui-svgs/play.svg";
 		lastTimestamp = playing ? Date.now() : null;
 	});
 
-	nextTickButton.addEventListener('click', () => {
+	nextTickButton.addEventListener("click", () => {
 		if (tick < total - 1) {
 			tick += 1;
 			tickProgress = 0;
@@ -158,7 +200,7 @@ export async function setupTimeManager() {
 			renderDirty = true;
 		}
 	});
-	prevTickButton.addEventListener('click', () => {
+	prevTickButton.addEventListener("click", () => {
 		if (tick > 0) {
 			tick -= 1;
 			tickProgress = 0;
@@ -167,14 +209,14 @@ export async function setupTimeManager() {
 			renderDirty = true;
 		}
 	});
-	skipStartButton.addEventListener('click', () => {
+	skipStartButton.addEventListener("click", () => {
 		tick = 0;
 		tickProgress = 0;
-		tickTimelineSlider.value = '0';
-		tickTimelineNumberInput.value = '0';
+		tickTimelineSlider.value = "0";
+		tickTimelineNumberInput.value = "0";
 		renderDirty = true;
 	});
-	skipEndButton.addEventListener('click', () => {
+	skipEndButton.addEventListener("click", () => {
 		tick = total - 1;
 		tickProgress = 1;
 		tickTimelineSlider.value = String(tick);
@@ -182,8 +224,11 @@ export async function setupTimeManager() {
 		renderDirty = true;
 	});
 
-	tickTimelineSlider.addEventListener('input', () => {
-		const v = Math.min(total - 1, Math.max(0, parseInt(tickTimelineSlider.value, 10)));
+	tickTimelineSlider.addEventListener("input", () => {
+		const v = Math.min(
+			total - 1,
+			Math.max(0, parseInt(tickTimelineSlider.value, 10)),
+		);
 		if (!Number.isNaN(v)) {
 			tick = v;
 			tickTimelineSlider.value = String(tick);
@@ -192,8 +237,11 @@ export async function setupTimeManager() {
 			renderDirty = true;
 		}
 	});
-	tickTimelineNumberInput.addEventListener('input', () => {
-		const v = Math.min(total - 1, Math.max(0, parseInt(tickTimelineNumberInput.value, 10)));
+	tickTimelineNumberInput.addEventListener("input", () => {
+		const v = Math.min(
+			total - 1,
+			Math.max(0, parseInt(tickTimelineNumberInput.value, 10)),
+		);
 		if (!Number.isNaN(v)) {
 			tick = v;
 			tickTimelineSlider.value = String(tick);
@@ -203,45 +251,69 @@ export async function setupTimeManager() {
 		}
 	});
 
-	speedSlider.addEventListener('input', () => {
+	speedSlider.addEventListener("input", () => {
 		const v = parseFloat(speedSlider.value);
 		if (!Number.isNaN(v)) setSpeedLocal(v);
 	});
-	speedNumberInput.addEventListener('input', () => {
+	speedNumberInput.addEventListener("input", () => {
 		const v = parseFloat(speedNumberInput.value);
 		if (!Number.isNaN(v)) setSpeedLocal(v);
 	});
-	speedUpButton.addEventListener('click', () => setSpeedLocal(speedApS + speedIncrement));
-	speedDownButton.addEventListener('click', () => setSpeedLocal(speedApS - speedIncrement));
+	speedUpButton.addEventListener("click", () =>
+		setSpeedLocal(speedApS + speedIncrement),
+	);
+	speedDownButton.addEventListener("click", () =>
+		setSpeedLocal(speedApS - speedIncrement),
+	);
 
-	const keyBindings: Record<string, { action: () => void; button?: HTMLButtonElement }> = {
-		' ': { action: () => playButton.click(), button: playButton },
+	const keyBindings: Record<
+		string,
+		{ action: () => void; button?: HTMLButtonElement }
+	> = {
+		" ": { action: () => playButton.click(), button: playButton },
 		r: { action: () => skipStartButton.click(), button: skipStartButton },
 		s: { action: () => skipStartButton.click(), button: skipStartButton },
 		e: { action: () => skipEndButton.click(), button: skipEndButton },
-		ArrowRight: { action: () => nextTickButton.click(), button: nextTickButton },
-		ArrowLeft: { action: () => prevTickButton.click(), button: prevTickButton },
-		ArrowUp: { action: () => setSpeedLocal(speedApS + speedIncrement), button: speedUpButton },
-		ArrowDown: { action: () => setSpeedLocal(speedApS - speedIncrement), button: speedDownButton },
+		ArrowRight: {
+			action: () => nextTickButton.click(),
+			button: nextTickButton,
+		},
+		ArrowLeft: {
+			action: () => prevTickButton.click(),
+			button: prevTickButton,
+		},
+		ArrowUp: {
+			action: () => setSpeedLocal(speedApS + speedIncrement),
+			button: speedUpButton,
+		},
+		ArrowDown: {
+			action: () => setSpeedLocal(speedApS - speedIncrement),
+			button: speedDownButton,
+		},
 		f: { action: () => toggleFullscreen(), button: fullscreenToggleButton },
 	};
 
-	window.addEventListener('keydown', (event) => {
+	window.addEventListener("keydown", (event) => {
 		if (event.ctrlKey || event.metaKey || event.altKey) return;
-		if (['INPUT', 'TEXTAREA', 'SELECT'].includes((event.target as HTMLElement).tagName)) return;
+		if (
+			["INPUT", "TEXTAREA", "SELECT"].includes(
+				(event.target as HTMLElement).tagName,
+			)
+		)
+			return;
 		const binding = keyBindings[event.key];
 		if (!binding) return;
 		if (binding.button) {
-			binding.button.classList.add('active');
+			binding.button.classList.add("active");
 			setTimeout(() => {
-				if (binding.button) binding.button.classList.remove('active');
+				if (binding.button) binding.button.classList.remove("active");
 			}, 100);
 		}
 		binding.action();
 		event.preventDefault();
 	});
 
-	window.addEventListener('pageshow', () => {
+	window.addEventListener("pageshow", () => {
 		const max = Math.max(1, getTotalTicks()) - 1;
 		if (tick > max) tick = 0;
 		tickTimelineSlider.max = String(max);
@@ -253,9 +325,9 @@ export async function setupTimeManager() {
 	});
 
 	// setup fullscreen handling
-	fullscreenToggleButton?.addEventListener('click', () => toggleFullscreen());
-	document.addEventListener('fullscreenchange', updateFullscreenUI);
-	(document as any).addEventListener('webkitfullscreenchange', updateFullscreenUI);
+	fullscreenToggleButton?.addEventListener("click", () => toggleFullscreen());
+	document.addEventListener("fullscreenchange", updateFullscreenUI);
+	document.addEventListener("webkitfullscreenchange", updateFullscreenUI);
 	updateFullscreenUI();
 }
 
@@ -264,8 +336,8 @@ export function getCurrentTickData(): tickData {
 		const total = getTotalReplayTicks();
 		const atEnd = total === 0 || tick === total - 1;
 
-		document.querySelectorAll<HTMLElement>('.win-display').forEach((elem) => {
-			elem.style.display = atEnd ? 'block' : 'none';
+		document.querySelectorAll<HTMLElement>(".win-display").forEach((elem) => {
+			elem.style.display = atEnd ? "block" : "none";
 		});
 
 		setRenderFireworks(atEnd);
@@ -288,7 +360,10 @@ export function getCurrentTickData(): tickData {
 
 	if (tickProgress > 1) {
 		if (tick < getTotalTicks() - 1) {
-			const newTick = Math.min(tick + Math.floor(tickProgress), getTotalTicks() - 1);
+			const newTick = Math.min(
+				tick + Math.floor(tickProgress),
+				getTotalTicks() - 1,
+			);
 			setTick(newTick);
 			tickProgress = tickProgress % 1;
 		} else {
@@ -309,7 +384,7 @@ export function resetTimeManager() {
 	lastTimestamp = null;
 	tickProgress = 0;
 	tickTimelineSlider.max = (getTotalTicks() - 1).toString();
-	tickTimelineSlider.value = '0';
+	tickTimelineSlider.value = "0";
 	tickTimelineNumberInput.max = (getTotalTicks() - 1).toString();
-	tickTimelineNumberInput.value = '0';
+	tickTimelineNumberInput.value = "0";
 }

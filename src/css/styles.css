@@ -1,6 +1,7 @@
 @font-face {
-	font-family: 'JetBrains Mono';
-	src: url('/assets/fonts/JetBrainsMonoNerdFontMono-Regular.ttf') format('truetype');
+	font-family: "JetBrains Mono";
+	src: url("/assets/fonts/JetBrainsMonoNerdFontMono-Regular.ttf")
+		format("truetype");
 }
 
 :root {
@@ -18,7 +19,7 @@ body {
 	height: 100%;
 	overflow: hidden;
 	overscroll-behavior: none;
-	font-family: 'JetBrains Mono', monospace;
+	font-family: "JetBrains Mono", monospace;
 	background-color: color-mix(in srgb, var(--core-purple) 20%, white);
 }
 
@@ -77,13 +78,6 @@ body {
 	margin: 10px 0 10px 0;
 }
 
-#svg-canvas image.team-1 {
-	opacity: 0.5;
-}
-#svg-canvas image.team-0 {
-	opacity: 1;
-}
-
 /* Time Controls */
 #time-controls {
 	display: flex;
@@ -107,6 +101,12 @@ body {
 	gap: 0.5rem;
 	margin: 0 20px 0 20px;
 }
+
+.main-buttons button {
+	padding: 0.75rem;
+	background-color: #555;
+}
+
 .slider-group {
 	display: flex;
 	flex-direction: column;
@@ -144,21 +144,22 @@ body {
 	height: auto;
 }
 
-#time-controls input[type='range'] {
+#time-controls input[type="range"] {
 	-webkit-appearance: none;
+	appearance: none;
 	width: 6rem;
 	height: 0.5rem;
 	background: #a4a4a4;
 	border-radius: 0.25rem;
 }
 
-#time-controls input[type='range']::-webkit-slider-runnable-track {
+#time-controls input[type="range"]::-webkit-slider-runnable-track {
 	height: 100%;
 	background: #a4a4a4;
 	border-radius: 0.25rem;
 }
 
-#time-controls input[type='range']::-webkit-slider-thumb {
+#time-controls input[type="range"]::-webkit-slider-thumb {
 	-webkit-appearance: none;
 	width: 1rem;
 	height: 1rem;
@@ -168,23 +169,24 @@ body {
 	cursor: pointer;
 }
 
-#time-controls input[type='range'] {
+#time-controls input[type="range"] {
 	-moz-appearance: none;
+	appearance: none;
 }
 
-#time-controls input[type='range']::-moz-range-track {
+#time-controls input[type="range"]::-moz-range-track {
 	height: 0.5rem;
 	background: #ddd;
 	border-radius: 0.25rem;
 }
 
-#time-controls input[type='range']::-moz-range-progress {
+#time-controls input[type="range"]::-moz-range-progress {
 	background: var(--core-purple);
 	height: 0.5rem;
 	border-radius: 0.25rem;
 }
 
-#time-controls input[type='range']::-moz-range-thumb {
+#time-controls input[type="range"]::-moz-range-thumb {
 	width: 1rem;
 	height: 1rem;
 	background: var(--core-purple);
@@ -193,13 +195,8 @@ body {
 	cursor: pointer;
 }
 
-#time-controls input[type='number'] {
+#time-controls input[type="number"] {
 	width: 3rem;
-}
-
-.main-buttons button {
-	padding: 0.75rem;
-	background-color: #555;
 }
 
 /* corner buttons */
@@ -221,7 +218,7 @@ body {
 #corner-bottom-left {
 	bottom: 0;
 	left: 0;
-	background-image: url('/assets/ui-svgs/github-logo.svg');
+	background-image: url("/assets/ui-svgs/github-logo.svg");
 	clip-path: polygon(0 100%, 0 0, 100% 100%);
 	background-position: 17% 83%;
 	transform-origin: bottom left;
@@ -230,33 +227,10 @@ body {
 #corner-top-right {
 	top: 0;
 	right: 0;
-	background-image: url('/assets/ui-svgs/core-logo.svg');
+	background-image: url("/assets/ui-svgs/core-logo.svg");
 	clip-path: polygon(0 0, 100% 0, 100% 100%);
 	background-position: 83% 17%;
 	transform-origin: top right;
-}
-
-#fullscreen-toggle-button.floating-control {
-	position: fixed;
-	right: 16px;
-	bottom: 16px;
-	z-index: 1000;
-	background: #fff;
-	border: 1px solid #d0d0d0;
-	border-radius: 10px;
-	padding: 10px 14px;
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-	cursor: pointer;
-	line-height: 1;
-}
-#fullscreen-toggle-button.floating-control:active,
-#fullscreen-toggle-button.floating-control.active {
-	transform: translateY(1px);
-}
-#fullscreen-toggle-button #fullscreen-icon {
-	width: 18px;
-	height: 18px;
-	display: block;
 }
 
 /* Winner Display */
