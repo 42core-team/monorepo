@@ -6,13 +6,13 @@
 
 :root {
 	--svg-canvas-scale: 100%;
+
+	--core-purple: #6a0dad;
 }
 :root[data-theme="light"] {
 	--hp-color: #c70202ff;
 	--balance-color: #008600ff;
 	--cooldown-color: #0066ffff;
-
-	--core-purple: #6a0dad;
 
 	--panel-bg: #f0f0f0;
 	--panel-outline: #cccccc;
@@ -22,6 +22,8 @@
 	--text: #333333;
 
 	--app-bg: color-mix(in srgb, var(--core-purple) 20%, white);
+
+	--corner-buttons-color: var(--core-purple);
 
 	--svg-icon-fill: #000000;
 }
@@ -33,7 +35,9 @@
 
 	--text: #e8e8ea;
 
-	--app-bg: #0f0f12;
+	--app-bg: color-mix(in srgb, var(--core-purple) 40%, black);
+
+	--corner-buttons-color: color-mix(in srgb, var(--core-purple) 35%, white);
 
 	--svg-icon-fill: #ffffff;
 }
@@ -91,12 +95,12 @@ svg path {
 	font-weight: bold;
 	color: var(--text);
 	text-align: center;
-	background-color: #f0f0f0;
+	background-color: var(--panel-bg);
+	outline: 2px solid var(--panel-outline);
 	padding: 0.5rem 1rem;
 	margin: 10px;
 	border-radius: 10px;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	outline: 2px solid #ccc;
 }
 
 #svg-canvas {
@@ -114,7 +118,7 @@ svg path {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 1rem;
+	gap: 3.5rem;
 	padding: 0.5rem 1rem;
 	background-color: var(--panel-bg);
 	border-radius: 0 0 20px 20px;
@@ -128,7 +132,7 @@ svg path {
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
-	margin: 0 20px;
+	margin: 0;
 	flex-wrap: nowrap;
 }
 
@@ -237,6 +241,7 @@ svg path {
 	justify-content: center;
 	gap: 0.5rem;
 	padding: 0;
+	z-index: 5000;
 }
 
 .icon-button {
@@ -253,13 +258,18 @@ svg path {
 	display: block;
 }
 
+:root[data-theme="dark"] .icon-button > img,
+:root[data-theme="dark"] .control-panel button img {
+	filter: invert(1);
+}
+
 /* corner buttons */
 
 .corner-button {
 	position: absolute;
 	width: 7rem;
 	height: 7rem;
-	background-color: var(--core-purple);
+	background-color: var(--corner-buttons-color);
 	background-size: 40%;
 	background-repeat: no-repeat;
 	transition: transform 0.1s ease-in-out;
@@ -272,19 +282,41 @@ svg path {
 #corner-bottom-left {
 	bottom: 0;
 	left: 0;
-	background-image: url("/assets/ui-svgs/github-logo.svg");
 	clip-path: polygon(0 100%, 0 0, 100% 100%);
-	background-position: 17% 83%;
 	transform-origin: bottom left;
+}
+#corner-bottom-left::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background-image: url("/assets/ui-svgs/github-logo.svg");
+	background-size: 40%;
+	background-repeat: no-repeat;
+	background-position: 17% 83%;
+	pointer-events: none;
+}
+:root[data-theme="light"] #corner-bottom-left::after {
+	filter: invert(1);
 }
 
 #corner-top-right {
 	top: 0;
 	right: 0;
-	background-image: url("/assets/ui-svgs/core-logo.svg");
 	clip-path: polygon(0 0, 100% 0, 100% 100%);
-	background-position: 83% 17%;
 	transform-origin: top right;
+}
+#corner-top-right::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background-image: url("/assets/ui-svgs/core-logo.svg");
+	background-size: 40%;
+	background-repeat: no-repeat;
+	background-position: 83% 17%;
+	pointer-events: none;
+}
+:root[data-theme="light"] #corner-top-right::after {
+	filter: invert(1);
 }
 
 /* Winner Display */
