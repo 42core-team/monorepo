@@ -14,23 +14,27 @@
 	--balance-color: #008600ff;
 	--cooldown-color: #0066ffff;
 
-	--panel-bg: #f0f0f0;
-	--panel-outline: #cccccc;
+	--panel-bg: color-mix(in srgb, var(--core-purple) 7%, white);
+	--panel-outline: color-mix(in srgb, var(--core-purple) 50%, white);
 	--panel-track: #a4a4a4;
 	--panel-thumb: var(--core-purple);
 
 	--text: #333333;
 
-	--app-bg: color-mix(in srgb, var(--core-purple) 20%, white);
+	--app-bg: color-mix(in srgb, var(--core-purple) 25%, white);
+	--grid-bg: var(--panel-bg);
 
 	--corner-buttons-color: var(--core-purple);
 
 	--svg-icon-fill: #000000;
+
+	--fireworks-darkening-layer: rgba(0, 0, 0, 0.75);
 }
 :root[data-theme="dark"] {
-	--hp-color: #c70202ff;
-	--balance-color: #008600ff;
+	--hp-color: rgb(242, 12, 12);
+	--balance-color: rgb(0, 215, 0);
 	--cooldown-color: #0066ffff;
+
 	--panel-bg: #4d4d73;
 	--panel-outline: #9f9fe3;
 	--panel-track: #6f6fd6;
@@ -39,10 +43,13 @@
 	--text: #e8e8ea;
 
 	--app-bg: color-mix(in srgb, var(--core-purple) 40%, black);
+	--grid-bg: color-mix(in srgb, var(--panel-bg) 50%, black);
 
 	--corner-buttons-color: color-mix(in srgb, var(--core-purple) 35%, white);
 
 	--svg-icon-fill: #ffffff;
+
+	--fireworks-darkening-layer: rgba(0, 0, 0, 0.5);
 }
 
 :root[data-theme="dark"] .game-object {
@@ -63,14 +70,31 @@ body {
 }
 
 /* SVG Output Canvas */
+#svg-canvas {
+	width: var(--svg-canvas-scale);
+	height: var(--svg-canvas-scale);
+	aspect-ratio: 1 / 1;
+	outline: 2px solid var(--panel-outline);
+	background-color: var(--grid-bg);
+	border-radius: 10px;
+	margin: 10px 0 10px 0;
+	color: var(--svg-icon-fill);
+}
+
+.grid-cell {
+	fill: var(--grid-bg);
+	pointer-events: none;
+}
+
 #tooltip {
 	position: fixed;
 	display: none;
 	padding: 10px;
-	background: white;
-	border: 1px solid #333;
+	background: var(--panel-bg);
+	border: 1px solid var(--panel-outline);
 	border-radius: 0 10px 10px 10px;
 	box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.3);
+	color: var(--text);
 	pointer-events: none;
 }
 
@@ -109,24 +133,6 @@ svg path {
 	margin: 10px;
 	border-radius: 10px;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-#svg-canvas {
-	width: var(--svg-canvas-scale);
-	height: var(--svg-canvas-scale);
-	aspect-ratio: 1 / 1;
-	outline: 2px solid #ccc;
-	background-color: #f9f9f9;
-	border-radius: 10px;
-	margin: 10px 0 10px 0;
-	color: var(--svg-icon-fill);
-}
-
-.grid-cell {
-	fill: var(--panel-bg);
-	stroke: var(--panel-outline);
-	stroke-width: 0.1;
-	pointer-events: none;
 }
 
 /* Time Controls */
@@ -370,7 +376,7 @@ svg path {
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	background-color: rgba(0, 0, 0, 0.75);
+	background-color: var(--fireworks-darkening-layer);
 	z-index: 500;
 	pointer-events: none;
 }

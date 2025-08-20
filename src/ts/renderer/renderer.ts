@@ -156,7 +156,6 @@ export async function setupRenderer(): Promise<void> {
 			rect.setAttribute("y", y.toString());
 			rect.setAttribute("width", "1");
 			rect.setAttribute("height", "1");
-			rect.setAttribute("stroke-width", "0.01");
 			svgCanvas.appendChild(rect);
 		}
 	}

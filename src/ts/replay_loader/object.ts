@@ -63,13 +63,13 @@ export function formatObjectData(obj: TickObject): string {
 	lines.push({
 		line: `❓ Object Type: ${objectTypeNames[obj.type] || "Unknown"}`,
 		priority: 4,
-		color: "black",
+		color: "var(--text)",
 	});
-	lines.push({ line: `#️⃣ ID: ${obj.id}`, priority: 5, color: "black" });
+	lines.push({ line: `#️⃣ ID: ${obj.id}`, priority: 5, color: "var(--text)" });
 	lines.push({
 		line: `📍 Position: [x: ${obj.x}, y: ${obj.y}]`,
 		priority: 6,
-		color: "black",
+		color: "var(--text)",
 	});
 
 	switch (obj.type) {
@@ -77,7 +77,7 @@ export function formatObjectData(obj: TickObject): string {
 			lines.push({
 				line: `🏁 Team ID: ${obj.teamId}`,
 				priority: 5,
-				color: "black",
+				color: "var(--text)",
 			});
 			lines.push({
 				line: `💰 Balance: ${obj.balance}`,
@@ -89,7 +89,7 @@ export function formatObjectData(obj: TickObject): string {
 			lines.push({
 				line: `🏁 Team ID: ${obj.teamId}`,
 				priority: 5,
-				color: "black",
+				color: "var(--text)",
 			});
 			lines.push({
 				line: `💰 Balance: ${obj.balance}`,
@@ -114,7 +114,7 @@ export function formatObjectData(obj: TickObject): string {
 			lines.push({
 				line: `💣 Explosion Countdown: ${obj.countdown}`,
 				priority: -1,
-				color: "black",
+				color: "var(--text)",
 			});
 			break;
 	}
