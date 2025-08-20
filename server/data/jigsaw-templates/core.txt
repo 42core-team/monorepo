@@ -1,0 +1,7 @@
+BtB          
+tCt          
+tCt        Bt
+tBB        tC
+tCt BtB tt tt
+tCt tFt tC tC
+BtB BtB tB Bt
