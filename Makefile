@@ -38,10 +38,10 @@ server_build:
 	make -C $(SERVER_FOLDER)
 
 player_1_build:
-	make -C $(PLAYER_1_FOLDER)
+	make -C $(PLAYER_1_FOLDER) CONNECTION_DIR=/workspaces/monorepo/client_lib
 
 player_2_build:
-	make -C $(PLAYER_2_FOLDER)
+	make -C $(PLAYER_2_FOLDER) CONNECTION_DIR=/workspaces/monorepo/client_lib
 
 
 # -------------------- Clean targets --------------------
