@@ -1,0 +1,304 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - architecture: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+          - architecture: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    outputs:
+      images: ${{ steps.meta.outputs.tags }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Helm (for PR chart lint)
+        if: github.event_name == 'pull_request'
+        uses: azure/setup-helm@v4
+        with:
+          version: "v3.13.3"
+
+      - name: Helm lint chart (pull_request)
+        if: github.event_name == 'pull_request'
+        run: |
+          helm lint ./helm/debug-visualizer
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,format=short,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+          labels: |
+            org.opencontainers.image.title=Debug Visualizer
+            org.opencontainers.image.description=Debug visualizer web application
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+
+      - name: Process tags for architecture
+        id: arch-tags
+        run: |
+          # Get the base tags and add architecture suffix to each
+          BASE_TAGS="${{ steps.meta.outputs.tags }}"
+          ARCH_TAGS=""
+          
+          while IFS= read -r tag; do
+            if [[ -n "$tag" ]]; then
+              if [[ -z "$ARCH_TAGS" ]]; then
+                ARCH_TAGS="${tag}-${{ matrix.architecture }}"
+              else
+                ARCH_TAGS="${ARCH_TAGS}\n${tag}-${{ matrix.architecture }}"
+              fi
+            fi
+          done <<< "$BASE_TAGS"
+          
+          echo "arch-tags<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$ARCH_TAGS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Build and push Docker image
+        if: github.event_name == 'push'
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ matrix.platform }}
+          push: true
+          tags: ${{ steps.arch-tags.outputs.arch-tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build Docker image (test build)
+        if: github.event_name == 'pull_request'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ matrix.platform }}
+          push: false
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test-${{ matrix.architecture }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Output image info
+        run: |
+          echo "Built for architecture: ${{ matrix.architecture }}"
+          echo "Platform: ${{ matrix.platform }}"
+          echo "Runner: ${{ matrix.runner }}"
+          if [ "${{ github.event_name }}" == "push" ]; then
+            echo "Image tags: ${{ steps.arch-tags.outputs.arch-tags }}"
+          else
+            echo "Test build completed for PR"
+          fi
+
+  merge:
+    needs: build
+    runs-on: ubuntu-24.04
+    if: github.event_name == 'push'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,format=short,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+          labels: |
+            org.opencontainers.image.title=Debug Visualizer
+            org.opencontainers.image.description=Debug visualizer web application
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+
+      - name: Create and push multi-architecture manifest
+        run: |
+          # Get the tags from metadata (convert newlines to spaces for proper iteration)
+          TAGS=$(echo "${{ steps.meta.outputs.tags }}" | tr '\n' ' ')
+          
+          # Create manifest for each tag
+          for tag in $TAGS; do
+            # Skip empty tags
+            if [[ -z "$tag" ]]; then
+              continue
+            fi
+            
+            echo "Creating manifest for tag: $tag"
+            
+            # Create manifest from existing architecture-specific images
+            docker buildx imagetools create -t "$tag" \
+              "${tag}-amd64" \
+              "${tag}-arm64"
+            
+            echo "Manifest created for $tag"
+          done
+
+      - name: Output merged image info
+        run: |
+          echo "Multi-architecture manifest created"
+          echo "Image tags: ${{ steps.meta.outputs.tags }}"
+          echo "Supported platforms: linux/amd64, linux/arm64"
+
+  deploy:
+    needs: merge
+    runs-on: ubuntu-24.04
+    if: github.event_name == 'push'
+    environment: ${{ github.ref_name == 'main' && 'prod' || 'dev' }}
+    permissions:
+      contents: read
+      packages: read
+      deployments: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set deployment configuration
+        id: cfg
+        run: |
+          BRANCH="${{ github.ref_name }}"
+          if [ "$BRANCH" = "main" ]; then
+            NAMESPACE="production"
+            ENVIRONMENT_URL="https://visualizer.coregame.de"
+            DEPLOYMENT_NAME="debug-visualizer"
+          else
+            NAMESPACE="development"
+            ENVIRONMENT_URL="https://dev.visualizer.coregame.de"
+            DEPLOYMENT_NAME="debug-visualizer-dev"
+          fi
+
+          echo "namespace=${NAMESPACE}" >> $GITHUB_OUTPUT
+          echo "environment_url=${ENVIRONMENT_URL}" >> $GITHUB_OUTPUT
+          echo "deployment_name=${DEPLOYMENT_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: "v1.28.4"
+
+      - name: Configure Kubernetes context
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.kube
+          if [ -n "${KUBECONFIG_DATA:-}" ]; then
+            echo "Using KUBECONFIG_DATA from environment variable"
+            echo "$KUBECONFIG_DATA" | base64 -d > ~/.kube/config
+          elif [ -n "${{ secrets.KUBECONFIG_DATA }}" ]; then
+            echo "Using KUBECONFIG_DATA from GitHub secret"
+            echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > ~/.kube/config
+          elif [ -f .kube/config ]; then
+            echo "Using repository kubeconfig at .kube/config"
+            cp .kube/config ~/.kube/config
+          else
+            echo "ERROR: No kubeconfig provided. Set KUBECONFIG_DATA (env or secret) or commit .kube/config for CI use."
+            exit 1
+          fi
+          chmod 600 ~/.kube/config
+          echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
+
+      - name: Verify Kubernetes context
+        run: |
+          kubectl cluster-info
+          kubectl get nodes
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: "v3.13.3"
+
+      - name: Determine image to deploy
+        id: image
+        run: |
+          BRANCH="${{ github.ref_name }}"
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          TAG="${BRANCH}-${SHORT_SHA}"
+          echo "repo=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}" >> $GITHUB_OUTPUT
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "Deploying image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${TAG}"
+
+      - name: Ensure namespace exists
+        run: |
+          kubectl create namespace ${{ steps.cfg.outputs.namespace }} --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Validate Helm chart
+        run: |
+          helm lint ./helm/debug-visualizer --values ./helm/debug-visualizer/${{ github.ref_name == 'main' && 'values-prod.yaml' || 'values-dev.yaml' }}
+
+      - name: Deploy with Helm
+        run: |
+          VALUES_FILE=${{ github.ref_name == 'main' && 'values-prod.yaml' || 'values-dev.yaml' }}
+          helm upgrade --install \
+            ${{ steps.cfg.outputs.deployment_name }} \
+            ./helm/debug-visualizer \
+            --namespace ${{ steps.cfg.outputs.namespace }} \
+            --values ./helm/debug-visualizer/${VALUES_FILE} \
+            --set image.repository=${{ steps.image.outputs.repo }} \
+            --set image.tag=${{ steps.image.outputs.tag }} \
+            --wait \
+            --timeout=3m \
+            --atomic \
+            --history-max=5
+
+      - name: Verify deployment
+        run: |
+          kubectl rollout status deployment/${{ steps.cfg.outputs.deployment_name }} -n ${{ steps.cfg.outputs.namespace }} --timeout=300s
+          kubectl get deploy/${{ steps.cfg.outputs.deployment_name }} -n ${{ steps.cfg.outputs.namespace }} -o wide | cat
+          kubectl get svc -n ${{ steps.cfg.outputs.namespace }} | cat
+          kubectl get ingress -n ${{ steps.cfg.outputs.namespace }} | cat
+
+      - name: Deployment summary
+        run: |
+          echo "## Application Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "Environment: ${{ github.ref_name == 'main' && 'prod' || 'dev' }}" >> $GITHUB_STEP_SUMMARY
+          echo "Namespace: ${{ steps.cfg.outputs.namespace }}" >> $GITHUB_STEP_SUMMARY
+          echo "Deployment: ${{ steps.cfg.outputs.deployment_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "Image: ${{ steps.image.outputs.repo }}:${{ steps.image.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "URL: ${{ steps.cfg.outputs.environment_url }}" >> $GITHUB_STEP_SUMMARY

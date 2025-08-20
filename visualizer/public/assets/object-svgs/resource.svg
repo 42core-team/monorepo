@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 512 512"
+   style="height: 512px; width: 512px;"
+   version="1.1"
+   id="svg2"
+   sodipodi:docname="minerals.svg"
+   inkscape:version="1.4.2 (ebf0e940, 2025-05-08)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="namedview2"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.67452076"
+     inkscape:cx="33.357017"
+     inkscape:cy="384.71759"
+     inkscape:window-width="1472"
+     inkscape:window-height="1022"
+     inkscape:window-x="211"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" />
+  <path
+     d="m 168.15891,228.58035 -33.46107,-53.13608 11.81148,-112.128717 37.38264,74.765277 -15.73424,90.50073 z"
+     id="path9"
+     style="stroke-width:1.20035" />
+  <path
+     id="path8"
+     d="M 300.89062 2.0488281 L 208.4082 116.14648 L 181.84375 247.01367 L 228.08984 308.97656 L 252.6875 235.19336 L 259.04492 244.86914 L 263.02148 183.55273 L 217.91211 167.38281 L 263.25781 161.86719 L 269.81641 118.58789 L 280.94727 161.86719 L 308.97852 158.01758 L 284.24023 180.875 L 263.7832 252.07812 L 297.94141 304.06055 L 368.77734 231.27148 L 376.63867 104.35156 L 300.89062 2.0488281 z M 263.7832 252.07812 L 259.04492 244.86914 L 257.06055 275.47266 L 263.7832 252.07812 z " />
+  <path
+     d="m 334.657,361.13 27.27,-32.52 9.98,-40.923 -25.183,32.52 z"
+     id="path6" />
+  <path
+     d="m 356.01079,405.36376 -20.43004,-2.55315 -10.21262,-52.36426 -17.14106,-32.1383 110.18535,-110.18414 37.39104,11.79349 -15.74265,88.54295 -84.04882,96.90221 z"
+     id="path5"
+     style="stroke-width:1.20035" />
+  <path
+     d="m 181.16355,439.88115 -34.77427,-2.69119 -77.014736,-126.50536 -4.979071,-99.52138 94.183407,36.41874 61.33812,81.5833 -19.68342,75.56472 -75.74836,-99.68464 56.68074,134.83581 z"
+     id="path4"
+     style="stroke-width:1.20035" />
+  <path
+     d="M 292.49643,511.1294 266.92528,353.72692 251.18143,507.18863 198.05614,477.66831 256.90232,274.87202 306.2633,355.6919 329.86827,465.87483 292.49643,511.1282 Z"
+     id="path2"
+     style="stroke-width:1.20035" />
+</svg>

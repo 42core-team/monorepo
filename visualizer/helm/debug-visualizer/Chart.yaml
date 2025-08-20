@@ -1,0 +1,7 @@
+apiVersion: v2
+name: debug-visualizer
+description: Helm chart for the Debug Visualizer static web app served by NGINX
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+
