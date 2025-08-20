@@ -1,8 +1,8 @@
 # Players
 PLAYER1_ID := 42
 PLAYER2_ID := 43
-PLAYER_1_FOLDER := bot/martin
-PLAYER_2_FOLDER := bot/gridmaster
+PLAYER_1_FOLDER := bots/martin
+PLAYER_2_FOLDER := bots/gridmaster
 PLAYER_1_EXECUTABLE := martin
 PLAYER_2_EXECUTABLE := gridmaster
 
