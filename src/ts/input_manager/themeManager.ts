@@ -1,36 +1,70 @@
-const themeToggleButton = document.getElementById(
-	"theme-toggle-button",
-) as HTMLButtonElement;
-const themeIcon = document.getElementById("theme-icon") as HTMLImageElement;
-
 type ThemeMode = "light" | "dark";
 
-function getSavedTheme(): ThemeMode {
-	const v = localStorage.getItem("ui.theme");
-	return v === "dark" ? "dark" : "light";
-}
-export function applyTheme(mode: ThemeMode): void {
-	document.documentElement.setAttribute("data-theme", mode);
-	localStorage.setItem("ui.theme", mode);
-	updateThemeUI(mode);
-}
-function updateThemeUI(mode: ThemeMode): void {
-	const isDark = mode === "dark";
-	if (themeToggleButton)
-		themeToggleButton.setAttribute("aria-pressed", isDark ? "true" : "false");
-	if (themeIcon) {
-		themeIcon.src = isDark
-			? "/assets/ui-svgs/dark-mode-sun.svg"
-			: "/assets/ui-svgs/dark-mode-moon.svg";
-		themeIcon.alt = isDark ? "Switch to Light Mode" : "Switch to Dark Mode";
-	}
-}
-export function loadSavedTheme(): void {
-	applyTheme(getSavedTheme());
-}
-export function toggleTheme(): void {
-	const next = getSavedTheme() === "dark" ? "light" : "dark";
-	applyTheme(next);
+const themeToggleButton = document.getElementById(
+	"theme-toggle-button",
+) as HTMLButtonElement | null;
+const themeIcon = document.getElementById(
+	"theme-icon",
+) as HTMLImageElement | null;
+
+const STORAGE_KEY = "ui.theme";
+const mql = window.matchMedia
+	? window.matchMedia("(prefers-color-scheme: dark)")
+	: null;
+
+function resolveTheme(): ThemeMode {
+	const v = localStorage.getItem(STORAGE_KEY);
+	if (v === "light" || v === "dark") return v as ThemeMode;
+	return mql?.matches ? "dark" : "light";
 }
 
-themeToggleButton.addEventListener("click", toggleTheme);
+function applyToDOM(mode: ThemeMode): void {
+	document.documentElement.setAttribute("data-theme", mode);
+	if (themeToggleButton)
+		themeToggleButton.setAttribute(
+			"aria-pressed",
+			mode === "dark" ? "true" : "false",
+		);
+	if (themeIcon) {
+		themeIcon.src =
+			mode === "dark"
+				? "/assets/ui-svgs/dark-mode-sun.svg"
+				: "/assets/ui-svgs/dark-mode-moon.svg";
+		themeIcon.alt =
+			mode === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode";
+	}
+}
+
+export function applyTheme(mode: ThemeMode): void {
+	localStorage.setItem(STORAGE_KEY, mode);
+	applyToDOM(mode);
+}
+
+export function loadSavedTheme(): void {
+	applyToDOM(resolveTheme());
+
+	if (mql) {
+		const onSystemChange = (e: MediaQueryListEvent) => {
+			const hasOverride =
+				localStorage.getItem(STORAGE_KEY) === "light" ||
+				localStorage.getItem(STORAGE_KEY) === "dark";
+			if (!hasOverride) applyToDOM(e.matches ? "dark" : "light");
+		};
+		if ("addEventListener" in mql) {
+			mql.addEventListener("change", onSystemChange);
+		} else if (typeof (mql as any).addListener === "function") {
+			(mql as any).addListener(onSystemChange);
+		}
+	}
+
+	window.addEventListener("storage", (e) => {
+		if (e.key === STORAGE_KEY) applyToDOM(resolveTheme());
+	});
+}
+
+export function toggleTheme(): void {
+	const next = resolveTheme() === "dark" ? "light" : "dark";
+	localStorage.setItem(STORAGE_KEY, next);
+	applyToDOM(next);
+}
+themeToggleButton?.addEventListener("click", toggleTheme);
