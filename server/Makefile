@@ -15,7 +15,7 @@ OBJDIR := obj
 SOURCES := $(shell find $(SRCDIR) -name "*.cpp")
 OBJECTS   := $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SOURCES))
 
-TARGET := core
+TARGET := server
 
 build: all
 all: $(TARGET)

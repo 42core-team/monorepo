@@ -1,0 +1,29 @@
+{
+	"name": "monorepo",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"forwardPorts": [5173],
+	"workspaceFolder": "/workspaces/monorepo",
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"terminal.integrated.shell.linux": "/bin/bash",
+				"editor.formatOnPaste": true,
+				"editor.formatOnSave": true,
+				"files.autoSave": "onFocusChange",
+				"editor.cursorSmoothCaretAnimation": "on",
+				"terminal.integrated.scrollback": 10000000
+			},
+			"extensions": [
+				"ms-vscode.cpptools",
+				"ms-vscode.vscode-typescript-tslint-plugin",
+				"GitHub.copilot"
+			]
+		}
+	},
+	"mounts": [
+		"source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached",
+		"source=${localEnv:HOME}/.gitconfig,target=/root/.gitconfig,type=bind,consistency=cached"
+	]
+}

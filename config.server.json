@@ -1,0 +1,14 @@
+{
+	"gameConfigFilePath": "config.game.json",
+	"replayFolderPaths": [
+		"replays",
+		"debug-visualizer/src/public/misc",
+		"3d-visualizer/static/replays"
+	],
+	"dataFolderPath": "core/data",
+	"timeoutTicks": 10000,
+	"timeoutMs": 120000,
+	"clientWaitTimeoutMs": 500,
+	"clientConnectTimeoutMs": 30000,
+	"enableTerminalVisualizer": false
+}
