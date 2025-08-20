@@ -208,7 +208,10 @@ function drawObject(
 	if (obj.type === 0 || obj.type === 1) {
 		img.classList.add(`team-${getTeamIndex(obj.teamId)}`);
 	}
-	img.setAttributeNS(xlinkNS, "href", `/assets/object-svgs/${path}`);
+	const href = `/assets/object-svgs/${path}`;
+	if (img.getAttribute("href") !== href) {
+		img.setAttribute("href", href);
+	}
 
 	let scale = 0.8;
 	if (obj.type === 2) {
@@ -227,7 +230,10 @@ function drawObject(
 		"transform",
 		`translate(${xOffset + offset},${yOffset + offset}) scale(${scale * scaleFactor})`,
 	);
-	svgCanvas.appendChild(img);
+
+	if (img.parentNode !== svgCanvas) {
+		svgCanvas.appendChild(img);
+	}
 }
 
 export function calcAndDrawObject(
