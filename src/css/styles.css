@@ -28,6 +28,9 @@
 	--svg-icon-fill: #000000;
 }
 :root[data-theme="dark"] {
+	--hp-color: #c70202ff;
+	--balance-color: #008600ff;
+	--cooldown-color: #0066ffff;
 	--panel-bg: #4d4d73;
 	--panel-outline: #9f9fe3;
 	--panel-track: #6f6fd6;
