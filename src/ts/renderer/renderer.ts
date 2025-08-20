@@ -151,13 +151,11 @@ export async function setupRenderer(): Promise<void> {
 	for (let y = 0; y < gridSize; y++) {
 		for (let x = 0; x < gridSize; x++) {
 			const rect = document.createElementNS(svgNS, "rect");
-			rect.setAttribute("class", "persistent");
+			rect.setAttribute("class", "grid-cell persistent");
 			rect.setAttribute("x", x.toString());
 			rect.setAttribute("y", y.toString());
 			rect.setAttribute("width", "1");
 			rect.setAttribute("height", "1");
-			rect.setAttribute("fill", "#f7f7f7");
-			rect.setAttribute("stroke", "black");
 			rect.setAttribute("stroke-width", "0.01");
 			svgCanvas.appendChild(rect);
 		}

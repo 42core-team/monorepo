@@ -42,6 +42,11 @@
 	--svg-icon-fill: #ffffff;
 }
 
+:root[data-theme="dark"] .game-object {
+	filter: invert(100%) sepia(96%) saturate(17%) hue-rotate(214deg)
+		brightness(104%) contrast(100);
+}
+
 html,
 body {
 	margin: 0;
@@ -111,6 +116,14 @@ svg path {
 	background-color: #f9f9f9;
 	border-radius: 10px;
 	margin: 10px 0 10px 0;
+	color: var(--svg-icon-fill);
+}
+
+.grid-cell {
+	fill: var(--panel-bg);
+	stroke: var(--panel-outline);
+	stroke-width: 0.1;
+	pointer-events: none;
 }
 
 /* Time Controls */
@@ -144,6 +157,17 @@ svg path {
 	border-radius: 4px;
 }
 
+.icon-button img {
+	width: 1.5rem;
+	height: 1.5rem;
+	display: block;
+}
+
+.control-panel button img {
+	width: 1.5rem;
+	height: auto;
+}
+
 :root[data-theme="light"] .control-panel button.active,
 :root[data-theme="light"] .control-panel button:active {
 	background-color: color-mix(in srgb, var(--core-purple) 30%, white);
@@ -159,11 +183,6 @@ svg path {
 :root[data-theme="dark"] .icon-button.active,
 :root[data-theme="dark"] .icon-button:active {
 	background-color: color-mix(in srgb, var(--core-purple) 80%, black);
-}
-
-.control-panel button img {
-	width: 1.5rem;
-	height: auto;
 }
 
 .slider-group {
@@ -260,13 +279,8 @@ svg path {
 	border-radius: 0 0 12px 12px;
 	cursor: pointer;
 }
-.icon-button > img {
-	width: 1.5rem;
-	height: 1.5rem;
-	display: block;
-}
 
-:root[data-theme="dark"] .icon-button > img,
+:root[data-theme="dark"] .icon-button img,
 :root[data-theme="dark"] .control-panel button img {
 	filter: invert(1);
 }
