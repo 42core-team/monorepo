@@ -1,10 +1,10 @@
+import type { tickData } from "../input_manager/timeManager";
 import { getBarMetrics, type TickObject } from "../replay_loader/object";
 import {
 	getActionsByExecutor,
 	getNameOfUnitType,
 	getStateAt,
 } from "../replay_loader/replayLoader";
-import type { tickData } from "../time_manager/timeManager";
 import {
 	EaseInOutTimingCurve,
 	MidTickIncreaseTimingCurve,
@@ -202,7 +202,7 @@ function drawObject(
 		img = document.createElementNS(svgNS, "image");
 		img.setAttribute("data-obj-id", obj.id.toString());
 	}
-
+	img.classList.add("game-object");
 	img.classList.remove("not-touched");
 	img.classList.remove("team-0", "team-1");
 	if (obj.type === 0 || obj.type === 1) {

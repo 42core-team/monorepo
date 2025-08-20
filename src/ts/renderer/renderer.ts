@@ -1,3 +1,4 @@
+import { getCurrentTickData, isDirty } from "../input_manager/timeManager";
 import type { GameConfig } from "../replay_loader/config";
 import { formatObjectData, type TickObject } from "../replay_loader/object";
 import {
@@ -5,7 +6,6 @@ import {
 	getGameMisc,
 	getStateAt,
 } from "../replay_loader/replayLoader";
-import { getCurrentTickData, isDirty } from "../time_manager/timeManager";
 import { calcAndDrawObject, initializeTeamMapping } from "./objectRenderer";
 
 const svgNS = "http://www.w3.org/2000/svg";
@@ -104,7 +104,7 @@ function refreshTooltipFromSVGPoint(
 	if (obj) {
 		tooltipElement.innerHTML = formatObjectData(obj);
 	} else {
-		tooltipElement.innerHTML = `📍 Position: [${tx}, ${ty}]`;
+		tooltipElement.innerHTML = `📍 Position: [x: ${tx}, y: ${ty}]`;
 	}
 }
 export async function setupRenderer(): Promise<void> {
@@ -151,14 +151,11 @@ export async function setupRenderer(): Promise<void> {
 	for (let y = 0; y < gridSize; y++) {
 		for (let x = 0; x < gridSize; x++) {
 			const rect = document.createElementNS(svgNS, "rect");
-			rect.setAttribute("class", "persistent");
+			rect.setAttribute("class", "grid-cell persistent");
 			rect.setAttribute("x", x.toString());
 			rect.setAttribute("y", y.toString());
 			rect.setAttribute("width", "1");
 			rect.setAttribute("height", "1");
-			rect.setAttribute("fill", "#f7f7f7");
-			rect.setAttribute("stroke", "black");
-			rect.setAttribute("stroke-width", "0.01");
 			svgCanvas.appendChild(rect);
 		}
 	}

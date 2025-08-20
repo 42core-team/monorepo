@@ -1,5 +1,5 @@
+import { resetTimeManager } from "../input_manager/timeManager";
 import { setupRenderer } from "../renderer/renderer";
-import { resetTimeManager } from "../time_manager/timeManager";
 import type { TickAction } from "./action";
 import type { GameConfig } from "./config";
 import type { TickObject } from "./object";

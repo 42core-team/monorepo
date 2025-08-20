@@ -20,7 +20,7 @@
 		"fireworks-js": "^2.10.8"
 	},
 	"lint-staged": {
-		"*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [
+		"*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc,css}": [
 			"biome check --write --no-errors-on-unmatched"
 		]
 	}

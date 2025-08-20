@@ -1,3 +1,5 @@
+import { loadSavedTheme } from "./input_manager/themeManager.js";
+
 const svgCanvas = document.getElementById("svg-canvas") as HTMLElement;
 
 window.addEventListener("DOMContentLoaded", async () => {
@@ -25,7 +27,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 	const { setupReplayLoader } = await import("./replay_loader/replayLoader.js");
 	const { setupTimeManager, startPlayback, isAtEnd } = await import(
-		"./time_manager/timeManager.js"
+		"./input_manager/timeManager.js"
 	);
 	const { setupRenderer } = await import("./renderer/renderer.js");
 
@@ -73,4 +75,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 	window.addEventListener("resize", updateSvgSize);
 	window.addEventListener("load", updateSvgSize);
 	updateSvgSize();
+
+	// theme
+	loadSavedTheme();
 });
