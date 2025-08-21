@@ -1,4 +1,4 @@
-con_lib.a
+core_lib.a
 obj
 docs/html
 docs/xml

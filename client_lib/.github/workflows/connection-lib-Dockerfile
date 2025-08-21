@@ -12,5 +12,5 @@ RUN make re
 
 FROM ubuntu-gcc AS release
 WORKDIR /connection
-COPY --from=build /connection/con_lib.a ./con_lib.a
+COPY --from=build /connection/core_lib.a ./core_lib.a
 COPY --from=build /connection/inc/core_lib.h ./core_lib.h

@@ -1,6 +1,7 @@
 #include "Config.h"
 
 std::string Config::serverConfigFilePath = "";
+std::string Config::gameConfigFilePath = "";
 
 #include "JigsawWorldGenerator.h"
 #include "DistancedResourceWorldGenerator.h"
@@ -20,7 +21,6 @@ static ServerConfig parseServerConfig()
 
 	json j = json::parse(inFile);
 
-	config.gameConfigFilePath = j.value("gameConfigFilePath", "config/game.json");
 	if (j.contains("replayFolderPaths") && j["replayFolderPaths"].is_array()) {
 		config.replayFolderPaths.clear();
 		for (const auto& path : j["replayFolderPaths"]) {
@@ -49,10 +49,10 @@ static GameConfig parseGameConfig()
 {
 	GameConfig config;
 
-	std::ifstream inFile(Config::server().gameConfigFilePath);
+	std::ifstream inFile(Config::getGameConfigFilePath());
 	if (!inFile)
 	{
-		Logger::Log(LogLevel::ERROR, "Could not open config file: " + Config::server().gameConfigFilePath);
+		Logger::Log(LogLevel::ERROR, "Could not open config file: " + Config::getGameConfigFilePath());
 		exit(EXIT_FAILURE);
 	}
 
@@ -168,10 +168,10 @@ UnitConfig &Config::getUnitConfig(unsigned int unit_type)
 
 json Config::encodeConfig()
 {
-	std::ifstream inFile(Config::server().gameConfigFilePath);
+	std::ifstream inFile(Config::getGameConfigFilePath());
 	if (!inFile)
 	{
-		Logger::Log(LogLevel::ERROR, "Could not open config file: " + Config::server().gameConfigFilePath);
+		Logger::Log(LogLevel::ERROR, "Could not open config file: " + Config::getGameConfigFilePath());
 		exit(EXIT_FAILURE);
 	}
 
