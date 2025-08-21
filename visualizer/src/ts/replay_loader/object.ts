@@ -53,7 +53,7 @@ const objectTypeNames = {
 };
 
 export function formatObjectData(obj: TickObject): string {
-	const num = (v: unknown) => Number.isFinite(Number(v)) ? String(Number(v)) : "42"; // XSS prevention
+	const num = (v: unknown) => Number.isFinite(Number(v)) ? String(Number(v)) : "NaN"; // XSS prevention
 
 	const lines: { line: string; priority: number; color: string }[] = [];
 
