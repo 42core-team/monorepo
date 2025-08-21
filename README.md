@@ -2,7 +2,8 @@
 
 1. Clone this via SSH
 2. Run make update to initialize the my-core-bot submodule
-3. Run make to build, make run to run, and make debug to run with the outputs of server and the other bot, not just yours.
+3. Open this via Microsoft devcontainer extension in VSCode
+4. Run make to build, make run to run, and make debug to run with the outputs of server and the other bot, not just yours.
 
 ---
 
