@@ -22,3 +22,9 @@
 
 - Label the issue with all the areas of the repo that it relates to.
 - Give all issues a clear type.
+
+--- 
+
+## Branches
+
+- my-core-bot branches are 100% synced with this repos branches. If a monorepo branch gets deleted or merged, do the same for the my-core-bot branch.

@@ -15,6 +15,9 @@ CONFIG_FOLDER := my-core-bot/configs
 CONFIG_SERVER_FILE := $(CONFIG_FOLDER)/server-config.json
 CONFIG_GAME_FILE := $(CONFIG_FOLDER)/game-config.json
 
+# Git info
+CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
+
 # -------------------- Run targets --------------------
 all: build
 re: fclean all
@@ -62,8 +65,9 @@ fclean: clean
 
 # -------------------- Clean targets --------------------
 update:
+	CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 	git submodule update --init --recursive
-	cd my-core-bot && git pull && cd ..
+	cd my-core-bot && git pull origin $(shell git rev-parse --abbrev-ref HEAD)
 
 vis:
 	make visualizer
