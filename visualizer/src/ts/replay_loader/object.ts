@@ -53,7 +53,8 @@ const objectTypeNames = {
 };
 
 export function formatObjectData(obj: TickObject): string {
-	const num = (v: unknown) => Number.isFinite(Number(v)) ? String(Number(v)) : "NaN"; // XSS prevention
+	const num = (v: unknown) =>
+		Number.isFinite(Number(v)) ? String(Number(v)) : "NaN"; // XSS prevention
 
 	const lines: { line: string; priority: number; color: string }[] = [];
 
@@ -67,7 +68,11 @@ export function formatObjectData(obj: TickObject): string {
 		priority: 4,
 		color: "var(--text)",
 	});
-	lines.push({ line: `#️⃣ ID: ${num(obj.id)}`, priority: 5, color: "var(--text)" });
+	lines.push({
+		line: `#️⃣ ID: ${num(obj.id)}`,
+		priority: 5,
+		color: "var(--text)",
+	});
 	lines.push({
 		line: `📍 Position: [x: ${num(obj.x)}, y: ${num(obj.y)}]`,
 		priority: 6,

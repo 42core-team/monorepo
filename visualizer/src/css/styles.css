@@ -407,3 +407,27 @@ svg path {
 	height: 100vh;
 	z-index: 600;
 }
+
+/* Info Modal */
+
+#site-modal {
+	border: none;
+	border-radius: 12px;
+	padding: 1.25rem 1.5rem;
+	width: min(90vw, 480px);
+}
+#open-modal {
+	position: absolute;
+	z-index: 5000;
+	border-bottom-left-radius: 0;
+}
+#info-icon {
+	width: 1.5rem;
+	height: 1.5rem;
+	display: block;
+}
+
+#site-modal::backdrop {
+	background: rgba(0, 0, 0, 0.45);
+}
+
