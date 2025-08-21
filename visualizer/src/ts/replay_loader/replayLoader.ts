@@ -130,14 +130,14 @@ class ReplayLoader {
 		}
 		totalReplayTicks = this.replayData.full_tick_amount;
 
-		winnerNameElement.innerHTML =
+		winnerNameElement.textContent =
 			this.replayData.misc.team_results.find((team) => team.place === 0)
 				?.name || "Unknown";
-		winReasonElement.innerHTML = "";
+		winReasonElement.textContent = "";
 		for (const team of this.replayData.misc.team_results) {
 			if (team.place === 0) continue;
 			const teamName = team.name || `Team ${team.id}`;
-			winReasonElement.innerHTML += `Place ${team.place + 1}: ${teamName} (Death Reason: ${deathReasons[team.death_reason]})<br>`;
+			winReasonElement.textContent += `Place ${team.place + 1}: ${teamName} (Death Reason: ${deathReasons[team.death_reason]})\n`;
 		}
 
 		const fullState: State = {};

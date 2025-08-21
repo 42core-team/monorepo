@@ -3,7 +3,7 @@
 	"build": {
 		"dockerfile": "Dockerfile"
 	},
-	"forwardPorts": [5173],
+	"forwardPorts": [4242],
 	"workspaceFolder": "/workspaces/monorepo",
 	"customizations": {
 		"vscode": {
