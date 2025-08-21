@@ -55,4 +55,9 @@ fclean: clean
 	make -C $(PLAYER_2_FOLDER) fclean
 	make -C $(SERVER_FOLDER) fclean
 
-.PHONY: all re run ren debug rebug stop build server_build player_1_build player_2_build clean fclean
+# -------------------- Clean targets --------------------
+update:
+	git submodule update --init --recursive
+	cd my-core-bot && git pull && cd ..
+
+.PHONY: all re run ren debug rebug stop build server_build player_1_build player_2_build clean fclean update

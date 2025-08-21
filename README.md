@@ -1,3 +1,4 @@
 # Monorepo
 
-Tutorial for how to run CORE game monorepo can be found in the public README of the GitHub Orga
+1. Clone this via SSH
+2. Run make update to initialize the my-core-bot submodule
