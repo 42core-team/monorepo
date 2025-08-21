@@ -64,14 +64,14 @@ void ReplayEncoder::verifyReplaySaveFolder()
 	{
 		if (replaySaveFolder.empty())
 		{
-			Logger::Log(LogLevel::ERROR, "Replay save folder is not set.");
+			Logger::Log(LogLevel::WARNING, "One replay save folder is not set.");
 			continue;
 		}
 
 		if (!std::filesystem::exists(replaySaveFolder) ||
 			!std::filesystem::is_directory(replaySaveFolder))
 		{
-			Logger::Log(LogLevel::ERROR, "One replay save folder is incorrectly set to: " + replaySaveFolder);
+			Logger::Log(LogLevel::WARNING, "One replay save folder is incorrectly set to: " + replaySaveFolder);
 			continue;
 		}
 
