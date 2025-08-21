@@ -411,14 +411,16 @@ svg path {
 /* Info Modal */
 
 #site-modal {
-	border: none;
-	border-radius: 12px;
+	border: 2px solid var(--panel-outline);
+	color: var(--text);
+	background: var(--panel-bg);
+	border-radius: 15px;
 	padding: 1.25rem 1.5rem;
 	width: min(90vw, 480px);
 }
 #open-modal {
 	position: absolute;
-	z-index: 5000;
+	z-index: 5001;
 	border-bottom-left-radius: 0;
 }
 #info-icon {
