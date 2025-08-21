@@ -53,10 +53,12 @@ const objectTypeNames = {
 };
 
 export function formatObjectData(obj: TickObject): string {
+	const num = (v: unknown) => Number.isFinite(Number(v)) ? String(Number(v)) : "42"; // XSS prevention
+
 	const lines: { line: string; priority: number; color: string }[] = [];
 
 	lines.push({
-		line: `❤️ HP: ${obj.hp}`,
+		line: `❤️ HP: ${num(obj.hp)}`,
 		priority: 0,
 		color: "var(--hp-color)",
 	});
@@ -65,9 +67,9 @@ export function formatObjectData(obj: TickObject): string {
 		priority: 4,
 		color: "var(--text)",
 	});
-	lines.push({ line: `#️⃣ ID: ${obj.id}`, priority: 5, color: "var(--text)" });
+	lines.push({ line: `#️⃣ ID: ${num(obj.id)}`, priority: 5, color: "var(--text)" });
 	lines.push({
-		line: `📍 Position: [x: ${obj.x}, y: ${obj.y}]`,
+		line: `📍 Position: [x: ${num(obj.x)}, y: ${num(obj.y)}]`,
 		priority: 6,
 		color: "var(--text)",
 	});
@@ -75,29 +77,29 @@ export function formatObjectData(obj: TickObject): string {
 	switch (obj.type) {
 		case 0:
 			lines.push({
-				line: `🏁 Team ID: ${obj.teamId}`,
+				line: `🏁 Team ID: ${num(obj.teamId)}`,
 				priority: 5,
 				color: "var(--text)",
 			});
 			lines.push({
-				line: `💰 Balance: ${obj.balance}`,
+				line: `💰 Balance: ${num(obj.balance)}`,
 				priority: 1,
 				color: "var(--balance-color)",
 			});
 			break;
 		case 1:
 			lines.push({
-				line: `🏁 Team ID: ${obj.teamId}`,
+				line: `🏁 Team ID: ${num(obj.teamId)}`,
 				priority: 5,
 				color: "var(--text)",
 			});
 			lines.push({
-				line: `💰 Balance: ${obj.balance}`,
+				line: `💰 Balance: ${num(obj.balance)}`,
 				priority: 1,
 				color: "var(--balance-color)",
 			});
 			lines.push({
-				line: `🔢 Move Cooldown: ${obj.moveCooldown}`,
+				line: `🔢 Move Cooldown: ${num(obj.moveCooldown)}`,
 				priority: 2,
 				color: "var(--cooldown-color)",
 			});
@@ -105,14 +107,14 @@ export function formatObjectData(obj: TickObject): string {
 		case 4:
 		case 2:
 			lines.push({
-				line: `💰 Balance: ${obj.balance}`,
+				line: `💰 Balance: ${num(obj.balance)}`,
 				priority: 1,
 				color: "var(--balance-color)",
 			});
 			break;
 		case 5:
 			lines.push({
-				line: `💣 Explosion Countdown: ${obj.countdown}`,
+				line: `💣 Explosion Countdown: ${num(obj.countdown)}`,
 				priority: -1,
 				color: "var(--text)",
 			});

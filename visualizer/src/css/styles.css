@@ -384,6 +384,9 @@ svg path {
 	z-index: 1000;
 	pointer-events: none;
 }
+#winreason {
+	white-space: pre-line;
+}
 
 #background-darkener {
 	position: fixed;
