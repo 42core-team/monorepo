@@ -65,4 +65,9 @@ update:
 	git submodule update --init --recursive
 	cd my-core-bot && git pull && cd ..
 
-.PHONY: all re run ren debug rebug stop build server_build player_1_build player_2_build clean fclean update
+vis:
+	make visualizer
+visualizer:
+	cd visualizer && npm i && npm run dev
+
+.PHONY: all re run ren debug rebug stop build server_build player_1_build player_2_build clean fclean update vis visualizer
