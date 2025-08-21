@@ -66,7 +66,9 @@ fclean: clean
 # -------------------- Clean targets --------------------
 update:
 	git submodule update --init --recursive
-	cd my-core-bot && (git checkout $(CURRENT_BRANCH) && git pull origin $(CURRENT_BRANCH)) || (git checkout dev && git pull origin dev)
+	git -C my-core-bot fetch origin --prune
+	git -C my-core-bot checkout -B $(CURRENT_BRANCH) --track origin/$(CURRENT_BRANCH) || git -C my-core-bot checkout -B $(CURRENT_BRANCH) origin/dev
+	git -C my-core-bot pull --ff-only
 
 vis:
 	make visualizer
