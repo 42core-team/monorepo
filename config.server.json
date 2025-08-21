@@ -1,7 +1,7 @@
 {
 	"gameConfigFilePath": "config.game.json",
 	"replayFolderPaths": [
-		"replays"
+		"."
 	],
 	"dataFolderPath": "core/data",
 	"timeoutTicks": 10000,
