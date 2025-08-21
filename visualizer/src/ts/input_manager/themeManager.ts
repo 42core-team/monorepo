@@ -33,6 +33,12 @@ function applyToDOM(mode: ThemeMode): void {
 		themeIcon.alt =
 			mode === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode";
 	}
+	const darkModeCheckbox = document.getElementById(
+		"dark_mode_checkbox",
+	) as HTMLInputElement;
+	if (darkModeCheckbox) {
+		darkModeCheckbox.checked = mode === "dark";
+	}
 }
 
 export function applyTheme(mode: ThemeMode): void {

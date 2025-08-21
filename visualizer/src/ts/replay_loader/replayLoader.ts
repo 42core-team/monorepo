@@ -60,6 +60,8 @@ type ReplayMisc = {
 		place: number;
 		death_reason: number;
 	}[];
+	version: string;
+	worldGeneratorSeed: number;
 };
 
 export let totalReplayTicks = 0;
@@ -256,6 +258,10 @@ class ReplayLoader {
 	public getGameMisc(): ReplayMisc {
 		return this.replayData.misc;
 	}
+
+	public getReplayJSON(): string {
+		return JSON.stringify(this.replayData);
+	}
 }
 
 let replayLoader: ReplayLoader | null = null;
@@ -444,6 +450,12 @@ export function getGameMisc(): ReplayMisc | undefined {
 	}
 
 	return replayLoader.getGameMisc();
+}
+export function getReplayJSON(): string {
+	if (!replayLoader) {
+		throw new Error("Replay not loaded. Please call loadReplay first.");
+	}
+	return replayLoader.getReplayJSON();
 }
 
 export function getWinningTeamFormatted(): string {
