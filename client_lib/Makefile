@@ -1,7 +1,7 @@
 JOBS ?= $(shell nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
 MAKEFLAGS += -j$(JOBS)
 
-LIBRARY = con_lib.a
+LIBRARY = core_lib.a
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -lm -g -fsanitize=address

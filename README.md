@@ -1,3 +1,24 @@
-# Monorepo
+# CORE GAME Monorepo
 
-Tutorial for how to run CORE game monorepo can be found in the public README of the GitHub Orga
+1. Clone this via SSH
+2. Run make update to initialize the my-core-bot submodule
+3. Run make to build, make run to run, and make debug to run with the outputs of server and the other bot, not just yours.
+
+---
+
+- client_lib/ -> previously connection, the C helper lib used by participants
+- server/ -> previously even_COREnier, the gameplay server, single source of truth connection players during matches, cpp
+- visualizer/ -> previously debug_visualizerm displays replay files generated from the server with vanilla html ts css
+- my-core-bot/ -> bot coding environment for Core players, containing two bots. Imported here as a submodule because players must receive a fork of my-core-bot only during events. This is included here so monorepo can also work with the same bots and configs as my-core-bot without us having duplicate code and copying files around.
+
+---
+
+- configs are at my-core-bot/configs
+- to write a test bot, write it in my-core-bot/your_bot
+
+---
+
+## Issues
+
+- Label the issue with all the areas of the repo that it relates to.
+- Give all issues a clear type.

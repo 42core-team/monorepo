@@ -74,7 +74,6 @@ struct UnitConfig
 
 struct ServerConfig
 {
-	std::string gameConfigFilePath;
 	std::vector<std::string> replayFolderPaths;
 	std::string dataFolderPath;
 	unsigned int timeoutTicks;
@@ -100,9 +99,15 @@ class Config
 			serverConfigFilePath = path;
 		}
 		static std::string getServerConfigFilePath() { return serverConfigFilePath; }
+		static void setGameConfigFilePath(const std::string &path)
+		{
+			gameConfigFilePath = path;
+		}
+		static std::string getGameConfigFilePath() { return gameConfigFilePath; }
 
 	private:
 		static std::string serverConfigFilePath;
+		static std::string gameConfigFilePath;
 };
 
 #endif // CONFIG_H

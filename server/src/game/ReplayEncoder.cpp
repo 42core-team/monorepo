@@ -59,24 +59,31 @@ void ReplayEncoder::includeConfig(json &config)
 
 void ReplayEncoder::verifyReplaySaveFolder()
 {
+	std::vector<std::string> validReplaySaveFolders;
 	for (const std::string &replaySaveFolder : Config::server().replayFolderPaths)
 	{
 		if (replaySaveFolder.empty())
 		{
 			Logger::Log(LogLevel::ERROR, "Replay save folder is not set.");
-			std::exit(1);
+			continue;
 		}
-
-		if (replaySaveFolder.rfind("http://", 0) == 0 ||
-			replaySaveFolder.rfind("https://", 0) == 0)
-			return;
 
 		if (!std::filesystem::exists(replaySaveFolder) ||
 			!std::filesystem::is_directory(replaySaveFolder))
 		{
-			Logger::Log(LogLevel::ERROR, "Replay save folder is incorrectly set to: " + replaySaveFolder);
-			exit(1);
+			Logger::Log(LogLevel::ERROR, "One replay save folder is incorrectly set to: " + replaySaveFolder);
+			continue;
 		}
+
+		validReplaySaveFolders.push_back(replaySaveFolder);
+	}
+
+	Config::server().replayFolderPaths = validReplaySaveFolders;
+
+	if (validReplaySaveFolders.empty())
+	{
+		Logger::Log(LogLevel::ERROR, "No valid replay save folders found.");
+		exit(1);
 	}
 }
 
