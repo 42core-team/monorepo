@@ -13,9 +13,9 @@ struct Position
 	Position(int x, int y) : x(x), y(y) {}
 	Position() : x(-1), y(-1) {} // purposeful overflow, max val to indicate invalidity
 
-	bool isValid(int maxX, int maxY) const
+	bool isValid(int maxGrid) const
 	{
-		return x < maxX && y < maxY && x >= 0 && y >= 0;
+		return x < maxGrid && y < maxGrid && x >= 0 && y >= 0;
 	}
 
 	bool operator==(const Position &other) const

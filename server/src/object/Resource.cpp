@@ -1,10 +1,10 @@
 #include "Resource.h"
 
-Resource::Resource(unsigned int id)
-	: Object(id, Config::game().resourceHp, ObjectType::Resource),
+Resource::Resource()
+	: Object(Config::game().resourceHp, ObjectType::Resource),
 	  balance_(Config::game().resourceIncome) {}
-Resource::Resource(unsigned int id, unsigned int balance)
-	: Object(id, Config::game().resourceHp,
+Resource::Resource(unsigned int balance)
+	: Object(Config::game().resourceHp,
 			 ObjectType::Resource),
 	  balance_(balance) {}
 

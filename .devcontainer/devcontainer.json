@@ -8,7 +8,7 @@
 	"customizations": {
 		"vscode": {
 			"settings": {
-				"terminal.integrated.shell.linux": "/bin/bash",
+				"terminal.integrated.shell.linux": "/bin/zsh",
 				"editor.formatOnPaste": true,
 				"editor.formatOnSave": true,
 				"files.autoSave": "onFocusChange",

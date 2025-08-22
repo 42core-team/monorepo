@@ -1,7 +1,7 @@
 #include "Unit.h"
 
-Unit::Unit(unsigned int id, unsigned int teamId, unsigned int unit_type)
-	: Object(id, Config::game().units[unit_type].hp, ObjectType::Unit), unit_type_(unit_type), team_id_(teamId), balance_(0)
+Unit::Unit(unsigned int teamId, unsigned int unit_type)
+	: Object(Config::game().units[unit_type].hp, ObjectType::Unit), unit_type_(unit_type), team_id_(teamId), balance_(0)
 {
 	resetActionCooldown();
 }

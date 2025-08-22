@@ -9,7 +9,7 @@
 class Bomb : public Object
 {
 	public:
-		Bomb(unsigned int id);
+		Bomb();
 		Bomb(const Bomb &other)
 			: Object(other), countdown_(other.countdown_) {}
 
