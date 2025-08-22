@@ -4,7 +4,7 @@ MAKEFLAGS += -j$(JOBS)
 LIBRARY = core_lib.a
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -lm -g -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -lm -g -fsanitize=address -MMD -MP
 
 INC = inc
 OBJDIR = obj
@@ -12,6 +12,8 @@ SRCDIR = src
 
 SRCS := $(shell find $(SRCDIR) -name "*.c")
 OBJS := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRCS))
+
+-include $(OBJS:.o=.d)
 
 all: $(LIBRARY)
 
