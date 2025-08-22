@@ -57,7 +57,7 @@ std::string TransferMoneyAction::dropMoney(Core *core, Object *srcObj)
 
 	srcUnit->resetActionCooldown();
 
-	Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), amount_), target_);
+	Board::instance().addObject<Money>(Money(amount_), target_);
 
 	return "";
 }

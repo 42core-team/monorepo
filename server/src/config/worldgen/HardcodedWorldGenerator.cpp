@@ -38,7 +38,7 @@ void HardcodedWorldGenerator::generateWorld(unsigned int seed)
 		const unsigned int x = i % gridSize;
 		const unsigned int y = i / gridSize;
 
-		if (!Position(x, y).isValid(gridSize, gridSize))
+		if (!Position(x, y).isValid(gridSize))
 		{
 			Logger::LogWarn("HardcodedWorldGenerator - Invalid obj at position (" + std::to_string(x) + ", " + std::to_string(y) + ") in map data.");
 			continue;
@@ -62,15 +62,15 @@ void HardcodedWorldGenerator::generateWorld(unsigned int seed)
 				break;
 			case 'W':
 				// Wall
-				Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), Position(x, y), false);
+				Board::instance().addObject<Wall>(Wall(), Position(x, y), false);
 				break;
 			case 'R':
 				// Resource
-				Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), Position(x, y), false);
+				Board::instance().addObject<Resource>(Resource(), Position(x, y), false);
 				break;
 			case 'M':
 				// Money
-				Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), Position(x, y), false);
+				Board::instance().addObject<Money>(Money(), Position(x, y), false);
 				break;
 			default:
 				Logger::LogWarn("HardcodedWorldGenerator - Unknown tile type found in map data.");

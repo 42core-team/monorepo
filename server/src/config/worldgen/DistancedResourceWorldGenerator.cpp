@@ -53,13 +53,13 @@ void DistancedResourceWorldGenerator::generateWorld(unsigned int seed)
 		switch (t)
 		{
 			case ObjectType::Resource:
-				Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId(), randomResourceBalance), p);
+				Board::instance().addObject<Resource>(Resource(randomResourceBalance), p);
 				return true;
 			case ObjectType::Money:
-				Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), randomMoneyBalance), p);
+				Board::instance().addObject<Money>(Money(randomMoneyBalance), p);
 				return true;
 			case ObjectType::Wall:
-				Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), p);
+				Board::instance().addObject<Wall>(Wall(), p);
 				return true;
 			default:
 				return false;
@@ -106,13 +106,13 @@ void DistancedResourceWorldGenerator::generateWorld(unsigned int seed)
 		switch (it.first)
 		{
 			case ObjectType::Resource:
-				Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), it.second);
+				Board::instance().addObject<Resource>(Resource(), it.second);
 				break;
 			case ObjectType::Money:
-				Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), it.second);
+				Board::instance().addObject<Money>(Money(), it.second);
 				break;
 			case ObjectType::Wall:
-				Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), it.second);
+				Board::instance().addObject<Wall>(Wall(), it.second);
 				break;
 			default:
 				Logger::Log("Unknown object type while mirroring: " + std::to_string(static_cast<int>(it.first)));

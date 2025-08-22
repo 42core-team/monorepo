@@ -8,7 +8,10 @@
             "includePath": [
                 "${workspaceFolder}/client_lib/inc",
                 "${workspaceFolder}/my-core-bot/gridmaster/inc",
-                "${workspaceFolder}/my-core-bot/my-core-bot/inc"
+                "${workspaceFolder}/my-core-bot/my-core-bot/inc",
+                "${workspaceFolder}/server/inc/**",
+                "${workspaceFolder}/server/inc/**/**",
+                "${workspaceFolder}/server/inc/**/*"
             ],
             "cppStandard": "c++17",
 			"defines": []

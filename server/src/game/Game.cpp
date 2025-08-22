@@ -5,7 +5,7 @@ Game::Game(std::vector<unsigned int> team_ids)
 {
 	shuffle_vector(team_ids); // randomly assign core positions to ensure fairness
 	for (unsigned int i = 0; i < team_ids.size(); ++i)
-		Board::instance().addObject<Core>(Core(Board::instance().getNextObjectId(), team_ids[i]), Config::getCorePosition(i), true);
+		Board::instance().addObject<Core>(Core(team_ids[i]), Config::getCorePosition(i), true);
 
 	unsigned int seed = Config::game().seed;
 	if (seed == 1) {
@@ -141,7 +141,7 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 				Position objPos = Board::instance().getObjectPositionById(obj.getId());
 				unsigned int unitBalance = ((Unit &)obj).getBalance();
 				Board::instance().removeObjectById(obj.getId());
-				Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), unitBalance), objPos);
+				Board::instance().addObject<Money>(Money(unitBalance), objPos);
 			}
 			else if (obj.getType() != ObjectType::Core)
 			{
@@ -195,7 +195,6 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 
 	// 6. ActionCooldown DECREMENT FOR UNITS
 	// must happen AFTER state send cause clients also do it locally for replay efficiency, otherwise we get a server/client desync with two decrements in one tick when ActionCooldown is reset
-	// this helped me get it: https://chatgpt.com/share/68a18ed4-e860-800d-9c93-1f7d03cdff94
 	for (auto &obj : Board::instance())
 		if (obj.getType() == ObjectType::Unit)
 			static_cast<Unit&>(obj).tickActionCooldown();

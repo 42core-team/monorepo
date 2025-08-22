@@ -3,12 +3,13 @@
 
 #include "Object.h"
 #include "Common.h"
+#include "Board.h"
 #include "Config.h"
 
 class Wall : public Object
 {
 	public:
-		Wall(unsigned int id);
+		Wall();
 		Wall(const Wall &other)
 			: Object(other) {}
 

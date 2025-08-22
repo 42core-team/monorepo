@@ -19,7 +19,7 @@ void AttackAction::decodeJSON(json msg)
 	target_pos_.x = msg["x"];
 	target_pos_.y = msg["y"];
 
-	if (!target_pos_.isValid(Config::game().gridSize, Config::game().gridSize))
+	if (!target_pos_.isValid(Config::game().gridSize))
 	{
 		is_valid_ = false;
 		return;
@@ -57,7 +57,7 @@ std::string AttackAction::attackObj(Object *obj, Unit *unit) // returns object n
 		{
 			unsigned int balance = ((Resource *)obj)->getBalance();
 			Board::instance().removeObjectById(obj->getId());
-			Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), balance), target_pos_);
+			Board::instance().addObject<Money>(Money(balance), target_pos_);
 		}
 	}
 	else if (obj->getType() == ObjectType::Wall)

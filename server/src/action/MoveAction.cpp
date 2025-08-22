@@ -17,7 +17,7 @@ void MoveAction::decodeJSON(json msg)
 
 	unit_id_ = msg["unit_id"];
 	target_ = Position(msg["x"], msg["y"]);
-	if (!target_.isValid(Config::game().gridSize, Config::game().gridSize))
+	if (!target_.isValid(Config::game().gridSize))
 	{
 		is_valid_ = false;
 		return;

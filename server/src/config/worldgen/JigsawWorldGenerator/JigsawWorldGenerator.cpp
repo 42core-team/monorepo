@@ -89,40 +89,40 @@ bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, i
 
 			Position targetPos(posX + x, posY + y);
 			if (cell == 'X')
-				Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), targetPos);
+				Board::instance().addObject<Wall>(Wall(), targetPos);
 			else if (cell == 'R')
-				Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), targetPos);
+				Board::instance().addObject<Resource>(Resource(), targetPos);
 			else if (cell == 'M')
-				Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), targetPos);
+				Board::instance().addObject<Money>(Money(), targetPos);
 			else if (std::string("0123456789").find(cell) != std::string::npos)
 			{
 				int wallLikelihood = cell - '0';
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < wallLikelihood)
-					Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), targetPos);
+					Board::instance().addObject<Wall>(Wall(), targetPos);
 			}
 			else if (std::string("abcdefghij").find(cell) != std::string::npos)
 			{
 				int resourceLikelihood = cell - 'a';
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < resourceLikelihood)
-					Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), targetPos);
+					Board::instance().addObject<Resource>(Resource(), targetPos);
 			}
 			else if (std::string("ABCDEFGHIJ").find(cell) != std::string::npos)
 			{
 				int moneyLikelihood = cell - 'A';
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < moneyLikelihood)
-					Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), targetPos);
+					Board::instance().addObject<Money>(Money(), targetPos);
 			}
 			else if (std::string("klmnopqrst").find(cell) != std::string::npos)
 			{
 				int wallLikelihood = cell - 'k';
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < wallLikelihood)
-					Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), targetPos);
+					Board::instance().addObject<Wall>(Wall(), targetPos);
 				else
-					Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), targetPos);
+					Board::instance().addObject<Resource>(Resource(), targetPos);
 			}
 			else if (std::string("uvwxyz!/$%").find(cell) != std::string::npos)
 			{
@@ -137,9 +137,9 @@ bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, i
 					moneyLikelihood = 9;
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < moneyLikelihood)
-					Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), targetPos);
+					Board::instance().addObject<Money>(Money(), targetPos);
 				else
-					Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), targetPos);
+					Board::instance().addObject<Wall>(Wall(), targetPos);
 			}
 			else if (std::string("KLNOPQSTUV").find(cell) != std::string::npos)
 			{
@@ -149,9 +149,9 @@ bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, i
 					int moneyLikelihood = it->second;
 					std::uniform_int_distribution<int> dist(0, 9);
 					if (dist(eng_) < moneyLikelihood)
-						Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), targetPos);
+						Board::instance().addObject<Money>(Money(), targetPos);
 					else
-						Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), targetPos);
+						Board::instance().addObject<Resource>(Resource(), targetPos);
 				}
 			}
 		}
@@ -234,9 +234,9 @@ void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 			if (Board::instance().getObjectAtPos(pos) == nullptr)
 			{
 				if (type == ObjectType::Resource)
-					Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId()), pos);
+					Board::instance().addObject<Resource>(Resource(), pos);
 				else
-					Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId()), pos);
+					Board::instance().addObject<Money>(Money(), pos);
 				addCount--;
 			}
 		}
@@ -338,7 +338,7 @@ void JigsawWorldGenerator::placeWalls()
 			placementProbability = 0.2;
 
 		if (probDist(eng_) < placementProbability)
-			Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), pos);
+			Board::instance().addObject<Wall>(Wall(), pos);
 	}
 }
 
@@ -370,13 +370,13 @@ void JigsawWorldGenerator::mirrorWorld()
 		switch (obj.getType())
 		{
 			case ObjectType::Wall:
-				Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), q);
+				Board::instance().addObject<Wall>(Wall(), q);
 				break;
 			case ObjectType::Resource:
-				Board::instance().addObject<Resource>(Resource(Board::instance().getNextObjectId(), ((Resource &)obj).getBalance()), q);
+				Board::instance().addObject<Resource>(Resource(((Resource &)obj).getBalance()), q);
 				break;
 			case ObjectType::Money:
-				Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), ((Money &)obj).getBalance()), q);
+				Board::instance().addObject<Money>(Money((Money &)obj).getBalance(), q);
 				break;
 			default:
 				Logger::Log(LogLevel::WARNING, "Unexpected object type during mirroring: " + std::to_string(static_cast<int>(obj.getType())));

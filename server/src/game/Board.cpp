@@ -1,10 +1,10 @@
 #include "Board.h"
 
-Board::Board(unsigned int grid_width, unsigned int grid_height)
-	: grid_width_(grid_width), grid_height_(grid_height)
+Board::Board(unsigned int grid_size)
+	: grid_size_(grid_size)
 {
-	objects_.reserve(grid_width * grid_height);
-	for (unsigned int i = 0; i < grid_width * grid_height; ++i)
+	objects_.reserve(grid_size * grid_size);
+	for (unsigned int i = 0; i < grid_size * grid_size; ++i)
 		objects_.emplace_back(nullptr);
 }
 
@@ -24,7 +24,7 @@ bool Board::removeObjectById(unsigned int id)
 // @return true if object was removed successfully
 bool Board::removeObjectAtPos(const Position & pos)
 {
-	if (!pos.isValid(grid_width_, grid_height_))
+	if (!pos.isValid(grid_size_))
 		return false;
 	unsigned int vecPos = gridPosToVecPos(pos);
 	if (vecPos > objects_.size() || objects_[vecPos] == nullptr)
@@ -45,7 +45,7 @@ Object *Board::getObjectById(unsigned int id) const
 // @return nullptr if no object at given position
 Object *Board::getObjectAtPos(const Position & pos) const
 {
-	if (!pos.isValid(grid_width_, grid_height_))
+	if (!pos.isValid(grid_size_))
 		return nullptr;
 	unsigned int vecPos = gridPosToVecPos(pos);
 	if (vecPos >= objects_.size())
@@ -85,7 +85,7 @@ int Board::getCoreCount()
 
 bool Board::moveObjectById(unsigned int id, const Position & newPos)
 {
-	if (!newPos.isValid(grid_width_, grid_height_))
+	if (!newPos.isValid(grid_size_))
 		return false;
 	unsigned int destIdx = gridPosToVecPos(newPos);
 	if (destIdx >= objects_.size() || objects_[destIdx])
@@ -109,16 +109,16 @@ bool Board::moveObjectById(unsigned int id, const Position & newPos)
 
 Position Board::vecPosToGridPos(unsigned int vecPos) const
 {
-	unsigned int x = vecPos % grid_width_;
-	unsigned int y = vecPos / grid_width_;
+	unsigned int x = vecPos % grid_size_;
+	unsigned int y = vecPos / grid_size_;
 	Position pos = Position(x, y);
-	if (!pos.isValid(grid_width_, grid_height_))
+	if (!pos.isValid(grid_size_))
 		return Position(-1, -1);
 	return pos;
 }
 unsigned int Board::gridPosToVecPos(const Position & gridPos) const
 {
-	if (!gridPos.isValid(grid_width_, grid_height_))
+	if (!gridPos.isValid(grid_size_))
 		return -1; // purposeful overflow, max val to indicate invalidity
-	return gridPos.y * grid_width_ + gridPos.x;
+	return gridPos.y * grid_size_ + gridPos.x;
 }

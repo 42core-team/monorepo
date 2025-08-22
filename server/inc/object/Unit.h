@@ -4,11 +4,12 @@
 #include "Object.h"
 #include "Common.h"
 #include "Config.h"
+#include "Board.h"
 
 class Unit : public Object
 {
 public:
-	Unit(unsigned int id, unsigned int teamId, unsigned int unit_type);
+	Unit(unsigned int teamId, unsigned int unit_type);
 	Unit(const Unit &other)
 		: Object(other), unit_type_(other.unit_type_), team_id_(other.team_id_),
 		  balance_(other.balance_), action_cooldown_(other.action_cooldown_) {}

@@ -5,14 +5,15 @@
 #include "Common.h"
 #include "Unit.h"
 #include "Config.h"
+#include "Board.h"
 
 #include <cmath>
 
 class Money : public Object
 {
 	public:
-		Money(unsigned int id);
-		Money(unsigned int id, unsigned int balance);
+		Money();
+		Money(unsigned int balance);
 		Money(const Money & other)
 			: Object(other), balance_(other.balance_) {}
 

@@ -12,13 +12,13 @@
 class Board
 {
 	public:
-		Board(unsigned int grid_width, unsigned int grid_height);
+		Board(unsigned int grid_size);
 		Board(const Board&) = delete;
 		Board& operator=(const Board&) = delete;
 		~Board() = default;
 
 		static Board& instance() {
-			static Board _instance(Config::game().gridSize, Config::game().gridSize);
+			static Board _instance(Config::game().gridSize);
 			return _instance;
 		}
 
@@ -46,16 +46,10 @@ class Board
 		Position		vecPosToGridPos(unsigned int vecPos) const;
 		unsigned int	gridPosToVecPos(const Position & gridPos) const;
 
-		unsigned int	getNextObjectId() { return next_object_id_++; }
-
 	private:
-		std::vector<std::unique_ptr<Object>> objects_; // [ 5 | 3 ] is at index grid_width * 5 + 3
+		std::vector<std::unique_ptr<Object>> objects_; // [ 5 | 3 ] is at index grid_size_ * 5 + 3
 
-		unsigned int grid_width_;
-		unsigned int grid_height_;
-
-		unsigned int next_object_id_ = 1;
-
+		unsigned int grid_size_;
 
 	// @brief Board Iterator that only exposes valid objects
 	class Iterator

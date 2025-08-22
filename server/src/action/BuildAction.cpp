@@ -16,7 +16,7 @@ void BuildAction::decodeJSON(json msg)
 	builder_id_ = msg["unit_id"];
 	position_ = Position(msg["x"], msg["y"]);
 
-	if (!position_.isValid(Config::game().gridSize, Config::game().gridSize))
+	if (!position_.isValid(Config::game().gridSize))
 		is_valid_ = false;
 }
 json BuildAction::encodeJSON()
@@ -64,7 +64,7 @@ std::string BuildAction::execute(Core *core)
 			return "insufficient funds";
 		builder->resetActionCooldown();
 		builder->setBalance(builder->getBalance() - Config::game().wallBuildCost);
-		Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), position_);
+		Board::instance().addObject<Wall>(Wall(), position_);
 	}
 	else if (buildType == BuildType::BOMB)
 	{
@@ -72,7 +72,7 @@ std::string BuildAction::execute(Core *core)
 			return "insufficient funds";
 		builder->resetActionCooldown();
 		builder->setBalance(builder->getBalance() - Config::game().bombThrowCost);
-		Board::instance().addObject<Bomb>(Bomb(Board::instance().getNextObjectId()), position_);
+		Board::instance().addObject<Bomb>(Bomb(), position_);
 	}
 
 	return "";
