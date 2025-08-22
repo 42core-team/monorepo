@@ -2,7 +2,7 @@
 
 extern t_game game;
 
-void core_print_obj(const t_obj *obj)
+void core_print_obj(t_obj *obj)
 {
 	if (obj == NULL)
 	{
@@ -58,7 +58,7 @@ t_obj **core_print_objs(t_obj **objs)
 	for (int i = 0; objs[i]; i++)
 	{
 		t_obj *obj = objs[i];
-		core_print_object(obj);
+		core_print_obj(obj);
 		printf("---\n");
 	}
 

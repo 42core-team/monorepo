@@ -7,7 +7,7 @@ static bool core_static_isMyCore(const t_obj *obj)
 }
 static t_obj *core_static_get_myCore(void)
 {
-	return core_get_obj_customCondition_first(core_static_isMyCore);
+	return core_get_obj_filter_first(core_static_isMyCore);
 }
 
 static void core_static_ensureCapacity(void)

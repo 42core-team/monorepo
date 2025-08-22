@@ -112,7 +112,7 @@ int	core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 		}
 		core_internal_parse_state(msg);
 		free(msg);
-		my_core = core_get_obj_customCondition_first(core_static_isMyCore);
+		my_core = core_get_obj_filter_first(core_static_isMyCore);
 
 		// execute user code
 		tick_callback(game.elapsed_ticks);

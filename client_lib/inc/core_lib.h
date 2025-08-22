@@ -274,7 +274,7 @@ t_obj *core_get_obj_filter_nearest(t_pos pos, bool (*condition)(const t_obj *));
 /// @brief Get the count of all objects matching a custom condition.
 /// @param condition Selection function pointer returning if the inputted object should be selected
 /// @return The count of objects that match the condition or 0 if no such object exists
-unsigned int core_get_objs_filter_count(bool (*condition)(const t_obj *)):
+unsigned int core_get_objs_filter_count(bool (*condition)(const t_obj *));
 
 /// @brief Get the unit config for a specific unit type.
 /// @param type The type of unit to get the config for.
@@ -287,12 +287,12 @@ t_unit_config *core_get_unitConfig(t_unit_type type);
 
 /// @brief Prints all information about the current game state of a given object. Handles NULL.
 /// @param obj The object to print information about.
-void core_print_obj(const t_obj *obj);
+void core_print_obj(t_obj *obj);
 
 /// @brief Prints all information about the current game state of multiple objects. Handles NULL.
 /// @param objs The objects to print information about.
 /// @return The inputted objects array, so you can easily free in the same line as you print.
-t_obj **core_print_objs(const t_obj **objs);
+t_obj **core_print_objs(t_obj **objs);
 
 /// @brief Prints a selected unit config.
 /// @param unit_type The type of unit to print the config for.
