@@ -22,7 +22,7 @@ typedef enum e_obj_type
 } t_obj_type;
 
 /// @brief Object state.
-/// @details Uninitialized objects should only have their type, state, data, team_id & unit_type read and set.
+/// @details Uninitialized objects should only have their type, state, data, team_id & unit_type read from.
 typedef enum e_obj_state
 {
 	STATE_UNINITIALIZED = 1,
@@ -209,39 +209,6 @@ extern t_game game;
 /// @return 0 on success, another number on failure.
 int core_startGame(const char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug);
 
-// ----- GETTER FUNCTIONS -----
-
-/// GETTER FUNCTIONS are used to get information about the current game state.
-
-/// @brief Get any object based on its id.
-/// @return The object or NULL if no such object exists.
-t_obj *core_get_obj_from_id(unsigned long id);
-
-/// @brief Get any object based on its position.
-/// @return The object at the position or NULL if no such object exists.
-t_obj *core_get_obj_from_pos(t_pos pos);
-
-/// @brief Get all objects matching a custom condition.
-/// @param condition Selection function pointer returning if the inputted object should be selected
-/// @return Null-terminated array of selected objects or NULL if no condition is provided or no objects match the condition.
-t_obj **core_get_objs_customCondition(bool (*condition)(const t_obj *));
-
-/// @brief Get the first object matching a custom condition.
-/// @param condition Selection function pointer returning if the inputted object should be selected
-/// @return The first object that matches the condition or NULL if no such object exists or no condition is provided.
-t_obj *core_get_obj_customCondition_first(bool (*condition)(const t_obj *));
-
-/// @brief Get the nearest object to a given position matching a custom condition.
-/// @param pos Position to search from
-/// @param condition Selection function pointer returning if the inputted object should be selected
-/// @return The nearest object that matches the condition or NULL if no such object exists or no condition is provided.
-t_obj *core_get_obj_customCondition_nearest(t_pos pos, bool (*condition)(const t_obj *));
-
-/// @brief Get the unit config for a specific unit type.
-/// @param type The type of unit to get the config for.
-/// @return The unit config or NULL if no such unit type or unit config exists.
-t_unit_config *core_get_unitConfig(t_unit_type type);
-
 // ----- ACTION FUNCTIONS -----
 
 // ACTION FUNCTIONS are used to perform actions in the game, like creating units, moving them, attacking, etc. Their changes are applied between ticks.
@@ -276,21 +243,63 @@ void core_action_transferMoney(const t_obj *source, t_pos target_pos, unsigned l
 /// @param pos The position where the object should be built.
 void core_action_build(const t_obj *builder, t_pos pos);
 
+// ----- GETTER FUNCTIONS -----
+
+/// GETTER FUNCTIONS are used to get information about the current game state.
+
+/// @brief Get any object based on its id.
+/// @return The object or NULL if no such object exists.
+t_obj *core_get_obj_from_id(unsigned long id);
+
+/// @brief Get any object based on its position.
+/// @return The object at the position or NULL if no such object exists.
+t_obj *core_get_obj_from_pos(t_pos pos);
+
+/// @brief Get all objects matching a custom condition.
+/// @param condition Selection function pointer returning if the inputted object should be selected
+/// @return Null-terminated array of selected objects or NULL if no condition is provided or no objects match the condition.
+t_obj **core_get_objs_filter(bool (*condition)(const t_obj *));
+
+/// @brief Get the first object matching a custom condition.
+/// @param condition Selection function pointer returning if the inputted object should be selected
+/// @return The first object that matches the condition or NULL if no such object exists or no condition is provided.
+t_obj *core_get_obj_filter_first(bool (*condition)(const t_obj *));
+
+/// @brief Get the nearest object to a given position matching a custom condition.
+/// @param pos Position to search from
+/// @param condition Selection function pointer returning if the inputted object should be selected
+/// @return The nearest object that matches the condition or NULL if no such object exists or no condition is provided.
+t_obj *core_get_obj_filter_nearest(t_pos pos, bool (*condition)(const t_obj *));
+
+/// @brief Get the count of all objects matching a custom condition.
+/// @param condition Selection function pointer returning if the inputted object should be selected
+/// @return The count of objects that match the condition or 0 if no such object exists
+unsigned int core_get_objs_filter_count(bool (*condition)(const t_obj *)):
+
+/// @brief Get the unit config for a specific unit type.
+/// @param type The type of unit to get the config for.
+/// @return The unit config or NULL if no such unit type or unit config exists.
+t_unit_config *core_get_unitConfig(t_unit_type type);
+
 // ----- PRINT FUNCTIONS -----
 
 // PRINT FUNCTIONS are used to print information about the game state to the console.
 
-/// @brief Prints all information about the current game state of a given object.
+/// @brief Prints all information about the current game state of a given object. Handles NULL.
 /// @param obj The object to print information about.
-void core_print_object(const t_obj *obj);
+void core_print_obj(const t_obj *obj);
 
-/// @brief Prints all objects that match a custom condition.
-/// @param condition Selection function pointer returning if the inputted object should be selected
-void core_print_objects(bool (*condition)(const t_obj *));
+/// @brief Prints all information about the current game state of multiple objects. Handles NULL.
+/// @param objs The objects to print information about.
+/// @return The inputted objects array, so you can easily free in the same line as you print.
+t_obj **core_print_objs(const t_obj **objs);
 
 /// @brief Prints a selected unit config.
 /// @param unit_type The type of unit to print the config for.
 void core_print_config_unit(t_unit_type unit_type);
+
+/// @brief Prints the entire game config
+void core_print_config_game(void);
 
 /// @brief Prints the entire game config and all unit configs
 void core_print_config(void);

@@ -37,7 +37,7 @@ t_unit_config *core_get_unitConfig(t_unit_type unit_type)
 
 // -
 
-t_obj **core_get_objs_customCondition(bool (*condition)(const t_obj *))
+t_obj **core_get_objs_filter(bool (*condition)(const t_obj *))
 {
 	int count = 0;
 	for (int i = 0; game.objects && game.objects[i] != NULL; i++)
@@ -64,9 +64,9 @@ t_obj **core_get_objs_customCondition(bool (*condition)(const t_obj *))
 	return result;
 }
 
-t_obj *core_get_obj_customCondition_first(bool (*condition)(const t_obj *))
+t_obj *core_get_obj_filter_first(bool (*condition)(const t_obj *))
 {
-	t_obj **objects = core_get_objs_customCondition(condition);
+	t_obj **objects = core_get_objs_filter(condition);
 	if (!objects || !objects[0])
 		return NULL;
 	t_obj *first = objects[0];
@@ -74,9 +74,9 @@ t_obj *core_get_obj_customCondition_first(bool (*condition)(const t_obj *))
 	return first;
 }
 
-t_obj *core_get_obj_customCondition_nearest(t_pos pos, bool (*condition)(const t_obj *))
+t_obj *core_get_obj_filter_nearest(t_pos pos, bool (*condition)(const t_obj *))
 {
-	t_obj **objects = core_get_objs_customCondition(condition);
+	t_obj **objects = core_get_objs_filter(condition);
 	if (!objects || !objects[0])
 		return NULL;
 
@@ -93,4 +93,18 @@ t_obj *core_get_obj_customCondition_nearest(t_pos pos, bool (*condition)(const t
 	}
 	free(objects);
 	return nearest;
+}
+
+unsigned int core_get_objs_filter_count(bool (*condition)(const t_obj *))
+{
+	unsigned int count = 0;
+	t_obj **objects = core_get_objs_filter(condition);
+	if (!objects)
+		return 0;
+
+	for (int i = 0; objects[i] != NULL; i++)
+		count++;
+
+	free(objects);
+	return count;
 }
