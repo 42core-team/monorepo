@@ -1,0 +1,8 @@
+{
+	"C_Cpp.intelliSenseEngine": "Default",
+	"C_Cpp.errorSquiggles": "Enabled",
+	"C_Cpp.codeAnalysis.clangTidy.enabled": true,
+	"C_Cpp.default.compilerPath": "/usr/bin/cc",
+	"C_Cpp.default.intelliSenseMode": "linux-gcc-arm64",
+	"C_Cpp.default.cStandard": "c23"
+}

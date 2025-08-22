@@ -2,8 +2,14 @@
 
 extern t_game game;
 
-void core_print_object(const t_obj *obj)
+void core_print_obj(t_obj *obj)
 {
+	if (obj == NULL)
+	{
+		printf("core_print_object: Received object was NULL!\n");
+		return;
+	}
+
 	printf("---");
 	printf("ID: %lu\n", obj->id);
 	printf("Type: %s\n", obj->type == OBJ_CORE ? "Core" : 
@@ -42,18 +48,21 @@ void core_print_object(const t_obj *obj)
 	}
 }
 
-void core_print_objects(bool (*condition)(const t_obj *))
+t_obj **core_print_objs(t_obj **objs)
 {
-	if (game.objects == NULL)
-		return;
-	for (int i = 0; game.objects[i]; i++)
+	if (objs == NULL || objs[0] == NULL)
 	{
-		t_obj *obj = game.objects[i];
-		if (condition && !condition(obj))
-			continue;
-		core_print_object(obj);
+		printf("core_print_objects: Received objects array was NULL or empty!\n");
+		return NULL;
+	}
+	for (int i = 0; objs[i]; i++)
+	{
+		t_obj *obj = objs[i];
+		core_print_obj(obj);
 		printf("---\n");
 	}
+
+	return objs;
 }
 
 void core_print_config_unit(t_unit_type unit_type)
@@ -83,7 +92,7 @@ void core_print_config_unit(t_unit_type unit_type)
 	printf("	- Can Build: %s\n", unit_config->can_build ? "Yes" : "No");
 }
 
-void core_print_config(void)
+void core_print_config_game(void)
 {
 	printf("Game Config:\n");
 	printf("	- Map Grid Size: %lu\n", game.config.gridSize);
@@ -100,7 +109,12 @@ void core_print_config(void)
 	printf("	- Bomb Throw Cost: %lu\n", game.config.bomb_throw_cost);
 	printf("	- Bomb Reach: %lu\n", game.config.bomb_reach);
 	printf("	- Bomb Damage: %lu\n", game.config.bomb_damage);
-	
+}
+
+void core_print_config(void)
+{
+	core_print_config_game();
+
 	for (int i = 0; game.config.units[i] != NULL; i++)
 	{
 		core_print_config_unit(game.config.units[i]->unit_type);
