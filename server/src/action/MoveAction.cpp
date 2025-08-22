@@ -45,7 +45,7 @@ std::string MoveAction::execute(Core * core)
 		return "invalid or non-existing unit";
 	Unit * unit = (Unit *)unitObj;
 
-	if (unit->getMoveCooldown() > 0)
+	if (unit->getActionCooldown() > 0)
 		return "unit is on cooldown";
 	if (unit->getTeamId() != core->getTeamId())
 		return "unit does not belong to your team";
@@ -63,7 +63,7 @@ std::string MoveAction::execute(Core * core)
 	}
 
 	Board::instance().moveObjectById(unit->getId(), target_);
-	unit->resetMoveCooldown();
+	unit->resetActionCooldown();
 
 	return "";
 }

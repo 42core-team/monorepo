@@ -18,7 +18,7 @@ export interface UnitObject extends BaseObject {
 	unit_type: number;
 	teamId: number;
 	balance: number;
-	moveCooldown: number;
+	ActionCooldown: number;
 }
 export interface ResourceObject extends BaseObject {
 	type: 2; // Resource
@@ -104,7 +104,7 @@ export function formatObjectData(obj: TickObject): string {
 				color: "var(--balance-color)",
 			});
 			lines.push({
-				line: `🔢 Move Cooldown: ${num(obj.moveCooldown)}`,
+				line: `🔢 Action Cooldown: ${num(obj.ActionCooldown)}`,
 				priority: 2,
 				color: "var(--cooldown-color)",
 			});
@@ -186,20 +186,20 @@ export function getBarMetrics(
 		});
 	}
 
-	// Move Cooldown
+	// Action Cooldown
 	if (obj.type === 1) {
 		const cfg = getGameConfig();
 		if (!cfg) return metrics;
 		const u = cfg.units[obj.unit_type];
 		const step = Math.max(1, u.balancePerCooldownStep);
-		let calc = u.baseMoveCooldown + Math.floor(obj.balance / step);
-		if (u.maxMoveCooldown > 0 && calc > u.maxMoveCooldown)
-			calc = u.maxMoveCooldown;
+		let calc = u.baseActionCooldown + Math.floor(obj.balance / step);
+		if (u.maxActionCooldown > 0 && calc > u.maxActionCooldown)
+			calc = u.maxActionCooldown;
 		calc = Math.max(1, calc);
-		const denom = Math.max(calc, obj.moveCooldown);
+		const denom = Math.max(calc, obj.ActionCooldown);
 		metrics.push({
-			key: "moveCooldown",
-			percentage: (obj.moveCooldown / denom) * 100,
+			key: "ActionCooldown",
+			percentage: (obj.ActionCooldown / denom) * 100,
 		});
 	}
 

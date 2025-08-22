@@ -46,7 +46,7 @@ std::string TransferMoneyAction::dropMoney(Core *core, Object *srcObj)
 	Unit *srcUnit = (Unit *)srcObj;
 	if (srcUnit->getTeamId() != core->getTeamId())
 		return "can't drop money from another team";
-	if (srcUnit->getMoveCooldown() > 0)
+	if (srcUnit->getActionCooldown() > 0)
 		return "unit is on cooldown";
 
 	if (srcUnit->getBalance() < amount_)
@@ -55,7 +55,7 @@ std::string TransferMoneyAction::dropMoney(Core *core, Object *srcObj)
 		return "invalid amount";
 	srcUnit->setBalance(srcUnit->getBalance() - amount_);
 
-	srcUnit->resetMoveCooldown();
+	srcUnit->resetActionCooldown();
 
 	Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), amount_), target_);
 
@@ -109,9 +109,9 @@ std::string TransferMoneyAction::execute(Core *core)
 		Unit *srcUnit = (Unit *)srcObj;
 		if (srcUnit->getTeamId() != core->getTeamId())
 			return "can't transfer money from another team unit";
-		if (srcUnit->getMoveCooldown() > 0)
+		if (srcUnit->getActionCooldown() > 0)
 			return "unit is on cooldown";
-		srcUnit->resetMoveCooldown();
+		srcUnit->resetActionCooldown();
 		if (srcUnit->getBalance() < amount_)
 			amount_ = srcUnit->getBalance();
 		if (srcUnit->getBalance() <= 0)
