@@ -60,9 +60,9 @@ struct UnitConfig
 	std::string name;
 	unsigned int cost;
 	unsigned int hp;
-	unsigned int baseMoveCooldown; // timeout between moves in ticks
-	unsigned int maxMoveCooldown;
-	unsigned int balancePerCooldownStep; // move cooldown = base move cooldown + balance / balancePerCooldownStep
+	unsigned int baseActionCooldown; // timeout between actions in ticks
+	unsigned int maxActionCooldown;
+	unsigned int balancePerCooldownStep; // action cooldown = base action cooldown + balance / balancePerCooldownStep
 
 	unsigned int damageCore;
 	unsigned int damageUnit;

@@ -41,7 +41,7 @@ std::string AttackAction::attackObj(Object *obj, Unit *unit) // returns object n
 {
 	if (!obj)
 		return "no object at target position";
-	unit->resetMoveCooldown();
+	unit->resetActionCooldown();
 	if (obj->getType() == ObjectType::Unit)
 	{
 		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageUnit);
@@ -85,7 +85,7 @@ std::string AttackAction::execute(Core *core)
 	Unit *unit = (Unit *)unitObj;
 	if (Board::instance().getObjectPositionById(unit->getId()).distance(target_pos_) > 1)
 		return "unit is too far away";
-	if (unit->getMoveCooldown() > 0)
+	if (unit->getActionCooldown() > 0)
 		return "unit is on cooldown";
 	if (unit->getTeamId() != core->getTeamId())
 		return "unit does not belong to your team";

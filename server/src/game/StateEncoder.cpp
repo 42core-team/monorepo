@@ -24,7 +24,7 @@ json StateEncoder::encodeFullState()
 			o["teamId"] = ((Unit &)obj).getTeamId();
 			o["unit_type"] = ((Unit &)obj).getUnitType();
 			o["balance"] = ((Unit &)obj).getBalance();
-			o["moveCooldown"] = ((Unit &)obj).getMoveCooldown();
+			o["ActionCooldown"] = ((Unit &)obj).getActionCooldown();
 		}
 		if (obj.getType() == ObjectType::Resource)
 		{
@@ -54,7 +54,7 @@ json StateEncoder::diffObject(const json &currentObj, const json &previousObj)
 	for (auto it = currentObj.begin(); it != currentObj.end(); ++it)
 	{
 		const std::string &key = it.key();
-		if (key == "id" || (key == "moveCooldown" && currentObj.contains("moveCooldown") && previousObj.contains("moveCooldown") && currentObj["moveCooldown"] <= previousObj["moveCooldown"]))
+		if (key == "id" || (key == "ActionCooldown" && currentObj.contains("ActionCooldown") && previousObj.contains("ActionCooldown") && currentObj["ActionCooldown"] <= previousObj["ActionCooldown"]))
 			continue;
 
 		if (previousObj.find(key) == previousObj.end() || previousObj.at(key) != it.value())

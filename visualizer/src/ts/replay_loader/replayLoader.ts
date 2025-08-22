@@ -157,7 +157,7 @@ class ReplayLoader {
 				this.applyDiff(fullState, tickData);
 			}
 			for (const obj of Object.values(fullState)) {
-				if ("moveCooldown" in obj && obj.moveCooldown > 0) obj.moveCooldown--;
+				if ("ActionCooldown" in obj && obj.ActionCooldown > 0) obj.ActionCooldown--;
 			}
 			if (t % this.cacheInterval === 0) {
 				this.cache.set(t, deepClone(fullState));
@@ -210,11 +210,11 @@ class ReplayLoader {
 				this.applyDiff(state, tickData);
 			}
 			for (const obj of Object.values(state)) {
-				if (!("moveCooldown" in obj)) {
+				if (!("ActionCooldown" in obj)) {
 					continue;
 				}
-				if (obj.moveCooldown > 0) {
-					obj.moveCooldown--;
+				if (obj.ActionCooldown > 0) {
+					obj.ActionCooldown--;
 				}
 			}
 		}

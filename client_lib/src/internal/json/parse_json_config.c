@@ -30,8 +30,8 @@ static t_unit_config **core_static_parse_unitConfig(json_node *root)
 		units[i]->unit_type = i;
 		units[i]->cost = (unsigned long)json_find(unit_node, "cost")->number;
 		units[i]->hp = (unsigned long)json_find(unit_node, "hp")->number;
-		units[i]->baseMoveCooldown = (unsigned long)json_find(unit_node, "baseMoveCooldown")->number;
-		units[i]->maxMoveCooldown = (unsigned long)json_find(unit_node, "maxMoveCooldown")->number;
+		units[i]->baseActionCooldown = (unsigned long)json_find(unit_node, "baseActionCooldown")->number;
+		units[i]->maxActionCooldown = (unsigned long)json_find(unit_node, "maxActionCooldown")->number;
 		units[i]->dmg_core = (long)json_find(unit_node, "damageCore")->number;
 		units[i]->dmg_unit = (long)json_find(unit_node, "damageUnit")->number;
 		units[i]->dmg_resource = (long)json_find(unit_node, "damageResource")->number;

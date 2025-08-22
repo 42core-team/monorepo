@@ -28,7 +28,7 @@ void core_print_object(const t_obj *obj)
 			printf("Unit Type: %lu\n", obj->s_unit.unit_type);
 			printf("Team ID: %lu\n", obj->s_unit.team_id);
 			printf("Balance: %lu\n", obj->s_unit.balance);
-			printf("Move Cooldown: %lu\n", obj->s_unit.move_cooldown);
+			printf("Action Cooldown: %lu\n", obj->s_unit.action_cooldown);
 			break;
 		case OBJ_RESOURCE:
 		case OBJ_MONEY:
@@ -78,8 +78,8 @@ void core_print_config_unit(t_unit_type unit_type)
 	else if (unit_config->build_type == BUILD_TYPE_BOMB)
 		build_type = "Bomb";
 	printf("	- Build Type: %s\n", build_type);
-	printf("	- Base Move Cooldown: %lu\n", unit_config->baseMoveCooldown);
-	printf("	- Max Move Cooldown: %lu\n", unit_config->maxMoveCooldown);
+	printf("	- Base Action Cooldown: %lu\n", unit_config->baseActionCooldown);
+	printf("	- Max Action Cooldown: %lu\n", unit_config->maxActionCooldown);
 	printf("	- Can Build: %s\n", unit_config->can_build ? "Yes" : "No");
 }
 

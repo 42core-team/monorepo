@@ -11,28 +11,28 @@ public:
 	Unit(unsigned int id, unsigned int teamId, unsigned int unit_type);
 	Unit(const Unit &other)
 		: Object(other), unit_type_(other.unit_type_), team_id_(other.team_id_),
-		  balance_(other.balance_), move_cooldown_(other.move_cooldown_) {}
+		  balance_(other.balance_), action_cooldown_(other.action_cooldown_) {}
 
 	void tick(unsigned long long tickCount);
 
-	void tickMoveCooldown();
+	void tickActionCooldown();
 
 	unsigned int getUnitType() const { return unit_type_; }
 	unsigned int getTeamId() const { return team_id_; }
 	unsigned int getBalance() const { return balance_; }
-	unsigned int getMoveCooldown() const { return move_cooldown_; }
+	unsigned int getActionCooldown() const { return action_cooldown_; }
 
 	void addBalance(unsigned int amount) { balance_ += amount; }
 	void setBalance(unsigned int amount) { balance_ = amount; }
-	void resetMoveCooldown() { move_cooldown_ = calcMoveCooldown(); }
+	void resetActionCooldown() { action_cooldown_ = calcActionCooldown(); }
 
 private:
 	unsigned int unit_type_;
 	unsigned int team_id_;
 	unsigned int balance_;
-	unsigned int move_cooldown_ = 0;
+	unsigned int action_cooldown_ = 0;
 
-	unsigned int calcMoveCooldown();
+	unsigned int calcActionCooldown();
 };
 
 #endif // UNIT_H

@@ -82,7 +82,7 @@ typedef struct s_obj
 			/// @brief The amount of money the unit is carrying.
 			unsigned long balance;
 			/// @brief Countdown to the next tick the unit can move, defined by it's speed & how much it's carrying.
-			unsigned long move_cooldown;
+			unsigned long action_cooldown;
 		} s_unit;
 		struct
 		{
@@ -128,9 +128,9 @@ typedef struct s_unit_config
 	/// @brief The units build type.
 	t_build_type build_type;
 	/// @brief The time a unit waits between moves if it is not carrying money.
-	unsigned long baseMoveCooldown;
+	unsigned long baseActionCooldown;
 	/// @brief The minimum time a unit waits between moves.
-	unsigned long maxMoveCooldown;
+	unsigned long maxActionCooldown;
 	/// @brief Whether the unit can build walls or bombs.
 	bool can_build;
 } t_unit_config;
@@ -253,13 +253,13 @@ t_unit_config *core_get_unitConfig(t_unit_type type);
 t_obj *core_action_createUnit(t_unit_type unit_type);
 
 /// @brief Moves a unit to a specific position.
-/// @details Units can only move one tile up, down, left or right; and only if their move_cooldown is 0.
+/// @details Units can only move one tile up, down, left or right; and only if their action_cooldown is 0.
 /// @param unit The unit that should move.
 /// @param pos The position where the unit should move to.
 void core_action_move(const t_obj *unit, t_pos pos);
 
 /// @brief Attacks a target position with a unit.
-/// @details Units can only attack one tile up, down, left or right; and only if their move_cooldown is 0.
+/// @details Units can only attack one tile up, down, left or right; and only if their action_cooldown is 0.
 /// @param attacker The unit that should attack.
 /// @param pos The position where the unit should attack.
 void core_action_attack(const t_obj *attacker, t_pos pos);
