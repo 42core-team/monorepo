@@ -5,6 +5,14 @@ JigsawWorldGenerator::JigsawWorldGenerator()
 	loadTemplates();
 }
 
+// before mirroring, everything should only be placed in the top-left triangle
+// static bool isValidPreMirrorPos(Position pos)
+// {
+// 	return pos.x + pos.y < Config::game().gridSize - 1;
+// }
+
+// ----- STEP 1: Template Placing
+
 void JigsawWorldGenerator::loadTemplates()
 {
 	const std::string templateFolder = Config::server().dataFolderPath + "/jigsaw-templates";
@@ -159,6 +167,72 @@ bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, i
 	return true;
 }
 
+// ----- STEP 2: Walls Placing
+
+void JigsawWorldGenerator::placeWalls()
+{
+	int additionalWallPlaceAttemptCount = Config::game().worldGeneratorConfig.value("additionalWallPlaceAttemptCount", 100);
+	int minCoreDistance = Config::game().worldGeneratorConfig.value("minCoreDistance", 5);
+
+	std::uniform_int_distribution<int> distX(0, Config::game().gridSize - 1);
+	std::uniform_int_distribution<int> distY(0, Config::game().gridSize - 1);
+	std::uniform_real_distribution<double> probDist(0.0, 1.0);
+
+	for (int i = 0; i < additionalWallPlaceAttemptCount; ++i)
+	{
+		int x = distX(eng_);
+		int y = distY(eng_);
+		Position pos(x, y);
+
+		if (Board::instance().getObjectAtPos(pos) != nullptr)
+			continue;
+
+		bool nearCore = false;
+		for (const Object & obj : Board::instance())
+		{
+			if (obj.getType() == ObjectType::Core && Board::instance().getObjectPositionById(obj.getId()).distance(pos) < minCoreDistance)
+			{
+				nearCore = true;
+				break;
+			}
+		}
+		if (nearCore)
+			continue;
+
+		int adjacentObjects = 0;
+		for (int sy = -1; sy <= 1; ++sy)
+		{
+			for (int sx = -1; sx <= 1; ++sx)
+			{
+				if (sx == 0 && sy == 0)
+					continue;
+				Position neighbor(x + sx, y + sy);
+				if (Board::instance().getObjectAtPos(neighbor) != nullptr)
+					adjacentObjects++;
+			}
+		}
+
+		if (adjacentObjects >= 4)
+			continue;
+
+		double placementProbability = 0.5;
+		if (adjacentObjects == 0)
+			placementProbability = 1;
+		else if (adjacentObjects == 1)
+			placementProbability = 0.6;
+		else if (adjacentObjects == 2)
+			placementProbability = 0.9;
+		else if (adjacentObjects == 3)
+			placementProbability = 0.2;
+
+		if (probDist(eng_) < placementProbability)
+			Board::instance().addObject<Wall>(Wall(), pos);
+	}
+}
+
+
+// ----- STEP 3 + 4: Resource & Money Balancing
+
 // TODO: Make this a template function. the if statement down there is painful
 void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 {
@@ -243,6 +317,8 @@ void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 	}
 }
 
+// ----- STEP 5: Varying Money & Resource Income
+
 void JigsawWorldGenerator::varyResourceIncome()
 {
 	const int baseResourceIncome = Config::game().worldGeneratorConfig.value("baseResourceIncome", 200);
@@ -281,66 +357,7 @@ void JigsawWorldGenerator::varyResourceIncome()
 	}
 }
 
-void JigsawWorldGenerator::placeWalls()
-{
-	int additionalWallPlaceAttemptCount = Config::game().worldGeneratorConfig.value("additionalWallPlaceAttemptCount", 100);
-	int minCoreDistance = Config::game().worldGeneratorConfig.value("minCoreDistance", 5);
-
-	std::uniform_int_distribution<int> distX(0, Config::game().gridSize - 1);
-	std::uniform_int_distribution<int> distY(0, Config::game().gridSize - 1);
-	std::uniform_real_distribution<double> probDist(0.0, 1.0);
-
-	for (int i = 0; i < additionalWallPlaceAttemptCount; ++i)
-	{
-		int x = distX(eng_);
-		int y = distY(eng_);
-		Position pos(x, y);
-
-		if (Board::instance().getObjectAtPos(pos) != nullptr)
-			continue;
-
-		bool nearCore = false;
-		for (const Object & obj : Board::instance())
-		{
-			if (obj.getType() == ObjectType::Core && Board::instance().getObjectPositionById(obj.getId()).distance(pos) < minCoreDistance)
-			{
-				nearCore = true;
-				break;
-			}
-		}
-		if (nearCore)
-			continue;
-
-		int adjacentObjects = 0;
-		for (int sy = -1; sy <= 1; ++sy)
-		{
-			for (int sx = -1; sx <= 1; ++sx)
-			{
-				if (sx == 0 && sy == 0)
-					continue;
-				Position neighbor(x + sx, y + sy);
-				if (Board::instance().getObjectAtPos(neighbor) != nullptr)
-					adjacentObjects++;
-			}
-		}
-
-		if (adjacentObjects >= 4)
-			continue;
-
-		double placementProbability = 0.5;
-		if (adjacentObjects == 0)
-			placementProbability = 1;
-		else if (adjacentObjects == 1)
-			placementProbability = 0.6;
-		else if (adjacentObjects == 2)
-			placementProbability = 0.9;
-		else if (adjacentObjects == 3)
-			placementProbability = 0.2;
-
-		if (probDist(eng_) < placementProbability)
-			Board::instance().addObject<Wall>(Wall(), pos);
-	}
-}
+// ----- STEP 6: Mirroring World
 
 void JigsawWorldGenerator::mirrorWorld()
 {
@@ -384,6 +401,8 @@ void JigsawWorldGenerator::mirrorWorld()
 	}
 }
 
+
+
 void JigsawWorldGenerator::generateWorld(unsigned int seed)
 {
 	eng_ = std::mt19937_64(seed);
@@ -426,11 +445,13 @@ void JigsawWorldGenerator::generateWorld(unsigned int seed)
 	balanceObjectType(ObjectType::Money, Config::game().worldGeneratorConfig.value("moneysCount", 20));
 	Visualizer::visualizeGameState(0);
 	
+	Logger::Log("Step 5: Varying Money & Resource Income");
 	varyResourceIncome();
+	Visualizer::visualizeGameState(0);
 
 	if (mirrorMap)
 	{
-		Logger::Log("Step 5: Mirroring world");
+		Logger::Log("Step 6: Mirroring world");
 		mirrorWorld();
 		Visualizer::visualizeGameState(0);
 	}

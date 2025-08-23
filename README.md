@@ -27,7 +27,7 @@
 
 ## Issues
 
-- Label the issue with all the areas of the repo that it relates to.
+- Label the issue with all the areas of the repo that it relates to. Issue Label names should exactly mirror the names of the respective directoris in the repo.
 - Give all issues a clear type.
 
 --- 
