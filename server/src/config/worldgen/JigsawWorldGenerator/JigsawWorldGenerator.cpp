@@ -356,6 +356,7 @@ void JigsawWorldGenerator::varyResourceIncome()
 			if (randomResourceVariation > 0)
 			{
 				int variation = randomResourceVariation / 2;
+				if (variation > income) variation = income - 1; // avoid underflow when variation is too large
 				std::uniform_int_distribution<int> d(0, randomResourceVariation - 1);
 				income = income - variation + d(eng_);
 			}
@@ -370,6 +371,7 @@ void JigsawWorldGenerator::varyResourceIncome()
 			if (randomMoneyVariation > 0)
 			{
 				int variation = randomMoneyVariation / 2;
+				if (variation > income) variation = income - 1; // avoid underflow when variation is too large
 				std::uniform_int_distribution<int> d(0, randomMoneyVariation - 1);
 				income = income - variation + d(eng_);
 			}
