@@ -9,7 +9,7 @@
 
 #include "Core.h"
 #include "Unit.h"
-#include "Resource.h"
+#include "Deposit.h"
 #include "Wall.h"
 #include "Bridge.h"
 #include "Action.h"

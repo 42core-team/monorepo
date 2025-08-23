@@ -15,10 +15,10 @@ typedef enum e_obj_type
 {
 	OBJ_CORE,
 	OBJ_UNIT,
-	OBJ_RESOURCE,
+	OBJ_DEPOSIT,
 	OBJ_WALL,
-	OBJ_MONEY //,
-	// OBJ_BOMB
+	OBJ_GEM_PILE,
+	OBJ_BOMB
 } t_obj_type;
 
 /// @brief Object state.
@@ -35,12 +35,12 @@ typedef enum e_unit_type
 {
 	UNIT_WARRIOR = 0,
 	UNIT_MINER = 1,
-	UNIT_CARRIER = 2 //,
-	// UNIT_BUILDER = 3,
-	// UNIT_BOMBERMAN = 4
+	UNIT_CARRIER = 2,
+	UNIT_BUILDER = 3,
+	UNIT_BOMBERMAN = 4
 } t_unit_type;
 
-/// @brief Position structure for 2D coordinates
+/// @brief Position structure for 2D coordinates. 0 indexed. Valid coordinates are 0,1,2,...gridSize-3,gridSize-2,gridSize-1.
 typedef struct s_pos
 {
 	/// @brief X coordinate
@@ -70,8 +70,8 @@ typedef struct s_obj
 		{
 			/// @brief The id of the team that owns the core.
 			unsigned long team_id;
-			/// @brief The current balance of the core.
-			unsigned long balance;
+			/// @brief The current gems of the core.
+			unsigned long gems;
 		} s_core;
 		struct
 		{
@@ -79,21 +79,21 @@ typedef struct s_obj
 			unsigned long unit_type;
 			/// @brief The id of the team that owns the unit.
 			unsigned long team_id;
-			/// @brief The amount of money the unit is carrying.
-			unsigned long balance;
+			/// @brief The amount of gems the unit is carrying.
+			unsigned long gems;
 			/// @brief Countdown to the next tick the unit can move, defined by it's speed & how much it's carrying.
 			unsigned long action_cooldown;
 		} s_unit;
 		struct
 		{
-			/// @brief The amount of money the resource / money contains.
-			unsigned long balance;
-		} s_resource_money;
-		// struct
-		// {
-		// 	/// @brief How much longer the bomb will take to explode.
-		// 	unsigned long countdown;
-		// } s_bomb;
+			/// @brief The amount of gems the deposit / gem pile contains.
+			unsigned long gems;
+		} s_resource_gems_pile;
+		struct
+		{
+			/// @brief How much longer the bomb will take to explode.
+			unsigned long countdown;
+		} s_bomb;
 	};
 } t_obj;
 
@@ -121,13 +121,13 @@ typedef struct s_unit_config
 	unsigned long dmg_core;
 	/// @brief How much damage the unit deals to units.
 	unsigned long dmg_unit;
-	/// @brief How much damage the unit deals to resources.
-	unsigned long dmg_resource;
+	/// @brief How much damage the unit deals to deposits.
+	unsigned long dmg_deposit;
 	/// @brief How much damage the unit deals to walls.
 	unsigned long dmg_wall;
 	/// @brief The units build type.
 	t_build_type build_type;
-	/// @brief The time a unit waits between moves if it is not carrying money.
+	/// @brief The time a unit waits between moves if it is not carrying gems.
 	unsigned long baseActionCooldown;
 	/// @brief The minimum time a unit waits between moves.
 	unsigned long maxActionCooldown;
@@ -143,15 +143,15 @@ typedef struct s_config
 	unsigned long idle_income;
 	/// @brief How many ticks you get idle income.
 	unsigned long idle_income_timeout;
-	/// @brief How much healthpoints a resource has at the start of the game.
-	unsigned long resource_hp;
-	/// @brief How much income you get when you destroy a resource.
-	unsigned long resource_income;
-	/// @brief How much money a money object contains.
-	unsigned long money_obj_income;
+	/// @brief How much healthpoints a deposit has at the start of the game.
+	unsigned long deposit_hp;
+	/// @brief How much income you get when you destroy a deposit.
+	unsigned long deposit_income;
+	/// @brief How many gems a gem pile object contains.
+	unsigned long gem_pile_income;
 	/// @brief How much healthpoints a core has at the start of the game.
 	unsigned long core_hp;
-	/// @brief How much money a team starts with.
+	/// @brief How many gems a team starts with.
 	unsigned long initial_balance;
 	/// @brief How much healthpoints a wall has at the start of the game.
 	unsigned long wall_hp;
@@ -231,11 +231,11 @@ void core_action_move(const t_obj *unit, t_pos pos);
 /// @param pos The position where the unit should attack.
 void core_action_attack(const t_obj *attacker, t_pos pos);
 
-/// @brief Gives money to another object or drops it on the floor.
-/// @param source The object that the money should be transferred from.
-/// @param target_pos The position of the object to transfer the money to, or the non-occupied position where the money should be dropped.
-/// @param amount The amount of money to transfer or drop.
-void core_action_transferMoney(const t_obj *source, t_pos target_pos, unsigned long amount);
+/// @brief Gives gems to another object or drops it on the floor.
+/// @param source The object that the gems should be transferred from.
+/// @param target_pos The position of the object to transfer the gems to, or the non-occupied position where the gems should be dropped.
+/// @param amount The amount of gems to transfer or drop.
+void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned long amount);
 
 /// @brief Builds a new object.
 /// @details Units can only build one tile up, down, left or right. Not all units can build, and they may build different things. Please consult config for details.

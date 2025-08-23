@@ -34,7 +34,7 @@ static t_unit_config **core_static_parse_unitConfig(json_node *root)
 		units[i]->maxActionCooldown = (unsigned long)json_find(unit_node, "maxActionCooldown")->number;
 		units[i]->dmg_core = (long)json_find(unit_node, "damageCore")->number;
 		units[i]->dmg_unit = (long)json_find(unit_node, "damageUnit")->number;
-		units[i]->dmg_resource = (long)json_find(unit_node, "damageResource")->number;
+		units[i]->dmg_deposit = (long)json_find(unit_node, "damageDeposit")->number;
 		units[i]->dmg_wall = (long)json_find(unit_node, "damageWall")->number;
 		units[i]->build_type = (t_build_type)json_find(unit_node, "buildType")->number;
 	}
@@ -50,9 +50,9 @@ void core_internal_parse_config(char *json)
 	game.config.gridSize = (unsigned long)json_find(root, "gridSize")->number;
 	game.config.idle_income = (unsigned long)json_find(root, "idleIncome")->number;
 	game.config.idle_income_timeout = (unsigned long)json_find(root, "idleIncomeTimeOut")->number;
-	game.config.resource_hp = (unsigned long)json_find(root, "resourceHp")->number;
-	game.config.resource_income = (unsigned long)json_find(root, "resourceIncome")->number;
-	game.config.money_obj_income = (unsigned long)json_find(root, "moneyObjIncome")->number;
+	game.config.deposit_hp = (unsigned long)json_find(root, "depositHp")->number;
+	game.config.deposit_income = (unsigned long)json_find(root, "depositIncome")->number;
+	game.config.gem_pile_income = (unsigned long)json_find(root, "gemPileIncome")->number;
 	game.config.core_hp = (unsigned long)json_find(root, "coreHp")->number;
 	game.config.initial_balance = (unsigned long)json_find(root, "initialBalance")->number;
 	game.config.wall_hp = (unsigned long)json_find(root, "wallHp")->number;

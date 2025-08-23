@@ -8,9 +8,9 @@ enum class ObjectType
 {
 	Core,
 	Unit,
-	Resource,
+	Deposit,
 	Wall,
-	Money,
+	GemPile,
 	Bomb
 };
 

@@ -5,7 +5,7 @@
 
 #include "Action.h"
 #include "Common.h"
-#include "Money.h"
+#include "GemPile.h"
 
 class Unit;
 

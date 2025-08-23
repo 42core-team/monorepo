@@ -26,9 +26,9 @@ struct GameConfig
 	unsigned int idleIncome;		// idle income per tick
 	unsigned int idleIncomeTimeOut; // idle income duration in ticks
 
-	unsigned int resourceHp;
-	unsigned int resourceIncome;
-	unsigned int moneyObjIncome;
+	unsigned int depositHp;
+	unsigned int depositIncome;
+	unsigned int gemPileIncome;
 
 	unsigned int coreHp;
 	unsigned int initialBalance;
@@ -62,11 +62,11 @@ struct UnitConfig
 	unsigned int hp;
 	unsigned int baseActionCooldown; // timeout between actions in ticks
 	unsigned int maxActionCooldown;
-	unsigned int balancePerCooldownStep; // action cooldown = base action cooldown + balance / balancePerCooldownStep
+	unsigned int balancePerCooldownStep; // action cooldown = base action cooldown + gems / balancePerCooldownStep
 
 	unsigned int damageCore;
 	unsigned int damageUnit;
-	unsigned int damageResource;
+	unsigned int damageDeposit;
 	unsigned int damageWall;
 
 	BuildType buildType;

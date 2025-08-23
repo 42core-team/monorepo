@@ -101,9 +101,9 @@ bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, i
 			if (cell == 'X')
 				Board::instance().addObject<Wall>(Wall(), targetPos);
 			else if (cell == 'R')
-				Board::instance().addObject<Resource>(Resource(), targetPos);
+				Board::instance().addObject<Deposit>(Deposit(), targetPos);
 			else if (cell == 'M')
-				Board::instance().addObject<Money>(Money(), targetPos);
+				Board::instance().addObject<GemPile>(GemPile(), targetPos);
 			else if (std::string("0123456789").find(cell) != std::string::npos)
 			{
 				int wallLikelihood = cell - '0';
@@ -113,17 +113,17 @@ bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, i
 			}
 			else if (std::string("abcdefghij").find(cell) != std::string::npos)
 			{
-				int resourceLikelihood = cell - 'a';
+				int depositLikelihood = cell - 'a';
 				std::uniform_int_distribution<int> dist(0, 9);
-				if (dist(eng_) < resourceLikelihood)
-					Board::instance().addObject<Resource>(Resource(), targetPos);
+				if (dist(eng_) < depositLikelihood)
+					Board::instance().addObject<Deposit>(Deposit(), targetPos);
 			}
 			else if (std::string("ABCDEFGHIJ").find(cell) != std::string::npos)
 			{
-				int moneyLikelihood = cell - 'A';
+				int gemPileLikelihood = cell - 'A';
 				std::uniform_int_distribution<int> dist(0, 9);
-				if (dist(eng_) < moneyLikelihood)
-					Board::instance().addObject<Money>(Money(), targetPos);
+				if (dist(eng_) < gemPileLikelihood)
+					Board::instance().addObject<GemPile>(GemPile(), targetPos);
 			}
 			else if (std::string("klmnopqrst").find(cell) != std::string::npos)
 			{
@@ -132,7 +132,7 @@ bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, i
 				if (dist(eng_) < wallLikelihood)
 					Board::instance().addObject<Wall>(Wall(), targetPos);
 				else
-					Board::instance().addObject<Resource>(Resource(), targetPos);
+					Board::instance().addObject<Deposit>(Deposit(), targetPos);
 			}
 			else if (std::string("uvwxyz!/$%").find(cell) != std::string::npos)
 			{
@@ -147,7 +147,7 @@ bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, i
 					moneyLikelihood = 9;
 				std::uniform_int_distribution<int> dist(0, 9);
 				if (dist(eng_) < moneyLikelihood)
-					Board::instance().addObject<Money>(Money(), targetPos);
+					Board::instance().addObject<GemPile>(GemPile(), targetPos);
 				else
 					Board::instance().addObject<Wall>(Wall(), targetPos);
 			}
@@ -159,9 +159,9 @@ bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, i
 					int moneyLikelihood = it->second;
 					std::uniform_int_distribution<int> dist(0, 9);
 					if (dist(eng_) < moneyLikelihood)
-						Board::instance().addObject<Money>(Money(), targetPos);
+						Board::instance().addObject<GemPile>(GemPile(), targetPos);
 					else
-						Board::instance().addObject<Resource>(Resource(), targetPos);
+						Board::instance().addObject<Deposit>(Deposit(), targetPos);
 				}
 			}
 		}
@@ -234,7 +234,7 @@ void JigsawWorldGenerator::placeWalls()
 	}
 }
 
-// ----- STEP 3 + 4: Resource & Money Balancing
+// ----- STEP 3 + 4: Deposit & Gem Pile Balancing
 
 // TODO: Make this a template function. the if statement down there is painful
 void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
@@ -313,31 +313,31 @@ void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 
 			if (Board::instance().getObjectAtPos(pos) == nullptr)
 			{
-				if (type == ObjectType::Resource)
-					Board::instance().addObject<Resource>(Resource(), pos);
+				if (type == ObjectType::Deposit)
+					Board::instance().addObject<Deposit>(Deposit(), pos);
 				else
-					Board::instance().addObject<Money>(Money(), pos);
+					Board::instance().addObject<GemPile>(GemPile(), pos);
 				addCount--;
 			}
 		}
 	}
 }
 
-// ----- STEP 5: Varying Money & Resource Income
+// ----- STEP 5: Varying Gem Pile & Deposit Income
 
-void JigsawWorldGenerator::varyResourceIncome()
+void JigsawWorldGenerator::varyDepositIncome()
 {
-	const int baseResourceIncome = Config::game().worldGeneratorConfig.value("baseResourceIncome", 200);
-	const int additionalResourceIncomePerAdjacentWall = Config::game().worldGeneratorConfig.value("resourceAdditionalIncomePerAdjacentWall", 20);
-	const float resourceMultiplierIfFullySurrounded = Config::game().worldGeneratorConfig.value("resourceMultiplierIfFullySurrounded", 1.3);
-	const int randomResourceVariation = Config::game().worldGeneratorConfig.value("randomResourceIncomeVariation", 0);
+	const int baseDepositIncome = Config::game().worldGeneratorConfig.value("baseDepositIncome", 200);
+	const int additionalDepositIncomePerAdjacentWall = Config::game().worldGeneratorConfig.value("depositAdditionalIncomePerAdjacentWall", 20);
+	const float depositMultiplierIfFullySurrounded = Config::game().worldGeneratorConfig.value("depositMultiplierIfFullySurrounded", 1.3);
+	const int randomDepositVariation = Config::game().worldGeneratorConfig.value("randomDepositIncomeVariation", 0);
 
-	const int baseMoneyIncome = Config::game().worldGeneratorConfig.value("moneyObjIncome", 75);
-	const int randomMoneyVariation = Config::game().worldGeneratorConfig.value("randomMoneyIncomeVariation", 0);
+	const int baseGemPileIncome = Config::game().worldGeneratorConfig.value("moneyObjIncome", 75);
+	const int randomGemPileVariation = Config::game().worldGeneratorConfig.value("randomGemPileIncomeVariation", 0);
 
 	for (Object & obj : Board::instance())
 	{
-		if (obj.getType() == ObjectType::Resource)
+		if (obj.getType() == ObjectType::Deposit)
 		{
 			Position pos = Board::instance().getObjectPositionById(obj.getId());
 			static Position dirs[] = {{1,0},{-1,0},{0,1},{0,-1}};
@@ -345,39 +345,39 @@ void JigsawWorldGenerator::varyResourceIncome()
 			int adjacentWalls = 0;
 			for (auto& d : dirs) {
 				auto* o = board.getObjectAtPos({pos.x + d.x, pos.y + d.y});
-				if (o && (o->getType() == ObjectType::Wall || o->getType() == ObjectType::Resource))
+				if (o && (o->getType() == ObjectType::Wall || o->getType() == ObjectType::Deposit))
 					adjacentWalls++;
 			}
 
-			int income = baseResourceIncome + additionalResourceIncomePerAdjacentWall * adjacentWalls;
+			int income = baseDepositIncome + additionalDepositIncomePerAdjacentWall * adjacentWalls;
 			if (adjacentWalls >= 4)
-				income = static_cast<int>(income * resourceMultiplierIfFullySurrounded);
+				income = static_cast<int>(income * depositMultiplierIfFullySurrounded);
 
-			if (randomResourceVariation > 0)
+			if (randomDepositVariation > 0)
 			{
-				int variation = randomResourceVariation / 2;
+				int variation = randomDepositVariation / 2;
 				if (variation > income) variation = income - 1; // avoid underflow when variation is too large
-				std::uniform_int_distribution<int> d(0, randomResourceVariation - 1);
+				std::uniform_int_distribution<int> d(0, randomDepositVariation - 1);
 				income = income - variation + d(eng_);
 			}
 
-			Resource & ResourceObj = static_cast<Resource &>(obj);
-			ResourceObj.setBalance(income);
+			Deposit & DepositObj = static_cast<Deposit &>(obj);
+			DepositObj.setBalance(income);
 		}
-		else if (obj.getType() == ObjectType::Money)
+		else if (obj.getType() == ObjectType::GemPile)
 		{
-			unsigned int income = baseMoneyIncome;
+			unsigned int income = baseGemPileIncome;
 
-			if (randomMoneyVariation > 0)
+			if (randomGemPileVariation > 0)
 			{
-				int variation = randomMoneyVariation / 2;
-				if (variation > income) variation = income - 1; // avoid underflow when variation is too large
-				std::uniform_int_distribution<int> d(0, randomMoneyVariation - 1);
+				int variation = randomGemPileVariation / 2;
+				if (variation > (int)income) variation = income - 1; // avoid underflow when variation is too large
+				std::uniform_int_distribution<int> d(0, randomGemPileVariation - 1);
 				income = income - variation + d(eng_);
 			}
 
-			Money & MoneyObj = static_cast<Money &>(obj);
-			MoneyObj.setBalance(income);
+			GemPile & GemPileObj = static_cast<GemPile &>(obj);
+			GemPileObj.setBalance(income);
 		}
 	}
 }
@@ -395,8 +395,8 @@ void JigsawWorldGenerator::mirrorWorld()
 		Position p = Board::instance().getObjectPositionById(obj.getId());
 		Position q(gridSize - 1 - p.x, gridSize - 1 - p.y);
 		int bal = 0;
-		if (obj.getType() == ObjectType::Resource) bal = ((Resource&)obj).getBalance();
-		else if (obj.getType() == ObjectType::Money) bal = ((Money&)obj).getBalance();
+		if (obj.getType() == ObjectType::Deposit) bal = ((Deposit&)obj).getBalance();
+		else if (obj.getType() == ObjectType::GemPile) bal = ((GemPile&)obj).getBalance();
 		clones.emplace_back(obj.getType(), q, bal);
 	}
 
@@ -404,8 +404,8 @@ void JigsawWorldGenerator::mirrorWorld()
 	{
 		auto [type, pos, bal] = it;
 		switch (type) {
-			case ObjectType::Resource: Board::instance().addObject<Resource>(Resource(bal), pos); break;
-			case ObjectType::Money:    Board::instance().addObject<Money>(Money(bal), pos); break;
+			case ObjectType::Deposit:  Board::instance().addObject<Deposit>(Deposit(bal), pos); break;
+			case ObjectType::GemPile:  Board::instance().addObject<GemPile>(GemPile(bal), pos); break;
 			case ObjectType::Wall:     Board::instance().addObject<Wall>(Wall(), pos); break;
 			default: Logger::Log("Unknown object type while mirroring: " + std::to_string(static_cast<int>(type))); break;
 		}
@@ -447,16 +447,16 @@ void JigsawWorldGenerator::generateWorld(unsigned int seed)
 	placeWalls();
 	Visualizer::visualizeGameState(0, true);
 
-	Logger::Log("Step 3: Balancing resources");
-	balanceObjectType(ObjectType::Resource, Config::game().worldGeneratorConfig.value("resourceCount", 20) / 2); // balance to half, will be doubled again later by mirroring
+	Logger::Log("Step 3: Balancing Gem Deposits");
+	balanceObjectType(ObjectType::Deposit, Config::game().worldGeneratorConfig.value("depositCount", 20) / 2); // gems to half, will be doubled again later by mirroring
 	Visualizer::visualizeGameState(0, true);
 
-	Logger::Log("Step 4: Balancing moneys");
-	balanceObjectType(ObjectType::Money, Config::game().worldGeneratorConfig.value("moneysCount", 20) / 2); // balance to half, will be doubled again later by mirroring
+	Logger::Log("Step 4: Balancing Gem Piles");
+	balanceObjectType(ObjectType::GemPile, Config::game().worldGeneratorConfig.value("gemPileCount", 20) / 2); // gems to half, will be doubled again later by mirroring
 	Visualizer::visualizeGameState(0, true);
-	
-	Logger::Log("Step 5: Varying Money & Resource Income");
-	varyResourceIncome();
+
+	Logger::Log("Step 5: Varying Gem Pile & Deposit Income");
+	varyDepositIncome();
 	Visualizer::visualizeGameState(0, true);
 
 	Logger::Log("Step 6: Mirroring world");

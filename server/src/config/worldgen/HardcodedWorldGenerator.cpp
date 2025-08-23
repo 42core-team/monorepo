@@ -65,12 +65,12 @@ void HardcodedWorldGenerator::generateWorld(unsigned int seed)
 				Board::instance().addObject<Wall>(Wall(), Position(x, y), false);
 				break;
 			case 'R':
-				// Resource
-				Board::instance().addObject<Resource>(Resource(), Position(x, y), false);
+				// Deposit
+				Board::instance().addObject<Deposit>(Deposit(), Position(x, y), false);
 				break;
 			case 'M':
-				// Money
-				Board::instance().addObject<Money>(Money(), Position(x, y), false);
+				// GemPile
+				Board::instance().addObject<GemPile>(GemPile(), Position(x, y), false);
 				break;
 			default:
 				Logger::LogWarn("HardcodedWorldGenerator - Unknown tile type found in map data.");
