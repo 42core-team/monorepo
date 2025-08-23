@@ -10,7 +10,7 @@
 class Visualizer
 {
 	public:
-		static void visualizeGameState(unsigned long long tick);
+		static void visualizeGameState(unsigned long long tick, bool force = false);
 };
 
 #endif // VISUALIZER_H

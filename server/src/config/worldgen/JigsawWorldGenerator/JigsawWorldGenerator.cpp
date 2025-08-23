@@ -6,10 +6,10 @@ JigsawWorldGenerator::JigsawWorldGenerator()
 }
 
 // before mirroring, everything should only be placed in the top-left triangle
-// static bool isValidPreMirrorPos(Position pos)
-// {
-// 	return pos.x + pos.y < Config::game().gridSize - 1;
-// }
+static bool isValidPreMirrorPos(Position pos)
+{
+	return pos.x + pos.y < (int)Config::game().gridSize - 1;
+}
 
 // ----- STEP 1: Template Placing
 
@@ -93,6 +93,8 @@ bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, i
 				continue;
 
 			if (posX + x < 0 || posX + x >= (int)Config::game().gridSize || posY + y < 0 || posY + y >= (int)Config::game().gridSize)
+				continue;
+			if (!isValidPreMirrorPos(Position(posX + x, posY + y)))
 				continue;
 
 			Position targetPos(posX + x, posY + y);
@@ -186,6 +188,8 @@ void JigsawWorldGenerator::placeWalls()
 
 		if (Board::instance().getObjectAtPos(pos) != nullptr)
 			continue;
+		if (!isValidPreMirrorPos(pos))
+			continue;
 
 		bool nearCore = false;
 		for (const Object & obj : Board::instance())
@@ -230,7 +234,6 @@ void JigsawWorldGenerator::placeWalls()
 	}
 }
 
-
 // ----- STEP 3 + 4: Resource & Money Balancing
 
 // TODO: Make this a template function. the if statement down there is painful
@@ -261,12 +264,15 @@ void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 		std::uniform_int_distribution<int> distX(0, Config::game().gridSize - 1);
 		std::uniform_int_distribution<int> distY(0, Config::game().gridSize - 1);
 
-		int max_iter = 10000;
+		int max_iter = 100000;
 		while (addCount > 0 && --max_iter > 0)
 		{
 			int x = distX(eng_);
 			int y = distY(eng_);
 			Position pos(x, y);
+
+			if (!isValidPreMirrorPos(pos)) // outside of top left triangle, don't populate, rest of grid will be mirrored later
+				continue;
 
 			bool nearCore = false;
 			for (const Object & obj : Board::instance())
@@ -322,38 +328,55 @@ void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 void JigsawWorldGenerator::varyResourceIncome()
 {
 	const int baseResourceIncome = Config::game().worldGeneratorConfig.value("baseResourceIncome", 200);
-	const int additionalIncomePerAdjacentWall = Config::game().worldGeneratorConfig.value("resourceAdditionalIncomePerAdjacentWall", 20);
-	const float multiplierIfFullySurrounded = Config::game().worldGeneratorConfig.value("resourceMultiplierIfFullySurrounded", 1.3);
-	const int randomVariation = Config::game().worldGeneratorConfig.value("randomResourceIncomeVariation", 0);
+	const int additionalResourceIncomePerAdjacentWall = Config::game().worldGeneratorConfig.value("resourceAdditionalIncomePerAdjacentWall", 20);
+	const float resourceMultiplierIfFullySurrounded = Config::game().worldGeneratorConfig.value("resourceMultiplierIfFullySurrounded", 1.3);
+	const int randomResourceVariation = Config::game().worldGeneratorConfig.value("randomResourceIncomeVariation", 0);
+
+	const int baseMoneyIncome = Config::game().worldGeneratorConfig.value("moneyObjIncome", 75);
+	const int randomMoneyVariation = Config::game().worldGeneratorConfig.value("randomMoneyIncomeVariation", 0);
 
 	for (Object & obj : Board::instance())
 	{
-		if (obj.getType() != ObjectType::Resource)
-			continue;
-
-		Position pos = Board::instance().getObjectPositionById(obj.getId());
-		static Position dirs[] = {{1,0},{-1,0},{0,1},{0,-1}};
-		auto& board = Board::instance();
-		int adjacentWalls = 0;
-		for (auto& d : dirs) {
-			auto* o = board.getObjectAtPos({pos.x + d.x, pos.y + d.y});
-			if (o && (o->getType() == ObjectType::Wall || o->getType() == ObjectType::Resource))
-				adjacentWalls++;
-		}
-
-		int income = baseResourceIncome + additionalIncomePerAdjacentWall * adjacentWalls;
-		if (adjacentWalls >= 4)
-			income = static_cast<int>(income * multiplierIfFullySurrounded);
-
-		if (randomVariation > 0)
+		if (obj.getType() == ObjectType::Resource)
 		{
-			int variation = randomVariation / 2;
-			std::uniform_int_distribution<int> d(0, randomVariation - 1);
-			income = income - variation + d(eng_);
-		}
+			Position pos = Board::instance().getObjectPositionById(obj.getId());
+			static Position dirs[] = {{1,0},{-1,0},{0,1},{0,-1}};
+			auto& board = Board::instance();
+			int adjacentWalls = 0;
+			for (auto& d : dirs) {
+				auto* o = board.getObjectAtPos({pos.x + d.x, pos.y + d.y});
+				if (o && (o->getType() == ObjectType::Wall || o->getType() == ObjectType::Resource))
+					adjacentWalls++;
+			}
 
-		Resource & ResourceObj = static_cast<Resource &>(obj);
-		ResourceObj.setBalance(income);
+			int income = baseResourceIncome + additionalResourceIncomePerAdjacentWall * adjacentWalls;
+			if (adjacentWalls >= 4)
+				income = static_cast<int>(income * resourceMultiplierIfFullySurrounded);
+
+			if (randomResourceVariation > 0)
+			{
+				int variation = randomResourceVariation / 2;
+				std::uniform_int_distribution<int> d(0, randomResourceVariation - 1);
+				income = income - variation + d(eng_);
+			}
+
+			Resource & ResourceObj = static_cast<Resource &>(obj);
+			ResourceObj.setBalance(income);
+		}
+		else if (obj.getType() == ObjectType::Money)
+		{
+			unsigned int income = baseMoneyIncome;
+
+			if (randomMoneyVariation > 0)
+			{
+				int variation = randomMoneyVariation / 2;
+				std::uniform_int_distribution<int> d(0, randomMoneyVariation - 1);
+				income = income - variation + d(eng_);
+			}
+
+			Money & MoneyObj = static_cast<Money &>(obj);
+			MoneyObj.setBalance(income);
+		}
 	}
 }
 
@@ -361,42 +384,28 @@ void JigsawWorldGenerator::varyResourceIncome()
 
 void JigsawWorldGenerator::mirrorWorld()
 {
-	unsigned int W = Config::game().gridSize;
-	unsigned int H = Config::game().gridSize;
+	unsigned int gridSize = Config::game().gridSize;
 
-	for (const Object & obj : Board::instance())
+	std::vector<std::tuple<ObjectType, Position, int>> clones;
+	for (auto& obj : Board::instance())
 	{
-		if (obj.getType() == ObjectType::Core)
-			continue;
+		if (obj.getType() == ObjectType::Core) continue;
 		Position p = Board::instance().getObjectPositionById(obj.getId());
-		Position q(W - 1 - p.x, H - 1 - p.y);
-		bool isBase =
-			(p.y < q.y) ||
-			(p.y == q.y && p.x < q.x);
-		if (!isBase)
-			Board::instance().removeObjectById(obj.getId());
+		Position q(gridSize - 1 - p.x, gridSize - 1 - p.y);
+		int bal = 0;
+		if (obj.getType() == ObjectType::Resource) bal = ((Resource&)obj).getBalance();
+		else if (obj.getType() == ObjectType::Money) bal = ((Money&)obj).getBalance();
+		clones.emplace_back(obj.getType(), q, bal);
 	}
-	for (const Object & obj : Board::instance())
+
+	for (auto& it : clones)
 	{
-		if (obj.getType() == ObjectType::Core)
-			continue;
-		Position p = Board::instance().getObjectPositionById(obj.getId());
-		Position q(W - 1 - p.x, H - 1 - p.y);
-		if (Board::instance().getObjectAtPos(q) != nullptr)
-			continue;
-		switch (obj.getType())
-		{
-			case ObjectType::Wall:
-				Board::instance().addObject<Wall>(Wall(), q);
-				break;
-			case ObjectType::Resource:
-				Board::instance().addObject<Resource>(Resource(((Resource &)obj).getBalance()), q);
-				break;
-			case ObjectType::Money:
-				Board::instance().addObject<Money>(Money((Money &)obj).getBalance(), q);
-				break;
-			default:
-				Logger::Log(LogLevel::WARNING, "Unexpected object type during mirroring: " + std::to_string(static_cast<int>(obj.getType())));
+		auto [type, pos, bal] = it;
+		switch (type) {
+			case ObjectType::Resource: Board::instance().addObject<Resource>(Resource(bal), pos); break;
+			case ObjectType::Money:    Board::instance().addObject<Money>(Money(bal), pos); break;
+			case ObjectType::Wall:     Board::instance().addObject<Wall>(Wall(), pos); break;
+			default: Logger::Log("Unknown object type while mirroring: " + std::to_string(static_cast<int>(type))); break;
 		}
 	}
 }
@@ -408,11 +417,10 @@ void JigsawWorldGenerator::generateWorld(unsigned int seed)
 	eng_ = std::mt19937_64(seed);
 
 	int templatePlaceAttemptCount = Config::game().worldGeneratorConfig.value("templatePlaceAttemptCount", 1000);
-	bool mirrorMap = Config::game().worldGeneratorConfig.value("mirrorMap", true);
 
 	Logger::Log("Generating world with JigsawWorldGenerator");
 
-	Visualizer::visualizeGameState(0);
+	Visualizer::visualizeGameState(0, true);
 
 	unsigned int width = Config::game().gridSize;
 	unsigned int height = Config::game().gridSize;
@@ -431,30 +439,27 @@ void JigsawWorldGenerator::generateWorld(unsigned int seed)
 		if (tryPlaceTemplate(temp, posX, posY))
 			Logger::Log("Placed template " + original.name + " at (" + std::to_string(posX) + ", " + std::to_string(posY) + ")");
 	}
-	Visualizer::visualizeGameState(0);
+	Visualizer::visualizeGameState(0, true);
 
 	Logger::Log("Step 2: Placing walls");
 	placeWalls();
-	Visualizer::visualizeGameState(0);
+	Visualizer::visualizeGameState(0, true);
 
 	Logger::Log("Step 3: Balancing resources");
-	balanceObjectType(ObjectType::Resource, Config::game().worldGeneratorConfig.value("resourceCount", 20));
-	Visualizer::visualizeGameState(0);
+	balanceObjectType(ObjectType::Resource, Config::game().worldGeneratorConfig.value("resourceCount", 20) / 2); // balance to half, will be doubled again later by mirroring
+	Visualizer::visualizeGameState(0, true);
 
 	Logger::Log("Step 4: Balancing moneys");
-	balanceObjectType(ObjectType::Money, Config::game().worldGeneratorConfig.value("moneysCount", 20));
-	Visualizer::visualizeGameState(0);
+	balanceObjectType(ObjectType::Money, Config::game().worldGeneratorConfig.value("moneysCount", 20) / 2); // balance to half, will be doubled again later by mirroring
+	Visualizer::visualizeGameState(0, true);
 	
 	Logger::Log("Step 5: Varying Money & Resource Income");
 	varyResourceIncome();
-	Visualizer::visualizeGameState(0);
+	Visualizer::visualizeGameState(0, true);
 
-	if (mirrorMap)
-	{
-		Logger::Log("Step 6: Mirroring world");
-		mirrorWorld();
-		Visualizer::visualizeGameState(0);
-	}
+	Logger::Log("Step 6: Mirroring world");
+	mirrorWorld();
+	Visualizer::visualizeGameState(0, true);
 
 	Logger::Log("World generation complete");
 }
