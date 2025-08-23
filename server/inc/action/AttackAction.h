@@ -5,10 +5,10 @@
 
 #include "Action.h"
 #include "Common.h"
-#include "Money.h"
+#include "GemPile.h"
 #include "Bomb.h"
 
-#include "Resource.h"
+#include "Deposit.h"
 #include "Board.h"
 
 class Unit;

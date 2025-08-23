@@ -6,8 +6,8 @@
 #include "Logger.h"
 #include "Object.h"
 #include "Wall.h"
-#include "Resource.h"
-#include "Money.h"
+#include "Deposit.h"
+#include "GemPile.h"
 #include "Board.h"
 #include "Visualizer.h"
 
@@ -47,5 +47,5 @@ class JigsawWorldGenerator : public WorldGenerator {
 		void balanceObjectType(ObjectType type, int amount);
 		void placeWalls();
 		void mirrorWorld();
-		void varyResourceIncome();
+		void varyDepositIncome();
 };

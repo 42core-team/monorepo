@@ -23,7 +23,7 @@ class Core : public Object
 		void tick(unsigned long long tickCount);
 
 		unsigned int getBalance() const { return balance_; }
-		void setBalance(unsigned int balance) { balance_ = balance; }
+		void setBalance(unsigned int gems) { balance_ = gems; }
 		unsigned int getTeamId() const { return team_id_; }
 
 	private:

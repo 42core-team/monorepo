@@ -11,25 +11,25 @@ export interface BaseObject {
 export interface CoreObject extends BaseObject {
 	type: 0; // Core
 	teamId: number;
-	balance: number;
+	gems: number;
 }
 export interface UnitObject extends BaseObject {
 	type: 1; // Unit
 	unit_type: number;
 	teamId: number;
-	balance: number;
+	gems: number;
 	ActionCooldown: number;
 }
-export interface ResourceObject extends BaseObject {
-	type: 2; // Resource
-	balance: number;
+export interface DepositObject extends BaseObject {
+	type: 2; // Deposit
+	gems: number;
 }
 export interface WallObject extends BaseObject {
 	type: 3; // Wall
 }
-export interface MoneyObject extends BaseObject {
-	type: 4; // Money
-	balance: number;
+export interface GemPileObject extends BaseObject {
+	type: 4; // Gems
+	gems: number;
 }
 export interface BombObject extends BaseObject {
 	type: 5; // Bomb
@@ -38,17 +38,17 @@ export interface BombObject extends BaseObject {
 export type TickObject =
 	| CoreObject
 	| UnitObject
-	| ResourceObject
+	| DepositObject
 	| WallObject
-	| MoneyObject
+	| GemPileObject
 	| BombObject;
 
 const objectTypeNames = {
 	0: "Core",
 	1: "Unit",
-	2: "Resource",
+	2: "Gem Deposit",
 	3: "Wall",
-	4: "Money",
+	4: "Gem Pile",
 	5: "Bomb",
 };
 
@@ -87,9 +87,9 @@ export function formatObjectData(obj: TickObject): string {
 				color: "var(--text)",
 			});
 			lines.push({
-				line: `💰 Balance: ${num(obj.balance)}`,
+				line: `💎 Gems: ${num(obj.gems)}`,
 				priority: 1,
-				color: "var(--balance-color)",
+				color: "var(--gems-color)",
 			});
 			break;
 		case 1:
@@ -99,9 +99,9 @@ export function formatObjectData(obj: TickObject): string {
 				color: "var(--text)",
 			});
 			lines.push({
-				line: `💰 Balance: ${num(obj.balance)}`,
+				line: `💎 Gems: ${num(obj.gems)}`,
 				priority: 1,
-				color: "var(--balance-color)",
+				color: "var(--gems-color)",
 			});
 			lines.push({
 				line: `🔢 Action Cooldown: ${num(obj.ActionCooldown)}`,
@@ -112,9 +112,9 @@ export function formatObjectData(obj: TickObject): string {
 		case 4:
 		case 2:
 			lines.push({
-				line: `💰 Balance: ${num(obj.balance)}`,
+				line: `💎 Gems: ${num(obj.gems)}`,
 				priority: 1,
-				color: "var(--balance-color)",
+				color: "var(--gems-color)",
 			});
 			break;
 		case 5:
@@ -156,8 +156,8 @@ export function getBarMetrics(
 		case 1: // Unit
 			maxHP = getGameConfig()?.units?.[obj.unit_type]?.hp || -1;
 			break;
-		case 2: // Resource
-			maxHP = getGameConfig()?.resourceHp || -1;
+		case 2: // Deposit
+			maxHP = getGameConfig()?.depositHp || -1;
 			break;
 		case 3: // Wall
 			maxHP = getGameConfig()?.wallHp || -1;
@@ -173,16 +173,16 @@ export function getBarMetrics(
 		});
 	}
 
-	// Balance
-	if ((obj.type === 0 || obj.type === 1) && obj.balance > 0) {
-		// resources and moneys holding money doesnt actually contain any info
-		let maxBalance = (getGameConfig()?.resourceIncome || 175) * 3;
-		if (obj.balance > maxBalance) {
-			maxBalance = obj.balance;
+	// gems
+	if ((obj.type === 0 || obj.type === 1) && obj.gems > 0) {
+		// deposits and gem piles holding gems doesnt actually contain any info
+		let maxBalance = (getGameConfig()?.depositIncome || 175) * 3;
+		if (obj.gems > maxBalance) {
+			maxBalance = obj.gems;
 		}
 		metrics.push({
-			key: "balance",
-			percentage: (obj.balance / maxBalance) * 100,
+			key: "gems",
+			percentage: (obj.gems / maxBalance) * 100,
 		});
 	}
 
@@ -192,7 +192,7 @@ export function getBarMetrics(
 		if (!cfg) return metrics;
 		const u = cfg.units[obj.unit_type];
 		const step = Math.max(1, u.balancePerCooldownStep);
-		let calc = u.baseActionCooldown + Math.floor(obj.balance / step);
+		let calc = u.baseActionCooldown + Math.floor(obj.gems / step);
 		if (u.maxActionCooldown > 0 && calc > u.maxActionCooldown)
 			calc = u.maxActionCooldown;
 		calc = Math.max(1, calc);

@@ -15,9 +15,9 @@ export interface GameConfig {
 	gridSize: number;
 	idleIncome: number;
 	idleIncomeTimeOut: number;
-	resourceHp: number;
-	resourceIncome: number;
-	moneyObjIncome: number;
+	depositHp: number;
+	depositIncome: number;
+	gemPileIncome: number;
 	coreHp: number;
 	initialBalance: number;
 	wallHp: number;

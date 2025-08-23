@@ -14,9 +14,9 @@ void core_print_obj(t_obj *obj)
 	printf("ID: %lu\n", obj->id);
 	printf("Type: %s\n", obj->type == OBJ_CORE ? "Core" : 
 		obj->type == OBJ_UNIT ? "Unit" : 
-		obj->type == OBJ_RESOURCE ? "Resource" :
+		obj->type == OBJ_DEPOSIT ? "Deposit" :
 		obj->type == OBJ_WALL ? "Wall" : 
-		obj->type == OBJ_MONEY ? "Money" : "Unknown");
+		obj->type == OBJ_GEM_PILE ? "Gem Pile" : "Unknown");
 		// obj->type == OBJ_BOMB ? "Bomb" : "Unknown");
 	printf("State: %s\n", obj->state == STATE_UNINITIALIZED ? "Uninitialized" :
 		obj->state == STATE_ALIVE ? "Alive" : 
@@ -28,17 +28,17 @@ void core_print_obj(t_obj *obj)
 	{
 		case OBJ_CORE:
 			printf("Team ID: %lu\n", obj->s_core.team_id);
-			printf("Balance: %lu\n", obj->s_core.balance);
+			printf("gems: %lu\n", obj->s_core.gems);
 			break;
 		case OBJ_UNIT:
 			printf("Unit Type: %lu\n", obj->s_unit.unit_type);
 			printf("Team ID: %lu\n", obj->s_unit.team_id);
-			printf("Balance: %lu\n", obj->s_unit.balance);
+			printf("gems: %lu\n", obj->s_unit.gems);
 			printf("Action Cooldown: %lu\n", obj->s_unit.action_cooldown);
 			break;
-		case OBJ_RESOURCE:
-		case OBJ_MONEY:
-			printf("Balance: %lu\n", obj->s_resource_money.balance);
+		case OBJ_DEPOSIT:
+		case OBJ_GEM_PILE:
+			printf("gems: %lu\n", obj->s_resource_gems_pile.gems);
 			break;
 		// case OBJ_BOMB:
 		// 	printf("Countdown: %lu\n", obj->s_bomb.countdown);
@@ -79,7 +79,7 @@ void core_print_config_unit(t_unit_type unit_type)
 	printf("	- HP: %lu\n", unit_config->hp);
 	printf("	- Damage to Core: %lu\n", unit_config->dmg_core);
 	printf("	- Damage to Unit: %lu\n", unit_config->dmg_unit);
-	printf("	- Damage to Resource: %lu\n", unit_config->dmg_resource);
+	printf("	- Damage to Deposit: %lu\n", unit_config->dmg_deposit);
 	printf("	- Damage to Wall: %lu\n", unit_config->dmg_wall);
 	char *build_type = "None";
 	if (unit_config->build_type == BUILD_TYPE_WALL)
@@ -98,10 +98,10 @@ void core_print_config_game(void)
 	printf("	- Map Grid Size: %lu\n", game.config.gridSize);
 	printf("	- Idle Income: %lu\n", game.config.idle_income);
 	printf("	- Idle Income Timeout: %lu\n", game.config.idle_income_timeout);
-	printf("	- Resource HP: %lu\n", game.config.resource_hp);
-	printf("	- Resource Income: %lu\n", game.config.resource_income);
+	printf("	- Deposit HP: %lu\n", game.config.deposit_hp);
+	printf("	- Deposit Income: %lu\n", game.config.deposit_income);
 	printf("	- Core HP: %lu\n", game.config.core_hp);
-	printf("	- Initial Balance: %lu\n", game.config.initial_balance);
+	printf("	- Initial gems: %lu\n", game.config.initial_balance);
 	printf("	- Wall HP: %lu\n", game.config.wall_hp);
 	printf("	- Wall Build Cost: %lu\n", game.config.wall_build_cost);
 	printf("	- Bomb HP: %lu\n", game.config.bomb_hp);

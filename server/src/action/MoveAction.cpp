@@ -51,14 +51,14 @@ std::string MoveAction::execute(Core * core)
 		return "unit does not belong to your team";
 
 	Object * obj = Board::instance().getObjectAtPos(target_);
-	if (obj && obj->getType() != ObjectType::Money)
-		return "invalid target object. should be Money or empty";
+	if (obj && obj->getType() != ObjectType::GemPile)
+		return "invalid target object. should be GemPile or empty";
 	if (target_.distance(Board::instance().getObjectPositionById(unit->getId())) > 1)
 		return "invalid move";
 
-	if (obj && obj->getType() == ObjectType::Money)
+	if (obj && obj->getType() == ObjectType::GemPile)
 	{
-		unit->setBalance(unit->getBalance() + static_cast<Money*>(obj)->getBalance());
+		unit->setBalance(unit->getBalance() + static_cast<GemPile*>(obj)->getBalance());
 		Board::instance().removeObjectById(obj->getId());
 	}
 

@@ -50,14 +50,14 @@ std::string AttackAction::attackObj(Object *obj, Unit *unit) // returns object n
 	{
 		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageCore);
 	}
-	else if (obj->getType() == ObjectType::Resource)
+	else if (obj->getType() == ObjectType::Deposit)
 	{
-		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageResource);
+		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageDeposit);
 		if (obj->getHP() <= 0)
 		{
-			unsigned int balance = ((Resource *)obj)->getBalance();
+			unsigned int gems = ((Deposit *)obj)->getBalance();
 			Board::instance().removeObjectById(obj->getId());
-			Board::instance().addObject<Money>(Money(balance), target_pos_);
+			Board::instance().addObject<GemPile>(GemPile(gems), target_pos_);
 		}
 	}
 	else if (obj->getType() == ObjectType::Wall)

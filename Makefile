@@ -40,7 +40,7 @@ stop:
 	@pkill $(PLAYER_2_EXECUTABLE) > /dev/null || true
 
 # -------------------- Build targets --------------------
-build: server_build player_1_build player_2_build
+build: server_build player_1_build player_2_build visualizer_build
 
 server_build:
 	make -C $(SERVER_FOLDER)
@@ -51,17 +51,22 @@ player_1_build:
 player_2_build:
 	make -C $(PLAYER_2_FOLDER) CONNECTIONDIR=/workspaces/monorepo/client_lib
 
+visualizer_build:
+	cd visualizer && npm i && npm run build
+
 
 # -------------------- Clean targets --------------------
 clean: stop
 	make -C $(PLAYER_1_FOLDER) clean
 	make -C $(PLAYER_2_FOLDER) clean
 	make -C $(SERVER_FOLDER) clean
+	make -C client_lib clean
 
 fclean: clean
 	make -C $(PLAYER_1_FOLDER) fclean
 	make -C $(PLAYER_2_FOLDER) fclean
 	make -C $(SERVER_FOLDER) fclean
+	make -C client_lib fclean
 
 # -------------------- Clean targets --------------------
 update:
@@ -75,4 +80,4 @@ vis:
 visualizer:
 	cd visualizer && npm i && npm run dev
 
-.PHONY: all re run ren debug rebug stop build server_build player_1_build player_2_build clean fclean update vis visualizer
+.PHONY: all re run ren debug rebug stop build server_build player_1_build player_2_build clean fclean update vis visualizer visualizer_build

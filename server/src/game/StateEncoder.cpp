@@ -17,22 +17,22 @@ json StateEncoder::encodeFullState()
 		if (obj.getType() == ObjectType::Core)
 		{
 			o["teamId"] = ((Core &)obj).getTeamId();
-			o["balance"] = ((Core &)obj).getBalance();
+			o["gems"] = ((Core &)obj).getBalance();
 		}
 		if (obj.getType() == ObjectType::Unit)
 		{
 			o["teamId"] = ((Unit &)obj).getTeamId();
 			o["unit_type"] = ((Unit &)obj).getUnitType();
-			o["balance"] = ((Unit &)obj).getBalance();
+			o["gems"] = ((Unit &)obj).getBalance();
 			o["ActionCooldown"] = ((Unit &)obj).getActionCooldown();
 		}
-		if (obj.getType() == ObjectType::Resource)
+		if (obj.getType() == ObjectType::Deposit)
 		{
-			o["balance"] = ((Resource &)obj).getBalance();
+			o["gems"] = ((Deposit &)obj).getBalance();
 		}
-		if (obj.getType() == ObjectType::Money)
+		if (obj.getType() == ObjectType::GemPile)
 		{
-			o["balance"] = ((Money &)obj).getBalance();
+			o["gems"] = ((GemPile &)obj).getBalance();
 		}
 		if (obj.getType() == ObjectType::Bomb)
 		{

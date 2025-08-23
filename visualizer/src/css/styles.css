@@ -11,7 +11,7 @@
 }
 :root[data-theme="light"] {
 	--hp-color: #c70202ff;
-	--balance-color: #008600ff;
+	--gems-color: #008600ff;
 	--cooldown-color: #0066ffff;
 
 	--panel-bg: color-mix(in srgb, var(--theme-color) 7%, white);
@@ -33,7 +33,7 @@
 }
 :root[data-theme="dark"] {
 	--hp-color: rgb(242, 12, 12);
-	--balance-color: rgb(0, 215, 0);
+	--gems-color: rgb(0, 215, 0);
 	--cooldown-color: #0066ffff;
 
 	--panel-bg: color-mix(in srgb, color-mix(in srgb, var(--theme-color) 25%, white), black 70%);
@@ -115,7 +115,7 @@ a {
 	pointer-events: none;
 }
 #tooltip span[style*="var(--hp-color)"],
-#tooltip span[style*="var(--balance-color)"],
+#tooltip span[style*="var(--gems-color)"],
 #tooltip span[style*="var(--cooldown-color)"] {
 	text-shadow:
 		0 0 2px var(--tooltip-shadow-contrast),

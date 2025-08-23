@@ -4,7 +4,7 @@ std::string Config::serverConfigFilePath = "";
 std::string Config::gameConfigFilePath = "";
 
 #include "JigsawWorldGenerator.h"
-#include "DistancedResourceWorldGenerator.h"
+#include "SparseWorldGenerator.h"
 #include "HardcodedWorldGenerator.h"
 #include "EmptyWorldGenerator.h"
 
@@ -68,9 +68,9 @@ static GameConfig parseGameConfig()
 	}
 	config.idleIncome = j.value("idleIncome", 1);
 	config.idleIncomeTimeOut = j.value("idleIncomeTimeOut", 600);
-	config.resourceHp = j.value("resourceHp", 50);
-	config.resourceIncome = j.value("resourceIncome", 200);
-	config.moneyObjIncome = j.value("moneyObjIncome", 100);
+	config.depositHp = j.value("depositHp", 50);
+	config.depositIncome = j.value("depositIncome", 200);
+	config.gemPileIncome = j.value("gemPileIncome", 100);
 	config.coreHp = j.value("coreHp", 350);
 	config.initialBalance = j.value("initialBalance", 200);
 	config.wallHp = j.value("wallHp", 100);
@@ -84,8 +84,8 @@ static GameConfig parseGameConfig()
 	std::string wgType = j.value("worldGenerator", "jigsaw");
 	if (wgType == "jigsaw")
 		config.worldGenerator = std::make_unique<JigsawWorldGenerator>();
-	else if (wgType == "distanced_resources")
-		config.worldGenerator = std::make_unique<DistancedResourceWorldGenerator>();
+	else if (wgType == "sparse")
+		config.worldGenerator = std::make_unique<SparseWorldGenerator>();
 	else if (wgType == "hardcoded")
 		config.worldGenerator = std::make_unique<HardcodedWorldGenerator>();
 	else if (wgType == "empty")
@@ -110,7 +110,7 @@ static GameConfig parseGameConfig()
 			unit.balancePerCooldownStep = std::max(1u, unitJson.value("balancePerCooldownStep", 1u));
 			unit.damageCore = unitJson.value("damageCore", 0);
 			unit.damageUnit = unitJson.value("damageUnit", 0);
-			unit.damageResource = unitJson.value("damageResource", 0);
+			unit.damageDeposit = unitJson.value("damageDeposit", 0);
 			unit.damageWall = unitJson.value("damageWall", 0);
 			int buildTypeInt = unitJson.value("buildType", 0);
 			unit.buildType = static_cast<BuildType>(buildTypeInt);

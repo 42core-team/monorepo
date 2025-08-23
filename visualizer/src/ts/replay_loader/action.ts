@@ -7,7 +7,7 @@ export interface MoveAction extends BaseAction {
 	x: number;
 	y: number;
 }
-export interface TransferMoneyAction extends BaseAction {
+export interface TransferGemsAction extends BaseAction {
 	type: "transfer_money";
 	source_id: number;
 	x: number;
@@ -33,7 +33,7 @@ export interface AttackAction extends BaseAction {
 }
 export type TickAction =
 	| MoveAction
-	| TransferMoneyAction
+	| TransferGemsAction
 	| BuildAction
 	| CreateAction
 	| AttackAction;

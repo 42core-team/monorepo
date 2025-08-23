@@ -9,10 +9,10 @@
 #include "json.hpp"
 using json = nlohmann::ordered_json;
 
-class TransferMoneyAction : public Action
+class TransferGemsAction : public Action
 {
 	public:
-		TransferMoneyAction(json msg);
+		TransferGemsAction(json msg);
 
 		std::string execute(Core * core);
 		void decodeJSON(json msg);

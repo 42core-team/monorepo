@@ -14,9 +14,9 @@ static const std::array<char, 2> BUILDER_SYM = {'B', 'b'};
 static const std::array<char, 2> BOMBER_SYM = {'Z', 'z'};
 
 static const std::unordered_map<ObjectType, char> OBJ_SYMBOL = {
-	{ObjectType::Resource, 'R'},
+	{ObjectType::Deposit, 'R'},
 	{ObjectType::Wall, '#'},
-	{ObjectType::Money, '$'},
+	{ObjectType::GemPile, '$'},
 	{ObjectType::Bomb, '*'}};
 
 static constexpr char EMPTY_CELL = '.';
@@ -43,16 +43,16 @@ void Visualizer::visualizeGameState(unsigned long long tick, bool force)
 			  << "    Bomberman: Team0 = '" << BOMBER_SYM[0]
 			  << "', Team1 = '" << BOMBER_SYM[1] << "'\n\n"
 			  << "  Objects:\n"
-			  << "    Resource = '" << OBJ_SYMBOL.at(ObjectType::Resource) << "'\n"
+			  << "    Deposit  = '" << OBJ_SYMBOL.at(ObjectType::Deposit) << "'\n"
 			  << "    Wall     = '" << OBJ_SYMBOL.at(ObjectType::Wall) << "'\n"
-			  << "    Money    = '" << OBJ_SYMBOL.at(ObjectType::Money) << "'\n"
+			  << "    GemPile  = '" << OBJ_SYMBOL.at(ObjectType::GemPile) << "'\n"
 			  << "    Bomb     = '" << OBJ_SYMBOL.at(ObjectType::Bomb) << "'\n"
 			  << "    Empty    = '" << EMPTY_CELL << "'\n\n";
 
 	for (const Object & obj : Board::instance())
 	{
 		ObjectType type = obj.getType();
-		if (type == ObjectType::Bomb || type == ObjectType::Money || type == ObjectType::Resource || type == ObjectType::Wall)
+		if (type == ObjectType::Bomb || type == ObjectType::GemPile || type == ObjectType::Deposit || type == ObjectType::Wall)
 			continue;
 		std::cout << "ID: " << obj.getId() << " HP: " << obj.getHP();
 		if (obj.getType() == ObjectType::Core)
@@ -60,7 +60,7 @@ void Visualizer::visualizeGameState(unsigned long long tick, bool force)
 			const Core &core = dynamic_cast<const Core &>(obj);
 			std::cout << " Type: Core";
 			std::cout << " Team: " << core.getTeamId();
-			std::cout << " Balance: " << core.getBalance();
+			std::cout << " gems: " << core.getBalance();
 		}
 		if  (obj.getType() == ObjectType::Unit)
 		{
@@ -68,7 +68,7 @@ void Visualizer::visualizeGameState(unsigned long long tick, bool force)
 			std::cout << " Type: Unit";
 			std::cout << " Team: " << unit.getTeamId();
 			std::cout << " Type: " << unit.getUnitType();
-			std::cout << " Balance: " << unit.getBalance();
+			std::cout << " gems: " << unit.getBalance();
 			std::cout << " Next Move Opp: " << unit.getActionCooldown();
 		}
 		std::cout << std::endl;

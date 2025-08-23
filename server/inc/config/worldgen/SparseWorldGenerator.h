@@ -3,19 +3,19 @@
 
 #include "WorldGenerator.h"
 #include "Board.h"
-#include "Money.h"
+#include "GemPile.h"
 #include "Wall.h"
-#include "Resource.h"
+#include "Deposit.h"
 #include "Logger.h"
 
 #include <random>
 #include <time.h>
 #include <string.h>
 
-class DistancedResourceWorldGenerator : public WorldGenerator
+class SparseWorldGenerator : public WorldGenerator
 {
 	public:
-		DistancedResourceWorldGenerator();
+		SparseWorldGenerator();
 
 		void generateWorld(unsigned int seed);
 

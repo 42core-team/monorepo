@@ -3,9 +3,9 @@
 
 #include "WorldGenerator.h"
 #include "Board.h"
-#include "Money.h"
+#include "GemPile.h"
 #include "Wall.h"
-#include "Resource.h"
+#include "Deposit.h"
 #include "Logger.h"
 
 #include <random>

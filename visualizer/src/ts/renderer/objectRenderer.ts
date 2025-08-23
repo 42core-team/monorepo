@@ -20,9 +20,9 @@ const svgAssets = {
 		1: "cores/2.svg",
 	},
 	1: {},
-	2: "resource.svg",
+	2: "deposit.svg",
 	3: "wall.svg",
-	4: "money.svg",
+	4: "gem_pile.svg",
 	5: "core.svg",
 } as const;
 
@@ -45,7 +45,7 @@ function computeSmoothBarInstructions(
 	yOffset: number,
 	progress: number,
 ): BarDrawingInstructions[] {
-	const ORDER = ["hp", "balance", "ActionCooldown"] as const;
+	const ORDER = ["hp", "gems", "ActionCooldown"] as const;
 	const toMap = (arr: { key: string; percentage: number }[]) =>
 		Object.fromEntries(
 			arr.map(({ key, percentage }) => [key, percentage / 100]),
@@ -136,8 +136,8 @@ function drawObject(
 		const color =
 			bar.key === "hp"
 				? "var(--hp-color)"
-				: bar.key === "balance"
-					? "var(--balance-color)"
+				: bar.key === "gems"
+					? "var(--gems-color)"
 					: "var(--cooldown-color)";
 
 		const bg = document.createElementNS(svgNS, "rect");
@@ -215,11 +215,11 @@ function drawObject(
 
 	let scale = 0.8;
 	if (obj.type === 2) {
-		scale = 0.95; // Resource
+		scale = 0.95; // Deposit
 	} else if (obj.type === 3) {
 		scale = 1; // Wall
 	} else if (obj.type === 4) {
-		scale = 0.6; // Money
+		scale = 0.6; // Gem Pile
 	}
 	const offset = (1 - scale * scaleFactor) / 2;
 	img.removeAttribute("x");
@@ -280,14 +280,14 @@ export function calcAndDrawObject(
 		y = currObj.y + (nextObj.y - currObj.y) * easeInOutProgress;
 	}
 
-	// check attacks / build / transfer money
+	// check attacks / build / transfer gems
 	if (currObj.type === 1) {
 		const actions = actionsByExec[currObj.id] || [];
 		for (const action of actions) {
 			if (
 				action.type === "attack" ||
 				action.type === "build" ||
-				action.type === "transfer_money"
+				action.type === "transfer_gems"
 			) {
 				const deltaX = action.x - currObj.x;
 				const deltaY = action.y - currObj.y;

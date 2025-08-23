@@ -141,7 +141,7 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 				Position objPos = Board::instance().getObjectPositionById(obj.getId());
 				unsigned int unitBalance = ((Unit &)obj).getBalance();
 				Board::instance().removeObjectById(obj.getId());
-				Board::instance().addObject<Money>(Money(unitBalance), objPos);
+				Board::instance().addObject<GemPile>(GemPile(unitBalance), objPos);
 			}
 			else if (obj.getType() != ObjectType::Core)
 			{

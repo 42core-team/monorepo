@@ -1,6 +1,6 @@
-#include "DistancedResourceWorldGenerator.h"
+#include "SparseWorldGenerator.h"
 
-DistancedResourceWorldGenerator::DistancedResourceWorldGenerator()
+SparseWorldGenerator::SparseWorldGenerator()
 {
 }
 
@@ -20,17 +20,17 @@ static bool positionHasNeighbours(const Position& pos, int N)
 	return false;
 }
 
-void DistancedResourceWorldGenerator::generateWorld(unsigned int seed)
+void SparseWorldGenerator::generateWorld(unsigned int seed)
 {
 	eng_ = std::mt19937_64(seed);
 
 	unsigned int gridSize = Config::game().gridSize;
-	int resourceCount = Config::game().worldGeneratorConfig.value("resourceCount", 20);
-	int resourceBalanceVariation = Config::game().worldGeneratorConfig.value("resourceBalanceVariation", 10);
-	int resourceIncome = Config::game().resourceIncome;
-	int moneyCount = Config::game().worldGeneratorConfig.value("moneyCount", 10);
-	int moneyBalanceVariation = Config::game().worldGeneratorConfig.value("moneyBalanceVariation", 5);
-	int moneyIncome = Config::game().moneyObjIncome;
+	int depositCount = Config::game().worldGeneratorConfig.value("depositCount", 20);
+	int depositBalanceVariation = Config::game().worldGeneratorConfig.value("depositBalanceVariation", 10);
+	int depositIncome = Config::game().depositIncome;
+	int gemPileCount = Config::game().worldGeneratorConfig.value("gemPileCount", 10);
+	int gemPileBalanceVariation = Config::game().worldGeneratorConfig.value("gemPileBalanceVariation", 5);
+	int gemPileIncome = Config::game().gemPileIncome;
 	int wallCount = Config::game().worldGeneratorConfig.value("wallCount", 10);
 	int coreBuffer = Config::game().worldGeneratorConfig.value("coreBuffer", 3);
 
@@ -49,15 +49,15 @@ void DistancedResourceWorldGenerator::generateWorld(unsigned int seed)
 		if (positionHasNeighbours(p, N)) return false;
 		if (withinCoreBuffer(p)) return false;
 		if (p.x + p.y >= N - 1) return false; // only place in upper left triangle, rest will be mirrored later
-		unsigned int randomResourceBalance = resourceIncome + std::uniform_int_distribution<>(-resourceBalanceVariation, resourceBalanceVariation)(eng_);
-		unsigned int randomMoneyBalance = moneyIncome + std::uniform_int_distribution<>(-moneyBalanceVariation, moneyBalanceVariation)(eng_);
+		unsigned int randomDepositBalance = depositIncome + std::uniform_int_distribution<>(-depositBalanceVariation, depositBalanceVariation)(eng_);
+		unsigned int randomGemPileBalance = gemPileIncome + std::uniform_int_distribution<>(-gemPileBalanceVariation, gemPileBalanceVariation)(eng_);
 		switch (t)
 		{
-			case ObjectType::Resource:
-				Board::instance().addObject<Resource>(Resource(randomResourceBalance), p);
+			case ObjectType::Deposit:
+				Board::instance().addObject<Deposit>(Deposit(randomDepositBalance), p);
 				return true;
-			case ObjectType::Money:
-				Board::instance().addObject<Money>(Money(randomMoneyBalance), p);
+			case ObjectType::GemPile:
+				Board::instance().addObject<GemPile>(GemPile(randomGemPileBalance), p);
 				return true;
 			case ObjectType::Wall:
 				Board::instance().addObject<Wall>(Wall(), p);
@@ -79,8 +79,8 @@ void DistancedResourceWorldGenerator::generateWorld(unsigned int seed)
 	};
 
 	// halfed -> will be mirrored later
-	placeK(ObjectType::Resource, resourceCount / 2);
-	placeK(ObjectType::Money,    moneyCount / 2);
+	placeK(ObjectType::Deposit,  depositCount / 2);
+	placeK(ObjectType::GemPile,  gemPileCount / 2);
 	placeK(ObjectType::Wall,     wallCount / 2);
 
 	std::vector<std::pair<ObjectType, Position>> clones;
@@ -96,11 +96,11 @@ void DistancedResourceWorldGenerator::generateWorld(unsigned int seed)
 	{
 		switch (it.first)
 		{
-			case ObjectType::Resource:
-				Board::instance().addObject<Resource>(Resource(), it.second);
+			case ObjectType::Deposit:
+				Board::instance().addObject<Deposit>(Deposit(), it.second);
 				break;
-			case ObjectType::Money:
-				Board::instance().addObject<Money>(Money(), it.second);
+			case ObjectType::GemPile:
+				Board::instance().addObject<GemPile>(GemPile(), it.second);
 				break;
 			case ObjectType::Wall:
 				Board::instance().addObject<Wall>(Wall(), it.second);
