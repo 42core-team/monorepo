@@ -11,7 +11,7 @@ struct Position
 	int y;
 
 	Position(int x, int y) : x(x), y(y) {}
-	Position() : x(-1), y(-1) {} // purposeful overflow, max val to indicate invalidity
+	Position() : x(-1), y(-1) {}
 
 	bool isValid(int maxGrid) const
 	{

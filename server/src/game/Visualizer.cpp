@@ -21,9 +21,9 @@ static const std::unordered_map<ObjectType, char> OBJ_SYMBOL = {
 
 static constexpr char EMPTY_CELL = '.';
 
-void Visualizer::visualizeGameState(unsigned long long tick)
+void Visualizer::visualizeGameState(unsigned long long tick, bool force)
 {
-	if (!Config::server().enableTerminalVisualizer)
+	if (!Config::server().enableTerminalVisualizer && !force)
 		return;
 
 

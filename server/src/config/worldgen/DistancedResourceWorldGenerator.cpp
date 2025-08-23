@@ -48,6 +48,7 @@ void DistancedResourceWorldGenerator::generateWorld(unsigned int seed)
 		if (Board::instance().getObjectAtPos(p)) return false;
 		if (positionHasNeighbours(p, N)) return false;
 		if (withinCoreBuffer(p)) return false;
+		if (p.x + p.y >= N - 1) return false; // only place in upper left triangle, rest will be mirrored later
 		unsigned int randomResourceBalance = resourceIncome + std::uniform_int_distribution<>(-resourceBalanceVariation, resourceBalanceVariation)(eng_);
 		unsigned int randomMoneyBalance = moneyIncome + std::uniform_int_distribution<>(-moneyBalanceVariation, moneyBalanceVariation)(eng_);
 		switch (t)
@@ -77,20 +78,10 @@ void DistancedResourceWorldGenerator::generateWorld(unsigned int seed)
 		}
 	};
 
-	placeK(ObjectType::Resource, resourceCount);
-	placeK(ObjectType::Money,    moneyCount);
-	placeK(ObjectType::Wall,     wallCount);
-
-	std::vector<int> toRemove;
-	for (auto &obj : Board::instance())
-	{
-		if (obj.getType() == ObjectType::Core) continue;
-		Position pos = Board::instance().getObjectPositionById(obj.getId());
-		double ratio = static_cast<double>(pos.x) / (gridSize - 1) +
-					   static_cast<double>(pos.y) / (gridSize - 1);
-		if (ratio >= 1.0) toRemove.push_back(obj.getId());
-	}
-	for (int id : toRemove) Board::instance().removeObjectById(id);
+	// halfed -> will be mirrored later
+	placeK(ObjectType::Resource, resourceCount / 2);
+	placeK(ObjectType::Money,    moneyCount / 2);
+	placeK(ObjectType::Wall,     wallCount / 2);
 
 	std::vector<std::pair<ObjectType, Position>> clones;
 	for (auto &obj : Board::instance())
