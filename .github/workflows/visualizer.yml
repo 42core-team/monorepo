@@ -102,6 +102,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          Dockerfile: ./Dockerfile
           platforms: ${{ matrix.platform }}
           push: true
           tags: ${{ steps.arch-tags.outputs.arch-tags }}
@@ -114,6 +115,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          Dockerfile: ./Dockerfile
           platforms: ${{ matrix.platform }}
           push: false
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test-${{ matrix.architecture }}
