@@ -14,10 +14,6 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
-defaults:
-  run:
-    working-directory: ./visualizer
-
 jobs:
   build:
     runs-on: ${{ matrix.runner }}
@@ -37,17 +33,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Setup Helm (PR lint)
-        if: github.event_name == 'pull_request'
-        uses: azure/setup-helm@v4
-        with:
-          version: "v3.13.3"
-
-      - name: Run Helm chart lint
-        if: github.event_name == 'pull_request'
-        run: |
-          helm lint ./helm/debug-visualizer
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -101,8 +86,8 @@ jobs:
         id: build
         uses: docker/build-push-action@v6
         with:
-          context: .
-          dockerfile: ./Dockerfile
+          context: ./visualizer
+          file: ./visualizer/Dockerfile
           platforms: ${{ matrix.platform }}
           push: true
           tags: ${{ steps.arch-tags.outputs.arch-tags }}
@@ -114,8 +99,8 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: docker/build-push-action@v6
         with:
-          context: .
-          dockerfile: ./Dockerfile
+          context: ./visualizer
+          file: ./visualizer/Dockerfile
           platforms: ${{ matrix.platform }}
           push: false
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test-${{ matrix.architecture }}
@@ -276,16 +261,16 @@ jobs:
 
       - name: Validate Helm chart
         run: |
-          helm lint ./helm/debug-visualizer --values ./helm/debug-visualizer/${{ github.ref_name == 'main' && 'values-prod.yaml' || 'values-dev.yaml' }}
+          helm lint ./visualizer/helm/debug-visualizer --values ./visualizer/helm/debug-visualizer/${{ github.ref_name == 'main' && 'values-prod.yaml' || 'values-dev.yaml' }}
 
       - name: Deploy application with Helm
         run: |
           VALUES_FILE=${{ github.ref_name == 'main' && 'values-prod.yaml' || 'values-dev.yaml' }}
           helm upgrade --install \
             ${{ steps.cfg.outputs.deployment_name }} \
-            ./helm/debug-visualizer \
+            ./visualizer/helm/debug-visualizer \
             --namespace ${{ steps.cfg.outputs.namespace }} \
-            --values ./helm/debug-visualizer/${VALUES_FILE} \
+            --values ./visualizer/helm/debug-visualizer/${VALUES_FILE} \
             --set image.repository=${{ steps.image.outputs.repo }} \
             --set image.tag=${{ steps.image.outputs.tag }} \
             --wait \
