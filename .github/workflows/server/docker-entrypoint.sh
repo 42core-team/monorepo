@@ -7,7 +7,7 @@ set -euo pipefail
 # Configuration
 UPLOAD_REPLAY="${UPLOAD_REPLAY:-false}"
 SEND_RESULTS="${SEND_RESULTS:-false}"
-REPLAY_FILE="${REPLAY_FILE:-/core/replays/replay_latest.json}"
+REPLAY_FILE="${REPLAY_FILE:-./replays/replay_latest.json}"
 
 # Script paths
 UPLOAD_SCRIPT="/core/data/scripts/upload_replay_to_s3.sh"
