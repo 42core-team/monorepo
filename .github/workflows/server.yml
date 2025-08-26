@@ -18,6 +18,10 @@ on:
       - ".github/workflows/server-Dockerfile"
       - ".github/workflows/server-docker-entrypoint.sh"
 
+permissions:
+  contents: read
+  packages: write
+
 env:
   REGISTRY_IMAGE: ghcr.io/42core-team/game-server
 
