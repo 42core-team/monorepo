@@ -22,7 +22,7 @@ static bool positionHasNeighbours(const Position& pos, int N)
 
 void SparseWorldGenerator::generateWorld(unsigned int seed)
 {
-	eng_ = std::mt19937_64(seed);
+	eng_.seed(seed);
 
 	unsigned int gridSize = Config::game().gridSize;
 	int depositCount = Config::game().worldGeneratorConfig.value("depositCount", 20);
@@ -43,7 +43,8 @@ void SparseWorldGenerator::generateWorld(unsigned int seed)
 
 	const int N = static_cast<int>(gridSize);
 	auto tryPlace = [&](ObjectType t) -> bool {
-		Position p = Position::random(gridSize);
+		static std::uniform_int_distribution<int> dist(0, static_cast<int>(gridSize) - 1);
+		Position p{dist(eng_), dist(eng_)};
 		if (p.x < 0 || p.x >= N || p.y < 0 || p.y >= N) return false;
 		if (Board::instance().getObjectAtPos(p)) return false;
 		if (positionHasNeighbours(p, N)) return false;

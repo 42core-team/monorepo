@@ -20,7 +20,7 @@ class SparseWorldGenerator : public WorldGenerator
 		void generateWorld(unsigned int seed);
 
 	private:
-		std::mt19937_64 eng_ = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
+		std::mt19937_64 eng_{};
 };
 
 #endif // DISTANCED_RESOURCE_WORLD_GENERATOR_H
