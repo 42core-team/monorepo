@@ -13,7 +13,7 @@ SERVER_EXECUTABLE := server
 # Configs
 CONFIG_FOLDER := my-core-bot/configs
 CONFIG_SERVER_FILE := $(CONFIG_FOLDER)/server-config.json
-CONFIG_GAME_FILE := $(CONFIG_FOLDER)/hard-config.json
+CONFIG_GAME_FILE := $(CONFIG_FOLDER)/soft-config.json
 
 # Git info
 CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)

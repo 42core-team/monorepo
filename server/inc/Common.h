@@ -44,14 +44,6 @@ struct Position
 	{
 		return std::abs(x - other.x) + std::abs(y - other.y);
 	}
-
-	static Position random(int maxSizeSquare)
-	{
-		static std::default_random_engine eng = std::default_random_engine(time(nullptr));
-		std::uniform_int_distribution<int> posX(0, maxSizeSquare - 1);
-		std::uniform_int_distribution<int> posY(0, maxSizeSquare - 1);
-		return Position(posX(eng), posY(eng));
-	}
 };
 
 #endif // COMMON_H
