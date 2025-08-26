@@ -18,7 +18,7 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: visualizer
+  IMAGE_NAME: 42core-team/visualizer
 
 jobs:
   build:
