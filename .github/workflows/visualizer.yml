@@ -129,9 +129,6 @@ jobs:
     runs-on: ubuntu-24.04
     if: github.event_name == 'push'
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
