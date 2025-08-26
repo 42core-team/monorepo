@@ -6,7 +6,17 @@ on:
     branches:
       - main
       - dev
+    paths:
+      - "server/**"
+      - ".github/workflows/server.yml"
+      - ".github/workflows/server-Dockerfile"
+      - ".github/workflows/server-docker-entrypoint.sh"
   pull_request:
+    paths:
+      - "server/**"
+      - ".github/workflows/server.yml"
+      - ".github/workflows/server-Dockerfile"
+      - ".github/workflows/server-docker-entrypoint.sh"
 
 env:
   REGISTRY_IMAGE: ghcr.io/42core-team/game-server

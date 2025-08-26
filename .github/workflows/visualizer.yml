@@ -3,8 +3,14 @@ name: visualizer build, push, deploy
 on:
   push:
     branches: [main, dev]
+    paths:
+      - "visualizer/**"
+      - ".github/workflows/visualizer.yml"
   pull_request:
     branches: [main, dev]
+    paths:
+      - "visualizer/**"
+      - ".github/workflows/visualizer.yml"
 
 permissions:
   contents: read
@@ -66,7 +72,7 @@ jobs:
           # Get the base tags and add architecture suffix to each
           BASE_TAGS="${{ steps.meta.outputs.tags }}"
           ARCH_TAGS=""
-          
+
           while IFS= read -r tag; do
             if [[ -n "$tag" ]]; then
               if [[ -z "$ARCH_TAGS" ]]; then
@@ -76,7 +82,7 @@ jobs:
               fi
             fi
           done <<< "$BASE_TAGS"
-          
+
           echo "arch-tags<<EOF" >> $GITHUB_OUTPUT
           echo -e "$ARCH_TAGS" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
@@ -155,21 +161,21 @@ jobs:
         run: |
           # Get the tags from metadata (convert newlines to spaces for proper iteration)
           TAGS=$(echo "${{ steps.meta.outputs.tags }}" | tr '\n' ' ')
-          
+
           # Create manifest for each tag
           for tag in $TAGS; do
             # Skip empty tags
             if [[ -z "$tag" ]]; then
               continue
             fi
-            
+
             echo "Creating manifest for tag: $tag"
-            
+
             # Create manifest from existing architecture-specific images
             docker buildx imagetools create -t "$tag" \
               "${tag}-amd64" \
               "${tag}-arm64"
-            
+
             echo "Manifest created for $tag"
           done
 
@@ -293,4 +299,3 @@ jobs:
           echo "Deployment: ${{ steps.cfg.outputs.deployment_name }}" >> $GITHUB_STEP_SUMMARY
           echo "Image: ${{ steps.image.outputs.repo }}:${{ steps.image.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
           echo "URL: ${{ steps.cfg.outputs.environment_url }}" >> $GITHUB_STEP_SUMMARY
-
