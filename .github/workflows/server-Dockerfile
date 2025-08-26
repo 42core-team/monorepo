@@ -1,0 +1,30 @@
+FROM ubuntu:noble AS build-game
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    clang \
+    libcurl4-openssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /core
+COPY ./server .
+
+RUN make re
+
+FROM ubuntu:noble AS release
+RUN apt-get update && apt-get install -y \
+    libcurl4 \
+    jq \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /core
+COPY --from=build-game /core/server ./server
+COPY --from=build-game /core/data ./data
+
+COPY ./.github/workflows/server-docker-entrypoint.sh ./docker-entrypoint.sh
+COPY ./my-core-bot/configs ./configs
+
+RUN mkdir replays && chmod +x ./docker-entrypoint.sh
+
+ENTRYPOINT [ "./docker-entrypoint.sh", "./server", "./configs/server-config.json", "./configs/soft-config.json" ]
+CMD [ "--default-arg" ]
