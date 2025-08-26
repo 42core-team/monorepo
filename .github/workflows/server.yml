@@ -23,7 +23,7 @@ permissions:
   packages: write
 
 env:
-  REGISTRY_IMAGE: ghcr.io/42core-team/game-server
+  REGISTRY_IMAGE: ghcr.io/42core-team/server
 
 concurrency:
   group: "${{ github.workflow }} @ ${{ github.ref_name }}"
