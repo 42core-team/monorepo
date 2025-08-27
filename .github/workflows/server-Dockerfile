@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /core
-COPY . .
+COPY ./server .
 
 RUN make re
 
@@ -18,11 +18,13 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /core
-COPY --from=build-game /core/core ./core
+COPY --from=build-game /core/server ./server
 COPY --from=build-game /core/data ./data
-COPY --from=build-game /core/.github/workflows/entrypoint.sh ./entrypoint.sh
 
-RUN mkdir replays && chmod +x ./entrypoint.sh
+COPY ./.github/workflows/server-docker-entrypoint.sh ./docker-entrypoint.sh
+COPY ./my-core-bot/configs ./configs
 
-ENTRYPOINT [ "./entrypoint.sh", "./core", "./data/server.config.json" ]
+RUN mkdir replays && chmod +x ./docker-entrypoint.sh
+
+ENTRYPOINT [ "./docker-entrypoint.sh", "./server", "./configs/server-config.json", "./configs/soft-config.json" ]
 CMD [ "--default-arg" ]

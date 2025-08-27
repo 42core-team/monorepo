@@ -1,4 +1,4 @@
-name: "Build and publish Dockerimage"
+name: "server build, push"
 
 on:
   workflow_dispatch:
@@ -6,12 +6,24 @@ on:
     branches:
       - main
       - dev
-      - "event-*"
-      - "rush-*"
+    paths:
+      - "server/**"
+      - ".github/workflows/server.yml"
+      - ".github/workflows/server-Dockerfile"
+      - ".github/workflows/server-docker-entrypoint.sh"
   pull_request:
+    paths:
+      - "server/**"
+      - ".github/workflows/server.yml"
+      - ".github/workflows/server-Dockerfile"
+      - ".github/workflows/server-docker-entrypoint.sh"
+
+permissions:
+  contents: read
+  packages: write
 
 env:
-  REGISTRY_IMAGE: ghcr.io/42core-team/game-server
+  REGISTRY_IMAGE: ghcr.io/42core-team/server
 
 concurrency:
   group: "${{ github.workflow }} @ ${{ github.ref_name }}"
@@ -37,6 +49,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -45,7 +59,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ${{ github.workspace }}
-          file: .github/workflows/game-server-Dockerfile
+          file: .github/workflows/server-Dockerfile
           platforms: ${{ matrix.platform }}
           push: false
           cache-from: type=gha
@@ -69,6 +83,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Prepare
         run: |
@@ -99,7 +115,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ${{ github.workspace }}
-          file: .github/workflows/game-server-Dockerfile
+          file: .github/workflows/server-Dockerfile
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ env.REGISTRY_IMAGE }}
