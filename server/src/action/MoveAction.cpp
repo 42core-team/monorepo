@@ -59,5 +59,8 @@ std::string MoveAction::execute(Core *core)
 	Board::instance().moveObjectById(unit->getId(), target_);
 	unit->resetActionCooldown();
 
+	Stats::instance().inc(stat_keys::tiles_traveled);
+	Stats::instance().inc(stat_keys::actions_executed);
+
 	return "";
 }

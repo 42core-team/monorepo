@@ -29,7 +29,7 @@ namespace stat_keys
 	inline constexpr std::string_view walls_destroyed = "walls_destroyed";
 	inline constexpr std::string_view bombs_destroyed = "bombs_destroyed"; // explosions
 
-	inline constexpr std::string_view money_transferred = "money_transferred";
+	inline constexpr std::string_view gems_transferred = "gems_transferred";
 	inline constexpr std::string_view tiles_traveled = "tiles_traveled";
 
 	inline constexpr std::string_view gems_gained = "gems_gained";

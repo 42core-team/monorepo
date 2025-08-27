@@ -44,6 +44,8 @@ void Bomb::explode()
 		obj->setHP(obj->getHP() - Config::game().bombDamage);
 	}
 	Board::instance().removeObjectById(this->getId());
+
+	Stats::instance().inc(stat_keys::bombs_destroyed);
 }
 
 void Bomb::tick(unsigned long long tickCount)

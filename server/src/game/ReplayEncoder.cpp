@@ -1,9 +1,12 @@
 #include "ReplayEncoder.h"
-#include <cstdlib>
 
 #define REPLAY_VERSION std::string("1.1.1")
 
-ReplayEncoder& ReplayEncoder::instance() { static ReplayEncoder inst; return inst; }
+ReplayEncoder &ReplayEncoder::instance()
+{
+	static ReplayEncoder inst;
+	return inst;
+}
 
 void ReplayEncoder::addTickState(json &state, unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions)
 {
@@ -23,9 +26,10 @@ void ReplayEncoder::addTickState(json &state, unsigned long long tick, std::vect
 
 void ReplayEncoder::registerExpectedTeam(unsigned int teamId)
 {
-	if (!teamData_.count(teamId)) teamData_[teamId].teamId = teamId;
+	if (!teamData_.count(teamId))
+		teamData_[teamId].teamId = teamId;
 }
-void ReplayEncoder::setTeamName(unsigned int teamId, const std::string& teamName)
+void ReplayEncoder::setTeamName(unsigned int teamId, const std::string &teamName)
 {
 	registerExpectedTeam(teamId);
 	teamData_[teamId].teamName = teamName;
@@ -47,7 +51,8 @@ void ReplayEncoder::setPlace(unsigned int teamId, unsigned int place)
 	teamData_[teamId].place = place;
 }
 
-bool ReplayEncoder::wasConnectedInitially(unsigned int teamId) const {
+bool ReplayEncoder::wasConnectedInitially(unsigned int teamId) const
+{
 	auto it = teamData_.find(teamId);
 	return it != teamData_.end() && it->second.connectedInitially;
 }
@@ -92,9 +97,9 @@ json ReplayEncoder::encodeMiscSection() const
 	json miscSection;
 
 	json players = json::array();
-	for (const auto& kv : teamData_)
+	for (const auto &kv : teamData_)
 	{
-		const auto& p = kv.second;
+		const auto &p = kv.second;
 		json pj;
 		pj["id"] = p.teamId;
 		pj["name"] = p.teamName;
@@ -111,6 +116,8 @@ json ReplayEncoder::encodeMiscSection() const
 	const char *gameId = std::getenv("GAME_ID");
 	miscSection["game_id"] = gameId ? std::string(gameId) : "";
 
+	miscSection["stats"] = Stats::instance().toJson();
+
 	return miscSection;
 }
 
@@ -124,7 +131,7 @@ void ReplayEncoder::exportReplay() const
 
 	json replayData;
 	replayData["misc"] = encodeMiscSection();
-	for (auto& kv : customData_.items())
+	for (auto &kv : customData_.items())
 		replayData["misc"][kv.key()] = kv.value();
 	replayData["ticks"] = !ticks_.empty() ? ticks_ : json::array();
 	replayData["config"] = config_;

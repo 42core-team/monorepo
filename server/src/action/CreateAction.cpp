@@ -44,5 +44,8 @@ std::string CreateAction::execute(Core *core)
 	Board::instance().addObject<Unit>(Unit(core->getTeamId(), unit_type_), closestEmptyPos);
 	core->setBalance(core->getBalance() - unitCost);
 
+	Stats::instance().inc(stat_keys::units_spawned);
+	Stats::instance().inc(stat_keys::actions_executed);
+
 	return "";
 }

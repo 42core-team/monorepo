@@ -7,9 +7,10 @@
 #include "Common.h"
 #include "GemPile.h"
 #include "Bomb.h"
-
 #include "Deposit.h"
+
 #include "Board.h"
+#include "Stats.h"
 
 class Unit;
 

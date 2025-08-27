@@ -59,6 +59,9 @@ std::string TransferGemsAction::dropMoney(Core *core, Object *srcObj)
 
 	Board::instance().addObject<GemPile>(GemPile(amount_), target_);
 
+	Stats::instance().inc(stat_keys::actions_executed);
+	Stats::instance().inc(stat_keys::gems_transferred, amount_);
+
 	return "";
 }
 
@@ -129,6 +132,9 @@ std::string TransferGemsAction::execute(Core *core)
 		Unit *dstUnit = (Unit *)dstObj;
 		dstUnit->setBalance(dstUnit->getBalance() + amount_);
 	}
+
+	Stats::instance().inc(stat_keys::actions_executed);
+	Stats::instance().inc(stat_keys::gems_transferred, amount_);
 
 	return "";
 }
