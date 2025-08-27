@@ -65,6 +65,8 @@ std::string BuildAction::execute(Core *core)
 		builder->resetActionCooldown();
 		builder->setBalance(builder->getBalance() - Config::game().wallBuildCost);
 		Board::instance().addObject<Wall>(Wall(), position_);
+
+		Stats::instance().inc(stat_keys::walls_spawned);
 	}
 	else if (buildType == BuildType::BOMB)
 	{
@@ -73,7 +75,11 @@ std::string BuildAction::execute(Core *core)
 		builder->resetActionCooldown();
 		builder->setBalance(builder->getBalance() - Config::game().bombThrowCost);
 		Board::instance().addObject<Bomb>(Bomb(), position_);
+
+		Stats::instance().inc(stat_keys::bombs_spawned);
 	}
+
+	Stats::instance().inc(stat_keys::actions_executed);
 
 	return "";
 }

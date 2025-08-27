@@ -7,13 +7,16 @@ using json = nlohmann::ordered_json;
 #include "Logger.h"
 #include "Config.h"
 #include "Action.h"
+#include "Stats.h"
 #include "Core.h"
 
 #include <fstream>
 #include <unordered_map>
 #include <filesystem>
+#include <cstdlib>
 
-enum class death_reason_t {
+enum class death_reason_t
+{
 	NONE_SURVIVED,
 	CORE_DESTROYED,
 	DISCONNECTED,
@@ -24,13 +27,14 @@ enum class death_reason_t {
 	TIMEOUT_RANDOM
 };
 
-typedef struct team_data_s {
+typedef struct team_data_s
+{
 	unsigned int teamId;
 	std::string teamName;
 	bool connectedInitially = false;
 	death_reason_t deathReason = death_reason_t::DID_NOT_CONNECT;
 	unsigned int place = std::numeric_limits<unsigned int>::max(); // 0 = won
-}	team_data_t;
+} team_data_t;
 
 class ReplayEncoder
 {
@@ -38,19 +42,19 @@ public:
 	ReplayEncoder() : ticks_(json::object()), lastTickCount_(0) {}
 	~ReplayEncoder() = default;
 
-	static ReplayEncoder& instance();
+	static ReplayEncoder &instance();
 
 	void addTickState(json &state, unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions);
 
 	void registerExpectedTeam(unsigned int teamId);
-	void setTeamName(unsigned int teamId, const std::string& teamName);
+	void setTeamName(unsigned int teamId, const std::string &teamName);
 	void markConnectedInitially(unsigned int teamId, bool connected);
 	void setDeathReason(unsigned int teamId, death_reason_t reason);
 	void setPlace(unsigned int teamId, unsigned int place);
 
 	bool wasConnectedInitially(unsigned int teamId) const;
 
-	void includeConfig(json& config);
+	void includeConfig(json &config);
 	json &getCustomData(void) { return customData_; }
 
 	void exportReplay() const;

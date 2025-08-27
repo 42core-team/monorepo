@@ -5,21 +5,22 @@
 #include "Common.h"
 #include "Config.h"
 #include "Board.h"
+#include "Stats.h"
 
 class Bomb : public Object
 {
-	public:
-		Bomb();
-		Bomb(const Bomb &other)
-			: Object(other), countdown_(other.countdown_) {}
+public:
+	Bomb();
+	Bomb(const Bomb &other)
+		: Object(other), countdown_(other.countdown_) {}
 
-		void explode();
-		void tick(unsigned long long tickCount);
+	void explode();
+	void tick(unsigned long long tickCount);
 
-		unsigned int getCountdown() const { return countdown_; }
+	unsigned int getCountdown() const { return countdown_; }
 
-	private:
-		unsigned int countdown_ = 0; // Countdown for the bomb to explode
+private:
+	unsigned int countdown_ = 0; // Countdown for the bomb to explode
 };
 
 #endif // BOMB_H
