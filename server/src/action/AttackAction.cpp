@@ -93,6 +93,8 @@ std::string AttackAction::execute(Core *core)
 			unsigned int gems = ((Deposit *)obj)->getBalance();
 			Board::instance().removeObjectById(obj->getId());
 			Board::instance().addObject<GemPile>(GemPile(gems), target_pos_);
+
+			Stats::instance().inc(stat_keys::deposits_destroyed, 1);
 		}
 
 		Stats::instance().inc(stat_keys::damage_deposits, damage);
@@ -116,7 +118,7 @@ std::string AttackAction::execute(Core *core)
 		Board::instance().removeObjectById(obj->getId());
 
 		Stats::instance().inc(stat_keys::gems_gained, gems);
-		Stats::instance().inc(stat_keys::gempiles_destroyed, gems);
+		Stats::instance().inc(stat_keys::gempiles_destroyed, 1);
 	}
 
 	Stats::instance().inc(stat_keys::actions_executed);

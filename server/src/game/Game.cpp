@@ -167,9 +167,6 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 			case ObjectType::Wall:
 				Stats::instance().inc(stat_keys::walls_destroyed);
 				break;
-			case ObjectType::Deposit:
-				Stats::instance().inc(stat_keys::deposits_destroyed);
-				break;
 			case ObjectType::Core:
 				Stats::instance().inc(stat_keys::cores_destroyed);
 				break;
