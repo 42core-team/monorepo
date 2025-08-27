@@ -18,20 +18,18 @@ using json = nlohmann::ordered_json;
 
 class AttackAction : public Action
 {
-	public:
-		AttackAction(json msg);
-		unsigned int getUnitId() const { return unit_id_; }
-		Position getTargetPos() const { return target_pos_; }
+public:
+	AttackAction(json msg);
+	unsigned int getUnitId() const { return unit_id_; }
+	Position getTargetPos() const { return target_pos_; }
 
-		std::string execute(Core * core);
-		void decodeJSON(json msg);
-		json encodeJSON();
-	
-	private:
-		unsigned int unit_id_;
-		Position target_pos_;
+	std::string execute(Core *core);
+	void decodeJSON(json msg);
+	json encodeJSON();
 
-		std::string attackObj(Object *obj, Unit * unit);
+private:
+	unsigned int unit_id_;
+	Position target_pos_;
 };
 
 #endif // ATTACK_ACTION_H

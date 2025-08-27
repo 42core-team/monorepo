@@ -37,42 +37,6 @@ json AttackAction::encodeJSON()
 	return js;
 }
 
-std::string AttackAction::attackObj(Object *obj, Unit *unit) // returns object new hp, 1 if no object present
-{
-	if (!obj)
-		return "no object at target position";
-	unit->resetActionCooldown();
-	if (obj->getType() == ObjectType::Unit)
-	{
-		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageUnit);
-	}
-	else if (obj->getType() == ObjectType::Core)
-	{
-		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageCore);
-	}
-	else if (obj->getType() == ObjectType::Deposit)
-	{
-		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageDeposit);
-		if (obj->getHP() <= 0)
-		{
-			unsigned int gems = ((Deposit *)obj)->getBalance();
-			Board::instance().removeObjectById(obj->getId());
-			Board::instance().addObject<GemPile>(GemPile(gems), target_pos_);
-		}
-	}
-	else if (obj->getType() == ObjectType::Wall)
-	{
-		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageWall);
-	}
-	else if (obj->getType() == ObjectType::Bomb)
-	{
-		Bomb *bomb = (Bomb *)obj;
-		bomb->explode();
-	}
-
-	return "";
-}
-
 std::string AttackAction::execute(Core *core)
 {
 	if (!is_valid_)
@@ -94,5 +58,40 @@ std::string AttackAction::execute(Core *core)
 	if (!obj)
 		return "no object at target position";
 
-	return attackObj(obj, unit);
+	unit->resetActionCooldown();
+
+	// calculate attack damage depending on object type
+	if (obj->getType() == ObjectType::Unit)
+	{
+		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageUnit);
+	}
+	else if (obj->getType() == ObjectType::Core)
+	{
+		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageCore);
+	}
+	else if (obj->getType() == ObjectType::Deposit)
+	{
+		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageDeposit);
+		if (obj->getHP() > 0)
+			return "";
+		unsigned int gems = ((Deposit *)obj)->getBalance();
+		Board::instance().removeObjectById(obj->getId());
+		Board::instance().addObject<GemPile>(GemPile(gems), target_pos_);
+	}
+	else if (obj->getType() == ObjectType::Wall)
+	{
+		obj->setHP(obj->getHP() - Config::game().units[unit->getUnitType()].damageWall);
+	}
+	else if (obj->getType() == ObjectType::Bomb)
+	{
+		Bomb *bomb = (Bomb *)obj;
+		bomb->explode();
+	}
+	else if (obj->getType() == ObjectType::GemPile)
+	{
+		unit->setBalance(unit->getBalance() + static_cast<GemPile *>(obj)->getBalance());
+		Board::instance().removeObjectById(obj->getId());
+	}
+
+	return "";
 }
