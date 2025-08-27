@@ -61,7 +61,7 @@ std::string BuildAction::execute(Core *core)
 	if (buildType == BuildType::WALL)
 	{
 		if (builder->getBalance() < Config::game().wallBuildCost)
-			return "insufficient funds";
+			return "insufficient funds of acting unit";
 		builder->resetActionCooldown();
 		builder->setBalance(builder->getBalance() - Config::game().wallBuildCost);
 		Board::instance().addObject<Wall>(Wall(), position_);
@@ -71,7 +71,7 @@ std::string BuildAction::execute(Core *core)
 	else if (buildType == BuildType::BOMB)
 	{
 		if (builder->getBalance() < Config::game().bombThrowCost)
-			return "insufficient funds";
+			return "insufficient funds of acting unit";
 		builder->resetActionCooldown();
 		builder->setBalance(builder->getBalance() - Config::game().bombThrowCost);
 		Board::instance().addObject<Bomb>(Bomb(), position_);
