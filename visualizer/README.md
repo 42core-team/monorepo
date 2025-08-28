@@ -1,3 +1,5 @@
+[![visualizer.coregame.de](https://status.coregame.de/badge/web/status?labelColor=&color=&style=for-the-badge&label=visualizer.coregame.de)](https://visualizer.coregame.de)
+
 # Debug Visualizer
 
 -   `npm run preview` -> Run compiled visualizer
