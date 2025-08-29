@@ -11,6 +11,8 @@ on:
       - ".github/workflows/**"
       - "client_lib/**"
       - "my-core-bot/**"
+    tags:
+      - "v*"
   pull_request:
     paths:
       - "server/**"
@@ -34,7 +36,7 @@ concurrency:
 
 jobs:
   # PR validation for server image (no push)
-  pr-server:
+  pr-build-test:
     if: github.event_name == 'pull_request'
     runs-on: *RUNNER_AMD64
     steps:
@@ -234,8 +236,13 @@ jobs:
         with:
           images: ${{ env.SERVER_IMAGE }}
           tags: |
-            type=raw,value=${{ github.ref_name }}
+            type=ref,event=branch
+            type=ref,event=tag
             type=raw,value=${{ github.ref_name }}-${{ github.sha }}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
 
       - name: Create manifest list and push (server)
         working-directory: ${{ runner.temp }}/digests
@@ -277,8 +284,13 @@ jobs:
         with:
           images: ${{ env.BOT_IMAGE }}
           tags: |
-            type=raw,value=${{ github.ref_name }}
+            type=ref,event=branch
+            type=ref,event=tag
             type=raw,value=${{ github.ref_name }}-${{ github.sha }}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
 
       - name: Create manifest list and push (my-core-bot)
         working-directory: ${{ runner.temp }}/digests-bot
