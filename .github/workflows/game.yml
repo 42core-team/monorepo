@@ -19,6 +19,9 @@ on:
       - ".github/workflows/**"
       - "client_lib/**"
       - "my-core-bot/**"
+  create:
+    tags:
+      - "v*"
 
 permissions:
   contents: read

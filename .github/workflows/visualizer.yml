@@ -6,13 +6,14 @@ on:
     paths:
       - "visualizer/**"
       - ".github/workflows/visualizer.yml"
-    tags:
-      - "v*"
   pull_request:
     branches: [main, dev]
     paths:
       - "visualizer/**"
       - ".github/workflows/visualizer.yml"
+  create:
+    tags:
+      - "v*"
 
 permissions:
   contents: read
