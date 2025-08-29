@@ -36,19 +36,7 @@ jobs:
   # PR validation for server image (no push)
   pr-server:
     if: github.event_name == 'pull_request'
-    strategy:
-      fail-fast: true
-      matrix:
-        include:
-          - architecture: amd64
-            runner: *RUNNER_AMD64
-            platform: linux/amd64
-          - architecture: arm64
-            runner: *RUNNER_ARM64
-            platform: linux/arm64
-
-    runs-on:
-      - ${{ matrix.runner }}
+    runs-on: *RUNNER_AMD64
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -60,7 +48,7 @@ jobs:
 
       - name: Prepare
         run: |
-          platform=${{ matrix.platform }}
+          platform=linux/amd64
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
 
       - name: Build server (test only, export tar)
@@ -68,7 +56,7 @@ jobs:
         with:
           context: ${{ github.workspace }}
           file: .github/workflows/server-Dockerfile
-          platforms: ${{ matrix.platform }}
+          platforms: linux/amd64
           push: false
           tags: local/server:pr-${{ github.event.pull_request.head.sha }}
           outputs: type=docker,dest=/tmp/server-image.tar
@@ -87,18 +75,7 @@ jobs:
   pr-my-core-bot:
     if: github.event_name == 'pull_request'
     needs: pr-server
-    strategy:
-      fail-fast: true
-      matrix:
-        include:
-          - architecture: amd64
-            runner: *RUNNER_AMD64
-            platform: linux/amd64
-          - architecture: arm64
-            runner: *RUNNER_ARM64
-            platform: linux/arm64
-    runs-on:
-      - ${{ matrix.runner }}
+    runs-on: *RUNNER_AMD64
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -108,7 +85,7 @@ jobs:
 
       - name: Prepare
         run: |
-          platform=${{ matrix.platform }}
+          platform=linux/amd64
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
 
       - name: Download server image tar (PR)
@@ -135,7 +112,7 @@ jobs:
           build-args: |
             SERVER_IMAGE=local/server
             TAG_NAME=pr-${{ github.event.pull_request.head.sha }}
-          platforms: ${{ matrix.platform }}
+          platforms: linux/amd64
           push: false
           cache-from: type=gha
           cache-to: type=gha,mode=max
