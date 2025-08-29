@@ -25,8 +25,8 @@ permissions:
 env:
   SERVER_IMAGE: ghcr.io/42core-team/server
   BOT_IMAGE: ghcr.io/42core-team/my-core-bot
-  RUNNER_AMD64: ubuntu-24.04
-  RUNNER_ARM64: ubuntu-24.04-arm
+  RUNNER_AMD64: &RUNNER_AMD64 X64 # set this to ubuntu-24.04 for github hosted runners
+  RUNNER_ARM64: &RUNNER_ARM64 ARM64 # set this to ubuntu-24.04-arm for github hosted runners
 
 concurrency:
   group: "${{ github.workflow }} @ ${{ github.ref_name }}"
@@ -41,10 +41,10 @@ jobs:
       matrix:
         include:
           - architecture: amd64
-            runner: ${{ env.RUNNER_AMD64 }}
+            runner: *RUNNER_AMD64
             platform: linux/amd64
           - architecture: arm64
-            runner: ${{ env.RUNNER_ARM64 }}
+            runner: *RUNNER_ARM64
             platform: linux/arm64
 
     runs-on:
@@ -76,10 +76,10 @@ jobs:
       matrix:
         include:
           - architecture: amd64
-            runner: ${{ env.RUNNER_AMD64 }}
+            runner: *RUNNER_AMD64
             platform: linux/amd64
           - architecture: arm64
-            runner: ${{ env.RUNNER_ARM64 }}
+            runner: *RUNNER_ARM64
             platform: linux/arm64
     runs-on:
       - ${{ matrix.runner }}
@@ -110,10 +110,10 @@ jobs:
       matrix:
         include:
           - architecture: amd64
-            runner: ${{ env.RUNNER_AMD64 }}
+            runner: *RUNNER_AMD64
             platform: linux/amd64
           - architecture: arm64
-            runner: ${{ env.RUNNER_ARM64 }}
+            runner: *RUNNER_ARM64
             platform: linux/arm64
     runs-on:
       - ${{ matrix.runner }}
@@ -177,7 +177,7 @@ jobs:
   # Push-time: create and push multi-arch manifest for server
   push-server-merge:
     if: github.event_name != 'pull_request'
-    runs-on: ${{ env.RUNNER_AMD64 }}
+    runs-on: *RUNNER_AMD64
     needs: push-server-build
     steps:
       - name: Download digests (server)
@@ -225,10 +225,10 @@ jobs:
       matrix:
         include:
           - architecture: amd64
-            runner: ${{ env.RUNNER_AMD64 }}
+            runner: *RUNNER_AMD64
             platform: linux/amd64
           - architecture: arm64
-            runner: ${{ env.RUNNER_ARM64 }}
+            runner: *RUNNER_ARM64
             platform: linux/arm64
     runs-on:
       - ${{ matrix.runner }}
@@ -289,7 +289,7 @@ jobs:
   # Push-time: create and push multi-arch manifest for my-core-bot
   push-bot-merge:
     if: github.event_name != 'pull_request'
-    runs-on: ${{ env.RUNNER_AMD64 }}
+    runs-on: *RUNNER_AMD64
     needs: push-bot-build
     steps:
       - name: Download digests (my-core-bot)
