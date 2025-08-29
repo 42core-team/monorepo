@@ -72,8 +72,6 @@ jobs:
           load: true
           push: false
           provenance: false
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Build my-core-bot (PR, local only)
         uses: docker/build-push-action@v6
@@ -88,8 +86,6 @@ jobs:
           pull: false
           push: false
           provenance: false
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
   # Per-arch build: build server, tag temp per-arch for bot, then build bot — all in one job/matrix
   build-per-arch:
