@@ -23,8 +23,8 @@ permissions:
   packages: write
 
 env:
-  SERVER_IMAGE: ghcr.io/42core-team/server
-  BOT_IMAGE: ghcr.io/42core-team/my-core-bot
+  SERVER_IMAGE: ghcr.io/${{ github.repository_owner }}/server
+  BOT_IMAGE: ghcr.io/${{ github.repository_owner }}/my-core-bot
   RUNNER_AMD64: &RUNNER_AMD64 X64 # set this to ubuntu-24.04 for github hosted runners and X64 for self-hosted runners
   RUNNER_ARM64: &RUNNER_ARM64 ARM64 # set this to ubuntu-24.04-arm for github hosted runners and ARM64 for self-hosted runners
 
@@ -295,6 +295,7 @@ jobs:
           context: ${{ github.workspace }}
           file: .github/workflows/my-core-bot-Dockerfile
           build-args: |
+            SERVER_IMAGE=${{ env.SERVER_IMAGE }}
             TAG_NAME=${{ github.ref_name }}
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta-bot.outputs.labels }}
