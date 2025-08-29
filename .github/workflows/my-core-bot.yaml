@@ -69,6 +69,8 @@ jobs:
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ env.REGISTRY_IMAGE }}
+          build-args: |
+            TAG_NAME=${{ github.event.workflow_run.head_branch }}
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -114,8 +116,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY_IMAGE }}
           tags: |
-            type=raw,value=${{ github.ref_name }}
-            type=raw,value=${{ github.ref_name }}-${{ github.sha }}
+            type=raw,value=${{ github.event.workflow_run.head_branch }}
+            type=raw,value=${{ github.event.workflow_run.head_branch }}-${{ github.event.workflow_run.head_sha }}
 
       - name: Create manifest list and push
         working-directory: ${{ runner.temp }}/digests
