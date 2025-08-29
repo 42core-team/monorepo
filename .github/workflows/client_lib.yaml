@@ -1,0 +1,38 @@
+name: "Test client_lib build on PRs"
+
+on:
+  pull_request:
+
+concurrency:
+  group: "${{ github.workflow }} @ ${{ github.ref_name }}"
+  cancel-in-progress: true
+
+jobs:
+  build-test-client-lib:
+    name: Build client_lib (PR validation)
+    # Skip PRs that are between dev and main in either direction
+    if: >-
+      ${{ !(
+        (github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'dev') ||
+        (github.event.pull_request.base.ref == 'dev' && github.event.pull_request.head.ref == 'main')
+      ) }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y build-essential
+
+      - name: Build client_lib
+        working-directory: client_lib
+        run: |
+          make
+
+      - name: Clean build artifacts
+        if: always()
+        working-directory: client_lib
+        run: |
+          make fclean || true
