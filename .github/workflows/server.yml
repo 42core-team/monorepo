@@ -8,15 +8,13 @@ on:
       - dev
     paths:
       - "server/**"
-      - ".github/workflows/server.yml"
-      - ".github/workflows/server-Dockerfile"
-      - ".github/workflows/server-docker-entrypoint.sh"
+      - ".github/workflows/**"
+      - "client_lib/**"
   pull_request:
     paths:
       - "server/**"
-      - ".github/workflows/server.yml"
-      - ".github/workflows/server-Dockerfile"
-      - ".github/workflows/server-docker-entrypoint.sh"
+      - ".github/workflows/**"
+      - "client_lib/**"
 
 permissions:
   contents: read
@@ -34,7 +32,7 @@ jobs:
   test-build:
     if: github.event_name == 'pull_request'
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         include:
           - architecture: amd64

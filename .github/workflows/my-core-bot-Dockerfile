@@ -1,0 +1,32 @@
+ARG TAG_NAME="dev"
+
+FROM ubuntu:noble AS ubuntu-gcc
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt update && \
+    apt install -y git build-essential libcurl4 && \
+    rm -rf /var/lib/apt/lists/*
+
+FROM ghcr.io/42core-team/server:${TAG_NAME} AS game
+
+# Build connection library from monorepo sources
+FROM ubuntu-gcc AS connection
+WORKDIR /connection
+COPY client_lib/ ./
+RUN make re
+
+FROM ubuntu-gcc AS release
+
+# COPY .bashrc /root/.bashrc
+COPY --from=game /core/server /core/server
+COPY --from=game /core/data /core/data
+COPY --from=connection /connection/inc/core_lib.h /core/core_lib.h
+COPY --from=connection /connection/core_lib.a /core/core_lib.a
+# Also provide legacy name if expected by consumers
+COPY --from=connection /connection/core_lib.a /core/con_lib.a
+
+# Create .bashrc in /root/ directory by curling from URL
+# RUN curl -o /root/.bashrc https://raw.githubusercontent.com/42core-team/.shellrc/refs/heads/main/.bashrc
+
+# SHELL ["/bin/bash", "-c"]
+# ENV SHELL=/bin/bash
