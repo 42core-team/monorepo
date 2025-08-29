@@ -7,18 +7,16 @@ on:
       - main
       - dev
     paths:
-      - "server/**"
       - ".github/workflows/**"
       - "client_lib/**"
       - "my-core-bot/**"
-    tags:
-      - "v*"
+      - "server/**"
   pull_request:
     paths:
-      - "server/**"
       - ".github/workflows/**"
       - "client_lib/**"
       - "my-core-bot/**"
+      - "server/**"
   create:
     tags:
       - "v*"
