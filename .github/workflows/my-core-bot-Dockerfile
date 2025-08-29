@@ -1,4 +1,5 @@
 ARG TAG_NAME="dev"
+ARG SERVER_IMAGE="ghcr.io/42core-team/server"
 
 FROM ubuntu:noble AS ubuntu-gcc
 ENV DEBIAN_FRONTEND=noninteractive
@@ -7,7 +8,7 @@ RUN apt update && \
     apt install -y git build-essential libcurl4 && \
     rm -rf /var/lib/apt/lists/*
 
-FROM ghcr.io/42core-team/server:${TAG_NAME} AS game
+FROM ${SERVER_IMAGE}:${TAG_NAME} AS game
 
 # Build connection library from monorepo sources
 FROM ubuntu-gcc AS connection

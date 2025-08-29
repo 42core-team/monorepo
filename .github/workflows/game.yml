@@ -70,7 +70,7 @@ jobs:
           file: .github/workflows/server-Dockerfile
           platforms: ${{ matrix.platform }}
           push: false
-          tags: ${{ env.SERVER_IMAGE }}:pr-${{ github.event.pull_request.head.sha }}
+          tags: local/server:pr-${{ github.event.pull_request.head.sha }}
           outputs: type=docker,dest=/tmp/server-image.tar
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -121,12 +121,19 @@ jobs:
         run: |
           docker load -i ${{ runner.temp }}/server-image/server-image.tar
 
+      # Switch builder to docker driver so it can see locally-loaded images
+      - name: Set up Docker Buildx (driver=docker)
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker
+
       - name: Build my-core-bot (test only)
         uses: docker/build-push-action@v6
         with:
           context: ${{ github.workspace }}
           file: .github/workflows/my-core-bot-Dockerfile
           build-args: |
+            SERVER_IMAGE=local/server
             TAG_NAME=pr-${{ github.event.pull_request.head.sha }}
           platforms: ${{ matrix.platform }}
           push: false
