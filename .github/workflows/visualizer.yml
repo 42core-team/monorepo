@@ -65,10 +65,6 @@ jobs:
             type=ref,event=tag
             type=sha,format=short,prefix={{branch}}-
             type=raw,value=latest,enable={{is_default_branch}}
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}.{{patch}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
           labels: |
             org.opencontainers.image.title=Debug Visualizer
             org.opencontainers.image.description=Debug visualizer web application
@@ -161,21 +157,46 @@ jobs:
             type=ref,event=tag
             type=sha,format=short,prefix={{branch}}-
             type=raw,value=latest,enable={{is_default_branch}}
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}.{{patch}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
           labels: |
             org.opencontainers.image.title=Debug Visualizer
             org.opencontainers.image.description=Debug visualizer web application
             org.opencontainers.image.vendor=${{ github.repository_owner }}
+
+      - name: Generate additional version tags
+        id: version-tags
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          # Extract version from tag (remove 'v' prefix if present)
+          VERSION=${GITHUB_REF#refs/tags/}
+          VERSION=${VERSION#v}
+          
+          # Split version into parts
+          IFS='.' read -r -a parts <<< "$VERSION"
+          
+          # Generate hierarchical tags based on number of parts
+          ADDITIONAL_TAGS=""
+          if [ ${#parts[@]} -ge 1 ]; then
+            ADDITIONAL_TAGS="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:v${parts[0]}"
+          fi
+          if [ ${#parts[@]} -ge 2 ]; then
+            ADDITIONAL_TAGS="$ADDITIONAL_TAGS,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:v${parts[0]}.${parts[1]}"
+          fi
+          if [ ${#parts[@]} -ge 3 ]; then
+            ADDITIONAL_TAGS="$ADDITIONAL_TAGS,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:v${parts[0]}.${parts[1]}.${parts[2]}"
+          fi
+          if [ ${#parts[@]} -ge 4 ]; then
+            ADDITIONAL_TAGS="$ADDITIONAL_TAGS,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:v${parts[0]}.${parts[1]}.${parts[2]}.${parts[3]}"
+          fi
+          
+          echo "additional-tags=$ADDITIONAL_TAGS" >> $GITHUB_OUTPUT
+          echo "Generated additional tags: $ADDITIONAL_TAGS"
 
       - name: Create multi-architecture manifest
         run: |
           # Get the tags from metadata (convert newlines to spaces for proper iteration)
           TAGS=$(echo "${{ steps.meta.outputs.tags }}" | tr '\n' ' ')
 
-          # Create manifest for each tag
+          # Create manifest for each tag from metadata
           for tag in $TAGS; do
             # Skip empty tags
             if [[ -z "$tag" ]]; then
@@ -191,6 +212,33 @@ jobs:
 
             echo "Manifest created for $tag"
           done
+
+          # Create manifest for additional version tags if they exist
+          if [ -n "${{ steps.version-tags.outputs.additional-tags }}" ]; then
+            # Find the ref tag from the base tags to use as source
+            REF_TAG=""
+            for tag in $TAGS; do
+              if [[ "$tag" == *"$GITHUB_REF_NAME" ]] && [[ "$tag" != *"-"* ]]; then
+                REF_TAG="$tag"
+                break
+              fi
+            done
+            
+            if [ -n "$REF_TAG" ]; then
+              IFS=',' read -r -a additional_tags <<< "${{ steps.version-tags.outputs.additional-tags }}"
+              for tag in "${additional_tags[@]}"; do
+                if [ -n "$tag" ]; then
+                  echo "Creating additional tag: $tag from $REF_TAG"
+                  # Create additional tags from the ref tag that was already built
+                  docker buildx imagetools create -t "$tag" \
+                    "${REF_TAG}-amd64" \
+                    "${REF_TAG}-arm64"
+                  
+                  echo "Additional manifest created for $tag"
+                fi
+              done
+            fi
+          fi
 
       - name: Show manifest information
         run: |
