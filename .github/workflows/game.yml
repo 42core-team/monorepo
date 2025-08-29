@@ -11,12 +11,17 @@ on:
       - ".github/workflows/**"
       - "client_lib/**"
       - "my-core-bot/**"
+    tags:
+      - "v*"
   pull_request:
     paths:
       - "server/**"
       - ".github/workflows/**"
       - "client_lib/**"
       - "my-core-bot/**"
+  create:
+    tags:
+      - "v*"
 
 permissions:
   contents: read
@@ -34,7 +39,7 @@ concurrency:
 
 jobs:
   # PR validation for server image (no push)
-  pr-server:
+  pr-build-test:
     if: github.event_name == 'pull_request'
     runs-on: *RUNNER_AMD64
     steps:
@@ -70,8 +75,6 @@ jobs:
           load: true
           push: false
           provenance: false
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Build my-core-bot (PR, local only)
         uses: docker/build-push-action@v6
@@ -86,8 +89,6 @@ jobs:
           pull: false
           push: false
           provenance: false
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
   # Per-arch build: build server, tag temp per-arch for bot, then build bot — all in one job/matrix
   build-per-arch:
@@ -234,8 +235,13 @@ jobs:
         with:
           images: ${{ env.SERVER_IMAGE }}
           tags: |
-            type=raw,value=${{ github.ref_name }}
+            type=ref,event=branch
+            type=ref,event=tag
             type=raw,value=${{ github.ref_name }}-${{ github.sha }}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
 
       - name: Create manifest list and push (server)
         working-directory: ${{ runner.temp }}/digests
@@ -277,8 +283,13 @@ jobs:
         with:
           images: ${{ env.BOT_IMAGE }}
           tags: |
-            type=raw,value=${{ github.ref_name }}
+            type=ref,event=branch
+            type=ref,event=tag
             type=raw,value=${{ github.ref_name }}-${{ github.sha }}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
 
       - name: Create manifest list and push (my-core-bot)
         working-directory: ${{ runner.temp }}/digests-bot
