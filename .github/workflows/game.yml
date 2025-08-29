@@ -1,0 +1,327 @@
+name: "Build and publish: server + my-core-bot"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - dev
+    paths:
+      - "server/**"
+      - ".github/workflows/**"
+      - "client_lib/**"
+      - "my-core-bot/**"
+  pull_request:
+    paths:
+      - "server/**"
+      - ".github/workflows/**"
+      - "client_lib/**"
+      - "my-core-bot/**"
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  SERVER_IMAGE: ghcr.io/42core-team/server
+  BOT_IMAGE: ghcr.io/42core-team/my-core-bot
+
+concurrency:
+  group: "${{ github.workflow }} @ ${{ github.ref_name }}"
+  cancel-in-progress: true
+
+jobs:
+  # PR validation for server image (no push)
+  pr-server:
+    if: github.event_name == 'pull_request'
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - architecture: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+          - architecture: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+
+    runs-on:
+      - ${{ matrix.runner }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build server (test only)
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ github.workspace }}
+          file: .github/workflows/server-Dockerfile
+          platforms: ${{ matrix.platform }}
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # PR validation for my-core-bot image (no push)
+  pr-my-core-bot:
+    if: github.event_name == 'pull_request'
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - architecture: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+          - architecture: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    runs-on:
+      - ${{ matrix.runner }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build my-core-bot (test only)
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ github.workspace }}
+          file: .github/workflows/my-core-bot-Dockerfile
+          build-args: |
+            TAG_NAME=dev
+          platforms: ${{ matrix.platform }}
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # Push-time: build and push server image (per-arch)
+  push-server-build:
+    if: github.event_name != 'pull_request'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - architecture: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+          - architecture: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    runs-on:
+      - ${{ matrix.runner }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Prepare
+        run: |
+          platform=${{ matrix.platform }}
+          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
+
+      # - name: Set up QEMU
+      #   uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker meta (server)
+        id: meta-server
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.SERVER_IMAGE }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push by digest (server)
+        id: build-server
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ github.workspace }}
+          file: .github/workflows/server-Dockerfile
+          platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta-server.outputs.labels }}
+          tags: ${{ env.SERVER_IMAGE }}
+          outputs: type=image,push-by-digest=true,name-canonical=true,push=true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Export digest (server)
+        run: |
+          mkdir -p ${{ runner.temp }}/digests
+          digest="${{ steps.build-server.outputs.digest }}"
+          touch "${{ runner.temp }}/digests/${digest#sha256:}"
+
+      - name: Upload digest (server)
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-digests-${{ env.PLATFORM_PAIR }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  # Push-time: create and push multi-arch manifest for server
+  push-server-merge:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    needs: push-server-build
+    steps:
+      - name: Download digests (server)
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: server-digests-*
+          merge-multiple: true
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker meta (server)
+        id: meta-server
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.SERVER_IMAGE }}
+          tags: |
+            type=raw,value=${{ github.ref_name }}
+            type=raw,value=${{ github.ref_name }}-${{ github.sha }}
+
+      - name: Create manifest list and push (server)
+        working-directory: ${{ runner.temp }}/digests
+        run: |
+          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf '${{ env.SERVER_IMAGE }}@sha256:%s ' *)
+
+      - name: Inspect image (server)
+        run: |
+          docker buildx imagetools inspect ${{ env.SERVER_IMAGE }}:${{ steps.meta-server.outputs.version }}
+
+  # Push-time: build and push my-core-bot image after server manifest is ready
+  push-bot-build:
+    if: github.event_name != 'pull_request'
+    needs: push-server-merge
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - architecture: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+          - architecture: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    runs-on:
+      - ${{ matrix.runner }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Prepare
+        run: |
+          platform=${{ matrix.platform }}
+          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker meta (my-core-bot)
+        id: meta-bot
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.BOT_IMAGE }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push by digest (my-core-bot)
+        id: build-bot
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ github.workspace }}
+          file: .github/workflows/my-core-bot-Dockerfile
+          build-args: |
+            TAG_NAME=${{ github.ref_name }}
+          platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta-bot.outputs.labels }}
+          tags: ${{ env.BOT_IMAGE }}
+          outputs: type=image,push-by-digest=true,name-canonical=true,push=true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Export digest (my-core-bot)
+        run: |
+          mkdir -p ${{ runner.temp }}/digests-bot
+          digest="${{ steps.build-bot.outputs.digest }}"
+          touch "${{ runner.temp }}/digests-bot/${digest#sha256:}"
+
+      - name: Upload digest (my-core-bot)
+        uses: actions/upload-artifact@v4
+        with:
+          name: bot-digests-${{ env.PLATFORM_PAIR }}
+          path: ${{ runner.temp }}/digests-bot/*
+          if-no-files-found: error
+          retention-days: 1
+
+  # Push-time: create and push multi-arch manifest for my-core-bot
+  push-bot-merge:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    needs: push-bot-build
+    steps:
+      - name: Download digests (my-core-bot)
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests-bot
+          pattern: bot-digests-*
+          merge-multiple: true
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker meta (my-core-bot)
+        id: meta-bot
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.BOT_IMAGE }}
+          tags: |
+            type=raw,value=${{ github.ref_name }}
+            type=raw,value=${{ github.ref_name }}-${{ github.sha }}
+
+      - name: Create manifest list and push (my-core-bot)
+        working-directory: ${{ runner.temp }}/digests-bot
+        run: |
+          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf '${{ env.BOT_IMAGE }}@sha256:%s ' *)
+
+      - name: Inspect image (my-core-bot)
+        run: |
+          docker buildx imagetools inspect ${{ env.BOT_IMAGE }}:${{ steps.meta-bot.outputs.version }}
