@@ -106,8 +106,10 @@ jobs:
           push: true
           tags: ${{ steps.arch-tags.outputs.arch-tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: |
+            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache-${{ github.ref_name }}-${{ matrix.architecture }}
+            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache-main-${{ matrix.architecture }}
+          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache-${{ github.ref_name }}-${{ matrix.architecture }},mode=max
 
       - name: Build Docker image (PR test)
         if: github.event_name == 'pull_request'
@@ -118,8 +120,9 @@ jobs:
           platforms: ${{ matrix.platform }}
           push: false
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test-${{ matrix.architecture }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: |
+            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache-${{ github.ref_name }}-${{ matrix.architecture }}
+            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache-main-${{ matrix.architecture }}
 
       - name: Show build information
         run: |

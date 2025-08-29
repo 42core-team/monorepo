@@ -150,8 +150,10 @@ jobs:
           tags: ${{ env.SERVER_IMAGE }}
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
           provenance: false
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: |
+            type=registry,ref=${{ env.SERVER_IMAGE }}:buildcache-${{ github.ref_name }}-${{ matrix.arch }}
+            type=registry,ref=${{ env.SERVER_IMAGE }}:buildcache-main-${{ matrix.arch }}
+          cache-to: type=registry,ref=${{ env.SERVER_IMAGE }}:buildcache-${{ github.ref_name }}-${{ matrix.arch }},mode=max
 
       - name: Tag server image with temp per-arch tag
         run: |
@@ -187,8 +189,10 @@ jobs:
           tags: ${{ env.BOT_IMAGE }}
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
           provenance: false
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: |
+            type=registry,ref=${{ env.BOT_IMAGE }}:buildcache-${{ github.ref_name }}-${{ matrix.arch }}
+            type=registry,ref=${{ env.BOT_IMAGE }}:buildcache-main-${{ matrix.arch }}
+          cache-to: type=registry,ref=${{ env.BOT_IMAGE }}:buildcache-${{ github.ref_name }}-${{ matrix.arch }},mode=max
 
       - name: Export digest (my-core-bot)
         run: |
