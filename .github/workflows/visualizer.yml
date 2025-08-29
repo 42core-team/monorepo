@@ -1,10 +1,19 @@
-name: Build and Push Docker Image
+name: visualizer build, push, deploy
 
 on:
   push:
     branches: [main, dev]
+    paths:
+      - "visualizer/**"
+      - ".github/workflows/visualizer.yml"
   pull_request:
     branches: [main, dev]
+    paths:
+      - "visualizer/**"
+      - ".github/workflows/visualizer.yml"
+  create:
+    tags:
+      - "v*"
 
 permissions:
   contents: read
@@ -12,7 +21,7 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: 42core-team/visualizer
 
 jobs:
   build:
@@ -31,24 +40,13 @@ jobs:
       images: ${{ steps.meta.outputs.tags }}
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Helm (for PR chart lint)
-        if: github.event_name == 'pull_request'
-        uses: azure/setup-helm@v4
-        with:
-          version: "v3.13.3"
-
-      - name: Helm lint chart (pull_request)
-        if: github.event_name == 'pull_request'
-        run: |
-          helm lint ./helm/debug-visualizer
-
-      - name: Set up Docker Buildx
+      - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to Container Registry
+      - name: Login to container registry
         if: github.event_name == 'push'
         uses: docker/login-action@v3
         with:
@@ -56,7 +54,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata
+      - name: Generate Docker metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -64,20 +62,25 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=pr
+            type=ref,event=tag
             type=sha,format=short,prefix={{branch}}-
             type=raw,value=latest,enable={{is_default_branch}}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
           labels: |
             org.opencontainers.image.title=Debug Visualizer
             org.opencontainers.image.description=Debug visualizer web application
             org.opencontainers.image.vendor=${{ github.repository_owner }}
 
-      - name: Process tags for architecture
+      - name: Create architecture-specific tags
         id: arch-tags
         run: |
           # Get the base tags and add architecture suffix to each
           BASE_TAGS="${{ steps.meta.outputs.tags }}"
           ARCH_TAGS=""
-          
+
           while IFS= read -r tag; do
             if [[ -n "$tag" ]]; then
               if [[ -z "$ARCH_TAGS" ]]; then
@@ -87,36 +90,41 @@ jobs:
               fi
             fi
           done <<< "$BASE_TAGS"
-          
+
           echo "arch-tags<<EOF" >> $GITHUB_OUTPUT
           echo -e "$ARCH_TAGS" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Build and push Docker image
+      - name: Build and push multi-arch image
         if: github.event_name == 'push'
         id: build
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./visualizer
+          file: ./visualizer/Dockerfile
           platforms: ${{ matrix.platform }}
           push: true
           tags: ${{ steps.arch-tags.outputs.arch-tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: |
+            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache-${{ github.ref_name }}-${{ matrix.architecture }}
+            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache-main-${{ matrix.architecture }}
+          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache-${{ github.ref_name }}-${{ matrix.architecture }},mode=max
 
-      - name: Build Docker image (test build)
+      - name: Build Docker image (PR test)
         if: github.event_name == 'pull_request'
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./visualizer
+          file: ./visualizer/Dockerfile
           platforms: ${{ matrix.platform }}
           push: false
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test-${{ matrix.architecture }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: |
+            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache-${{ github.ref_name }}-${{ matrix.architecture }}
+            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache-main-${{ matrix.architecture }}
 
-      - name: Output image info
+      - name: Show build information
         run: |
           echo "Built for architecture: ${{ matrix.architecture }}"
           echo "Platform: ${{ matrix.platform }}"
@@ -132,20 +140,17 @@ jobs:
     runs-on: ubuntu-24.04
     if: github.event_name == 'push'
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
+      - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to Container Registry
+      - name: Login to container registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata
+      - name: Generate Docker metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -153,36 +158,41 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=pr
+            type=ref,event=tag
             type=sha,format=short,prefix={{branch}}-
             type=raw,value=latest,enable={{is_default_branch}}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
           labels: |
             org.opencontainers.image.title=Debug Visualizer
             org.opencontainers.image.description=Debug visualizer web application
             org.opencontainers.image.vendor=${{ github.repository_owner }}
 
-      - name: Create and push multi-architecture manifest
+      - name: Create multi-architecture manifest
         run: |
           # Get the tags from metadata (convert newlines to spaces for proper iteration)
           TAGS=$(echo "${{ steps.meta.outputs.tags }}" | tr '\n' ' ')
-          
+
           # Create manifest for each tag
           for tag in $TAGS; do
             # Skip empty tags
             if [[ -z "$tag" ]]; then
               continue
             fi
-            
+
             echo "Creating manifest for tag: $tag"
-            
+
             # Create manifest from existing architecture-specific images
             docker buildx imagetools create -t "$tag" \
               "${tag}-amd64" \
               "${tag}-arm64"
-            
+
             echo "Manifest created for $tag"
           done
 
-      - name: Output merged image info
+      - name: Show manifest information
         run: |
           echo "Multi-architecture manifest created"
           echo "Image tags: ${{ steps.meta.outputs.tags }}"
@@ -191,17 +201,17 @@ jobs:
   deploy:
     needs: merge
     runs-on: ubuntu-24.04
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')
     environment: ${{ github.ref_name == 'main' && 'prod' || 'dev' }}
     permissions:
       contents: read
       packages: read
       deployments: write
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set deployment configuration
+      - name: Prepare deployment configuration
         id: cfg
         run: |
           BRANCH="${{ github.ref_name }}"
@@ -219,7 +229,7 @@ jobs:
           echo "environment_url=${ENVIRONMENT_URL}" >> $GITHUB_OUTPUT
           echo "deployment_name=${DEPLOYMENT_NAME}" >> $GITHUB_OUTPUT
 
-      - name: Setup kubectl
+      - name: Setup kubectl CLI
         uses: azure/setup-kubectl@v4
         with:
           version: "v1.28.4"
@@ -244,7 +254,7 @@ jobs:
           chmod 600 ~/.kube/config
           echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
 
-      - name: Verify Kubernetes context
+      - name: Verify Kubernetes cluster
         run: |
           kubectl cluster-info
           kubectl get nodes
@@ -254,7 +264,7 @@ jobs:
         with:
           version: "v3.13.3"
 
-      - name: Determine image to deploy
+      - name: Determine image tag to deploy
         id: image
         run: |
           BRANCH="${{ github.ref_name }}"
@@ -264,22 +274,22 @@ jobs:
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
           echo "Deploying image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${TAG}"
 
-      - name: Ensure namespace exists
+      - name: Ensure Kubernetes namespace exists
         run: |
           kubectl create namespace ${{ steps.cfg.outputs.namespace }} --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Validate Helm chart
         run: |
-          helm lint ./helm/debug-visualizer --values ./helm/debug-visualizer/${{ github.ref_name == 'main' && 'values-prod.yaml' || 'values-dev.yaml' }}
+          helm lint ./visualizer/helm/debug-visualizer --values ./visualizer/helm/debug-visualizer/${{ github.ref_name == 'main' && 'values-prod.yaml' || 'values-dev.yaml' }}
 
-      - name: Deploy with Helm
+      - name: Deploy application with Helm
         run: |
           VALUES_FILE=${{ github.ref_name == 'main' && 'values-prod.yaml' || 'values-dev.yaml' }}
           helm upgrade --install \
             ${{ steps.cfg.outputs.deployment_name }} \
-            ./helm/debug-visualizer \
+            ./visualizer/helm/debug-visualizer \
             --namespace ${{ steps.cfg.outputs.namespace }} \
-            --values ./helm/debug-visualizer/${VALUES_FILE} \
+            --values ./visualizer/helm/debug-visualizer/${VALUES_FILE} \
             --set image.repository=${{ steps.image.outputs.repo }} \
             --set image.tag=${{ steps.image.outputs.tag }} \
             --wait \
@@ -287,14 +297,14 @@ jobs:
             --atomic \
             --history-max=5
 
-      - name: Verify deployment
+      - name: Verify Kubernetes deployment
         run: |
           kubectl rollout status deployment/${{ steps.cfg.outputs.deployment_name }} -n ${{ steps.cfg.outputs.namespace }} --timeout=300s
           kubectl get deploy/${{ steps.cfg.outputs.deployment_name }} -n ${{ steps.cfg.outputs.namespace }} -o wide | cat
           kubectl get svc -n ${{ steps.cfg.outputs.namespace }} | cat
           kubectl get ingress -n ${{ steps.cfg.outputs.namespace }} | cat
 
-      - name: Deployment summary
+      - name: Write deployment summary
         run: |
           echo "## Application Deployment" >> $GITHUB_STEP_SUMMARY
           echo "Environment: ${{ github.ref_name == 'main' && 'prod' || 'dev' }}" >> $GITHUB_STEP_SUMMARY

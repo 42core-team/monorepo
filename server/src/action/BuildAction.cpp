@@ -16,7 +16,7 @@ void BuildAction::decodeJSON(json msg)
 	builder_id_ = msg["unit_id"];
 	position_ = Position(msg["x"], msg["y"]);
 
-	if (!position_.isValid(Config::game().gridSize, Config::game().gridSize))
+	if (!position_.isValid(Config::game().gridSize))
 		is_valid_ = false;
 }
 json BuildAction::encodeJSON()
@@ -45,7 +45,7 @@ std::string BuildAction::execute(Core *core)
 	if (builder->getTeamId() != core->getTeamId())
 		return "unit does not belong to your team";
 
-	if (builder->getMoveCooldown() > 0)
+	if (builder->getActionCooldown() > 0)
 		return "unit is on cooldown";
 
 	BuildType buildType = Config::game().units[builder->getUnitType()].buildType;
@@ -61,19 +61,25 @@ std::string BuildAction::execute(Core *core)
 	if (buildType == BuildType::WALL)
 	{
 		if (builder->getBalance() < Config::game().wallBuildCost)
-			return "insufficient funds";
-		builder->resetMoveCooldown();
+			return "insufficient funds of acting unit";
+		builder->resetActionCooldown();
 		builder->setBalance(builder->getBalance() - Config::game().wallBuildCost);
-		Board::instance().addObject<Wall>(Wall(Board::instance().getNextObjectId()), position_);
+		Board::instance().addObject<Wall>(Wall(), position_);
+
+		Stats::instance().inc(stat_keys::walls_spawned);
 	}
 	else if (buildType == BuildType::BOMB)
 	{
 		if (builder->getBalance() < Config::game().bombThrowCost)
-			return "insufficient funds";
-		builder->resetMoveCooldown();
+			return "insufficient funds of acting unit";
+		builder->resetActionCooldown();
 		builder->setBalance(builder->getBalance() - Config::game().bombThrowCost);
-		Board::instance().addObject<Bomb>(Bomb(Board::instance().getNextObjectId()), position_);
+		Board::instance().addObject<Bomb>(Bomb(), position_);
+
+		Stats::instance().inc(stat_keys::bombs_spawned);
 	}
+
+	Stats::instance().inc(stat_keys::actions_executed);
 
 	return "";
 }

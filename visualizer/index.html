@@ -23,6 +23,47 @@
 		></script>
 		<script type="module" src="/src/ts/main.ts"></script>
 
+		<button id="open-modal" class="icon-button">
+			<img
+				id="info-icon"
+				src="/assets/ui-svgs/info-button.svg"
+				alt="Display Infos"
+			/>
+		</button>
+		<dialog id="site-modal">
+			<h2>CORE GAME Visualizer</h2>
+			<p>The Visualizer requires a replay file to run. Replay files are generated when the gameserver is done executing a game with a minimum of two players.</p>
+			<p>You can even drag & drop a replay file into this page to rewatch an older replay!</p>
+			<p>All Infos about what CORE GAME is & how to participate can be found <a href="https://coregame.de/" target="_blank">here</a> and the source code can be found <a href="https://github.com/42core-team" target="_blank">here</a>.</p>
+
+			<h3>Replay Infos</h3>
+			<a id="download-replay-link"><button id="download-replay-btn" class="modal-button primary">Download current replay file</button></a>
+			<button id="copy-seed-btn" class="modal-button">Copy current map seed</button>
+
+			<h3>Customization</h3>
+			<input type="checkbox" id="dark_mode_checkbox"><label for="dark_mode_checkbox">Enable Dark Mode</label><br>
+			<input type="checkbox" id="gridlines_checkbox"><label for="gridlines_checkbox">Show Grid Lines</label><br>
+			<input type="color" id="color_scheme_input"><label for="color_scheme_input">Customize color scheme</label>
+
+			<h3>Keybinds</h3>
+			<ul>
+				<li><kbd>Space</kbd>: Play/Pause</li>
+				<li><kbd>Left Arrow</kbd>: Previous Tick</li>
+				<li><kbd>Right Arrow</kbd>: Next Tick</li>
+				<li><kbd>Up Arrow</kbd>: Increase Speed</li>
+				<li><kbd>Down Arrow</kbd>: Decrease Speed</li>
+				<li><kbd>R</kbd>/<kbd>S</kbd>: Skip to Start</li>
+				<li><kbd>E</kbd>: Skip to End</li>
+				<li><kbd>F</kbd>: Toggle Fullscreen</li>
+				<li><kbd>D</kbd>: Enable Dark Mode</li>
+				<li><kbd>L</kbd>: Enable Light Mode</li>
+				<li><kbd>T</kbd>: Toggle Dark/Light Mode</li>
+			</ul>
+
+			<h3>Found a Bug?</h3>
+			<p>If you find a bug, please report it on our <a href="https://github.com/42core-team/monorepo/issues" target="_blank">GitHub Issues</a> page.</p>
+		</dialog>
+
 		<div class="container">
 			<div class="top-bar">
 				<!-- Fullscreen Toggle Button -->

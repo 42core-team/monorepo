@@ -15,7 +15,7 @@ OBJDIR := obj
 SOURCES := $(shell find $(SRCDIR) -name "*.cpp")
 OBJECTS   := $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SOURCES))
 
-TARGET := core
+TARGET := server
 
 build: all
 all: $(TARGET)
@@ -61,7 +61,7 @@ logfiles:
 
 # Test Dockerfile
 build-docker:
-	docker build -t game-server-test:latest -f ./.github/workflows/game-server-Dockerfile .
+	docker build -t game-server-test:latest -f ../.github/workflows/server/Dockerfile ../
 
 run-docker:
 	docker run --rm -p 4242:4242 game-server-test:latest 1 2

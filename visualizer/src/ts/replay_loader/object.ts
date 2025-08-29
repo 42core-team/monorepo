@@ -11,25 +11,25 @@ export interface BaseObject {
 export interface CoreObject extends BaseObject {
 	type: 0; // Core
 	teamId: number;
-	balance: number;
+	gems: number;
 }
 export interface UnitObject extends BaseObject {
 	type: 1; // Unit
 	unit_type: number;
 	teamId: number;
-	balance: number;
-	moveCooldown: number;
+	gems: number;
+	ActionCooldown: number;
 }
-export interface ResourceObject extends BaseObject {
-	type: 2; // Resource
-	balance: number;
+export interface DepositObject extends BaseObject {
+	type: 2; // Deposit
+	gems: number;
 }
 export interface WallObject extends BaseObject {
 	type: 3; // Wall
 }
-export interface MoneyObject extends BaseObject {
-	type: 4; // Money
-	balance: number;
+export interface GemPileObject extends BaseObject {
+	type: 4; // Gems
+	gems: number;
 }
 export interface BombObject extends BaseObject {
 	type: 5; // Bomb
@@ -38,25 +38,28 @@ export interface BombObject extends BaseObject {
 export type TickObject =
 	| CoreObject
 	| UnitObject
-	| ResourceObject
+	| DepositObject
 	| WallObject
-	| MoneyObject
+	| GemPileObject
 	| BombObject;
 
 const objectTypeNames = {
 	0: "Core",
 	1: "Unit",
-	2: "Resource",
+	2: "Gem Deposit",
 	3: "Wall",
-	4: "Money",
+	4: "Gem Pile",
 	5: "Bomb",
 };
 
 export function formatObjectData(obj: TickObject): string {
+	const num = (v: unknown) =>
+		Number.isFinite(Number(v)) ? String(Number(v)) : "NaN"; // XSS prevention
+
 	const lines: { line: string; priority: number; color: string }[] = [];
 
 	lines.push({
-		line: `❤️ HP: ${obj.hp}`,
+		line: `❤️ HP: ${num(obj.hp)}`,
 		priority: 0,
 		color: "var(--hp-color)",
 	});
@@ -65,9 +68,13 @@ export function formatObjectData(obj: TickObject): string {
 		priority: 4,
 		color: "var(--text)",
 	});
-	lines.push({ line: `#️⃣ ID: ${obj.id}`, priority: 5, color: "var(--text)" });
 	lines.push({
-		line: `📍 Position: [x: ${obj.x}, y: ${obj.y}]`,
+		line: `#️⃣ ID: ${num(obj.id)}`,
+		priority: 5,
+		color: "var(--text)",
+	});
+	lines.push({
+		line: `📍 Position: [x: ${num(obj.x)}, y: ${num(obj.y)}]`,
 		priority: 6,
 		color: "var(--text)",
 	});
@@ -75,29 +82,29 @@ export function formatObjectData(obj: TickObject): string {
 	switch (obj.type) {
 		case 0:
 			lines.push({
-				line: `🏁 Team ID: ${obj.teamId}`,
+				line: `🏁 Team ID: ${num(obj.teamId)}`,
 				priority: 5,
 				color: "var(--text)",
 			});
 			lines.push({
-				line: `💰 Balance: ${obj.balance}`,
+				line: `💎 Gems: ${num(obj.gems)}`,
 				priority: 1,
-				color: "var(--balance-color)",
+				color: "var(--gems-color)",
 			});
 			break;
 		case 1:
 			lines.push({
-				line: `🏁 Team ID: ${obj.teamId}`,
+				line: `🏁 Team ID: ${num(obj.teamId)}`,
 				priority: 5,
 				color: "var(--text)",
 			});
 			lines.push({
-				line: `💰 Balance: ${obj.balance}`,
+				line: `💎 Gems: ${num(obj.gems)}`,
 				priority: 1,
-				color: "var(--balance-color)",
+				color: "var(--gems-color)",
 			});
 			lines.push({
-				line: `🔢 Move Cooldown: ${obj.moveCooldown}`,
+				line: `🔢 Action Cooldown: ${num(obj.ActionCooldown)}`,
 				priority: 2,
 				color: "var(--cooldown-color)",
 			});
@@ -105,14 +112,14 @@ export function formatObjectData(obj: TickObject): string {
 		case 4:
 		case 2:
 			lines.push({
-				line: `💰 Balance: ${obj.balance}`,
+				line: `💎 Gems: ${num(obj.gems)}`,
 				priority: 1,
-				color: "var(--balance-color)",
+				color: "var(--gems-color)",
 			});
 			break;
 		case 5:
 			lines.push({
-				line: `💣 Explosion Countdown: ${obj.countdown}`,
+				line: `💣 Explosion Countdown: ${num(obj.countdown)}`,
 				priority: -1,
 				color: "var(--text)",
 			});
@@ -149,8 +156,8 @@ export function getBarMetrics(
 		case 1: // Unit
 			maxHP = getGameConfig()?.units?.[obj.unit_type]?.hp || -1;
 			break;
-		case 2: // Resource
-			maxHP = getGameConfig()?.resourceHp || -1;
+		case 2: // Deposit
+			maxHP = getGameConfig()?.depositHp || -1;
 			break;
 		case 3: // Wall
 			maxHP = getGameConfig()?.wallHp || -1;
@@ -166,33 +173,33 @@ export function getBarMetrics(
 		});
 	}
 
-	// Balance
-	if ((obj.type === 0 || obj.type === 1) && obj.balance > 0) {
-		// resources and moneys holding money doesnt actually contain any info
-		let maxBalance = (getGameConfig()?.resourceIncome || 175) * 3;
-		if (obj.balance > maxBalance) {
-			maxBalance = obj.balance;
+	// gems
+	if ((obj.type === 0 || obj.type === 1) && obj.gems > 0) {
+		// deposits and gem piles holding gems doesnt actually contain any info
+		let maxBalance = (getGameConfig()?.depositIncome || 175) * 3;
+		if (obj.gems > maxBalance) {
+			maxBalance = obj.gems;
 		}
 		metrics.push({
-			key: "balance",
-			percentage: (obj.balance / maxBalance) * 100,
+			key: "gems",
+			percentage: (obj.gems / maxBalance) * 100,
 		});
 	}
 
-	// Move Cooldown
+	// Action Cooldown
 	if (obj.type === 1) {
 		const cfg = getGameConfig();
 		if (!cfg) return metrics;
 		const u = cfg.units[obj.unit_type];
 		const step = Math.max(1, u.balancePerCooldownStep);
-		let calc = u.baseMoveCooldown + Math.floor(obj.balance / step);
-		if (u.maxMoveCooldown > 0 && calc > u.maxMoveCooldown)
-			calc = u.maxMoveCooldown;
+		let calc = u.baseActionCooldown + Math.floor(obj.gems / step);
+		if (u.maxActionCooldown > 0 && calc > u.maxActionCooldown)
+			calc = u.maxActionCooldown;
 		calc = Math.max(1, calc);
-		const denom = Math.max(calc, obj.moveCooldown);
+		const denom = Math.max(calc, obj.ActionCooldown);
 		metrics.push({
-			key: "moveCooldown",
-			percentage: (obj.moveCooldown / denom) * 100,
+			key: "ActionCooldown",
+			percentage: (obj.ActionCooldown / denom) * 100,
 		});
 	}
 

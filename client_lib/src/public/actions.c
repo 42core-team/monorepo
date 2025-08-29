@@ -7,7 +7,7 @@ static bool core_static_isMyCore(const t_obj *obj)
 }
 static t_obj *core_static_get_myCore(void)
 {
-	return core_get_obj_customCondition_first(core_static_isMyCore);
+	return core_get_obj_filter_first(core_static_isMyCore);
 }
 
 static void core_static_ensureCapacity(void)
@@ -57,7 +57,7 @@ t_obj *core_action_createUnit(t_unit_type unit_type)
 	game.objects[objLen] = newUnit;
 	game.objects[objLen + 1] = NULL;
 
-	core_static_get_myCore()->s_core.balance -= game.config.units[unit_type]->cost;
+	core_static_get_myCore()->s_core.gems -= game.config.units[unit_type]->cost;
 
 	return newUnit;
 }
@@ -82,7 +82,7 @@ void core_action_attack(const t_obj *attacker, t_pos target_pos)
 	action->data.attack.pos = target_pos;
 }
 
-void core_action_transferMoney(const t_obj *source, t_pos target_pos, unsigned long amount)
+void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned long amount)
 {
 	if (!source)
 		return;

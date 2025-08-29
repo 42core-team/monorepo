@@ -31,7 +31,7 @@ std::string CreateAction::execute(Core *core)
 		return "invalid input";
 
 	Position closestEmptyPos = findFirstEmptyGridCell(Board::instance().getObjectPositionById(core->getId()));
-	if (!closestEmptyPos.isValid(Config::game().gridSize, Config::game().gridSize))
+	if (!closestEmptyPos.isValid(Config::game().gridSize))
 		return "no valid position found";
 
 	if (unit_type_ >= Config::game().units.size() || unit_type_ < 0)
@@ -41,8 +41,11 @@ std::string CreateAction::execute(Core *core)
 	if (core->getBalance() < unitCost)
 		return "insufficient funds";
 
-	Board::instance().addObject<Unit>(Unit(Board::instance().getNextObjectId(), core->getTeamId(), unit_type_), closestEmptyPos);
+	Board::instance().addObject<Unit>(Unit(core->getTeamId(), unit_type_), closestEmptyPos);
 	core->setBalance(core->getBalance() - unitCost);
+
+	Stats::instance().inc(stat_keys::units_spawned);
+	Stats::instance().inc(stat_keys::actions_executed);
 
 	return "";
 }

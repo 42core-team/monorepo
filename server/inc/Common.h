@@ -11,11 +11,11 @@ struct Position
 	int y;
 
 	Position(int x, int y) : x(x), y(y) {}
-	Position() : x(-1), y(-1) {} // purposeful overflow, max val to indicate invalidity
+	Position() : x(-1), y(-1) {}
 
-	bool isValid(int maxX, int maxY) const
+	bool isValid(int maxGrid) const
 	{
-		return x < maxX && y < maxY && x >= 0 && y >= 0;
+		return x < maxGrid && y < maxGrid && x >= 0 && y >= 0;
 	}
 
 	bool operator==(const Position &other) const
@@ -43,14 +43,6 @@ struct Position
 	double distance(const Position &other) const
 	{
 		return std::abs(x - other.x) + std::abs(y - other.y);
-	}
-
-	static Position random(int maxSizeSquare)
-	{
-		static std::default_random_engine eng = std::default_random_engine(time(nullptr));
-		std::uniform_int_distribution<int> posX(0, maxSizeSquare - 1);
-		std::uniform_int_distribution<int> posY(0, maxSizeSquare - 1);
-		return Position(posX(eng), posY(eng));
 	}
 };
 

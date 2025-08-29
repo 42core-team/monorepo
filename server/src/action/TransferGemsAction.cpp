@@ -1,11 +1,11 @@
-#include "TransferMoneyAction.h"
+#include "TransferGemsAction.h"
 
-TransferMoneyAction::TransferMoneyAction(json msg) : Action(ActionType::TRANSFER_MONEY)
+TransferGemsAction::TransferGemsAction(json msg) : Action(ActionType::TRANSFER_GEMS)
 {
 	decodeJSON(msg);
 }
 
-void TransferMoneyAction::decodeJSON(json msg)
+void TransferGemsAction::decodeJSON(json msg)
 {
 	if (!msg.contains("source_id") || !msg.contains("x") || !msg.contains("y") || !msg.contains("amount"))
 	{
@@ -19,11 +19,11 @@ void TransferMoneyAction::decodeJSON(json msg)
 	target_ = Position(x, y);
 	amount_ = msg["amount"];
 }
-json TransferMoneyAction::encodeJSON()
+json TransferGemsAction::encodeJSON()
 {
 	json js;
 
-	js["type"] = "transfer_money";
+	js["type"] = "transfer_gems";
 	js["source_id"] = source_id_;
 	js["x"] = target_.x;
 	js["y"] = target_.y;
@@ -32,10 +32,10 @@ json TransferMoneyAction::encodeJSON()
 	return js;
 }
 
-std::string TransferMoneyAction::dropMoney(Core *core, Object *srcObj)
+std::string TransferGemsAction::dropMoney(Core *core, Object *srcObj)
 {
 	if (srcObj->getType() != ObjectType::Unit)
-		return "only units can drop money on the floor";
+		return "only units can drop gems on the floor";
 
 	if (Board::instance().getObjectPositionById(srcObj->getId()).distance(target_) > 1)
 		return "invalid drop position";
@@ -45,8 +45,8 @@ std::string TransferMoneyAction::dropMoney(Core *core, Object *srcObj)
 
 	Unit *srcUnit = (Unit *)srcObj;
 	if (srcUnit->getTeamId() != core->getTeamId())
-		return "can't drop money from another team";
-	if (srcUnit->getMoveCooldown() > 0)
+		return "can't drop gems from another team";
+	if (srcUnit->getActionCooldown() > 0)
 		return "unit is on cooldown";
 
 	if (srcUnit->getBalance() < amount_)
@@ -55,14 +55,17 @@ std::string TransferMoneyAction::dropMoney(Core *core, Object *srcObj)
 		return "invalid amount";
 	srcUnit->setBalance(srcUnit->getBalance() - amount_);
 
-	srcUnit->resetMoveCooldown();
+	srcUnit->resetActionCooldown();
 
-	Board::instance().addObject<Money>(Money(Board::instance().getNextObjectId(), amount_), target_);
+	Board::instance().addObject<GemPile>(GemPile(amount_), target_);
+
+	Stats::instance().inc(stat_keys::actions_executed);
+	Stats::instance().inc(stat_keys::gems_transferred, amount_);
 
 	return "";
 }
 
-std::string TransferMoneyAction::execute(Core *core)
+std::string TransferGemsAction::execute(Core *core)
 {
 	if (!is_valid_)
 		return "invalid input";
@@ -76,15 +79,15 @@ std::string TransferMoneyAction::execute(Core *core)
 		return dropMoney(core, srcObj);
 
 	if (srcObj->getId() == dstObj->getId())
-		return "can't transfer money to yourself"; // can't transfer money to itself
+		return "can't transfer gems to yourself"; // can't transfer gems to itself
 
-	// only active objects can transfer money
+	// only active objects can transfer gems
 	if (srcObj->getType() != ObjectType::Core && srcObj->getType() != ObjectType::Unit)
 		return "invalid source object type";
 	if (dstObj->getType() != ObjectType::Core && dstObj->getType() != ObjectType::Unit)
 		return "invalid destination object type";
 
-	// only as-close-together-as-possible objects can transfer money
+	// only as-close-together-as-possible objects can transfer gems
 	Position srcPos = Board::instance().getObjectPositionById(srcObj->getId());
 	Position dstPos = Board::instance().getObjectPositionById(dstObj->getId());
 	Position firstEmptyGridCell = findFirstEmptyGridCell(dstPos);
@@ -92,12 +95,12 @@ std::string TransferMoneyAction::execute(Core *core)
 	if (srcPos.distance(dstPos) > maxDist)
 		return "invalid transfer distance";
 
-	// cant transfer someone else's money
+	// cant transfer someone else's gems
 	if (srcObj->getType() == ObjectType::Core)
 	{
 		Core *srcCore = (Core *)srcObj;
 		if (srcCore->getTeamId() != core->getTeamId())
-			return "can't transfer money from another team core";
+			return "can't transfer gems from another team core";
 		if (srcCore->getBalance() < amount_)
 			amount_ = srcCore->getBalance();
 		if (srcCore->getBalance() <= 0)
@@ -108,10 +111,10 @@ std::string TransferMoneyAction::execute(Core *core)
 	{
 		Unit *srcUnit = (Unit *)srcObj;
 		if (srcUnit->getTeamId() != core->getTeamId())
-			return "can't transfer money from another team unit";
-		if (srcUnit->getMoveCooldown() > 0)
+			return "can't transfer gems from another team unit";
+		if (srcUnit->getActionCooldown() > 0)
 			return "unit is on cooldown";
-		srcUnit->resetMoveCooldown();
+		srcUnit->resetActionCooldown();
 		if (srcUnit->getBalance() < amount_)
 			amount_ = srcUnit->getBalance();
 		if (srcUnit->getBalance() <= 0)
@@ -129,6 +132,9 @@ std::string TransferMoneyAction::execute(Core *core)
 		Unit *dstUnit = (Unit *)dstObj;
 		dstUnit->setBalance(dstUnit->getBalance() + amount_);
 	}
+
+	Stats::instance().inc(stat_keys::actions_executed);
+	Stats::instance().inc(stat_keys::gems_transferred, amount_);
 
 	return "";
 }

@@ -1,9 +1,10 @@
 #include "Config.h"
 
 std::string Config::serverConfigFilePath = "";
+std::string Config::gameConfigFilePath = "";
 
 #include "JigsawWorldGenerator.h"
-#include "DistancedResourceWorldGenerator.h"
+#include "SparseWorldGenerator.h"
 #include "HardcodedWorldGenerator.h"
 #include "EmptyWorldGenerator.h"
 
@@ -20,7 +21,6 @@ static ServerConfig parseServerConfig()
 
 	json j = json::parse(inFile);
 
-	config.gameConfigFilePath = j.value("gameConfigFilePath", "config/game.json");
 	if (j.contains("replayFolderPaths") && j["replayFolderPaths"].is_array()) {
 		config.replayFolderPaths.clear();
 		for (const auto& path : j["replayFolderPaths"]) {
@@ -49,10 +49,10 @@ static GameConfig parseGameConfig()
 {
 	GameConfig config;
 
-	std::ifstream inFile(Config::server().gameConfigFilePath);
+	std::ifstream inFile(Config::getGameConfigFilePath());
 	if (!inFile)
 	{
-		Logger::Log(LogLevel::ERROR, "Could not open config file: " + Config::server().gameConfigFilePath);
+		Logger::Log(LogLevel::ERROR, "Could not open config file: " + Config::getGameConfigFilePath());
 		exit(EXIT_FAILURE);
 	}
 
@@ -68,9 +68,9 @@ static GameConfig parseGameConfig()
 	}
 	config.idleIncome = j.value("idleIncome", 1);
 	config.idleIncomeTimeOut = j.value("idleIncomeTimeOut", 600);
-	config.resourceHp = j.value("resourceHp", 50);
-	config.resourceIncome = j.value("resourceIncome", 200);
-	config.moneyObjIncome = j.value("moneyObjIncome", 100);
+	config.depositHp = j.value("depositHp", 50);
+	config.depositIncome = j.value("depositIncome", 200);
+	config.gemPileIncome = j.value("gemPileIncome", 100);
 	config.coreHp = j.value("coreHp", 350);
 	config.initialBalance = j.value("initialBalance", 200);
 	config.wallHp = j.value("wallHp", 100);
@@ -84,8 +84,8 @@ static GameConfig parseGameConfig()
 	std::string wgType = j.value("worldGenerator", "jigsaw");
 	if (wgType == "jigsaw")
 		config.worldGenerator = std::make_unique<JigsawWorldGenerator>();
-	else if (wgType == "distanced_resources")
-		config.worldGenerator = std::make_unique<DistancedResourceWorldGenerator>();
+	else if (wgType == "sparse")
+		config.worldGenerator = std::make_unique<SparseWorldGenerator>();
 	else if (wgType == "hardcoded")
 		config.worldGenerator = std::make_unique<HardcodedWorldGenerator>();
 	else if (wgType == "empty")
@@ -105,12 +105,12 @@ static GameConfig parseGameConfig()
 			unit.name = unitJson.value("name", "Unnamed");
 			unit.cost = unitJson.value("cost", 0);
 			unit.hp = unitJson.value("hp", 0);
-			unit.baseMoveCooldown = unitJson.value("baseMoveCooldown", 0);
-			unit.maxMoveCooldown = unitJson.value("maxMoveCooldown", 0);
+			unit.baseActionCooldown = unitJson.value("baseActionCooldown", 0);
+			unit.maxActionCooldown = unitJson.value("maxActionCooldown", 0);
 			unit.balancePerCooldownStep = std::max(1u, unitJson.value("balancePerCooldownStep", 1u));
 			unit.damageCore = unitJson.value("damageCore", 0);
 			unit.damageUnit = unitJson.value("damageUnit", 0);
-			unit.damageResource = unitJson.value("damageResource", 0);
+			unit.damageDeposit = unitJson.value("damageDeposit", 0);
 			unit.damageWall = unitJson.value("damageWall", 0);
 			int buildTypeInt = unitJson.value("buildType", 0);
 			unit.buildType = static_cast<BuildType>(buildTypeInt);
@@ -127,7 +127,7 @@ static GameConfig parseGameConfig()
 			pos.x = posJson.value("x", 0);
 			pos.y = posJson.value("y", 0);
 
-			if (!pos.isValid(config.gridSize, config.gridSize))
+			if (!pos.isValid(config.gridSize))
 			{
 				Logger::Log(LogLevel::ERROR, "Invalid core position: (" + std::to_string(pos.x) + ", " + std::to_string(pos.y) + "). Skipping this position.");
 				continue;
@@ -168,10 +168,10 @@ UnitConfig &Config::getUnitConfig(unsigned int unit_type)
 
 json Config::encodeConfig()
 {
-	std::ifstream inFile(Config::server().gameConfigFilePath);
+	std::ifstream inFile(Config::getGameConfigFilePath());
 	if (!inFile)
 	{
-		Logger::Log(LogLevel::ERROR, "Could not open config file: " + Config::server().gameConfigFilePath);
+		Logger::Log(LogLevel::ERROR, "Could not open config file: " + Config::getGameConfigFilePath());
 		exit(EXIT_FAILURE);
 	}
 

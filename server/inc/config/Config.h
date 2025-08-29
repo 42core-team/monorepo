@@ -26,9 +26,9 @@ struct GameConfig
 	unsigned int idleIncome;		// idle income per tick
 	unsigned int idleIncomeTimeOut; // idle income duration in ticks
 
-	unsigned int resourceHp;
-	unsigned int resourceIncome;
-	unsigned int moneyObjIncome;
+	unsigned int depositHp;
+	unsigned int depositIncome;
+	unsigned int gemPileIncome;
 
 	unsigned int coreHp;
 	unsigned int initialBalance;
@@ -60,13 +60,13 @@ struct UnitConfig
 	std::string name;
 	unsigned int cost;
 	unsigned int hp;
-	unsigned int baseMoveCooldown; // timeout between moves in ticks
-	unsigned int maxMoveCooldown;
-	unsigned int balancePerCooldownStep; // move cooldown = base move cooldown + balance / balancePerCooldownStep
+	unsigned int baseActionCooldown; // timeout between actions in ticks
+	unsigned int maxActionCooldown;
+	unsigned int balancePerCooldownStep; // action cooldown = base action cooldown + gems / balancePerCooldownStep
 
 	unsigned int damageCore;
 	unsigned int damageUnit;
-	unsigned int damageResource;
+	unsigned int damageDeposit;
 	unsigned int damageWall;
 
 	BuildType buildType;
@@ -74,7 +74,6 @@ struct UnitConfig
 
 struct ServerConfig
 {
-	std::string gameConfigFilePath;
 	std::vector<std::string> replayFolderPaths;
 	std::string dataFolderPath;
 	unsigned int timeoutTicks;
@@ -100,9 +99,15 @@ class Config
 			serverConfigFilePath = path;
 		}
 		static std::string getServerConfigFilePath() { return serverConfigFilePath; }
+		static void setGameConfigFilePath(const std::string &path)
+		{
+			gameConfigFilePath = path;
+		}
+		static std::string getGameConfigFilePath() { return gameConfigFilePath; }
 
 	private:
 		static std::string serverConfigFilePath;
+		static std::string gameConfigFilePath;
 };
 
 #endif // CONFIG_H

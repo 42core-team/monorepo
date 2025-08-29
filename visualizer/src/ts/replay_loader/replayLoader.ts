@@ -4,7 +4,7 @@ import type { TickAction } from "./action";
 import type { GameConfig } from "./config";
 import type { TickObject } from "./object";
 
-const expectedReplayVersion = "1.1.1";
+const expectedReplayVersion = "1.2.1";
 const winnerNameElement = document.getElementById(
 	"winnername",
 ) as HTMLSpanElement;
@@ -60,6 +60,8 @@ type ReplayMisc = {
 		place: number;
 		death_reason: number;
 	}[];
+	version: string;
+	worldGeneratorSeed: number;
 };
 
 export let totalReplayTicks = 0;
@@ -130,14 +132,14 @@ class ReplayLoader {
 		}
 		totalReplayTicks = this.replayData.full_tick_amount;
 
-		winnerNameElement.innerHTML =
+		winnerNameElement.textContent =
 			this.replayData.misc.team_results.find((team) => team.place === 0)
 				?.name || "Unknown";
-		winReasonElement.innerHTML = "";
+		winReasonElement.textContent = "";
 		for (const team of this.replayData.misc.team_results) {
 			if (team.place === 0) continue;
 			const teamName = team.name || `Team ${team.id}`;
-			winReasonElement.innerHTML += `Place ${team.place + 1}: ${teamName} (Death Reason: ${deathReasons[team.death_reason]})<br>`;
+			winReasonElement.textContent += `Place ${team.place + 1}: ${teamName} (Death Reason: ${deathReasons[team.death_reason]})\n`;
 		}
 
 		const fullState: State = {};
@@ -155,7 +157,7 @@ class ReplayLoader {
 				this.applyDiff(fullState, tickData);
 			}
 			for (const obj of Object.values(fullState)) {
-				if ("moveCooldown" in obj && obj.moveCooldown > 0) obj.moveCooldown--;
+				if ("ActionCooldown" in obj && obj.ActionCooldown > 0) obj.ActionCooldown--;
 			}
 			if (t % this.cacheInterval === 0) {
 				this.cache.set(t, deepClone(fullState));
@@ -208,11 +210,11 @@ class ReplayLoader {
 				this.applyDiff(state, tickData);
 			}
 			for (const obj of Object.values(state)) {
-				if (!("moveCooldown" in obj)) {
+				if (!("ActionCooldown" in obj)) {
 					continue;
 				}
-				if (obj.moveCooldown > 0) {
-					obj.moveCooldown--;
+				if (obj.ActionCooldown > 0) {
+					obj.ActionCooldown--;
 				}
 			}
 		}
@@ -255,6 +257,10 @@ class ReplayLoader {
 
 	public getGameMisc(): ReplayMisc {
 		return this.replayData.misc;
+	}
+
+	public getReplayJSON(): string {
+		return JSON.stringify(this.replayData);
 	}
 }
 
@@ -444,6 +450,12 @@ export function getGameMisc(): ReplayMisc | undefined {
 	}
 
 	return replayLoader.getGameMisc();
+}
+export function getReplayJSON(): string {
+	if (!replayLoader) {
+		throw new Error("Replay not loaded. Please call loadReplay first.");
+	}
+	return replayLoader.getReplayJSON();
 }
 
 export function getWinningTeamFormatted(): string {

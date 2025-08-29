@@ -2,8 +2,8 @@ export interface UnitConfig {
 	name: string;
 	cost: number;
 	hp: number;
-	baseMoveCooldown: number;
-	maxMoveCooldown: number;
+	baseActionCooldown: number;
+	maxActionCooldown: number;
 	balancePerCooldownStep: number;
 	damageCore: number;
 	damageUnit: number;
@@ -15,9 +15,9 @@ export interface GameConfig {
 	gridSize: number;
 	idleIncome: number;
 	idleIncomeTimeOut: number;
-	resourceHp: number;
-	resourceIncome: number;
-	moneyObjIncome: number;
+	depositHp: number;
+	depositIncome: number;
+	gemPileIncome: number;
 	coreHp: number;
 	initialBalance: number;
 	wallHp: number;

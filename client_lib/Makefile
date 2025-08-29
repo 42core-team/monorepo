@@ -1,10 +1,10 @@
 JOBS ?= $(shell nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
 MAKEFLAGS += -j$(JOBS)
 
-LIBRARY = con_lib.a
+LIBRARY = core_lib.a
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -lm -g -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -lm -g -fsanitize=address -MMD -MP
 
 INC = inc
 OBJDIR = obj
@@ -12,6 +12,8 @@ SRCDIR = src
 
 SRCS := $(shell find $(SRCDIR) -name "*.c")
 OBJS := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRCS))
+
+-include $(OBJS:.o=.d)
 
 all: $(LIBRARY)
 

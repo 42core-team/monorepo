@@ -1,27 +1,29 @@
-#ifndef MONEY_H
-#define MONEY_H
+#ifndef GEM_PILE_H
+#define GEM_PILE_H
 
 #include "Object.h"
 #include "Common.h"
 #include "Unit.h"
 #include "Config.h"
+#include "Board.h"
 
 #include <cmath>
 
-class Money : public Object
+class GemPile : public Object
 {
 	public:
-		Money(unsigned int id);
-		Money(unsigned int id, unsigned int balance);
-		Money(const Money & other)
+		GemPile();
+		GemPile(unsigned int gems);
+		GemPile(const GemPile & other)
 			: Object(other), balance_(other.balance_) {}
 
 		void tick(unsigned long long tickCount);
 
 		unsigned int getBalance() const { return balance_; }
+		void setBalance(unsigned int gems) { balance_ = gems; }
 
 	private:
 		unsigned int balance_;
 };
 
-#endif // MONEY_H
+#endif // GEM_PILE_H

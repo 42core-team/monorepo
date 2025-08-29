@@ -9,7 +9,7 @@
 
 class CreateAction;
 class MoveAction;
-class TransferMoneyAction;
+class TransferGemsAction;
 class BuildAction;
 class AttackAction;
 
@@ -21,7 +21,7 @@ enum class ActionType
 	MOVE,
 	ATTACK,
 	CREATE,
-	TRANSFER_MONEY,
+	TRANSFER_GEMS,
 	BUILD
 };
 
@@ -49,7 +49,7 @@ protected:
 
 #include "CreateAction.h"
 #include "MoveAction.h"
-#include "TransferMoneyAction.h"
+#include "TransferGemsAction.h"
 #include "BuildAction.h"
 #include "AttackAction.h"
 

@@ -8,19 +8,19 @@ enum class ObjectType
 {
 	Core,
 	Unit,
-	Resource,
+	Deposit,
 	Wall,
-	Money,
+	GemPile,
 	Bomb
 };
 
 class Object
 {
 	public:
-		Object(unsigned int id, int hp, ObjectType type)
-			: id_(id), hp_(hp), type_(type) {}
+		Object(int hp, ObjectType type)
+			: id_(nextObjectId_++), hp_(hp), type_(type) {}
 		Object(const Object &other)
-			: id_(other.id_), hp_(other.hp_), type_(other.type_) {}
+			: id_(nextObjectId_++), hp_(other.hp_), type_(other.type_) {}
 		virtual ~Object() {}
 
 		virtual void tick(unsigned long long tickCount) = 0;
@@ -35,7 +35,11 @@ class Object
 		unsigned int id_;
 		int hp_;
 
+		static unsigned int nextObjectId_;
+
 		ObjectType type_;
 };
+
+inline unsigned int Object::nextObjectId_ = 1;
 
 #endif // OBJECT_H

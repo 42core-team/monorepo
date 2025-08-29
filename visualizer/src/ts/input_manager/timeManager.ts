@@ -1,6 +1,6 @@
 import { setRenderFireworks } from "../renderer/fireworksRenderer";
 import { getTotalReplayTicks } from "../replay_loader/replayLoader";
-import { applyTheme } from "./themeManager";
+import { applyTheme, toggleTheme } from "./themeManager";
 
 const playButton = document.getElementById(
 	"play-pause-button",
@@ -294,6 +294,7 @@ export async function setupTimeManager() {
 		f: { action: () => toggleFullscreen(), button: fullscreenToggleButton },
 		d: { action: () => applyTheme("dark") },
 		l: { action: () => applyTheme("light") },
+		t: { action: () => toggleTheme() },
 	};
 
 	window.addEventListener("keydown", (event) => {

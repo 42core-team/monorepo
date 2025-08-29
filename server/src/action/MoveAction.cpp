@@ -17,7 +17,7 @@ void MoveAction::decodeJSON(json msg)
 
 	unit_id_ = msg["unit_id"];
 	target_ = Position(msg["x"], msg["y"]);
-	if (!target_.isValid(Config::game().gridSize, Config::game().gridSize))
+	if (!target_.isValid(Config::game().gridSize))
 	{
 		is_valid_ = false;
 		return;
@@ -35,35 +35,32 @@ json MoveAction::encodeJSON()
 	return js;
 }
 
-std::string MoveAction::execute(Core * core)
+std::string MoveAction::execute(Core *core)
 {
 	if (!is_valid_)
 		return "invalid input";
 
-	Object * unitObj = Board::instance().getObjectById(getUnitId());
+	Object *unitObj = Board::instance().getObjectById(getUnitId());
 	if (!unitObj || unitObj->getType() != ObjectType::Unit)
 		return "invalid or non-existing unit";
-	Unit * unit = (Unit *)unitObj;
+	Unit *unit = (Unit *)unitObj;
 
-	if (unit->getMoveCooldown() > 0)
+	if (unit->getActionCooldown() > 0)
 		return "unit is on cooldown";
 	if (unit->getTeamId() != core->getTeamId())
 		return "unit does not belong to your team";
 
-	Object * obj = Board::instance().getObjectAtPos(target_);
-	if (obj && obj->getType() != ObjectType::Money)
-		return "invalid target object. should be Money or empty";
+	Object *obj = Board::instance().getObjectAtPos(target_);
+	if (obj)
+		return "invalid target position. should be empty";
 	if (target_.distance(Board::instance().getObjectPositionById(unit->getId())) > 1)
 		return "invalid move";
 
-	if (obj && obj->getType() == ObjectType::Money)
-	{
-		unit->setBalance(unit->getBalance() + static_cast<Money*>(obj)->getBalance());
-		Board::instance().removeObjectById(obj->getId());
-	}
-
 	Board::instance().moveObjectById(unit->getId(), target_);
-	unit->resetMoveCooldown();
+	unit->resetActionCooldown();
+
+	Stats::instance().inc(stat_keys::tiles_traveled);
+	Stats::instance().inc(stat_keys::actions_executed);
 
 	return "";
 }

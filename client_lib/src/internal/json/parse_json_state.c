@@ -43,20 +43,20 @@ static void core_static_updateObj(t_obj *existingObj, json_node *updates)
 				case OBJ_UNIT: existingObj->s_unit.team_id = property->number; break;
 			}
 		}
-		else if (strncmp(property->key, "balance", 7) == 0)
+		else if (strncmp(property->key, "gems", 7) == 0)
 		{
 			switch ((int)existingObj->type)
 			{
-				case OBJ_CORE: existingObj->s_core.balance = property->number; break;
-				case OBJ_UNIT: existingObj->s_unit.balance = property->number; break;
-				case OBJ_MONEY:
-				case OBJ_RESOURCE: existingObj->s_resource_money.balance = property->number; break;
+				case OBJ_CORE: existingObj->s_core.gems = property->number; break;
+				case OBJ_UNIT: existingObj->s_unit.gems = property->number; break;
+				case OBJ_GEM_PILE:
+				case OBJ_DEPOSIT: existingObj->s_resource_gems_pile.gems = property->number; break;
 			}
 		}
-		else if (strncmp(property->key, "moveCooldown", 12) == 0)
-			existingObj->s_unit.move_cooldown = property->number;
-		// else if (strncmp(property->key, "countdown", 9) == 0)
-		// 	existingObj->s_bomb.countdown = property->number;
+		else if (strncmp(property->key, "ActionCooldown", 12) == 0)
+			existingObj->s_unit.action_cooldown = property->number;
+		else if (strncmp(property->key, "countdown", 9) == 0)
+			existingObj->s_bomb.countdown = property->number;
 	}
 }
 
@@ -130,11 +130,11 @@ void core_internal_parse_state(char *json)
 		game.objects[0] = NULL;
 	}
 
-	// update move cooldowns
+	// update action cooldowns
 	for (size_t i = 0; game.objects[i]; i++)
 		if (game.objects[i]->type == OBJ_UNIT)
-			if (game.objects[i]->s_unit.move_cooldown > 0)
-				game.objects[i]->s_unit.move_cooldown--;
+			if (game.objects[i]->s_unit.action_cooldown > 0)
+				game.objects[i]->s_unit.action_cooldown--;
 
 	game.elapsed_ticks = (unsigned long)json_find(root, "tick")->number;
 

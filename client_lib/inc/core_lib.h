@@ -15,14 +15,14 @@ typedef enum e_obj_type
 {
 	OBJ_CORE,
 	OBJ_UNIT,
-	OBJ_RESOURCE,
+	OBJ_DEPOSIT,
 	OBJ_WALL,
-	OBJ_MONEY //,
-	// OBJ_BOMB
+	OBJ_GEM_PILE,
+	OBJ_BOMB
 } t_obj_type;
 
 /// @brief Object state.
-/// @details Uninitialized objects should only have their type, state, data, team_id & unit_type read and set.
+/// @details Uninitialized objects should only have their type, state, data, team_id & unit_type read from.
 typedef enum e_obj_state
 {
 	STATE_UNINITIALIZED = 1,
@@ -35,12 +35,12 @@ typedef enum e_unit_type
 {
 	UNIT_WARRIOR = 0,
 	UNIT_MINER = 1,
-	UNIT_CARRIER = 2 //,
-	// UNIT_BUILDER = 3,
-	// UNIT_BOMBERMAN = 4
+	UNIT_CARRIER = 2,
+	UNIT_BUILDER = 3,
+	UNIT_BOMBERMAN = 4
 } t_unit_type;
 
-/// @brief Position structure for 2D coordinates
+/// @brief Position structure for 2D coordinates. 0 indexed. Valid coordinates are 0,1,2,...gridSize-3,gridSize-2,gridSize-1.
 typedef struct s_pos
 {
 	/// @brief X coordinate
@@ -70,8 +70,8 @@ typedef struct s_obj
 		{
 			/// @brief The id of the team that owns the core.
 			unsigned long team_id;
-			/// @brief The current balance of the core.
-			unsigned long balance;
+			/// @brief The current gems of the core.
+			unsigned long gems;
 		} s_core;
 		struct
 		{
@@ -79,21 +79,21 @@ typedef struct s_obj
 			unsigned long unit_type;
 			/// @brief The id of the team that owns the unit.
 			unsigned long team_id;
-			/// @brief The amount of money the unit is carrying.
-			unsigned long balance;
+			/// @brief The amount of gems the unit is carrying.
+			unsigned long gems;
 			/// @brief Countdown to the next tick the unit can move, defined by it's speed & how much it's carrying.
-			unsigned long move_cooldown;
+			unsigned long action_cooldown;
 		} s_unit;
 		struct
 		{
-			/// @brief The amount of money the resource / money contains.
-			unsigned long balance;
-		} s_resource_money;
-		// struct
-		// {
-		// 	/// @brief How much longer the bomb will take to explode.
-		// 	unsigned long countdown;
-		// } s_bomb;
+			/// @brief The amount of gems the deposit / gem pile contains.
+			unsigned long gems;
+		} s_resource_gems_pile;
+		struct
+		{
+			/// @brief How much longer the bomb will take to explode.
+			unsigned long countdown;
+		} s_bomb;
 	};
 } t_obj;
 
@@ -121,16 +121,16 @@ typedef struct s_unit_config
 	unsigned long dmg_core;
 	/// @brief How much damage the unit deals to units.
 	unsigned long dmg_unit;
-	/// @brief How much damage the unit deals to resources.
-	unsigned long dmg_resource;
+	/// @brief How much damage the unit deals to deposits.
+	unsigned long dmg_deposit;
 	/// @brief How much damage the unit deals to walls.
 	unsigned long dmg_wall;
 	/// @brief The units build type.
 	t_build_type build_type;
-	/// @brief The time a unit waits between moves if it is not carrying money.
-	unsigned long baseMoveCooldown;
+	/// @brief The time a unit waits between moves if it is not carrying gems.
+	unsigned long baseActionCooldown;
 	/// @brief The minimum time a unit waits between moves.
-	unsigned long maxMoveCooldown;
+	unsigned long maxActionCooldown;
 	/// @brief Whether the unit can build walls or bombs.
 	bool can_build;
 } t_unit_config;
@@ -143,15 +143,15 @@ typedef struct s_config
 	unsigned long idle_income;
 	/// @brief How many ticks you get idle income.
 	unsigned long idle_income_timeout;
-	/// @brief How much healthpoints a resource has at the start of the game.
-	unsigned long resource_hp;
-	/// @brief How much income you get when you destroy a resource.
-	unsigned long resource_income;
-	/// @brief How much money a money object contains.
-	unsigned long money_obj_income;
+	/// @brief How much healthpoints a deposit has at the start of the game.
+	unsigned long deposit_hp;
+	/// @brief How much income you get when you destroy a deposit.
+	unsigned long deposit_income;
+	/// @brief How many gems a gem pile object contains.
+	unsigned long gem_pile_income;
 	/// @brief How much healthpoints a core has at the start of the game.
 	unsigned long core_hp;
-	/// @brief How much money a team starts with.
+	/// @brief How many gems a team starts with.
 	unsigned long initial_balance;
 	/// @brief How much healthpoints a wall has at the start of the game.
 	unsigned long wall_hp;
@@ -209,6 +209,40 @@ extern t_game game;
 /// @return 0 on success, another number on failure.
 int core_startGame(const char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug);
 
+// ----- ACTION FUNCTIONS -----
+
+// ACTION FUNCTIONS are used to perform actions in the game, like creating units, moving them, attacking, etc. Their changes are applied between ticks.
+
+/// @brief Create a new unit of specified type.
+/// @details The unit will be uninitialized, meaning you can read & write only read its type, state, data, team_id & unit_type.
+/// @param unit_type The type of unit to create.
+/// @return A newly created, uninitialized unit object or NULL if the unit could not be created.
+t_obj *core_action_createUnit(t_unit_type unit_type);
+
+/// @brief Moves a unit to a specific position.
+/// @details Units can only move one tile up, down, left or right; and only if their action_cooldown is 0.
+/// @param unit The unit that should move.
+/// @param pos The position where the unit should move to.
+void core_action_move(const t_obj *unit, t_pos pos);
+
+/// @brief Attacks a target position with a unit.
+/// @details Units can only attack one tile up, down, left or right; and only if their action_cooldown is 0.
+/// @param attacker The unit that should attack.
+/// @param pos The position where the unit should attack.
+void core_action_attack(const t_obj *attacker, t_pos pos);
+
+/// @brief Gives gems to another object or drops it on the floor.
+/// @param source The object that the gems should be transferred from.
+/// @param target_pos The position of the object to transfer the gems to, or the non-occupied position where the gems should be dropped.
+/// @param amount The amount of gems to transfer or drop.
+void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned long amount);
+
+/// @brief Builds a new object.
+/// @details Units can only build one tile up, down, left or right. Not all units can build, and they may build different things. Please consult config for details.
+/// @param builder The unit that should build a new object. What will be built depends on the buildType of the builder unit.
+/// @param pos The position where the object should be built.
+void core_action_build(const t_obj *builder, t_pos pos);
+
 // ----- GETTER FUNCTIONS -----
 
 /// GETTER FUNCTIONS are used to get information about the current game state.
@@ -224,73 +258,48 @@ t_obj *core_get_obj_from_pos(t_pos pos);
 /// @brief Get all objects matching a custom condition.
 /// @param condition Selection function pointer returning if the inputted object should be selected
 /// @return Null-terminated array of selected objects or NULL if no condition is provided or no objects match the condition.
-t_obj **core_get_objs_customCondition(bool (*condition)(const t_obj *));
+t_obj **core_get_objs_filter(bool (*condition)(const t_obj *));
 
 /// @brief Get the first object matching a custom condition.
 /// @param condition Selection function pointer returning if the inputted object should be selected
 /// @return The first object that matches the condition or NULL if no such object exists or no condition is provided.
-t_obj *core_get_obj_customCondition_first(bool (*condition)(const t_obj *));
+t_obj *core_get_obj_filter_first(bool (*condition)(const t_obj *));
 
 /// @brief Get the nearest object to a given position matching a custom condition.
 /// @param pos Position to search from
 /// @param condition Selection function pointer returning if the inputted object should be selected
 /// @return The nearest object that matches the condition or NULL if no such object exists or no condition is provided.
-t_obj *core_get_obj_customCondition_nearest(t_pos pos, bool (*condition)(const t_obj *));
+t_obj *core_get_obj_filter_nearest(t_pos pos, bool (*condition)(const t_obj *));
+
+/// @brief Get the count of all objects matching a custom condition.
+/// @param condition Selection function pointer returning if the inputted object should be selected
+/// @return The count of objects that match the condition or 0 if no such object exists
+unsigned int core_get_objs_filter_count(bool (*condition)(const t_obj *));
 
 /// @brief Get the unit config for a specific unit type.
 /// @param type The type of unit to get the config for.
 /// @return The unit config or NULL if no such unit type or unit config exists.
 t_unit_config *core_get_unitConfig(t_unit_type type);
 
-// ----- ACTION FUNCTIONS -----
-
-// ACTION FUNCTIONS are used to perform actions in the game, like creating units, moving them, attacking, etc. Their changes are applied between ticks.
-
-/// @brief Create a new unit of specified type.
-/// @details The unit will be uninitialized, meaning you can read & write only read its type, state, data, team_id & unit_type.
-/// @param unit_type The type of unit to create.
-/// @return A newly created, uninitialized unit object or NULL if the unit could not be created.
-t_obj *core_action_createUnit(t_unit_type unit_type);
-
-/// @brief Moves a unit to a specific position.
-/// @details Units can only move one tile up, down, left or right; and only if their move_cooldown is 0.
-/// @param unit The unit that should move.
-/// @param pos The position where the unit should move to.
-void core_action_move(const t_obj *unit, t_pos pos);
-
-/// @brief Attacks a target position with a unit.
-/// @details Units can only attack one tile up, down, left or right; and only if their move_cooldown is 0.
-/// @param attacker The unit that should attack.
-/// @param pos The position where the unit should attack.
-void core_action_attack(const t_obj *attacker, t_pos pos);
-
-/// @brief Gives money to another object or drops it on the floor.
-/// @param source The object that the money should be transferred from.
-/// @param target_pos The position of the object to transfer the money to, or the non-occupied position where the money should be dropped.
-/// @param amount The amount of money to transfer or drop.
-void core_action_transferMoney(const t_obj *source, t_pos target_pos, unsigned long amount);
-
-/// @brief Builds a new object.
-/// @details Units can only build one tile up, down, left or right. Not all units can build, and they may build different things. Please consult config for details.
-/// @param builder The unit that should build a new object. What will be built depends on the buildType of the builder unit.
-/// @param pos The position where the object should be built.
-void core_action_build(const t_obj *builder, t_pos pos);
-
 // ----- PRINT FUNCTIONS -----
 
 // PRINT FUNCTIONS are used to print information about the game state to the console.
 
-/// @brief Prints all information about the current game state of a given object.
+/// @brief Prints all information about the current game state of a given object. Handles NULL.
 /// @param obj The object to print information about.
-void core_print_object(const t_obj *obj);
+void core_print_obj(t_obj *obj);
 
-/// @brief Prints all objects that match a custom condition.
-/// @param condition Selection function pointer returning if the inputted object should be selected
-void core_print_objects(bool (*condition)(const t_obj *));
+/// @brief Prints all information about the current game state of multiple objects. Handles NULL.
+/// @param objs The objects to print information about.
+/// @return The inputted objects array, so you can easily free in the same line as you print.
+t_obj **core_print_objs(t_obj **objs);
 
 /// @brief Prints a selected unit config.
 /// @param unit_type The type of unit to print the config for.
 void core_print_config_unit(t_unit_type unit_type);
+
+/// @brief Prints the entire game config
+void core_print_config_game(void);
 
 /// @brief Prints the entire game config and all unit configs
 void core_print_config(void);

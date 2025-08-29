@@ -1,28 +1,29 @@
-#ifndef RESOURCE_H
-#define RESOURCE_H
+#ifndef DEPOSIT_H
+#define DEPOSIT_H
 
 #include "Object.h"
 #include "Common.h"
 #include "Unit.h"
 #include "Config.h"
+#include "Board.h"
 
 #include <cmath>
 
-class Resource : public Object
+class Deposit : public Object
 {
 	public:
-		Resource(unsigned int id);
-		Resource(unsigned int id, unsigned int balance);
-		Resource(const Resource &other)
+		Deposit();
+		Deposit(unsigned int gems);
+		Deposit(const Deposit &other)
 			: Object(other), balance_(other.balance_) {}
 
 		void tick(unsigned long long tickCount);
 
 		unsigned int getBalance() const { return balance_; }
-		void setBalance(unsigned int balance) { balance_ = balance; }
+		void setBalance(unsigned int gems) { balance_ = gems; }
 
 	private:
 		unsigned int balance_;
 };
 
-#endif // RESOURCE_H
+#endif // DEPOSIT_H

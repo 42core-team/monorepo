@@ -1,3 +1,4 @@
+import { setupInfoPopupManager } from "./input_manager/infoPopupManager.js";
 import { loadSavedTheme } from "./input_manager/themeManager.js";
 
 const svgCanvas = document.getElementById("svg-canvas") as HTMLElement;
@@ -78,4 +79,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 	// theme
 	loadSavedTheme();
+
+	// info popup manager
+	setupInfoPopupManager();
 });

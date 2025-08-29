@@ -1,7 +1,7 @@
 #include "Bomb.h"
 
-Bomb::Bomb(unsigned int id)
-	: Object(id, Config::game().bombHp, ObjectType::Bomb), countdown_(Config::game().bombCountdown) {}
+Bomb::Bomb()
+	: Object(Config::game().bombHp, ObjectType::Bomb), countdown_(Config::game().bombCountdown) {}
 
 void Bomb::explode()
 {
@@ -44,6 +44,8 @@ void Bomb::explode()
 		obj->setHP(obj->getHP() - Config::game().bombDamage);
 	}
 	Board::instance().removeObjectById(this->getId());
+
+	Stats::instance().inc(stat_keys::bombs_destroyed);
 }
 
 void Bomb::tick(unsigned long long tickCount)
