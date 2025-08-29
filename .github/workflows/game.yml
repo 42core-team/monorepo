@@ -117,8 +117,6 @@ jobs:
           platforms: linux/amd64
           pull: false
           push: false
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
   # Push-time: build and push server image (per-arch)
   push-server-build:
