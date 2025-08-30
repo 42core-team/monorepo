@@ -11,9 +11,9 @@ all:
 
 build: all
 dev:
-	$(MAKE) CONFIG=Debug all
+	$(MAKE) CONFIG=dev all
 prod:
-	$(MAKE) CONFIG=Release all
+	$(MAKE) CONFIG=prod all
 
 clean:
 	@if [ -d "$(BUILD_DIR)" ]; then $(CMAKE) --build "$(BUILD_DIR)" --target clean; else :; fi
