@@ -20,6 +20,7 @@ clean:
 
 fclean: clean
 	rm -f server
+	rm -rf build
 
 re:
 	$(MAKE) fclean

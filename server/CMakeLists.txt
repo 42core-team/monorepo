@@ -15,15 +15,14 @@ set(FETCHCONTENT_QUIET FALSE)
 
 include(FetchContent)
 
-FetchContent_Declare(
-	nlohmann_json
-	GIT_REPOSITORY https://github.com/nlohmann/json.git
-	GIT_TAG v3.11.3
-	GIT_SHALLOW TRUE
-	GIT_PROGRESS TRUE
-	UPDATE_DISCONNECTED TRUE
-)
-FetchContent_MakeAvailable(nlohmann_json)
+set(NLOHMANN_JSON_VERSION 3.11.3)
+set(NLOHMANN_JSON_URL "https://github.com/nlohmann/json/releases/download/v${NLOHMANN_JSON_VERSION}/json.hpp")
+set(NLOHMANN_JSON_INC "${CMAKE_BINARY_DIR}/nlohmann_json/include")
+file(MAKE_DIRECTORY "${NLOHMANN_JSON_INC}/nlohmann")
+file(DOWNLOAD "${NLOHMANN_JSON_URL}" "${NLOHMANN_JSON_INC}/nlohmann/json.hpp" TLS_VERIFY ON)
+add_library(nlohmann_json INTERFACE)
+add_library(nlohmann_json::nlohmann_json ALIAS nlohmann_json)
+target_include_directories(nlohmann_json INTERFACE "${NLOHMANN_JSON_INC}")
 
 set(JSON_VALIDATOR_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(
