@@ -29,5 +29,5 @@ COPY ./my-core-bot/configs ./configs
 
 RUN mkdir replays && chmod +x ./docker-entrypoint.sh
 
-ENTRYPOINT [ "./docker-entrypoint.sh", "./server", "./configs/server-config.json", "./configs/soft-config.json" ]
+ENTRYPOINT [ "./docker-entrypoint.sh", "./server", "./configs/server-config.json", "./configs/soft-config.json", "./data" ]
 CMD [ "--default-arg" ]
