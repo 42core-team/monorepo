@@ -36,7 +36,6 @@ struct GameConfig
 	unsigned int wallHp;
 	unsigned int wallBuildCost;
 
-	unsigned int bombHp;
 	unsigned int bombCountdown;
 	unsigned int bombThrowCost;
 	unsigned int bombReach;

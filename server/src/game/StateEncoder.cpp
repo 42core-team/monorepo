@@ -37,6 +37,19 @@ json StateEncoder::encodeFullState()
 		if (obj.getType() == ObjectType::Bomb)
 		{
 			o["countdown"] = ((Bomb &)obj).getCountdown();
+			o["countdownStarted"] = ((Bomb &)obj).isCountdownStarted();
+			
+			json tiles = json::array();
+			const Bomb& b = static_cast<const Bomb &>(obj);
+			auto exploded = b.explosionTiles_;
+			for (const Position& p : exploded) {
+				json t;
+				t["x"] = p.x;
+				t["y"] = p.y;
+				tiles.push_back(t);
+			}
+
+			o["explosionTiles"] = tiles;
 		}
 
 		state.push_back(o);

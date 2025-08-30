@@ -3,12 +3,15 @@
 #include <unordered_set>
 
 Bomb::Bomb()
-	: Object(Config::game().bombHp, ObjectType::Bomb), countdown_(Config::game().bombCountdown) {}
+	: Object(1, ObjectType::Bomb), countdown_(Config::game().bombCountdown) {}
 
 void Bomb::explode()
 {
 	const int radius = Config::game().bombReach;
 	const Position bomb = Board::instance().getObjectPositionById(this->getId());
+
+	explosionTiles_.clear();
+	explosionTiles_.emplace(bomb);
 
 	auto isPositionExplosionBlocking = [](int x, int y) -> bool {
 		if (Object* o = Board::instance().getObjectAtPos(Position{x, y})) return o->getType() == ObjectType::Wall;
@@ -51,6 +54,7 @@ void Bomb::explode()
 						if (toDamageIds.insert(id).second) toDamage.push_back(o);
 					}
 				}
+				explosionTiles_.emplace(Position{cx, cy});
 				return true;
 			});
 		}
@@ -68,8 +72,7 @@ void Bomb::explode()
 			((Bomb *)o)->handleAttack(); // trigger chain explosions
 	}
 
-	Board::instance().removeObjectById(this->getId());
-	Stats::instance().inc(stat_keys::bombs_destroyed);
+	this->hp_ = 0;
 }
 
 void Bomb::tick(unsigned long long tickCount)

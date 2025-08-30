@@ -7,6 +7,8 @@
 #include "Board.h"
 #include "Stats.h"
 
+#include <set>
+
 class Bomb : public Object
 {
 public:
@@ -18,8 +20,11 @@ public:
 	void tick(unsigned long long tickCount);
 
 	unsigned int getCountdown() const { return countdown_; }
+	bool isCountdownStarted() const { return countdownStarted_; }
 
 	void handleAttack();
+
+	std::set<Position> explosionTiles_;
 
 private:
 	unsigned int countdown_ = 0; // Countdown for the bomb to explode

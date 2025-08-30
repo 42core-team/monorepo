@@ -15,7 +15,6 @@
 		"initialBalance",
 		"wallHp",
 		"wallBuildCost",
-		"bombHp",
 		"bombCountdown",
 		"bombThrowCost",
 		"bombReach",
@@ -79,11 +78,6 @@
 			"maximum": 10000000
 		},
 		"wallBuildCost": {
-			"type": "integer",
-			"minimum": 0,
-			"maximum": 10000000
-		},
-		"bombHp": {
 			"type": "integer",
 			"minimum": 0,
 			"maximum": 10000000

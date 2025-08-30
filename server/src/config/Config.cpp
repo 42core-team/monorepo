@@ -87,7 +87,6 @@ static GameConfig parseGameConfig()
 	config.initialBalance = j.value("initialBalance", 200);
 	config.wallHp = j.value("wallHp", 100);
 	config.wallBuildCost = j.value("wallBuildCost", 20);
-	config.bombHp = j.value("bombHp", 100);
 	config.bombCountdown = j.value("bombCountdown", 25);
 	config.bombThrowCost = j.value("bombThrowCost", 50);
 	config.bombReach = j.value("bombReach", 3);

@@ -170,6 +170,9 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 			case ObjectType::Core:
 				Stats::instance().inc(stat_keys::cores_destroyed);
 				break;
+			case ObjectType::Bomb:
+				Stats::instance().inc(stat_keys::bombs_destroyed);
+				break;
 			default:
 				break;
 			}
@@ -181,11 +184,11 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 				Board::instance().removeObjectById(obj.getId());
 				Board::instance().addObject<GemPile>(GemPile(unitBalance), objPos);
 			}
-			else if (obj.getType() != ObjectType::Core)
+			// Cores must stay so clients know they died, Bombs must stay so the visualizer can get encoded positions where the explosion happened
+			else if (obj.getType() != ObjectType::Core && obj.getType() != ObjectType::Bomb)
 			{
 				Board::instance().removeObjectById(obj.getId());
 			}
-			// TODO: handle game over (send message, disconnect bridge, decrease teamCount_)
 		}
 		else
 		{
@@ -205,8 +208,13 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 	sendState(actions, tick, failures);
 	Visualizer::visualizeGameState(tick);
 
+
+	// ----------------------------
+
+
 	// 5. REMOVE CORES
 	// connection libs must receive one final state json with their core at 0 hp to realize they lost
+
 	std::vector<unsigned> removeTeamIds;
 	for (auto &obj : Board::instance())
 	{
@@ -232,8 +240,19 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 		}
 	}
 
-	// 6. ActionCooldown DECREMENT FOR UNITS
+	// 6. REMOVE BOMBS
+
+	for (auto &obj : Board::instance())
+	{
+		if (obj.getType() == ObjectType::Bomb && obj.getHP() <= 0)
+		{
+			Board::instance().removeObjectById(obj.getId());
+		}
+	}
+
+	// 7. ActionCooldown DECREMENT FOR UNITS
 	// must happen AFTER state send cause clients also do it locally for replay efficiency, otherwise we get a server/client desync with two decrements in one tick when ActionCooldown is reset
+
 	for (auto &obj : Board::instance())
 		if (obj.getType() == ObjectType::Unit)
 			static_cast<Unit &>(obj).tickActionCooldown();
