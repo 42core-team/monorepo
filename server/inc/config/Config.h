@@ -40,7 +40,9 @@ struct GameConfig
 	unsigned int bombCountdown;
 	unsigned int bombThrowCost;
 	unsigned int bombReach;
-	unsigned int bombDamage;
+	unsigned int bombDamageCore;
+	unsigned int bombDamageUnit;
+	unsigned int bombDamageDeposit;
 
 	std::vector<UnitConfig> units;
 

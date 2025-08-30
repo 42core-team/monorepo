@@ -109,7 +109,7 @@ std::string AttackAction::execute(Core *core)
 	else if (obj->getType() == ObjectType::Bomb)
 	{
 		Bomb *bomb = (Bomb *)obj;
-		bomb->explode();
+		bomb->handleAttack();
 	}
 	else if (obj->getType() == ObjectType::GemPile)
 	{

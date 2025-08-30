@@ -12,7 +12,7 @@
 				"${workspaceFolder}/server/inc/**",
 				"${workspaceFolder}/server/inc/**/**",
 				"${workspaceFolder}/server/inc/**/*",
-				"${workspaceFolder}/server/build/nlohmann_json/include",
+				"${workspaceFolder}/server/build/nlohmann_json/include/nlohmann",
 				"${workspaceFolder}/server/build/_deps/json_schema_validator-src/src/nlohmann"
 			],
 			"cppStandard": "c++17",

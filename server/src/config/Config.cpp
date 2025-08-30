@@ -91,7 +91,9 @@ static GameConfig parseGameConfig()
 	config.bombCountdown = j.value("bombCountdown", 25);
 	config.bombThrowCost = j.value("bombThrowCost", 50);
 	config.bombReach = j.value("bombReach", 3);
-	config.bombDamage = j.value("bombDamage", 100);
+	config.bombDamageCore = j.value("bombDamageCore", 50);
+	config.bombDamageUnit = j.value("bombDamageUnit", 30);
+	config.bombDamageDeposit = j.value("bombDamageDeposit", 40);
 
 	std::string wgType = j.value("worldGenerator", "jigsaw");
 	if (wgType == "jigsaw")

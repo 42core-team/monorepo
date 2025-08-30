@@ -12,15 +12,18 @@ class Bomb : public Object
 public:
 	Bomb();
 	Bomb(const Bomb &other)
-		: Object(other), countdown_(other.countdown_) {}
+		: Object(other), countdown_(other.countdown_), countdownStarted_(other.countdownStarted_) {}
 
 	void explode();
 	void tick(unsigned long long tickCount);
 
 	unsigned int getCountdown() const { return countdown_; }
 
+	void handleAttack();
+
 private:
 	unsigned int countdown_ = 0; // Countdown for the bomb to explode
+	bool countdownStarted_ = false;
 };
 
 #endif // BOMB_H

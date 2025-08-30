@@ -19,7 +19,9 @@
 		"bombCountdown",
 		"bombThrowCost",
 		"bombReach",
-		"bombDamage",
+		"bombDamageCore",
+		"bombDamageUnit",
+		"bombDamageDeposit",
 		"worldGenerator",
 		"worldGeneratorConfig",
 		"units",
@@ -101,7 +103,17 @@
 			"minimum": 0,
 			"maximum": 10000000
 		},
-		"bombDamage": {
+		"bombDamageCore": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 10000000
+		},
+		"bombDamageUnit": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 10000000
+		},
+		"bombDamageDeposit": {
 			"type": "integer",
 			"minimum": 0,
 			"maximum": 10000000
