@@ -1,0 +1,381 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "GameConfig",
+	"type": "object",
+	"additionalProperties": false,
+	"required": [
+		"gridSize",
+		"seed",
+		"idleIncome",
+		"idleIncomeTimeOut",
+		"depositHp",
+		"depositIncome",
+		"gemPileIncome",
+		"coreHp",
+		"initialBalance",
+		"wallHp",
+		"wallBuildCost",
+		"bombHp",
+		"bombCountdown",
+		"bombThrowCost",
+		"bombReach",
+		"bombDamage",
+		"worldGenerator",
+		"worldGeneratorConfig",
+		"units",
+		"corePositions"
+	],
+	"properties": {
+		"gridSize": {
+			"type": "integer",
+			"minimum": 2,
+			"maximum": 200
+		},
+		"seed": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"idleIncome": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 10000000
+		},
+		"idleIncomeTimeOut": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 10000000
+		},
+		"depositHp": {
+			"type": "integer",
+			"minimum": 1,
+			"maximum": 10000000
+		},
+		"depositIncome": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 10000000
+		},
+		"gemPileIncome": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 10000000
+		},
+		"coreHp": {
+			"type": "integer",
+			"minimum": 1,
+			"maximum": 10000000
+		},
+		"initialBalance": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 10000000
+		},
+		"wallHp": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 10000000
+		},
+		"wallBuildCost": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 10000000
+		},
+		"bombHp": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 10000000
+		},
+		"bombCountdown": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 10000000
+		},
+		"bombThrowCost": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 10000000
+		},
+		"bombReach": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 10000000
+		},
+		"bombDamage": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 10000000
+		},
+		"worldGenerator": {
+			"type": "string",
+			"enum": [
+				"jigsaw",
+				"sparse",
+				"hardcoded",
+				"empty"
+			]
+		},
+		"worldGeneratorConfig": {
+			"type": "object"
+		},
+		"units": {
+			"type": "array",
+			"minItems": 1,
+			"items": {
+				"$ref": "#/$defs/unit"
+			}
+		},
+		"corePositions": {
+			"type": "array",
+			"minItems": 2,
+			"items": {
+				"$ref": "#/$defs/position"
+			}
+		}
+	},
+	"allOf": [
+		{
+			"if": {
+				"properties": {
+					"worldGenerator": {
+						"const": "jigsaw"
+					}
+				},
+				"required": [
+					"worldGenerator"
+				]
+			},
+			"then": {
+				"properties": {
+					"worldGeneratorConfig": {
+						"$ref": "#/$defs/jigsawCfg"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"worldGenerator": {
+						"const": "sparse"
+					}
+				},
+				"required": [
+					"worldGenerator"
+				]
+			},
+			"then": {
+				"properties": {
+					"worldGeneratorConfig": {
+						"$ref": "#/$defs/sparseCfg"
+					}
+				}
+			}
+		}
+	],
+	"$defs": {
+		"position": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"x",
+				"y"
+			],
+			"properties": {
+				"x": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 100000
+				},
+				"y": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 100000
+				}
+			}
+		},
+		"unit": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"name",
+				"cost",
+				"hp",
+				"baseActionCooldown",
+				"maxActionCooldown",
+				"damageCore",
+				"damageUnit",
+				"damageDeposit",
+				"damageWall",
+				"buildType"
+			],
+			"properties": {
+				"name": {
+					"type": "string",
+					"minLength": 1
+				},
+				"cost": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"hp": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"baseActionCooldown": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"maxActionCooldown": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"balancePerCooldownStep": {
+					"type": "integer",
+					"minimum": 1
+				},
+				"damageCore": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"damageUnit": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"damageDeposit": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"damageWall": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"buildType": {
+					"type": "integer",
+					"enum": [
+						0,
+						1,
+						2
+					]
+				}
+			}
+		},
+		"jigsawCfg": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"templatePlaceAttemptCount",
+				"additionalWallPlaceAttemptCount",
+				"depositCount",
+				"gemPileCount",
+				"minTemplateSpacing",
+				"minCoreDistance",
+				"baseDepositIncome",
+				"depositAdditionalIncomePerAdjacentWall",
+				"depositMultiplierIfFullySurrounded",
+				"randomDepositIncomeVariation",
+				"randomGemPileIncomeVariation"
+			],
+			"properties": {
+				"templatePlaceAttemptCount": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 10000000
+				},
+				"additionalWallPlaceAttemptCount": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 10000000
+				},
+				"depositCount": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 100000
+				},
+				"gemPileCount": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 100000
+				},
+				"minTemplateSpacing": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 1000
+				},
+				"minCoreDistance": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 1000
+				},
+				"baseDepositIncome": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 10000000
+				},
+				"depositAdditionalIncomePerAdjacentWall": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 10000000
+				},
+				"depositMultiplierIfFullySurrounded": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 1000
+				},
+				"randomDepositIncomeVariation": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 10000000
+				},
+				"randomGemPileIncomeVariation": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 10000000
+				}
+			}
+		},
+		"sparseCfg": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"depositCount",
+				"depositBalanceVariation",
+				"gemPileCount",
+				"gemPileBalanceVariation",
+				"wallCount",
+				"coreBuffer"
+			],
+			"properties": {
+				"depositCount": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 100000
+				},
+				"depositBalanceVariation": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 10000000
+				},
+				"gemPileCount": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 100000
+				},
+				"gemPileBalanceVariation": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 10000000
+				},
+				"wallCount": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 1000000
+				},
+				"coreBuffer": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 1000
+				}
+			}
+		}
+	}
+}

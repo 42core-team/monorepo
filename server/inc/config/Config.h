@@ -75,7 +75,6 @@ struct UnitConfig
 struct ServerConfig
 {
 	std::vector<std::string> replayFolderPaths;
-	std::string dataFolderPath;
 	unsigned int timeoutTicks;
 	unsigned int timeoutMs;
 	unsigned int clientWaitTimeoutMs;
@@ -104,10 +103,18 @@ class Config
 			gameConfigFilePath = path;
 		}
 		static std::string getGameConfigFilePath() { return gameConfigFilePath; }
+		static void setDataFolderPath(const std::string &path)
+		{
+			dataFolderPath = path;
+			if (dataFolderPath.back() == '/')
+				dataFolderPath.pop_back();
+		}
+		static std::string getDataFolderPath() { return dataFolderPath; }
 
 	private:
 		static std::string serverConfigFilePath;
 		static std::string gameConfigFilePath;
+		static std::string dataFolderPath;
 };
 
 #endif // CONFIG_H

@@ -59,6 +59,11 @@ endforeach()
 list(REMOVE_DUPLICATES ALL_INC_DIRS)
 target_include_directories(server PRIVATE ${ALL_INC_DIRS})
 
+target_include_directories(server PRIVATE
+	"${CMAKE_BINARY_DIR}/nlohmann_json/include/nlohmann"
+	"${CMAKE_BINARY_DIR}/_deps/json_schema_validator-src/src/nlohmann"
+)
+
 target_compile_options(server PRIVATE -Wall -Wextra -Werror)
 
-target_link_libraries(server PRIVATE nlohmann_json_schema_validator)
+target_link_libraries(server PRIVATE nlohmann_json nlohmann_json_schema_validator)

@@ -1,0 +1,12 @@
+{
+  "configurations": [
+    {
+      "name": "client_lib",
+      "compilerPath": "/usr/bin/cc",
+      "cStandard": "c23",
+      "intelliSenseMode": "linux-gcc-x64",
+      "includePath": ["${workspaceFolder}/inc"]
+    }
+  ],
+  "version": 4
+}
