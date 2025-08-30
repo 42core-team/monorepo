@@ -2,7 +2,3 @@
 
 .github/              @PaulicStudios
 helm/                 @PaulicStudios
- 
-/visualizer/            @flomero
-/client_lib/docs/       @flomero
-/client_lib/DoxyFile    @flomero
