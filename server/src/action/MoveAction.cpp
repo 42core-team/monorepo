@@ -1,7 +1,5 @@
 #include "MoveAction.h"
 
-#include "Unit.h"
-
 MoveAction::MoveAction(json msg) : Action(ActionType::MOVE)
 {
 	decodeJSON(msg);

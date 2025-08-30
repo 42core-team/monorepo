@@ -1,12 +1,25 @@
 #include "Config.h"
 
+#include <json-schema.hpp>
+using nlohmann::json_schema::json_validator;
+
 std::string Config::serverConfigFilePath = "";
 std::string Config::gameConfigFilePath = "";
+std::string Config::dataFolderPath = "";
 
 #include "JigsawWorldGenerator.h"
 #include "SparseWorldGenerator.h"
 #include "HardcodedWorldGenerator.h"
 #include "EmptyWorldGenerator.h"
+
+static void validate_or_die(const json& instance, const std::string& schema_name) {
+	std::string fullName = Config::getDataFolderPath() + "/config-schemas/" + schema_name;
+	std::ifstream s(fullName);
+	if (!s) { Logger::LogErr("Could not open schema: " + fullName); exit(EXIT_FAILURE); }
+	json schema = json::parse(s);
+	try { json_validator v; v.set_root_schema(schema); v.validate(instance); }
+	catch (const std::exception& e) { Logger::Log(LogLevel::ERROR, std::string("Validation error: ") + e.what()); exit(EXIT_FAILURE); }
+}
 
 static ServerConfig parseServerConfig()
 {
@@ -20,6 +33,7 @@ static ServerConfig parseServerConfig()
 	}
 
 	json j = json::parse(inFile);
+	validate_or_die(j, "server-config.schema.json");
 
 	if (j.contains("replayFolderPaths") && j["replayFolderPaths"].is_array()) {
 		config.replayFolderPaths.clear();
@@ -34,9 +48,6 @@ static ServerConfig parseServerConfig()
 	} else {
 		config.replayFolderPaths = {"replays"};
 	}
-	config.dataFolderPath = j.value("dataFolderPath", "data/");
-	if (config.dataFolderPath.back() == '/')
-		config.dataFolderPath.pop_back();
 	config.timeoutTicks = j.value("timeoutTicks", 3000);
 	config.timeoutMs = j.value("timeoutMs", 3000);
 	config.clientWaitTimeoutMs = j.value("clientWaitTimeoutMs", 500);
@@ -57,6 +68,7 @@ static GameConfig parseGameConfig()
 	}
 
 	json j = json::parse(inFile);
+	validate_or_die(j, "game-config.schema.json");
 
 	config.gridSize = j.value("gridSize", 25);
 	if (j.contains("seed") && j["seed"].is_number_unsigned())
@@ -115,6 +127,12 @@ static GameConfig parseGameConfig()
 			int buildTypeInt = unitJson.value("buildType", 0);
 			unit.buildType = static_cast<BuildType>(buildTypeInt);
 
+			if (unit.baseActionCooldown > unit.maxActionCooldown)
+			{
+				Logger::LogErr("baseActionCooldown > maxActionCooldown for unit: " + unit.name);
+				exit(EXIT_FAILURE);
+			}
+
 			config.units.push_back(unit);
 		}
 	}
@@ -129,8 +147,8 @@ static GameConfig parseGameConfig()
 
 			if (!pos.isValid(config.gridSize))
 			{
-				Logger::Log(LogLevel::ERROR, "Invalid core position: (" + std::to_string(pos.x) + ", " + std::to_string(pos.y) + "). Skipping this position.");
-				continue;
+				Logger::LogErr("Invalid core position: (" + std::to_string(pos.x) + ", " + std::to_string(pos.y) + ").");
+				exit(EXIT_FAILURE);
 			}
 
 			config.corePositions.push_back(pos);

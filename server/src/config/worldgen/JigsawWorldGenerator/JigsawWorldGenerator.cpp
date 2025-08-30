@@ -15,7 +15,7 @@ static bool isValidPreMirrorPos(Position pos)
 
 void JigsawWorldGenerator::loadTemplates()
 {
-	const std::string templateFolder = Config::server().dataFolderPath + "/jigsaw-templates";
+	const std::string templateFolder = Config::getDataFolderPath() + "/jigsaw-templates";
 	std::vector<std::string> files;
 	for (auto &e : std::filesystem::directory_iterator(templateFolder))
 		if (e.path().extension() == ".txt")

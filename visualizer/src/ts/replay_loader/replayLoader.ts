@@ -4,7 +4,7 @@ import type { TickAction } from "./action";
 import type { GameConfig } from "./config";
 import type { TickObject } from "./object";
 
-const expectedReplayVersion = "1.2.1";
+const expectedReplayVersion = "1.2.0";
 const winnerNameElement = document.getElementById(
 	"winnername",
 ) as HTMLSpanElement;
@@ -124,7 +124,7 @@ class ReplayLoader {
 		}
 		if (this.replayData.misc.version !== expectedReplayVersion) {
 			alert(
-				"Unsupported replay version. Things might stop working unexpectedly.",
+				`Unsupported replay version. (Expected ${expectedReplayVersion}, but got: ${this.replayData.misc.version}) Things might stop working unexpectedly.`,
 			);
 			console.error(
 				`Expected version: ${expectedReplayVersion}, but got: ${this.replayData.misc.version}`,
