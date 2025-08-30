@@ -34,7 +34,7 @@ std::string CreateAction::execute(Core *core)
 	if (!closestEmptyPos.isValid(Config::game().gridSize))
 		return "no valid position found";
 
-	if (unit_type_ >= Config::game().units.size() || unit_type_ < 0)
+	if (unit_type_ >= Config::game().units.size())
 		return "invalid unit type";
 
 	unsigned int unitCost = Config::getUnitConfig(unit_type_).cost;

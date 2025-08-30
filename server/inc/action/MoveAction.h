@@ -6,6 +6,7 @@
 #include "Action.h"
 #include "Common.h"
 #include "GemPile.h"
+#include "Unit.h"
 
 class Unit;
 

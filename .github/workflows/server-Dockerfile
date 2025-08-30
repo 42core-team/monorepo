@@ -2,13 +2,16 @@ FROM ubuntu:noble AS build-game
 RUN apt-get update && apt-get install -y \
     build-essential \
     clang \
+    cmake \
+    git \
     libcurl4-openssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /core
 COPY ./server .
 
-RUN make re
+RUN make fclean
+RUN make prod
 
 FROM ubuntu:noble AS release
 RUN apt-get update && apt-get install -y \

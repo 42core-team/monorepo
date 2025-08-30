@@ -21,6 +21,10 @@ class Object
 			: id_(nextObjectId_++), hp_(hp), type_(type) {}
 		Object(const Object &other)
 			: id_(nextObjectId_++), hp_(other.hp_), type_(other.type_) {}
+		Object& operator=(const Object& other) {
+			if (this != &other) { hp_ = other.hp_; type_ = other.type_; }
+			return *this;
+		}
 		virtual ~Object() {}
 
 		virtual void tick(unsigned long long tickCount) = 0;

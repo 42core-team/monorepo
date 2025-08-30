@@ -45,14 +45,15 @@ static std::string sanitizeTeamName(const std::string& teamName, const std::stri
 
 int main(int argc, char *argv[])
 {
-	if (argc < 5)
+	if (argc < 6)
 	{
-		Logger::Log(LogLevel::ERROR, std::string("Usage: ") + argv[0] + " [server config file path] [game config file path] <teamId1> <teamId2> ...");
+		Logger::Log(LogLevel::ERROR, std::string("Usage: ") + argv[0] + " [server config file path] [game config file path] [data folder path] <teamId1> <teamId2> ... <teamIdN>");
 		return 1;
 	}
 
 	Config::setServerConfigFilePath(argv[1]);
 	Config::setGameConfigFilePath(argv[2]);
+	Config::setDataFolderPath(argv[3]);
 	Config::server();
 	Config::game();
 	json encodedConfig = Config::encodeConfig();
@@ -60,14 +61,14 @@ int main(int argc, char *argv[])
 
 	ReplayEncoder::verifyReplaySaveFolder();
 
-	if (argc - 3 > (int)Config::game().corePositions.size())
+	if (argc - 4 > (int)Config::game().corePositions.size())
 	{
 		Logger::Log(LogLevel::ERROR, "Too many team IDs for Core Locations specified.");
 		return 1;
 	}
 
 	std::vector<unsigned int> expectedTeamIds;
-	for (int i = 3; i < argc; i++)
+	for (int i = 4; i < argc; i++)
 		expectedTeamIds.push_back(std::stoi(argv[i]));
 
 	std::sort(expectedTeamIds.begin(), expectedTeamIds.end());
