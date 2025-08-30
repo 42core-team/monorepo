@@ -49,7 +49,7 @@ const fullscreenToggleButton = document.getElementById(
 // consts
 
 const minSpeed = 0.5;
-const maxSpeed = 20;
+const maxSpeed = 50;
 const speedIncrement = 0.5;
 
 // Time Tracking Variables
