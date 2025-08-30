@@ -1,0 +1,23 @@
+{
+	"configurations": [
+		{
+			"name": "Linux",
+			"compilerPath": "/usr/bin/cc",
+			"cStandard": "c23",
+			"intelliSenseMode": "linux-gcc-x64",
+			"includePath": [
+				"${workspaceFolder}/client_lib/inc",
+				"${workspaceFolder}/my-core-bot/gridmaster/inc",
+				"${workspaceFolder}/my-core-bot/my-core-bot/inc",
+				"${workspaceFolder}/server/inc/**",
+				"${workspaceFolder}/server/inc/**/**",
+				"${workspaceFolder}/server/inc/**/*",
+				"${workspaceFolder}/server/build/nlohmann_json/include",
+				"${workspaceFolder}/server/build/_deps/json_schema_validator-src/src/nlohmann"
+			],
+			"cppStandard": "c++17",
+			"defines": []
+		}
+	],
+	"version": 4
+}

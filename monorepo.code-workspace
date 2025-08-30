@@ -1,9 +1,0 @@
-{
-	"folders": [
-		{ "path": "server" },
-		{ "path": "client_lib" },
-		{ "path": "my-core-bot/gridmaster" },
-		{ "path": "my-core-bot/my-core-bot" }
-	],
-	"settings": {}
-}
