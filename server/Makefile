@@ -16,7 +16,7 @@ prod:
 	$(MAKE) CONFIG=Release all
 
 clean:
-	$(CMAKE) --build $(BUILD_DIR) --target clean
+	@if [ -d "$(BUILD_DIR)" ]; then $(CMAKE) --build "$(BUILD_DIR)" --target clean; else :; fi
 
 fclean: clean
 	rm -f server

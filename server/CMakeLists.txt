@@ -5,7 +5,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# fetch dependencies
+if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE dev CACHE STRING "Choose build type: dev or prod" FORCE)
+endif()
+set(AVAILABLE_BUILD_TYPES dev prod)
+set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "${AVAILABLE_BUILD_TYPES}")
+
+set(FETCHCONTENT_QUIET FALSE)
 
 include(FetchContent)
 
@@ -30,14 +36,18 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(json_schema_validator)
 
-file(GLOB_RECURSE SERVER_SOURCES CONFIGURE_DEPENDS src/*.cpp)
+set(CMAKE_CXX_FLAGS_PROD "-O3 -DNDEBUG")
+set(CMAKE_C_FLAGS_PROD   "-O3 -DNDEBUG")
+set(CMAKE_EXE_LINKER_FLAGS_PROD "")
 
-# configure executable
+set(CMAKE_CXX_FLAGS_DEV "${CMAKE_CXX_FLAGS_PROD} -g -fno-omit-frame-pointer -fsanitize=address")
+set(CMAKE_C_FLAGS_DEV   "${CMAKE_C_FLAGS_PROD} -g -fno-omit-frame-pointer -fsanitize=address")
+set(CMAKE_EXE_LINKER_FLAGS_DEV "${CMAKE_EXE_LINKER_FLAGS_PROD} -fsanitize=address")
+
+file(GLOB_RECURSE SERVER_SOURCES CONFIGURE_DEPENDS src/*.cpp)
 
 add_executable(server ${SERVER_SOURCES})
 set_target_properties(server PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}")
-
-# include headers recursively
 
 set(INC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 file(GLOB_RECURSE INC_SUBDIRS LIST_DIRECTORIES true "${INC_ROOT}/*")
@@ -50,19 +60,6 @@ endforeach()
 list(REMOVE_DUPLICATES ALL_INC_DIRS)
 target_include_directories(server PRIVATE ${ALL_INC_DIRS})
 
-if(MSVC)
-	target_compile_options(server PRIVATE /W4 /WX)
-else()
-	target_compile_options(server PRIVATE -Wall -Wextra -Werror)
-endif()
-
-# add fsan if were in debug mode
-
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-	if(NOT MSVC)
-		target_compile_options(server PRIVATE -fsanitize=address -g)
-		target_link_options(server PRIVATE -fsanitize=address)
-	endif()
-endif()
+target_compile_options(server PRIVATE -Wall -Wextra -Werror)
 
 target_link_libraries(server PRIVATE nlohmann_json_schema_validator)
