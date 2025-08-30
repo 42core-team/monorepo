@@ -1,5 +1,4 @@
 #include "Action.h"
-#include <memory>
 
 Action::Action(ActionType type) : is_valid_(true), type_(type) {}
 

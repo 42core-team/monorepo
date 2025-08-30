@@ -78,6 +78,13 @@
 		"cinttypes": "cpp",
 		"typeinfo": "cpp",
 		"valarray": "cpp",
-		"variant": "cpp"
+		"variant": "cpp",
+		"__bit_reference": "cpp",
+		"__locale": "cpp",
+		"__split_buffer": "cpp",
+		"__verbose_abort": "cpp",
+		"execution": "cpp",
+		"ios": "cpp",
+		"locale": "cpp"
 	}
 }

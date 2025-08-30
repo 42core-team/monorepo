@@ -19,20 +19,23 @@ CONFIG_GAME_FILE := $(CONFIG_FOLDER)/soft-config.json
 CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 
 # -------------------- Run targets --------------------
-all: build
+all: build_clients
 re: fclean all
 
-run: stop build
-	./$(SERVER_FOLDER)/$(SERVER_EXECUTABLE) $(CONFIG_SERVER_FILE) $(CONFIG_GAME_FILE) $(PLAYER1_ID) $(PLAYER2_ID) > /dev/null &
-	$(PLAYER_2_FOLDER)/$(PLAYER_2_EXECUTABLE) $(PLAYER1_ID) > /dev/null &
-	$(PLAYER_1_FOLDER)/$(PLAYER_1_EXECUTABLE) $(PLAYER2_ID)
-ren: fclean run
+run: prod
+start: prod
 
-debug: stop build
+dev: stop build_clients server_build_dev
 	$(PLAYER_2_FOLDER)/$(PLAYER_2_EXECUTABLE) $(PLAYER1_ID) &
 	$(PLAYER_1_FOLDER)/$(PLAYER_1_EXECUTABLE) $(PLAYER2_ID) &
 	./$(SERVER_FOLDER)/$(SERVER_EXECUTABLE) $(CONFIG_SERVER_FILE) $(CONFIG_GAME_FILE) $(PLAYER1_ID) $(PLAYER2_ID)
-rebug: fclean debug
+redev: fclean dev
+
+prod: stop build_clients server_build_prod
+	$(PLAYER_2_FOLDER)/$(PLAYER_2_EXECUTABLE) $(PLAYER1_ID) &
+	$(PLAYER_1_FOLDER)/$(PLAYER_1_EXECUTABLE) $(PLAYER2_ID) &
+	./$(SERVER_FOLDER)/$(SERVER_EXECUTABLE) $(CONFIG_SERVER_FILE) $(CONFIG_GAME_FILE) $(PLAYER1_ID) $(PLAYER2_ID)
+reprod: fclean prod
 
 stop:
 	@pkill $(SERVER_EXECUTABLE) > /dev/null || true &
@@ -40,10 +43,13 @@ stop:
 	@pkill $(PLAYER_2_EXECUTABLE) > /dev/null || true
 
 # -------------------- Build targets --------------------
-build: server_build player_1_build player_2_build visualizer_build
+server_build_dev:
+	make -C $(SERVER_FOLDER) dev
 
-server_build:
-	make -C $(SERVER_FOLDER)
+server_build_prod:
+	make -C $(SERVER_FOLDER) prod
+
+build_clients: player_1_build player_2_build
 
 player_1_build:
 	make -C $(PLAYER_1_FOLDER) CONNECTIONDIR=/workspaces/monorepo/client_lib
@@ -80,4 +86,4 @@ vis:
 visualizer:
 	cd visualizer && npm i && npm run dev
 
-.PHONY: all re run ren debug rebug stop build server_build player_1_build player_2_build clean fclean update vis visualizer visualizer_build
+.PHONY: all re run start dev redev prod reprod stop server_build_dev server_build_prod build_clients player_1_build player_2_build visualizer_build clean fclean update vis visualizer
