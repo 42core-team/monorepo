@@ -157,16 +157,18 @@ typedef struct s_config
 	unsigned long wall_hp;
 	/// @brief How much it costs for a builder to build a wall.
 	unsigned long wall_build_cost;
-	/// @brief How much healthpoints a bomb has.
-	unsigned long bomb_hp;
 	/// @brief How many ticks a bomb takes to explode after being thrown.
 	unsigned long bomb_countdown;
 	/// @brief How much it costs to throw a bomb.
 	unsigned long bomb_throw_cost;
 	/// @brief How big the explosion of a bomb is.
 	unsigned long bomb_reach;
-	/// @brief How much damage a bomb does to objects hit by its explosion.
-	unsigned long bomb_damage;
+	/// @brief How much damage a bomb does to cores hit by its explosion.
+	unsigned long bomb_damage_core;
+	/// @brief How much damage a bomb does to units hit by its explosion.
+	unsigned long bomb_damage_unit;
+	/// @brief How much damage a bomb does to deposits hit by its explosion.
+	unsigned long bomb_damage_deposit;
 	/// @brief List of all unit types that are available in the game. NULL-terminated.
 	t_unit_config **units;
 } t_config;

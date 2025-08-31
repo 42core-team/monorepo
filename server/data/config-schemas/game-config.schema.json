@@ -258,7 +258,7 @@
 					"minimum": 0
 				},
 				"buildType": {
-					"type": "integer",
+					"type": "string",
 					"enum": [
 						"none",
 						"wall",

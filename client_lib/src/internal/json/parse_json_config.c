@@ -57,11 +57,12 @@ void core_internal_parse_config(char *json)
 	game.config.initial_balance = (unsigned long)json_find(root, "initialBalance")->number;
 	game.config.wall_hp = (unsigned long)json_find(root, "wallHp")->number;
 	game.config.wall_build_cost = (unsigned long)json_find(root, "wallBuildCost")->number;
-	game.config.bomb_hp = (unsigned long)json_find(root, "bombHp")->number;
 	game.config.bomb_countdown = (unsigned long)json_find(root, "bombCountdown")->number;
 	game.config.bomb_throw_cost = (unsigned long)json_find(root, "bombThrowCost")->number;
 	game.config.bomb_reach = (unsigned long)json_find(root, "bombReach")->number;
-	game.config.bomb_damage = (unsigned long)json_find(root, "bombDamage")->number;
+	game.config.bomb_damage_core = (unsigned long)json_find(root, "bombDamageCore")->number;
+	game.config.bomb_damage_unit = (unsigned long)json_find(root, "bombDamageUnit")->number;
+	game.config.bomb_damage_deposit = (unsigned long)json_find(root, "bombDamageDeposit")->number;
 
 	game.config.units = core_static_parse_unitConfig(root);
 

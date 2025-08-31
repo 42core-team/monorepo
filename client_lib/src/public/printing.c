@@ -104,11 +104,12 @@ void core_print_config_game(void)
 	printf("	- Initial gems: %lu\n", game.config.initial_balance);
 	printf("	- Wall HP: %lu\n", game.config.wall_hp);
 	printf("	- Wall Build Cost: %lu\n", game.config.wall_build_cost);
-	printf("	- Bomb HP: %lu\n", game.config.bomb_hp);
 	printf("	- Bomb Countdown: %lu\n", game.config.bomb_countdown);
 	printf("	- Bomb Throw Cost: %lu\n", game.config.bomb_throw_cost);
 	printf("	- Bomb Reach: %lu\n", game.config.bomb_reach);
-	printf("	- Bomb Damage: %lu\n", game.config.bomb_damage);
+	printf("	- Bomb Damage to Cores: %lu\n", game.config.bomb_damage_core);
+	printf("	- Bomb Damage to Units: %lu\n", game.config.bomb_damage_unit);
+	printf("	- Bomb Damage to Deposits: %lu\n", game.config.bomb_damage_deposit);
 }
 
 void core_print_config(void)
