@@ -11,15 +11,14 @@ on:
       - "client_lib/**"
       - "my-core-bot/**"
       - "server/**"
+    tags:
+      - "v*"
   pull_request:
     paths:
       - ".github/workflows/**"
       - "client_lib/**"
       - "my-core-bot/**"
       - "server/**"
-  create:
-    tags:
-      - "v*"
 
 permissions:
   contents: read
@@ -243,15 +242,15 @@ jobs:
 
       - name: Generate additional version tags (server)
         id: version-tags-server
-        if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, '-')
         run: |
           # Extract version from tag (remove 'v' prefix if present)
           VERSION=${GITHUB_REF#refs/tags/}
           VERSION=${VERSION#v}
-          
+
           # Split version into parts
           IFS='.' read -r -a parts <<< "$VERSION"
-          
+
           # Generate hierarchical tags based on number of parts
           ADDITIONAL_TAGS=""
           if [ ${#parts[@]} -ge 1 ]; then
@@ -266,7 +265,7 @@ jobs:
           if [ ${#parts[@]} -ge 4 ]; then
             ADDITIONAL_TAGS="$ADDITIONAL_TAGS,${{ env.SERVER_IMAGE }}:v${parts[0]}.${parts[1]}.${parts[2]}.${parts[3]}"
           fi
-          
+
           echo "additional-tags=$ADDITIONAL_TAGS" >> $GITHUB_OUTPUT
           echo "Generated additional tags: $ADDITIONAL_TAGS"
 
@@ -276,7 +275,7 @@ jobs:
           # Create manifest for base tags from metadata
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf '${{ env.SERVER_IMAGE }}@sha256:%s ' *)
-          
+
           # Create manifest for additional version tags if they exist
           if [ -n "${{ steps.version-tags-server.outputs.additional-tags }}" ]; then
             IFS=',' read -r -a additional_tags <<< "${{ steps.version-tags-server.outputs.additional-tags }}"
@@ -329,15 +328,15 @@ jobs:
 
       - name: Generate additional version tags (my-core-bot)
         id: version-tags-bot
-        if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, '-')
         run: |
           # Extract version from tag (remove 'v' prefix if present)
           VERSION=${GITHUB_REF#refs/tags/}
           VERSION=${VERSION#v}
-          
+
           # Split version into parts
           IFS='.' read -r -a parts <<< "$VERSION"
-          
+
           # Generate hierarchical tags based on number of parts
           ADDITIONAL_TAGS=""
           if [ ${#parts[@]} -ge 1 ]; then
@@ -352,7 +351,7 @@ jobs:
           if [ ${#parts[@]} -ge 4 ]; then
             ADDITIONAL_TAGS="$ADDITIONAL_TAGS,${{ env.BOT_IMAGE }}:v${parts[0]}.${parts[1]}.${parts[2]}.${parts[3]}"
           fi
-          
+
           echo "additional-tags=$ADDITIONAL_TAGS" >> $GITHUB_OUTPUT
           echo "Generated additional tags: $ADDITIONAL_TAGS"
 
@@ -362,7 +361,7 @@ jobs:
           # Create manifest for base tags from metadata
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf '${{ env.BOT_IMAGE }}@sha256:%s ' *)
-          
+
           # Create manifest for additional version tags if they exist
           if [ -n "${{ steps.version-tags-bot.outputs.additional-tags }}" ]; then
             IFS=',' read -r -a additional_tags <<< "${{ steps.version-tags-bot.outputs.additional-tags }}"
