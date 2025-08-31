@@ -125,6 +125,27 @@ function getTeamIndex(teamId: number | undefined): AssetTeam {
 
 // object
 
+export function drawSpawnPreviewForNextTick(
+	spawnObj: TickObject,
+	svgCanvas: SVGSVGElement,
+	currentTickData: tickData,
+): void {
+	const ease = new EaseInOutTimingCurve().getValue(currentTickData.tickProgress);
+	const mid = new MidTickIncreaseTimingCurve().getValue(currentTickData.tickProgress);
+	const metrics = computeSmoothBarInstructions(spawnObj, spawnObj, spawnObj.x, spawnObj.y, mid);
+
+	let scale = ease;
+	if (spawnObj.type === 5) {
+		const cfgTotal = Math.max(1, getGameConfig()?.bombCountdown ?? 1);
+		const currLeft = Math.max(0, Math.min(cfgTotal, (spawnObj as any).countdown ?? 0));
+		const p = 1 - currLeft / cfgTotal;
+		const bombScale = 0.65 + 0.65 * p;
+		scale *= bombScale / 0.8;
+	}
+
+	drawObject(svgCanvas, spawnObj, spawnObj.x, spawnObj.y, scale, metrics);
+}
+
 function drawObject(
 	svgCanvas: SVGSVGElement,
 	obj: TickObject,
@@ -249,13 +270,6 @@ export function calcAndDrawObject(
 	let x = currObj.x;
 	let y = currObj.y;
 
-	let prevObj: TickObject | undefined;
-	try {
-		if (currentTickData.tick - 1 >= 0)
-			prevObj = getStateAt(currentTickData.tick - 1)?.objects.find(
-				(o) => o.id === currObj.id,
-			);
-	} catch {}
 	let nextObj: TickObject | undefined;
 	try {
 		nextObj = getStateAt(currentTickData.tick + 1)?.objects.find(
@@ -270,12 +284,10 @@ export function calcAndDrawObject(
 		currentTickData.tickProgress,
 	);
 
-	if (!prevObj || prevObj.state === "dead") {
-		scale = easeInOutProgress;
-	}
-	if (!nextObj || nextObj.state === "dead") {
+	if (!nextObj || nextObj.state === "dead") { // despawn anim
 		scale = 1 - midTickIncreaseProgress;
 	}
+
 	// check movement
 	if (nextObj) {
 		x = currObj.x + (nextObj.x - currObj.x) * easeInOutProgress;

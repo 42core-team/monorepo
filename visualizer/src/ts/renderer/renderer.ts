@@ -6,7 +6,7 @@ import {
 	getGameMisc,
 	getStateAt,
 } from "../replay_loader/replayLoader";
-import { calcAndDrawObject, initializeTeamMapping } from "./objectRenderer";
+import { calcAndDrawObject, drawSpawnPreviewForNextTick, initializeTeamMapping } from "./objectRenderer";
 
 const svgNS = "http://www.w3.org/2000/svg";
 
@@ -66,6 +66,15 @@ function drawFrame(timestamp: number): void {
 
 	for (const currObj of replayData.objects) {
 		calcAndDrawObject(currObj, svgCanvas, currentTickData);
+	}
+	const nextTickData = getStateAt(currentTickData.tick + 1);
+	if (nextTickData) {
+		const currentIds = new Set(replayData.objects.map((o) => o.id));
+		for (const spawn of nextTickData.objects) {
+			if (!currentIds.has(spawn.id)) {
+				drawSpawnPreviewForNextTick(spawn as TickObject, svgCanvas, currentTickData);
+			}
+		}
 	}
 
 	if (tooltipElement.style.display === "block" && lastSVGPoint) {
