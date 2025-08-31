@@ -14,6 +14,7 @@ Game::Game(std::vector<unsigned int> team_ids)
 		uint64_t time_part = std::chrono::high_resolution_clock::now().time_since_epoch().count();
 		std::seed_seq seq{rd(), uint32_t(time_part), uint32_t(time_part >> 32)};
 		seq.generate(&seed, &seed + 1);
+		seed %= 10000000; // make seed adhere to config schema limits
 	}
 	Logger::Log("Generating world with seed \"" + std::to_string(seed) + "\".");
 	Config::game().worldGenerator->generateWorld(seed);
