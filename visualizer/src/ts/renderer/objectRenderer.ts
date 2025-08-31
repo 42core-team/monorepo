@@ -284,7 +284,7 @@ export function calcAndDrawObject(
 		currentTickData.tickProgress,
 	);
 
-	if (!nextObj || nextObj.state === "dead") { // despawn anim
+	if (!nextObj || nextObj.state === "dead" || nextObj.hp <= 0) { // despawn anim
 		scale = 1 - midTickIncreaseProgress;
 	}
 
@@ -340,7 +340,8 @@ export function calcAndDrawObject(
 		const leftSmooth = currLeft + (nextLeftRaw - currLeft) * currentTickData.tickProgress;
 		const p = 1 - leftSmooth / cfgTotal;
 		const bombScale = 0.65 + 0.65 * p;
-		scale *= bombScale / 0.8;
+		if (nextObj) // if the bomb doesnt exist next frame, use the normal despawning animation
+			scale *= bombScale / 0.8;
 	}
 
 	drawObject(svgCanvas, currObj, x, y, scale, metricBars);
@@ -352,13 +353,14 @@ export function calcAndDrawObject(
 		return ease.getValue(1 - (t - 0.5) / 0.5);
 	};
 	if (
-		currObj.type === 5 &&
-		currObj.countdown === 0 &&
-		Array.isArray((currObj as any).explosionTiles) &&
-		(currObj as any).explosionTiles.length > 0
+		nextObj &&
+		nextObj.type === 5 &&
+		nextObj.countdown === 0 &&
+		Array.isArray((nextObj as any).explosionTiles) &&
+		(nextObj as any).explosionTiles.length > 0
 	) {
 		const s = Math.max(0, Math.min(1, explosionScale(currentTickData.tickProgress)));
-		for (const tile of (currObj as any).explosionTiles as { x: number; y: number }[]) {
+		for (const tile of (nextObj as any).explosionTiles as { x: number; y: number }[]) {
 			const key = `exp-${tile.x},${tile.y}`;
 			let img = svgCanvas.querySelector(`image[data-exp-key="${key}"]`) as SVGImageElement | null;
 			if (!img) {
