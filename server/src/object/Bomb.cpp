@@ -43,6 +43,8 @@ void Bomb::explode()
 
 	for (int dy = -radius; dy <= radius; ++dy) {
 		for (int dx = -radius; dx <= radius; ++dx) {
+			if (Position(bomb.x + dx, bomb.y + dy).distance(bomb) > radius) continue;
+
 			if (dx == 0 && dy == 0) continue;
 			int tx = bomb.x + dx, ty = bomb.y + dy;
 
