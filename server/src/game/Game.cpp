@@ -153,57 +153,60 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 		}
 	}
 
-	// 2. UPDATE OBJECTS
+	// 2. TICK OBJECTS
+
+	for (auto &obj : Board::instance())
+		obj.tick(tick);
+
+	// 3. DELETE DEAD OBJECTS
 
 	for (auto &obj : Board::instance())
 	{
-		if (obj.getHP() <= 0)
-		{
-			switch (obj.getType())
-			{
-			case ObjectType::Unit:
-				Stats::instance().inc(stat_keys::units_destroyed);
-				break;
-			case ObjectType::Wall:
-				Stats::instance().inc(stat_keys::walls_destroyed);
-				break;
-			case ObjectType::Core:
-				Stats::instance().inc(stat_keys::cores_destroyed);
-				break;
-			case ObjectType::Bomb:
-				Stats::instance().inc(stat_keys::bombs_destroyed);
-				break;
-			default:
-				break;
-			}
+		if (obj.getHP() > 0) continue;
 
-			if (obj.getType() == ObjectType::Unit && ((Unit &)obj).getBalance() > 0)
-			{
-				Position objPos = Board::instance().getObjectPositionById(obj.getId());
-				unsigned int unitBalance = ((Unit &)obj).getBalance();
-				Board::instance().removeObjectById(obj.getId());
-				Board::instance().addObject<GemPile>(GemPile(unitBalance), objPos);
-			}
-			// Cores must stay so clients know they died, Bombs must stay so the visualizer can get encoded positions where the explosion happened
-			else if (obj.getType() != ObjectType::Core && obj.getType() != ObjectType::Bomb)
-			{
-				Board::instance().removeObjectById(obj.getId());
-			}
-		}
-		else
+		switch (obj.getType())
 		{
-			obj.tick(tick);
+		case ObjectType::Unit:
+			Stats::instance().inc(stat_keys::units_destroyed);
+			break;
+		case ObjectType::Wall:
+			Stats::instance().inc(stat_keys::walls_destroyed);
+			break;
+		case ObjectType::Core:
+			Stats::instance().inc(stat_keys::cores_destroyed);
+			break;
+		case ObjectType::Bomb:
+			Stats::instance().inc(stat_keys::bombs_destroyed);
+			break;
+		default:
+			break;
+		}
+
+		if (obj.getType() == ObjectType::Unit)
+		{
+			Position objPos = Board::instance().getObjectPositionById(obj.getId());
+			unsigned int unitBalance = ((Unit &)obj).getBalance();
+
+			Board::instance().removeObjectById(obj.getId());
+
+			if (unitBalance > 0)
+				Board::instance().addObject<GemPile>(GemPile(unitBalance), objPos);
+		}
+		// Cores must stay so clients know they died, Bombs must stay so the visualizer can get encoded positions where the explosion happened
+		else if (obj.getType() != ObjectType::Core && obj.getType() != ObjectType::Bomb)
+		{
+			Board::instance().removeObjectById(obj.getId());
 		}
 	}
 
-	// 3. CHECK TIMEOUT
+	// 4. CHECK TIMEOUT
 
 	if (tick >= Config::server().timeoutTicks)
 		killWorstPlayerOnTimeout();
 	if (std::chrono::steady_clock::now() - serverStartTime >= std::chrono::milliseconds(Config::server().timeoutMs))
 		killWorstPlayerOnTimeout();
 
-	// 4. SEND STATE
+	// 5. SEND STATE
 
 	sendState(actions, tick, failures);
 	Visualizer::visualizeGameState(tick);
@@ -212,7 +215,7 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 	// ----------------------------
 
 
-	// 5. REMOVE CORES
+	// 6. REMOVE CORES
 	// connection libs must receive one final state json with their core at 0 hp to realize they lost
 
 	std::vector<unsigned> removeTeamIds;
@@ -240,7 +243,7 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 		}
 	}
 
-	// 6. REMOVE BOMBS
+	// 7. REMOVE BOMBS
 
 	for (auto &obj : Board::instance())
 	{
@@ -250,7 +253,7 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 		}
 	}
 
-	// 7. ActionCooldown DECREMENT FOR UNITS
+	// 8. ActionCooldown DECREMENT FOR UNITS
 	// must happen AFTER state send cause clients also do it locally for replay efficiency, otherwise we get a server/client desync with two decrements in one tick when ActionCooldown is reset
 
 	for (auto &obj : Board::instance())
