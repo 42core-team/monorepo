@@ -209,6 +209,7 @@
 				"hp",
 				"baseActionCooldown",
 				"maxActionCooldown",
+				"balancePerCooldownStep",
 				"damageCore",
 				"damageUnit",
 				"damageDeposit",
@@ -259,9 +260,9 @@
 				"buildType": {
 					"type": "integer",
 					"enum": [
-						0,
-						1,
-						2
+						"none",
+						"wall",
+						"bomb"
 					]
 				}
 			}

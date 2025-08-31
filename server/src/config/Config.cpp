@@ -125,8 +125,14 @@ static GameConfig parseGameConfig()
 			unit.damageUnit = unitJson.value("damageUnit", 0);
 			unit.damageDeposit = unitJson.value("damageDeposit", 0);
 			unit.damageWall = unitJson.value("damageWall", 0);
-			int buildTypeInt = unitJson.value("buildType", 0);
-			unit.buildType = static_cast<BuildType>(buildTypeInt);
+
+			std::string buildTypeJson = unitJson.value("buildType", "none");
+			if (buildTypeJson == "none")
+				unit.buildType = BuildType::NONE;
+			else if (buildTypeJson == "wall")
+				unit.buildType = BuildType::WALL;
+			else if (buildTypeJson == "bomb")
+				unit.buildType = BuildType::BOMB;
 
 			if (unit.baseActionCooldown > unit.maxActionCooldown)
 			{
