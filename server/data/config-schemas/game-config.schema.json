@@ -15,11 +15,12 @@
 		"initialBalance",
 		"wallHp",
 		"wallBuildCost",
-		"bombHp",
 		"bombCountdown",
 		"bombThrowCost",
 		"bombReach",
-		"bombDamage",
+		"bombDamageCore",
+		"bombDamageUnit",
+		"bombDamageDeposit",
 		"worldGenerator",
 		"worldGeneratorConfig",
 		"units",
@@ -81,11 +82,6 @@
 			"minimum": 0,
 			"maximum": 10000000
 		},
-		"bombHp": {
-			"type": "integer",
-			"minimum": 0,
-			"maximum": 10000000
-		},
 		"bombCountdown": {
 			"type": "integer",
 			"minimum": 0,
@@ -101,7 +97,17 @@
 			"minimum": 0,
 			"maximum": 10000000
 		},
-		"bombDamage": {
+		"bombDamageCore": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 10000000
+		},
+		"bombDamageUnit": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 10000000
+		},
+		"bombDamageDeposit": {
 			"type": "integer",
 			"minimum": 0,
 			"maximum": 10000000
@@ -203,6 +209,7 @@
 				"hp",
 				"baseActionCooldown",
 				"maxActionCooldown",
+				"balancePerCooldownStep",
 				"damageCore",
 				"damageUnit",
 				"damageDeposit",
@@ -251,11 +258,11 @@
 					"minimum": 0
 				},
 				"buildType": {
-					"type": "integer",
+					"type": "string",
 					"enum": [
-						0,
-						1,
-						2
+						"none",
+						"wall",
+						"bomb"
 					]
 				}
 			}

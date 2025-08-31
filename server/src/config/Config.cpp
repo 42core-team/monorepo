@@ -87,11 +87,12 @@ static GameConfig parseGameConfig()
 	config.initialBalance = j.value("initialBalance", 200);
 	config.wallHp = j.value("wallHp", 100);
 	config.wallBuildCost = j.value("wallBuildCost", 20);
-	config.bombHp = j.value("bombHp", 100);
 	config.bombCountdown = j.value("bombCountdown", 25);
 	config.bombThrowCost = j.value("bombThrowCost", 50);
 	config.bombReach = j.value("bombReach", 3);
-	config.bombDamage = j.value("bombDamage", 100);
+	config.bombDamageCore = j.value("bombDamageCore", 50);
+	config.bombDamageUnit = j.value("bombDamageUnit", 30);
+	config.bombDamageDeposit = j.value("bombDamageDeposit", 40);
 
 	std::string wgType = j.value("worldGenerator", "jigsaw");
 	if (wgType == "jigsaw")
@@ -124,8 +125,14 @@ static GameConfig parseGameConfig()
 			unit.damageUnit = unitJson.value("damageUnit", 0);
 			unit.damageDeposit = unitJson.value("damageDeposit", 0);
 			unit.damageWall = unitJson.value("damageWall", 0);
-			int buildTypeInt = unitJson.value("buildType", 0);
-			unit.buildType = static_cast<BuildType>(buildTypeInt);
+
+			std::string buildTypeJson = unitJson.value("buildType", "none");
+			if (buildTypeJson == "none")
+				unit.buildType = BuildType::NONE;
+			else if (buildTypeJson == "wall")
+				unit.buildType = BuildType::WALL;
+			else if (buildTypeJson == "bomb")
+				unit.buildType = BuildType::BOMB;
 
 			if (unit.baseActionCooldown > unit.maxActionCooldown)
 			{

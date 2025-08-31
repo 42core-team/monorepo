@@ -2,6 +2,7 @@ import type { tickData } from "../input_manager/timeManager";
 import { getBarMetrics, type TickObject } from "../replay_loader/object";
 import {
 	getActionsByExecutor,
+	getGameConfig,
 	getNameOfUnitType,
 	getStateAt,
 } from "../replay_loader/replayLoader";
@@ -23,7 +24,7 @@ const svgAssets = {
 	2: "deposit.svg",
 	3: "wall.svg",
 	4: "gem_pile.svg",
-	5: "core.svg",
+	5: "bomb.svg",
 } as const;
 
 // metric bar interpolator
@@ -124,6 +125,26 @@ function getTeamIndex(teamId: number | undefined): AssetTeam {
 
 // object
 
+export function drawSpawnPreviewForNextTick(
+	spawnObj: TickObject,
+	svgCanvas: SVGSVGElement,
+	currentTickData: tickData,
+): void {
+	const mid = new MidTickIncreaseTimingCurve().getValue(currentTickData.tickProgress);
+	const metrics = computeSmoothBarInstructions(spawnObj, spawnObj, spawnObj.x, spawnObj.y, mid);
+
+	let scale = mid;
+	if (spawnObj.type === 5) {
+		const cfgTotal = Math.max(1, getGameConfig()?.bombCountdown ?? 1);
+		const currLeft = Math.max(0, Math.min(cfgTotal, (spawnObj as any).countdown ?? 0));
+		const p = 1 - currLeft / cfgTotal;
+		const bombScale = 0.65 + 0.65 * p;
+		scale *= bombScale / 0.8;
+	}
+
+	drawObject(svgCanvas, spawnObj, spawnObj.x, spawnObj.y, scale, metrics);
+}
+
 function drawObject(
 	svgCanvas: SVGSVGElement,
 	obj: TickObject,
@@ -175,6 +196,7 @@ function drawObject(
 			break;
 		}
 		case 1: {
+			// Unit
 			const unitType = obj.unit_type;
 			if (obj.unit_type === undefined) {
 				throw new Error(`Unit object ${obj.id} missing unit_type 🤯`);
@@ -197,7 +219,7 @@ function drawObject(
 	let img = document.querySelector(
 		`image[data-obj-id="${obj.id}"]`,
 	) as SVGImageElement | null;
-
+	
 	if (!img) {
 		img = document.createElementNS(svgNS, "image");
 		img.setAttribute("data-obj-id", obj.id.toString());
@@ -212,7 +234,7 @@ function drawObject(
 	if (img.getAttribute("href") !== href) {
 		img.setAttribute("href", href);
 	}
-
+	
 	let scale = 0.8;
 	if (obj.type === 2) {
 		scale = 0.95; // Deposit
@@ -247,13 +269,6 @@ export function calcAndDrawObject(
 	let x = currObj.x;
 	let y = currObj.y;
 
-	let prevObj: TickObject | undefined;
-	try {
-		if (currentTickData.tick - 1 >= 0)
-			prevObj = getStateAt(currentTickData.tick - 1)?.objects.find(
-				(o) => o.id === currObj.id,
-			);
-	} catch {}
 	let nextObj: TickObject | undefined;
 	try {
 		nextObj = getStateAt(currentTickData.tick + 1)?.objects.find(
@@ -268,12 +283,10 @@ export function calcAndDrawObject(
 		currentTickData.tickProgress,
 	);
 
-	if (!prevObj || prevObj.state === "dead") {
-		scale = easeInOutProgress;
-	}
-	if (!nextObj || nextObj.state === "dead") {
+	if (!nextObj || nextObj.state === "dead" || nextObj.hp <= 0) { // despawn anim
 		scale = 1 - midTickIncreaseProgress;
 	}
+
 	// check movement
 	if (nextObj) {
 		x = currObj.x + (nextObj.x - currObj.x) * easeInOutProgress;
@@ -315,5 +328,53 @@ export function calcAndDrawObject(
 		new MidTickIncreaseTimingCurve().getValue(currentTickData.tickProgress),
 	);
 
+	if (currObj.type === 5) {
+		const cfgTotal = Math.max(1, getGameConfig()?.bombCountdown ?? 1);
+		const currLeft = Math.max(0, Math.min(cfgTotal, (currObj as any).countdown ?? 0));
+		const inferredNext = Math.max(0, currLeft - 1);
+		const nextLeftRaw =
+			nextObj && nextObj.type === 5 && typeof (nextObj as any).countdown === "number"
+				? Math.max(0, Math.min(cfgTotal, (nextObj as any).countdown))
+				: inferredNext;
+		const leftSmooth = currLeft + (nextLeftRaw - currLeft) * currentTickData.tickProgress;
+		const p = 1 - leftSmooth / cfgTotal;
+		const bombScale = 0.65 + 0.65 * p;
+		if (nextObj) // if the bomb doesnt exist next frame, use the normal despawning animation
+			scale *= bombScale / 0.8;
+	}
+
 	drawObject(svgCanvas, currObj, x, y, scale, metricBars);
+
+	// bomb explosion
+	const explosionScale = (t: number): number => {
+		const ease = new EaseInOutTimingCurve();
+		if (t < 0.5) return ease.getValue(t / 0.5);
+		return ease.getValue(1 - (t - 0.5) / 0.5);
+	};
+	if (
+		nextObj &&
+		nextObj.type === 5 &&
+		nextObj.countdown === 0 &&
+		Array.isArray((nextObj as any).explosionTiles) &&
+		(nextObj as any).explosionTiles.length > 0
+	) {
+		const s = Math.max(0, Math.min(1, explosionScale(currentTickData.tickProgress)));
+		for (const tile of (nextObj as any).explosionTiles as { x: number; y: number }[]) {
+			const key = `exp-${tile.x},${tile.y}`;
+			let img = svgCanvas.querySelector(`image[data-exp-key="${key}"]`) as SVGImageElement | null;
+			if (!img) {
+				img = document.createElementNS(svgNS, "image");
+				img.setAttribute("data-exp-key", key);
+				img.setAttribute("href", "/assets/object-svgs/explosion.svg");
+			}
+			img.classList.add("game-object");
+			img.classList.remove("not-touched");
+			img.setAttribute("width", "1");
+			img.setAttribute("height", "1");
+			const tx = tile.x + 0.5 - 0.5 * s;
+			const ty = tile.y + 0.5 - 0.5 * s;
+			img.setAttribute("transform", `translate(${tx},${ty}) scale(${s})`);
+			if (img.parentNode !== svgCanvas) svgCanvas.appendChild(img);
+		}
+	}
 }

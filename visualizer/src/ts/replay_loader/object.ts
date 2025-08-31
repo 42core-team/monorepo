@@ -34,6 +34,7 @@ export interface GemPileObject extends BaseObject {
 export interface BombObject extends BaseObject {
 	type: 5; // Bomb
 	countdown: number;
+	explosionTiles?: { x: number; y: number }[];
 }
 export type TickObject =
 	| CoreObject

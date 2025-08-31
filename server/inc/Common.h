@@ -40,6 +40,12 @@ struct Position
 		return {x * scalar, y * scalar};
 	}
 
+	// needed for storing positions in sets, otherwise rather nonsensical
+	bool operator<(const Position &other) const
+	{
+		return (y < other.y) || (y == other.y && x < other.x);
+	}
+
 	double distance(const Position &other) const
 	{
 		return std::abs(x - other.x) + std::abs(y - other.y);

@@ -15,6 +15,7 @@ public:
 		  balance_(other.balance_), action_cooldown_(other.action_cooldown_) {}
 
 	void tick(unsigned long long tickCount);
+	void damage(Object *attacker, unsigned int damage);
 
 	void tickActionCooldown();
 

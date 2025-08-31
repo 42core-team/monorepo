@@ -173,6 +173,7 @@ class ReplayLoader {
 			const id = diffObj.id;
 			if (state[id]) {
 				Object.assign(state[id], diffObj);
+				// bombs only have state: dead reported 1 tick delayed so they can still communicate the tiles that exploded on their actual death tick
 				if (diffObj.state === "dead") {
 					delete state[id];
 				}

@@ -9,7 +9,7 @@ class Server {
 
  public:
   // Constructor
-  explicit Server(int port = 4242);
+  explicit Server(int port = 4444);
   // Deconstructor
   ~Server();
 
