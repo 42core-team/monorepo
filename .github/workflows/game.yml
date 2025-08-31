@@ -242,7 +242,7 @@ jobs:
 
       - name: Generate additional version tags (server)
         id: version-tags-server
-        if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, '-')
         run: |
           # Extract version from tag (remove 'v' prefix if present)
           VERSION=${GITHUB_REF#refs/tags/}
@@ -328,7 +328,7 @@ jobs:
 
       - name: Generate additional version tags (my-core-bot)
         id: version-tags-bot
-        if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, '-')
         run: |
           # Extract version from tag (remove 'v' prefix if present)
           VERSION=${GITHUB_REF#refs/tags/}
