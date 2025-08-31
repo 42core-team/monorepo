@@ -31,7 +31,24 @@ void Bomb::explode()
 		double tDeltaX = 1.0 * invAbsDx;
 		double tDeltaY = 1.0 * invAbsDy;
 
+		const double EPS = 1e-12;
+
 		while (!(x == tx && y == ty)) {
+			if (std::fabs(tMaxX - tMaxY) < EPS) {
+				int nx = x + stepX;
+				int ny = y + stepY;
+				bool blockX = isPositionExplosionBlocking(nx, y);
+				bool blockY = isPositionExplosionBlocking(x, ny);
+				if (blockX && blockY) break;
+				if (!blockX) { if (!onCell(nx, y)) break; }
+				if (!blockY) { if (!onCell(x, ny)) break; }
+				x = nx; y = ny;
+				tMaxX += tDeltaX;
+				tMaxY += tDeltaY;
+				if (!onCell(x, y)) break;
+				continue;
+			}
+
 			if (tMaxX < tMaxY) { x += stepX; tMaxX += tDeltaX; }
 			else               { y += stepY; tMaxY += tDeltaY; }
 			if (!onCell(x, y)) break;
@@ -44,7 +61,6 @@ void Bomb::explode()
 	for (int dy = -radius; dy <= radius; ++dy) {
 		for (int dx = -radius; dx <= radius; ++dx) {
 			if (Position(bomb.x + dx, bomb.y + dy).distance(bomb) > radius) continue;
-
 			if (dx == 0 && dy == 0) continue;
 			int tx = bomb.x + dx, ty = bomb.y + dy;
 
@@ -72,7 +88,7 @@ void Bomb::explode()
 		else if (o->getType() == ObjectType::Deposit)
 			damage = Config::game().bombDamageDeposit;
 
-		o->damage(this, damage); // this will trigger chain explosions for bombs
+		o->damage(this, damage);
 	}
 
 	this->hp_ = 0;
