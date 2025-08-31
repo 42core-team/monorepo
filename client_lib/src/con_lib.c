@@ -50,7 +50,7 @@ int	core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 	// setup socket
 	const char *env_ip = getenv("SERVER_IP");
 	const char *env_port = getenv("SERVER_PORT");
-	const int port = env_port ? atoi(env_port) : 4242;
+	const int port = env_port ? atoi(env_port) : 4444;
 	if (argv[1])
 		game.my_team_id = atoi(argv[1]);
 	else
