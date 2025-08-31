@@ -6,7 +6,7 @@ const svgCanvas = document.getElementById("svg-canvas") as HTMLElement;
 window.addEventListener("DOMContentLoaded", async () => {
 	// load url parameters
 
-	let replayFilePath = "/misc/replay_latest.json";
+	let replayFilePath = "/replays/replay_latest.json";
 	const urlParams = new URLSearchParams(window.location.search);
 	if (urlParams.has("replay")) {
 		replayFilePath = urlParams.get("replay") || replayFilePath;
