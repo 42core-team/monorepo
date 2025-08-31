@@ -54,9 +54,11 @@ server_build_prod:
 build_clients: player_1_build player_2_build
 
 player_1_build:
+	make -C client_lib
 	make -C $(PLAYER_1_FOLDER) CONNECTIONDIR=/workspaces/monorepo/client_lib
 
 player_2_build:
+	make -C client_lib
 	make -C $(PLAYER_2_FOLDER) CONNECTIONDIR=/workspaces/monorepo/client_lib
 
 visualizer_build:
