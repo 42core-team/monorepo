@@ -11,15 +11,14 @@ on:
       - "client_lib/**"
       - "my-core-bot/**"
       - "server/**"
+    tags:
+      - "v*"
   pull_request:
     paths:
       - ".github/workflows/**"
       - "client_lib/**"
       - "my-core-bot/**"
       - "server/**"
-  create:
-    tags:
-      - "v*"
 
 permissions:
   contents: read

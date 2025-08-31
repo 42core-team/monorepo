@@ -6,14 +6,13 @@ on:
     paths:
       - "visualizer/**"
       - ".github/workflows/visualizer.yml"
+    tags:
+      - "v*"
   pull_request:
     branches: [main, dev]
     paths:
       - "visualizer/**"
       - ".github/workflows/visualizer.yml"
-  create:
-    tags:
-      - "v*"
 
 permissions:
   contents: read
@@ -167,10 +166,10 @@ jobs:
           # Extract version from tag (remove 'v' prefix if present)
           VERSION=${GITHUB_REF#refs/tags/}
           VERSION=${VERSION#v}
-          
+
           # Split version into parts
           IFS='.' read -r -a parts <<< "$VERSION"
-          
+
           # Generate hierarchical tags based on number of parts
           ADDITIONAL_TAGS=""
           if [ ${#parts[@]} -ge 1 ]; then
@@ -185,7 +184,7 @@ jobs:
           if [ ${#parts[@]} -ge 4 ]; then
             ADDITIONAL_TAGS="$ADDITIONAL_TAGS,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:v${parts[0]}.${parts[1]}.${parts[2]}.${parts[3]}"
           fi
-          
+
           echo "additional-tags=$ADDITIONAL_TAGS" >> $GITHUB_OUTPUT
           echo "Generated additional tags: $ADDITIONAL_TAGS"
 
