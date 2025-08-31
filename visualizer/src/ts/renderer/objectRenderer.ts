@@ -130,11 +130,10 @@ export function drawSpawnPreviewForNextTick(
 	svgCanvas: SVGSVGElement,
 	currentTickData: tickData,
 ): void {
-	const ease = new EaseInOutTimingCurve().getValue(currentTickData.tickProgress);
 	const mid = new MidTickIncreaseTimingCurve().getValue(currentTickData.tickProgress);
 	const metrics = computeSmoothBarInstructions(spawnObj, spawnObj, spawnObj.x, spawnObj.y, mid);
 
-	let scale = ease;
+	let scale = mid;
 	if (spawnObj.type === 5) {
 		const cfgTotal = Math.max(1, getGameConfig()?.bombCountdown ?? 1);
 		const currLeft = Math.max(0, Math.min(cfgTotal, (spawnObj as any).countdown ?? 0));
