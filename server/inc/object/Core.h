@@ -21,6 +21,7 @@ class Core : public Object
 		}
 
 		void tick(unsigned long long tickCount);
+		void damage(Object *attacker, unsigned int damage);
 
 		unsigned int getBalance() const { return balance_; }
 		void setBalance(unsigned int gems) { balance_ = gems; }

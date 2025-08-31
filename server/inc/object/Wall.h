@@ -14,6 +14,7 @@ class Wall : public Object
 			: Object(other) {}
 
 		void tick(unsigned long long tickCount);
+		void damage(Object *attacker, unsigned int damage);
 };
 
 #endif // WALL_H

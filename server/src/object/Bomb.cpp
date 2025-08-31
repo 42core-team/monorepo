@@ -64,14 +64,15 @@ void Bomb::explode()
 
 	for (Object* o : toDamage)
 	{
+		int damage = 0;
 		if (o->getType() == ObjectType::Core)
-			o->setHP(o->getHP() - Config::game().bombDamageCore);
+			damage = Config::game().bombDamageCore;
 		else if (o->getType() == ObjectType::Unit)
-			o->setHP(o->getHP() - Config::game().bombDamageUnit);
+			damage = Config::game().bombDamageUnit;
 		else if (o->getType() == ObjectType::Deposit)
-			o->setHP(o->getHP() - Config::game().bombDamageDeposit);
-		else if (o->getType() == ObjectType::Bomb)
-			((Bomb *)o)->handleAttack(); // trigger chain explosions
+			damage = Config::game().bombDamageDeposit;
+
+		o->damage(this, damage); // this will trigger chain explosions for bombs
 	}
 
 	this->hp_ = 0;
@@ -88,8 +89,11 @@ void Bomb::tick(unsigned long long tickCount)
 		explode();
 }
 
-void Bomb::handleAttack()
+void Bomb::damage(Object *attacker, unsigned int damage)
 {
+	(void) attacker;
+	(void) damage;
+
 	if (!countdownStarted_)
 		countdownStarted_ = true;
 	else

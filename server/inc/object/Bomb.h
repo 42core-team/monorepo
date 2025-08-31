@@ -18,11 +18,10 @@ public:
 
 	void explode();
 	void tick(unsigned long long tickCount);
+	void damage(Object *attacker, unsigned int damage);
 
 	unsigned int getCountdown() const { return countdown_; }
 	bool isCountdownStarted() const { return countdownStarted_; }
-
-	void handleAttack();
 
 	std::set<Position> explosionTiles_;
 

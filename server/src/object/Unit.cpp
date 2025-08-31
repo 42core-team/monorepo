@@ -32,3 +32,15 @@ unsigned int Unit::calcActionCooldown()
 
 	return std::max(1u, cd);
 }
+
+void Unit::damage(Object *attacker, unsigned int damage)
+{
+	this->setHP(this->getHP() - damage);
+
+	Stats::instance().inc(stat_keys::damage_units, damage);
+	if (attacker->getType() != ObjectType::Unit) return;
+	if (((Unit *)attacker)->getTeamId() != team_id_)
+		Stats::instance().inc(stat_keys::damage_opponent, damage);
+	else
+		Stats::instance().inc(stat_keys::damage_self, damage);
+}
