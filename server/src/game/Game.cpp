@@ -9,7 +9,7 @@ Game::Game(std::vector<unsigned int> team_ids)
 
 	if (Config::game().usedRandomSeed)
 		Logger::Log("Generating world with random seed as no seed was provided.");
-	Logger::Log("Generating world with seed \"" + std::to_string(Config::game().seed) + "\". (hash: " + std::to_string(Config::game().seed) + ")");
+	Logger::Log("Generating world with seed \"" + Config::game().seedString + "\". (hash: " + std::to_string(Config::game().seed) + ")");
 	Config::game().worldGenerator->generateWorld(Config::game().seed);
 	ReplayEncoder::instance().getCustomData()["worldGeneratorSeed"] = Config::game().seed;
 

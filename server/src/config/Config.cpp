@@ -12,7 +12,9 @@ std::string Config::dataFolderPath = "";
 #include "HardcodedWorldGenerator.h"
 #include "EmptyWorldGenerator.h"
 
+#define XXH_INLINE_ALL
 #include "xxhash.h"
+
 #include "Utils.h"
 
 static void validate_or_die(const json& instance, const std::string& schema_name) {
@@ -76,7 +78,7 @@ static GameConfig parseGameConfig()
 	config.gridSize = j.value("gridSize", 25);
 
 	config.seedString = j.value("seed", "");
-	if (config.seedString.isEmpty())
+	if (config.seedString.empty())
 	{
 		config.seedString = random_base32_seed();
 		config.usedRandomSeed = true;
