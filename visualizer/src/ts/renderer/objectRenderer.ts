@@ -253,9 +253,7 @@ function drawObject(
 		`translate(${xOffset + offset},${yOffset + offset}) scale(${scale * scaleFactor})`,
 	);
 
-	if (img.parentNode !== svgCanvas) {
-		svgCanvas.appendChild(img);
-	}
+	svgCanvas.appendChild(img);
 }
 
 export function calcAndDrawObject(
