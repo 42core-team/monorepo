@@ -7,18 +7,11 @@ Game::Game(std::vector<unsigned int> team_ids)
 	for (unsigned int i = 0; i < team_ids.size(); ++i)
 		Board::instance().addObject<Core>(Core(team_ids[i]), Config::getCorePosition(i), true);
 
-	unsigned int seed = Config::game().seed;
-	if (seed == 1)
-	{
-		std::random_device rd;
-		uint64_t time_part = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-		std::seed_seq seq{rd(), uint32_t(time_part), uint32_t(time_part >> 32)};
-		seq.generate(&seed, &seed + 1);
-		seed %= 10000000; // make seed adhere to config schema limits
-	}
-	Logger::Log("Generating world with seed \"" + std::to_string(seed) + "\".");
-	Config::game().worldGenerator->generateWorld(seed);
-	ReplayEncoder::instance().getCustomData()["worldGeneratorSeed"] = seed;
+	if (Config::game().usedRandomSeed)
+		Logger::Log("Generating world with random seed as no seed was provided.");
+	Logger::Log("Generating world with seed \"" + Config::game().seedString + "\". (hash: " + std::to_string(Config::game().seed) + ")");
+	Config::game().worldGenerator->generateWorld(Config::game().seed);
+	ReplayEncoder::instance().getCustomData()["worldGeneratorSeed"] = Config::game().seedString;
 
 	Logger::Log("Game created with " + std::to_string(team_ids.size()) + " teams.");
 }

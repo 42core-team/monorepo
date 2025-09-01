@@ -17,7 +17,7 @@ class SparseWorldGenerator : public WorldGenerator
 	public:
 		SparseWorldGenerator();
 
-		void generateWorld(unsigned int seed);
+		void generateWorld(uint64_t seed);
 
 	private:
 		std::mt19937_64 eng_{};

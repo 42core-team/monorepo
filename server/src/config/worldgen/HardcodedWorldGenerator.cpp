@@ -4,7 +4,7 @@ HardcodedWorldGenerator::HardcodedWorldGenerator()
 {
 }
 
-void HardcodedWorldGenerator::generateWorld(unsigned int seed)
+void HardcodedWorldGenerator::generateWorld(uint64_t seed)
 {
 	(void)seed;
 

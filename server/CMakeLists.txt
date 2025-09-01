@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(server CXX)
+project(server C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -37,6 +37,17 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(json_schema_validator)
 
+set(XXHASH_VERSION v0.8.2)
+set(XXHASH_INC "${CMAKE_BINARY_DIR}/xxhash/include")
+file(MAKE_DIRECTORY "${XXHASH_INC}")
+if(NOT EXISTS "${XXHASH_INC}/xxhash.h")
+	file(DOWNLOAD
+		"https://raw.githubusercontent.com/Cyan4973/xxHash/${XXHASH_VERSION}/xxhash.h"
+		"${XXHASH_INC}/xxhash.h"
+		TLS_VERIFY ON)
+endif()
+add_library(xxhash INTERFACE)
+
 set(CMAKE_CXX_FLAGS_PROD "-O3 -DNDEBUG")
 set(CMAKE_C_FLAGS_PROD   "-O3 -DNDEBUG")
 set(CMAKE_EXE_LINKER_FLAGS_PROD "")
@@ -64,8 +75,9 @@ target_include_directories(server PRIVATE ${ALL_INC_DIRS})
 target_include_directories(server PRIVATE
 	"${CMAKE_BINARY_DIR}/nlohmann_json/include/nlohmann"
 	"${CMAKE_BINARY_DIR}/_deps/json_schema_validator-src/src/nlohmann"
+	"${CMAKE_BINARY_DIR}/xxhash/include"
 )
 
 target_compile_options(server PRIVATE -Wall -Wextra -Werror)
 
-target_link_libraries(server PRIVATE nlohmann_json nlohmann_json_schema_validator)
+target_link_libraries(server PRIVATE nlohmann_json nlohmann_json_schema_validator xxhash)

@@ -12,6 +12,11 @@ std::string Config::dataFolderPath = "";
 #include "HardcodedWorldGenerator.h"
 #include "EmptyWorldGenerator.h"
 
+#define XXH_INLINE_ALL
+#include "xxhash.h"
+
+#include "Utils.h"
+
 static void validate_or_die(const json& instance, const std::string& schema_name) {
 	std::string fullName = Config::getDataFolderPath() + "/config-schemas/" + schema_name;
 	std::ifstream s(fullName);
@@ -71,7 +76,15 @@ static GameConfig parseGameConfig()
 	validate_or_die(j, "game-config.schema.json");
 
 	config.gridSize = j.value("gridSize", 25);
-	config.seed = j.value("seed", 1);
+
+	config.seedString = j.value("seed", "");
+	if (config.seedString.empty())
+	{
+		config.seedString = random_base32_seed();
+		config.usedRandomSeed = true;
+	}
+	config.seed = XXH64(config.seedString.data(), config.seedString.size(), 0);
+
 	config.idleIncome = j.value("idleIncome", 1);
 	config.idleIncomeTimeOut = j.value("idleIncomeTimeOut", 600);
 	config.depositHp = j.value("depositHp", 50);

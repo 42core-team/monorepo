@@ -12,7 +12,7 @@ class WorldGenerator
 		WorldGenerator() = default;
 		virtual ~WorldGenerator() = default;
 		
-		virtual void generateWorld(unsigned int seed) = 0;
+		virtual void generateWorld(uint64_t seed) = 0;
 };
 
 #endif // WORLD_GENERATOR_H

@@ -32,7 +32,7 @@ class JigsawWorldGenerator : public WorldGenerator {
 	public:
 		JigsawWorldGenerator();
 
-		void generateWorld(unsigned int seed);
+		void generateWorld(uint64_t seed);
 
 	private:
 		std::vector<MapTemplate> templates_;

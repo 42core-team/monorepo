@@ -8,7 +8,7 @@ class EmptyWorldGenerator : public WorldGenerator
 	public:
 		EmptyWorldGenerator();
 
-		void generateWorld(unsigned int seed);
+		void generateWorld(uint64_t seed);
 };
 
 #endif // EMPTY_WORLD_GENERATOR_H

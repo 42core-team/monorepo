@@ -17,7 +17,7 @@ class HardcodedWorldGenerator : public WorldGenerator
 	public:
 		HardcodedWorldGenerator();
 
-		void generateWorld(unsigned int seed);
+		void generateWorld(uint64_t seed);
 };
 
 #endif // HARDCODED_WORLD_GENERATOR_H

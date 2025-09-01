@@ -13,6 +13,8 @@
 
 Position findFirstEmptyGridCell(Position startPos);
 
+std::string random_base32_seed();
+
 template <typename T>
 void shuffle_vector(std::vector<T> & vec)
 {
