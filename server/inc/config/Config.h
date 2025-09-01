@@ -21,7 +21,9 @@ struct GameConfig
 
 	unsigned int gridSize;
 
-	unsigned int seed = std::chrono::system_clock::now().time_since_epoch().count();
+	uint64_t seed;
+	std::string seedString = "";
+	bool usedRandomSeed = false;
 
 	unsigned int idleIncome;		// idle income per tick
 	unsigned int idleIncomeTimeOut; // idle income duration in ticks

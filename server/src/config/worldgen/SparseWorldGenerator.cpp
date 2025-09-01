@@ -23,7 +23,7 @@ static bool positionHasNeighbours(const Position &pos, int N)
 	return false;
 }
 
-void SparseWorldGenerator::generateWorld(unsigned int seed)
+void SparseWorldGenerator::generateWorld(uint64_t seed)
 {
 	eng_.seed(seed);
 

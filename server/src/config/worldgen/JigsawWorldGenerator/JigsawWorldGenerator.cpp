@@ -414,7 +414,7 @@ void JigsawWorldGenerator::mirrorWorld()
 
 
 
-void JigsawWorldGenerator::generateWorld(unsigned int seed)
+void JigsawWorldGenerator::generateWorld(uint64_t seed)
 {
 	eng_ = std::mt19937_64(seed);
 

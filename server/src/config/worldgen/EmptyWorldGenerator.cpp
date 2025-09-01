@@ -4,7 +4,7 @@ EmptyWorldGenerator::EmptyWorldGenerator()
 {
 }
 
-void EmptyWorldGenerator::generateWorld(unsigned int seed)
+void EmptyWorldGenerator::generateWorld(uint64_t seed)
 {
 	(void)seed;
 }
