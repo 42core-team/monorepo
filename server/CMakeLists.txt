@@ -40,10 +40,12 @@ FetchContent_MakeAvailable(json_schema_validator)
 set(XXHASH_VERSION v0.8.2)
 set(XXHASH_INC "${CMAKE_BINARY_DIR}/xxhash/include")
 file(MAKE_DIRECTORY "${XXHASH_INC}")
-file(DOWNLOAD
+if(NOT EXISTS "${XXHASH_INC}/xxhash.h")
+	file(DOWNLOAD
 		"https://raw.githubusercontent.com/Cyan4973/xxHash/${XXHASH_VERSION}/xxhash.h"
 		"${XXHASH_INC}/xxhash.h"
 		TLS_VERIFY ON)
+endif()
 add_library(xxhash INTERFACE)
 
 set(CMAKE_CXX_FLAGS_PROD "-O3 -DNDEBUG")
