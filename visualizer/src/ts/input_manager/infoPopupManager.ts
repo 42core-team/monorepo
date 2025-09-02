@@ -41,6 +41,21 @@ function refreshReplayInfos() {
 	});
 }
 
+// basic quick and dirty brightness reduction function
+function clampHexV80(hex: string): string {
+	if (!/^#([0-9a-f]{6})$/i.test(hex)) return hex;
+	const r = parseInt(hex.slice(1, 3), 16);
+	const g = parseInt(hex.slice(3, 5), 16);
+	const b = parseInt(hex.slice(5, 7), 16);
+	const m = Math.max(r, g, b);
+	const targetNum = 255 / 100 * 80; // target brightness (80%)
+	if (m <= targetNum) return hex;
+	const s = targetNum / m;
+	const to2 = (n: number) => n.toString(16).padStart(2, "0");
+	const R = Math.round(r * s), G = Math.round(g * s), B = Math.round(b * s);
+	return `#${to2(R)}${to2(G)}${to2(B)}`;
+}
+
 export function setupInfoPopupManager() {
 	const dialog = document.getElementById("site-modal");
 	const openBtn = document.getElementById("open-modal");
@@ -107,7 +122,7 @@ export function setupInfoPopupManager() {
 		"color_scheme_input",
 	) as HTMLInputElement;
 	colorSchemeInput.addEventListener("input", () => {
-		const color = colorSchemeInput.value;
+		const color = clampHexV80(colorSchemeInput.value);
 		document.documentElement.style.setProperty("--theme-color", color);
 		localStorage.setItem('ui.themeColor', color);
 	});
