@@ -23,6 +23,7 @@
 			})();
 		</script>
 		<link rel="stylesheet" href="/src/css/styles.css" />
+		<link rel="stylesheet" href="/src/css/color-picker.css" />
 	</head>
 	<body>
 		<script
@@ -93,7 +94,13 @@
 			</div>
 
 			<div class="settings-color-row">
-				<input type="color" id="color_scheme_input" />
+				<div class="color-picker" id="theme-color-picker">
+					<input type="color" id="color_scheme_input" />
+					<span class="swatch" aria-hidden="true"></span>
+					<span class="swatch-border" aria-hidden="true"></span>
+					<span class="swatch-checker" aria-hidden="true"></span>
+					<span class="color-text" aria-hidden="true"></span>
+				</div>
 			</div>
 		</dialog>
 

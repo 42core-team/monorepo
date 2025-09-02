@@ -67,12 +67,7 @@ export function setupInfoPopupManager() {
 		});
 		infoModal.addEventListener("click", (e) => {
 			const r = infoModal.getBoundingClientRect();
-			const inDialog =
-				e.clientX >= r.left &&
-				e.clientX <= r.right &&
-				e.clientY >= r.top &&
-				e.clientY <= r.bottom;
-			if (!inDialog) infoModal.close();
+			if (e.target === infoModal) infoModal.close();
 		});
 		infoModal.addEventListener("close", () => {
 			const a = document.getElementById(
@@ -94,12 +89,7 @@ export function setupInfoPopupManager() {
 		});
 		settingsModal.addEventListener("click", (e) => {
 			const r = settingsModal.getBoundingClientRect();
-			const inDialog =
-				e.clientX >= r.left &&
-				e.clientX <= r.right &&
-				e.clientY >= r.top &&
-				e.clientY <= r.bottom;
-			if (!inDialog) settingsModal.close();
+			if (e.target === settingsModal) settingsModal.close();
 		});
 	}
 
@@ -205,6 +195,30 @@ export function setupInfoPopupManager() {
 		localStorage.setItem('ui.themeColor', color);
 	});
 	colorSchemeInput.value = getComputedStyle(document.documentElement).getPropertyValue("--theme-color");
+	const picker = document.getElementById("theme-color-picker") as HTMLElement | null;
+	const textEl = picker?.querySelector(".color-text") as HTMLSpanElement | null;
+	const swatchEl = picker?.querySelector(".swatch") as HTMLElement | null;
+
+	function setPreview(hex: string) {
+		if (swatchEl) swatchEl.style.background = hex;
+		if (textEl) {
+			textEl.textContent = hex.toUpperCase();
+			const r = parseInt(hex.slice(1,3),16)/255;
+			const g = parseInt(hex.slice(3,5),16)/255;
+			const b = parseInt(hex.slice(5,7),16)/255;
+			const L = 0.2126*r + 0.7152*g + 0.0722*b;
+			textEl.style.color = L > 0.6 ? "rgba(0,0,0,0.85)" : "white";
+			textEl.style.textShadow = L > 0.6 ? "0 1px 2px rgba(255,255,255,0.35)" : "0 1px 2px rgba(0,0,0,0.35)";
+		}
+	}
+
+	const current = getComputedStyle(document.documentElement)
+		.getPropertyValue("--theme-color").trim() || "#5a7cff";
+	setPreview(current);
+
+	colorSchemeInput.addEventListener("input", () => setPreview(colorSchemeInput.value));
+
+	picker?.addEventListener("click", () => colorSchemeInput.click());
 
 
 

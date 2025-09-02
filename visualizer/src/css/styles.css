@@ -10,6 +10,8 @@
 	--theme-color: #6a0dad;
 
 	--gridline-color: rgba(127,127,127,0.5);
+
+	--control-height: 48px;
 }
 :root[data-theme="light"] {
 	--hp-color: #c70202ff;
@@ -504,13 +506,7 @@ svg path {
 	height: 22px;
 	filter: var(--svg-icon-filter, none);
 }
-.settings-color-row {
-	display: grid;
-	grid-template-columns: 1fr;
-	gap: 6px;
-	margin-top: 6px;
-	width: 100%;
-}
+
 
 kbd {
 	background-color: #eeeeee;
