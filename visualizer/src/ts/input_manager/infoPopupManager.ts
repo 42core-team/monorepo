@@ -109,6 +109,7 @@ export function setupInfoPopupManager() {
 	colorSchemeInput.addEventListener("input", () => {
 		const color = colorSchemeInput.value;
 		document.documentElement.style.setProperty("--theme-color", color);
+		localStorage.setItem('ui.themeColor', color);
 	});
 	colorSchemeInput.value = getComputedStyle(document.documentElement).getPropertyValue("--theme-color");
 }

@@ -7,6 +7,10 @@
 		<script>
 			(function () {
 				try {
+					// theme color
+					document.documentElement.style.setProperty('--theme-color', localStorage.getItem('ui.themeColor'));
+					
+					// theme
 					var o = localStorage.getItem('ui.theme');
 					var m = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 					var t = (o === 'dark' || o === 'light') ? o : (m ? 'dark' : 'light');
