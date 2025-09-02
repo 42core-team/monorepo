@@ -65,6 +65,24 @@
 	opacity: 0.7;
 }
 
+:root[data-theme="light"] ::selection {
+	background: color-mix(in srgb, var(--theme-color) 65%, black);
+	color: var(--tooltip-shadow-contrast); /* white in light mode */
+}
+:root[data-theme="light"] ::-moz-selection {
+	background: color-mix(in srgb, var(--theme-color) 65%, black);
+	color: var(--tooltip-shadow-contrast);
+}
+
+:root[data-theme="dark"] ::selection {
+	background: color-mix(in srgb, var(--theme-color) 65%, white);
+	color: var(--tooltip-shadow-contrast); /* black in dark mode */
+}
+:root[data-theme="dark"] ::-moz-selection {
+	background: color-mix(in srgb, var(--theme-color) 65%, white);
+	color: var(--tooltip-shadow-contrast);
+}
+
 /* Gridlines toggling */
 :root[data-gridlines="off"] .grid-cell {
 	display: none;
