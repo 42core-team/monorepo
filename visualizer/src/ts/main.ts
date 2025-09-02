@@ -1,5 +1,6 @@
 import { setupInfoPopupManager } from "./input_manager/infoPopupManager.js";
 import { loadSavedTheme } from "./input_manager/themeManager.js";
+import { setupRainbowMode } from "./input_manager/rainbowMode.js";
 
 const svgCanvas = document.getElementById("svg-canvas") as HTMLElement;
 
@@ -87,4 +88,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 	// info popup manager
 	setupInfoPopupManager();
+
+	// setup rainbow mode
+	setupRainbowMode();
 });

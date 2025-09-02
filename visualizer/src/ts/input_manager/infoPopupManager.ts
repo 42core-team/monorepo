@@ -1,5 +1,27 @@
 import { getGameMisc, getReplayJSON } from "../replay_loader/replayLoader.js";
 import { applyTheme } from "./themeManager.js";
+import { disableRainbowIfActive, isRainbowActive } from './rainbowMode.js';
+
+export function setColorSwitchPreview(hex: string) {
+	const picker = document.getElementById("theme-color-picker") as HTMLElement | null;
+	const textEl = picker?.querySelector(".color-text") as HTMLSpanElement | null;
+	const swatchEl = picker?.querySelector(".swatch") as HTMLElement | null;
+
+	if (swatchEl) swatchEl.style.background = hex;
+	if (textEl) {
+		if (isRainbowActive()) {
+			textEl.textContent = '~~ RaInBoW ~~';
+		} else {
+			textEl.textContent = hex.toUpperCase();
+		}
+		const r = parseInt(hex.slice(1,3),16)/255;
+		const g = parseInt(hex.slice(3,5),16)/255;
+		const b = parseInt(hex.slice(5,7),16)/255;
+		const L = 0.2126*r + 0.7152*g + 0.0722*b;
+		textEl.style.color = L > 0.6 ? "rgba(0,0,0,0.85)" : "white";
+		textEl.style.textShadow = L > 0.6 ? "0 1px 2px rgba(255,255,255,0.35)" : "0 1px 2px rgba(0,0,0,0.35)";
+	}
+}
 
 function refreshReplayInfos() {
 	const misc = getGameMisc();
@@ -101,8 +123,6 @@ export function setupInfoPopupManager() {
 
 	const gridBtn = document.getElementById("gridlines-toggle-button") as HTMLButtonElement | null;
 
-	const GRID_STORAGE_KEY = "ui.gridlines";
-
 	function setPressed(el: HTMLButtonElement | null, on: boolean) {
 		if (!el) return;
 		el.setAttribute("aria-pressed", on ? "true" : "false");
@@ -117,20 +137,20 @@ export function setupInfoPopupManager() {
 
 	async function toggleFullscreen() {
 		try {
-		if (!isFullscreen()) {
-			const target = document.querySelector(".container") as HTMLElement || document.documentElement;
-			if (target.requestFullscreen) {
-			await target.requestFullscreen();
-			} else if ((target as any).webkitRequestFullscreen) {
-			await (target as any).webkitRequestFullscreen();
+			if (!isFullscreen()) {
+				const target = document.querySelector(".container") as HTMLElement || document.documentElement;
+				if (target.requestFullscreen) {
+					await target.requestFullscreen();
+				} else if ((target as any).webkitRequestFullscreen) {
+					await (target as any).webkitRequestFullscreen();
+				}
+			} else {
+				if (document.exitFullscreen) {
+					await document.exitFullscreen();
+				} else if ((document as any).webkitExitFullscreen) {
+					await (document as any).webkitExitFullscreen();
+				}
 			}
-		} else {
-			if (document.exitFullscreen) {
-			await document.exitFullscreen();
-			} else if ((document as any).webkitExitFullscreen) {
-			await (document as any).webkitExitFullscreen();
-			}
-		}
 		} finally {
 		syncFullscreenBtn();
 		}
@@ -140,8 +160,8 @@ export function setupInfoPopupManager() {
 		const on = isFullscreen();
 		setPressed(fullscreenBtn, on);
 		if (fullscreenIcon) {
-		fullscreenIcon.src = on ? "/assets/ui-svgs/fullscreen-close.svg" : "/assets/ui-svgs/fullscreen-open.svg";
-		fullscreenIcon.alt = on ? "Exit Fullscreen" : "Enter Fullscreen";
+			fullscreenIcon.src = on ? "/assets/ui-svgs/fullscreen-close.svg" : "/assets/ui-svgs/fullscreen-open.svg";
+			fullscreenIcon.alt = on ? "Exit Fullscreen" : "Enter Fullscreen";
 		}
 	}
 
@@ -191,32 +211,18 @@ export function setupInfoPopupManager() {
 	const colorSchemeInput = document.getElementById("color_scheme_input") as HTMLInputElement;
 	colorSchemeInput.addEventListener("input", () => {
 		const color = clampHexV80(colorSchemeInput.value);
+		disableRainbowIfActive();
 		document.documentElement.style.setProperty("--theme-color", color);
 		localStorage.setItem('ui.themeColor', color);
 	});
 	colorSchemeInput.value = getComputedStyle(document.documentElement).getPropertyValue("--theme-color");
 	const picker = document.getElementById("theme-color-picker") as HTMLElement | null;
-	const textEl = picker?.querySelector(".color-text") as HTMLSpanElement | null;
-	const swatchEl = picker?.querySelector(".swatch") as HTMLElement | null;
-
-	function setPreview(hex: string) {
-		if (swatchEl) swatchEl.style.background = hex;
-		if (textEl) {
-			textEl.textContent = hex.toUpperCase();
-			const r = parseInt(hex.slice(1,3),16)/255;
-			const g = parseInt(hex.slice(3,5),16)/255;
-			const b = parseInt(hex.slice(5,7),16)/255;
-			const L = 0.2126*r + 0.7152*g + 0.0722*b;
-			textEl.style.color = L > 0.6 ? "rgba(0,0,0,0.85)" : "white";
-			textEl.style.textShadow = L > 0.6 ? "0 1px 2px rgba(255,255,255,0.35)" : "0 1px 2px rgba(0,0,0,0.35)";
-		}
-	}
 
 	const current = getComputedStyle(document.documentElement)
 		.getPropertyValue("--theme-color").trim() || "#5a7cff";
-	setPreview(current);
+	setColorSwitchPreview(current);
 
-	colorSchemeInput.addEventListener("input", () => setPreview(colorSchemeInput.value));
+	colorSchemeInput.addEventListener("input", () => setColorSwitchPreview(colorSchemeInput.value));
 
 	picker?.addEventListener("click", () => colorSchemeInput.click());
 
@@ -226,6 +232,7 @@ export function setupInfoPopupManager() {
 		syncFullscreenBtn();
 		syncDarkBtn();
 		syncGridBtn();
+		setColorSwitchPreview(colorSchemeInput.value);
 	}
 	syncSettingsUI();
 }
