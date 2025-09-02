@@ -151,9 +151,9 @@ export async function setupRenderer(): Promise<void> {
 			for (const obj of getStateAt(0)?.objects ?? []) {
 				if (obj.type === 0 && obj.teamId === team.id) {
 					if (obj.x === 0)
-						teamOneElement.textContent = `${team.name}(${team.id})`;
+						teamOneElement.textContent = `${team.name} (${team.id})`;
 					else if (obj.x === gameConfig.gridSize - 1)
-						teamTwoElement.textContent = `${team.name}(${team.id})`;
+						teamTwoElement.textContent = `${team.name} (${team.id})`;
 				}
 			}
 		}

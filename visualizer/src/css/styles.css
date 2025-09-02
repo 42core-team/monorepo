@@ -437,14 +437,16 @@ svg path {
 
 /* Info Modal */
 
-#site-modal {
+.popup-modal {
 	border: 2px solid var(--panel-outline);
 	color: var(--text);
 	background: var(--panel-bg);
 	border-radius: 15px;
 	padding: 1.25rem 1.5rem;
-	width: min(80vw, 480px);
-	height: min(80vh, 800px);
+	word-break: break-word;
+	overflow-wrap: break-word;
+	max-width: 450px;
+	height: min(max-content, 75vh);
 }
 #open-modal {
 	position: absolute;
@@ -457,8 +459,36 @@ svg path {
 	display: block;
 }
 
-#site-modal::backdrop {
+.popup-modal::backdrop {
 	background: rgba(0, 0, 0, 0.45);
+}
+
+.settings-toggle-row {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 12px;
+	margin: 8px 0 12px;
+}
+.settings-toggle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 10px 12px;
+	border-radius: 10px;
+}
+.settings-toggle img {
+	width: 22px;
+	height: 22px;
+}
+.settings-toggle img path {
+	fill: var(--svg-icon-fill);
+}
+.settings-color-row {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 6px;
+	margin-top: 6px;
+	width: 100%;
 }
 
 kbd {
