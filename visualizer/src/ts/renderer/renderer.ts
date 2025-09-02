@@ -101,8 +101,22 @@ function refreshTooltipFromSVGPoint(
 ): void {
 	const tx = Math.floor(svgP.x);
 	const ty = Math.floor(svgP.y);
+
+	const nextObjects = getStateAt(getCurrentTickData().tick + 1)?.objects || [];
 	const currentObjects = getStateAt(getCurrentTickData().tick)?.objects || [];
-	const obj = currentObjects.find((o: TickObject) => o.x === tx && o.y === ty);
+	let obj = currentObjects.find((o: TickObject) => o.x === tx && o.y === ty);
+
+	// if there was nothing at that pos but there is now, it was a move action and we can safely show the tooltip on both tiles
+	if (!obj) {
+		const movedObj = nextObjects.find((o: TickObject) => o.x === tx && o.y === ty);
+		obj = currentObjects.find((o: TickObject) => o.id === movedObj?.id);
+	}
+
+	// if were already closer to the next tick, show that ticks data instead
+	if (obj && getCurrentTickData().tickProgress > 0.5) {
+		const objId = obj.id;
+		obj = nextObjects.find((o: TickObject) => o.id === objId);
+	}
 
 	const offsetX = 10;
 	const offsetY =
