@@ -8,6 +8,8 @@
 	--svg-canvas-scale: 100%;
 
 	--theme-color: #6a0dad;
+
+	--gridline-color: rgba(127,127,127,0.5);
 }
 :root[data-theme="light"] {
 	--hp-color: #c70202ff;
@@ -109,12 +111,27 @@ a {
 	width: var(--svg-canvas-scale);
 	height: var(--svg-canvas-scale);
 	aspect-ratio: 1 / 1;
+
 	outline: 2px solid var(--panel-outline);
 	background-color: var(--grid-bg);
 	border-radius: 10px;
 	margin: 10px 0 10px 0;
 	color: var(--svg-icon-fill);
+
+	background-position: 0 0, 0 0;
+	background-repeat: repeat, repeat;
 }
+:root[data-gridlines="on"] #svg-canvas {
+	--cell: calc(var(--svg-canvas-scale) / var(--grid-size));
+	background-image:
+		linear-gradient(to right, var(--gridline-color) 1px, transparent 1px),
+		linear-gradient(to bottom, var(--gridline-color) 1px, transparent 1px);
+	background-size: var(--cell) 100%, 100% var(--cell);
+}
+:root[data-gridlines="off"] #svg-canvas {
+	background-image: none;
+}
+
 
 .grid-cell {
 	fill: var(--grid-bg);
@@ -213,6 +230,9 @@ svg path {
 	height: 1.5rem;
 	display: block;
 }
+.icon-button img{
+	filter: var(--svg-icon-filter, none);
+}
 
 .control-panel button img {
 	width: 1.5rem;
@@ -235,6 +255,9 @@ svg path {
 :root[data-theme="dark"] .icon-button:active {
 	background-color: color-mix(in srgb, var(--theme-color) 80%, black);
 }
+
+:root[data-theme="light"] { --svg-icon-filter: none; }
+:root[data-theme="dark"]  { --svg-icon-filter: invert(1) brightness(1.1); }
 
 .slider-group {
 	display: flex;
@@ -479,9 +502,7 @@ svg path {
 .settings-toggle img {
 	width: 22px;
 	height: 22px;
-}
-.settings-toggle img path {
-	fill: var(--svg-icon-fill);
+	filter: var(--svg-icon-filter, none);
 }
 .settings-color-row {
 	display: grid;

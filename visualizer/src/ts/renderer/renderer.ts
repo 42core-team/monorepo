@@ -173,21 +173,7 @@ export async function setupRenderer(): Promise<void> {
 	svgCanvas.setAttribute("height", gridSize.toString());
 	svgCanvas.setAttribute("viewBox", `0 0 ${gridSize} ${gridSize}`);
 
-	for (let y = 0; y < gridSize; y++) {
-		for (let x = 0; x < gridSize; x++) {
-			const rect = document.createElementNS(svgNS, "rect");
-			rect.setAttribute("class", "grid-cell persistent");
-			rect.setAttribute("x", x.toString());
-			rect.setAttribute("y", y.toString());
-			rect.setAttribute("width", "1");
-			rect.setAttribute("height", "1");
-			rect.setAttribute("stroke", "rgba(127,127,127,0.35)");
-			rect.setAttribute("stroke-width", "0.5");
-			rect.setAttribute("vector-effect", "non-scaling-stroke");
-			rect.setAttribute("shape-rendering", "crispEdges");
-			svgCanvas.appendChild(rect);
-		}
-	}
+	document.documentElement.style.setProperty("--grid-size", String(gridSize));
 
 	initializeTeamMapping();
 
