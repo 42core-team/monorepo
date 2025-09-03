@@ -27,15 +27,12 @@ json CreateAction::encodeJSON()
 
 std::string CreateAction::execute(Core *core)
 {
-	if (!is_valid_)
-		return "invalid input";
+	if (!is_valid_) return "invalid input";
 
 	Position closestEmptyPos = findFirstEmptyGridCell(Board::instance().getObjectPositionById(core->getId()));
-	if (!closestEmptyPos.isValid(Config::game().gridSize))
-		return "no valid position found - entire grid is filled up";
+	if (!closestEmptyPos.isValid(Config::game().gridSize)) return "no valid position found - entire grid is filled up";
 
-	if (unit_type_ >= Config::game().units.size())
-		return "invalid unit type";
+	if (unit_type_ >= Config::game().units.size()) return "invalid unit type";
 
 	unsigned int unitCost = Config::getUnitConfig(unit_type_).cost;
 	if (core->getBalance() < unitCost)

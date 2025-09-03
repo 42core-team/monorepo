@@ -1,18 +1,20 @@
 #ifndef UNIT_H
 #define UNIT_H
 
-#include "Object.h"
+#include "Board.h"
 #include "Common.h"
 #include "Config.h"
-#include "Board.h"
+#include "Object.h"
 
 class Unit : public Object
 {
-public:
+  public:
 	Unit(unsigned int teamId, unsigned int unit_type);
 	Unit(const Unit &other)
-		: Object(other), unit_type_(other.unit_type_), team_id_(other.team_id_),
-		  balance_(other.balance_), action_cooldown_(other.action_cooldown_) {}
+		: Object(other), unit_type_(other.unit_type_), team_id_(other.team_id_), balance_(other.balance_),
+		  action_cooldown_(other.action_cooldown_)
+	{
+	}
 
 	void tick(unsigned long long tickCount);
 	void damage(Object *attacker, unsigned int damage);
@@ -28,7 +30,7 @@ public:
 	void setBalance(unsigned int amount) { balance_ = amount; }
 	void resetActionCooldown() { action_cooldown_ = calcActionCooldown(); }
 
-private:
+  private:
 	unsigned int unit_type_;
 	unsigned int team_id_;
 	unsigned int balance_;

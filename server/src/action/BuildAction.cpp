@@ -16,8 +16,7 @@ void BuildAction::decodeJSON(json msg)
 	builder_id_ = msg["unit_id"];
 	position_ = Position(msg["x"], msg["y"]);
 
-	if (!position_.isValid(Config::game().gridSize))
-		is_valid_ = false;
+	if (!position_.isValid(Config::game().gridSize)) is_valid_ = false;
 }
 json BuildAction::encodeJSON()
 {
@@ -34,34 +33,27 @@ json BuildAction::encodeJSON()
 std::string BuildAction::execute(Core *core)
 {
 	(void)core;
-	if (!is_valid_)
-		return "invalid input";
+	if (!is_valid_) return "invalid input";
 
 	Object *builderObj = Board::instance().getObjectById(builder_id_);
-	if (builderObj == nullptr || builderObj->getType() != ObjectType::Unit)
-		return "invalid or non-existing unit";
+	if (builderObj == nullptr || builderObj->getType() != ObjectType::Unit) return "invalid or non-existing unit";
 
 	Unit *builder = dynamic_cast<Unit *>(builderObj);
-	if (builder->getTeamId() != core->getTeamId())
-		return "unit does not belong to your team";
+	if (builder->getTeamId() != core->getTeamId()) return "unit does not belong to your team";
 
-	if (builder->getActionCooldown() > 0)
-		return "unit is on cooldown";
+	if (builder->getActionCooldown() > 0) return "unit is on cooldown";
 
 	BuildType buildType = Config::game().units[builder->getUnitType()].buildType;
-	if (buildType == BuildType::NONE)
-		return "unit unable to build";
+	if (buildType == BuildType::NONE) return "unit unable to build";
 
-	if (Board::instance().getObjectAtPos(position_) != nullptr)
-		return "position occupied";
+	if (Board::instance().getObjectAtPos(position_) != nullptr) return "position occupied";
 
 	if (position_.distance(Board::instance().getObjectPositionById(builder->getId())) > 1)
 		return "invalid position. must be up, down, left or right of the unit";
 
 	if (buildType == BuildType::WALL)
 	{
-		if (builder->getBalance() < Config::game().wallBuildCost)
-			return "insufficient funds of acting unit";
+		if (builder->getBalance() < Config::game().wallBuildCost) return "insufficient funds of acting unit";
 		builder->resetActionCooldown();
 		builder->setBalance(builder->getBalance() - Config::game().wallBuildCost);
 		Board::instance().addObject<Wall>(Wall(), position_);
@@ -70,8 +62,7 @@ std::string BuildAction::execute(Core *core)
 	}
 	else if (buildType == BuildType::BOMB)
 	{
-		if (builder->getBalance() < Config::game().bombThrowCost)
-			return "insufficient funds of acting unit";
+		if (builder->getBalance() < Config::game().bombThrowCost) return "insufficient funds of acting unit";
 		builder->resetActionCooldown();
 		builder->setBalance(builder->getBalance() - Config::game().bombThrowCost);
 		Board::instance().addObject<Bomb>(Bomb(), position_);

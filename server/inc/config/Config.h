@@ -1,13 +1,12 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include <vector>
-#include <string>
-#include <memory>
-
 #include "Common.h"
-
 #include "json.hpp"
+
+#include <memory>
+#include <string>
+#include <vector>
 using json = nlohmann::ordered_json;
 
 class WorldGenerator;
@@ -87,37 +86,30 @@ struct ServerConfig
 
 class Config
 {
-	public:
-		static GameConfig &game();
-		static ServerConfig &server();
+  public:
+	static GameConfig &game();
+	static ServerConfig &server();
 
-		static json encodeConfig();
+	static json encodeConfig();
 
-		static Position &getCorePosition(unsigned int teamId);
-		static UnitConfig &getUnitConfig(unsigned int typeId);
+	static Position &getCorePosition(unsigned int teamId);
+	static UnitConfig &getUnitConfig(unsigned int typeId);
 
-		static void setServerConfigFilePath(const std::string &path)
-		{
-			serverConfigFilePath = path;
-		}
-		static std::string getServerConfigFilePath() { return serverConfigFilePath; }
-		static void setGameConfigFilePath(const std::string &path)
-		{
-			gameConfigFilePath = path;
-		}
-		static std::string getGameConfigFilePath() { return gameConfigFilePath; }
-		static void setDataFolderPath(const std::string &path)
-		{
-			dataFolderPath = path;
-			if (dataFolderPath.back() == '/')
-				dataFolderPath.pop_back();
-		}
-		static std::string getDataFolderPath() { return dataFolderPath; }
+	static void setServerConfigFilePath(const std::string &path) { serverConfigFilePath = path; }
+	static std::string getServerConfigFilePath() { return serverConfigFilePath; }
+	static void setGameConfigFilePath(const std::string &path) { gameConfigFilePath = path; }
+	static std::string getGameConfigFilePath() { return gameConfigFilePath; }
+	static void setDataFolderPath(const std::string &path)
+	{
+		dataFolderPath = path;
+		if (dataFolderPath.back() == '/') dataFolderPath.pop_back();
+	}
+	static std::string getDataFolderPath() { return dataFolderPath; }
 
-	private:
-		static std::string serverConfigFilePath;
-		static std::string gameConfigFilePath;
-		static std::string dataFolderPath;
+  private:
+	static std::string serverConfigFilePath;
+	static std::string gameConfigFilePath;
+	static std::string dataFolderPath;
 };
 
 #endif // CONFIG_H

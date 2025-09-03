@@ -10,13 +10,13 @@ using json = nlohmann::ordered_json;
 
 class StateEncoder
 {
-public:
+  public:
 	StateEncoder() = default;
 	~StateEncoder() = default;
 
 	json generateObjectDiff();
 
-private:
+  private:
 	json encodeFullState();
 	json diffObject(const json &currentObj, const json &previousObj);
 	json diffObjects(const json &previousObjects, const json &currentObjects);

@@ -7,23 +7,36 @@ std::string Config::serverConfigFilePath = "";
 std::string Config::gameConfigFilePath = "";
 std::string Config::dataFolderPath = "";
 
+#include "EmptyWorldGenerator.h"
+#include "HardcodedWorldGenerator.h"
 #include "JigsawWorldGenerator.h"
 #include "SparseWorldGenerator.h"
-#include "HardcodedWorldGenerator.h"
-#include "EmptyWorldGenerator.h"
 
 #define XXH_INLINE_ALL
+#include "Utils.h"
 #include "xxhash.h"
 
-#include "Utils.h"
-
-static void validate_or_die(const json& instance, const std::string& schema_name) {
+static void validate_or_die(const json &instance, const std::string &schema_name)
+{
 	std::string fullName = Config::getDataFolderPath() + "/config-schemas/" + schema_name;
 	std::ifstream s(fullName);
-	if (!s) { Logger::LogErr("Could not open schema: " + fullName); exit(EXIT_FAILURE); }
+	if (!s)
+	{
+		Logger::LogErr("Could not open schema: " + fullName);
+		exit(EXIT_FAILURE);
+	}
 	json schema = json::parse(s);
-	try { json_validator v; v.set_root_schema(schema); v.validate(instance); }
-	catch (const std::exception& e) { Logger::Log(LogLevel::ERROR, std::string("Validation error: ") + e.what()); exit(EXIT_FAILURE); }
+	try
+	{
+		json_validator v;
+		v.set_root_schema(schema);
+		v.validate(instance);
+	}
+	catch (const std::exception &e)
+	{
+		Logger::Log(LogLevel::ERROR, std::string("Validation error: ") + e.what());
+		exit(EXIT_FAILURE);
+	}
 }
 
 static ServerConfig parseServerConfig()
@@ -40,17 +53,21 @@ static ServerConfig parseServerConfig()
 	json j = json::parse(inFile);
 	validate_or_die(j, "server-config.schema.json");
 
-	if (j.contains("replayFolderPaths") && j["replayFolderPaths"].is_array()) {
+	if (j.contains("replayFolderPaths") && j["replayFolderPaths"].is_array())
+	{
 		config.replayFolderPaths.clear();
-		for (const auto& path : j["replayFolderPaths"]) {
-			if (path.is_string()) {
+		for (const auto &path : j["replayFolderPaths"])
+		{
+			if (path.is_string())
+			{
 				std::string folderPath = path.get<std::string>();
-				if (!folderPath.empty() && folderPath.back() == '/')
-					folderPath.pop_back();
+				if (!folderPath.empty() && folderPath.back() == '/') folderPath.pop_back();
 				config.replayFolderPaths.push_back(folderPath);
 			}
 		}
-	} else {
+	}
+	else
+	{
 		config.replayFolderPaths = {"replays"};
 	}
 	config.timeoutTicks = j.value("timeoutTicks", 3000);
@@ -161,7 +178,8 @@ static GameConfig parseGameConfig()
 
 			if (!pos.isValid(config.gridSize))
 			{
-				Logger::LogErr("Invalid core position: (" + std::to_string(pos.x) + ", " + std::to_string(pos.y) + ").");
+				Logger::LogErr("Invalid core position: (" + std::to_string(pos.x) + ", " + std::to_string(pos.y) +
+							   ").");
 				exit(EXIT_FAILURE);
 			}
 

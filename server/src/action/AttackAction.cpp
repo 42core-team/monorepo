@@ -39,24 +39,18 @@ json AttackAction::encodeJSON()
 
 std::string AttackAction::execute(Core *core)
 {
-	if (!is_valid_)
-		return "invalid input";
+	if (!is_valid_) return "invalid input";
 
 	Object *unitObj = Board::instance().getObjectById(getUnitId());
 
-	if (!unitObj || unitObj->getType() != ObjectType::Unit)
-		return "invalid or non-existing unit";
+	if (!unitObj || unitObj->getType() != ObjectType::Unit) return "invalid or non-existing unit";
 	Unit *unit = (Unit *)unitObj;
-	if (Board::instance().getObjectPositionById(unit->getId()).distance(target_pos_) > 1)
-		return "unit is too far away";
-	if (unit->getActionCooldown() > 0)
-		return "unit is on cooldown";
-	if (unit->getTeamId() != core->getTeamId())
-		return "unit does not belong to your team";
+	if (Board::instance().getObjectPositionById(unit->getId()).distance(target_pos_) > 1) return "unit is too far away";
+	if (unit->getActionCooldown() > 0) return "unit is on cooldown";
+	if (unit->getTeamId() != core->getTeamId()) return "unit does not belong to your team";
 
 	Object *obj = Board::instance().getObjectAtPos(target_pos_);
-	if (!obj)
-		return "no object at target position";
+	if (!obj) return "no object at target position";
 
 	unit->resetActionCooldown();
 

@@ -16,14 +16,13 @@ void Unit::tickActionCooldown()
 	if (action_cooldown_ > 0)
 	{
 		action_cooldown_--;
-		if (calcActionCooldown() < action_cooldown_)
-			action_cooldown_ = std::max(1u, calcActionCooldown());
+		if (calcActionCooldown() < action_cooldown_) action_cooldown_ = std::max(1u, calcActionCooldown());
 	}
 }
 
 unsigned int Unit::calcActionCooldown()
 {
-	const auto& u = Config::game().units[unit_type_];
+	const auto &u = Config::game().units[unit_type_];
 	unsigned int step = std::max(1u, u.balancePerCooldownStep);
 	unsigned int steps = balance_ / step;
 

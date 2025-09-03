@@ -33,11 +33,21 @@ static char *parse_string_literal(const char **p)
 			if (**p == '\0') break;
 			switch (**p)
 			{
-				case '"':  buffer[len++] = '"'; break;
-				case '\\': buffer[len++] = '\\'; break;
-				case 'n':  buffer[len++] = '\n'; break;
-				case 't':  buffer[len++] = '\t'; break;
-				default:   buffer[len++] = **p; break;
+			case '"':
+				buffer[len++] = '"';
+				break;
+			case '\\':
+				buffer[len++] = '\\';
+				break;
+			case 'n':
+				buffer[len++] = '\n';
+				break;
+			case 't':
+				buffer[len++] = '\t';
+				break;
+			default:
+				buffer[len++] = **p;
+				break;
 			}
 		}
 		else
@@ -79,7 +89,7 @@ static double parse_number_literal(const char **p)
 	return num;
 }
 
-json_node* create_node(json_type type)
+json_node *create_node(json_type type)
 {
 	json_node *node = malloc(sizeof(json_node));
 	if (!node)
@@ -92,27 +102,27 @@ json_node* create_node(json_type type)
 
 	switch (type)
 	{
-		case JSON_TYPE_OBJECT:
-		case JSON_TYPE_ARRAY:
-			node->array = NULL;
-			break;
-		case JSON_TYPE_STRING:
-			node->string = NULL;
-			break;
-		case JSON_TYPE_BOOL:
-		case JSON_TYPE_NUMBER:
-			node->number = 0;
-			break;
-		default:
-			break;
+	case JSON_TYPE_OBJECT:
+	case JSON_TYPE_ARRAY:
+		node->array = NULL;
+		break;
+	case JSON_TYPE_STRING:
+		node->string = NULL;
+		break;
+	case JSON_TYPE_BOOL:
+	case JSON_TYPE_NUMBER:
+		node->number = 0;
+		break;
+	default:
+		break;
 	}
 
 	return node;
 }
 
-static json_node* parse_value(const char **p);
+static json_node *parse_value(const char **p);
 
-static json_node* parse_object(const char **p)
+static json_node *parse_object(const char **p)
 {
 	if (**p != '{')
 	{
@@ -121,17 +131,17 @@ static json_node* parse_object(const char **p)
 	}
 	(*p)++;
 	skip_whitespace(p);
-	
+
 	json_node *node = create_node(JSON_TYPE_OBJECT);
 	size_t capacity = 4, count = 0;
-	json_node **members = malloc(sizeof(json_node*) * capacity);
+	json_node **members = malloc(sizeof(json_node *) * capacity);
 	if (!members)
 	{
 		fprintf(stderr, "Memory allocation failed for object members.\n");
 		exit(EXIT_FAILURE);
 	}
 	skip_whitespace(p);
-	
+
 	if (**p == '}')
 	{
 		(*p)++;
@@ -139,7 +149,7 @@ static json_node* parse_object(const char **p)
 		node->array = members;
 		return node;
 	}
-	
+
 	while (1)
 	{
 		skip_whitespace(p);
@@ -158,7 +168,7 @@ static json_node* parse_object(const char **p)
 		if (count >= capacity)
 		{
 			capacity *= 2;
-			members = realloc(members, sizeof(json_node*) * capacity);
+			members = realloc(members, sizeof(json_node *) * capacity);
 			if (!members)
 			{
 				fprintf(stderr, "Memory reallocation failed for object members.\n");
@@ -183,7 +193,7 @@ static json_node* parse_object(const char **p)
 			exit(EXIT_FAILURE);
 		}
 	}
-	members = realloc(members, sizeof(json_node*) * (count + 1));
+	members = realloc(members, sizeof(json_node *) * (count + 1));
 	if (!members)
 	{
 		fprintf(stderr, "Memory reallocation failed for object termination.\n");
@@ -194,7 +204,7 @@ static json_node* parse_object(const char **p)
 	return node;
 }
 
-static json_node* parse_array(const char **p)
+static json_node *parse_array(const char **p)
 {
 	if (**p != '[')
 	{
@@ -203,17 +213,17 @@ static json_node* parse_array(const char **p)
 	}
 	(*p)++;
 	skip_whitespace(p);
-	
+
 	json_node *node = create_node(JSON_TYPE_ARRAY);
 	size_t capacity = 4, count = 0;
-	json_node **elements = malloc(sizeof(json_node*) * capacity);
+	json_node **elements = malloc(sizeof(json_node *) * capacity);
 	if (!elements)
 	{
 		fprintf(stderr, "Memory allocation failed for array elements.\n");
 		exit(EXIT_FAILURE);
 	}
 	skip_whitespace(p);
-	
+
 	if (**p == ']')
 	{
 		(*p)++;
@@ -221,7 +231,7 @@ static json_node* parse_array(const char **p)
 		node->array = elements;
 		return node;
 	}
-	
+
 	while (1)
 	{
 		skip_whitespace(p);
@@ -229,7 +239,7 @@ static json_node* parse_array(const char **p)
 		if (count >= capacity)
 		{
 			capacity *= 2;
-			elements = realloc(elements, sizeof(json_node*) * capacity);
+			elements = realloc(elements, sizeof(json_node *) * capacity);
 			if (!elements)
 			{
 				fprintf(stderr, "Memory reallocation failed for array elements.\n");
@@ -254,7 +264,7 @@ static json_node* parse_array(const char **p)
 			exit(EXIT_FAILURE);
 		}
 	}
-	elements = realloc(elements, sizeof(json_node*) * (count + 1));
+	elements = realloc(elements, sizeof(json_node *) * (count + 1));
 	if (!elements)
 	{
 		fprintf(stderr, "Memory reallocation failed for array termination.\n");
@@ -265,7 +275,7 @@ static json_node* parse_array(const char **p)
 	return node;
 }
 
-static json_node* parse_value(const char **p)
+static json_node *parse_value(const char **p)
 {
 	skip_whitespace(p);
 	char c = **p;
@@ -406,53 +416,51 @@ static void json_to_string_internal(json_node *node, StringBuffer *sb)
 	char buffer[64];
 	switch (node->type)
 	{
-		case JSON_TYPE_NULL:
-			sb_append(sb, "null");
-			break;
-		case JSON_TYPE_NUMBER:
-			snprintf(buffer, sizeof(buffer), "%g", node->number);
-			sb_append(sb, buffer);
-			break;
-		case JSON_TYPE_STRING:
-			sb_append_escaped(sb, node->string);
-			break;
-		case JSON_TYPE_BOOL:
-			sb_append(sb, node->number ? "true" : "false");
-			break;
-		case JSON_TYPE_OBJECT:
+	case JSON_TYPE_NULL:
+		sb_append(sb, "null");
+		break;
+	case JSON_TYPE_NUMBER:
+		snprintf(buffer, sizeof(buffer), "%g", node->number);
+		sb_append(sb, buffer);
+		break;
+	case JSON_TYPE_STRING:
+		sb_append_escaped(sb, node->string);
+		break;
+	case JSON_TYPE_BOOL:
+		sb_append(sb, node->number ? "true" : "false");
+		break;
+	case JSON_TYPE_OBJECT:
+	{
+		sb_append_char(sb, '{');
+		if (node->array)
 		{
-			sb_append_char(sb, '{');
-			if (node->array)
+			for (size_t i = 0; node->array[i] != NULL; i++)
 			{
-				for (size_t i = 0; node->array[i] != NULL; i++)
-				{
-					if (i > 0)
-						sb_append_char(sb, ',');
-					sb_append_escaped(sb, node->array[i]->key);
-					sb_append_char(sb, ':');
-					json_to_string_internal(node->array[i], sb);
-				}
+				if (i > 0) sb_append_char(sb, ',');
+				sb_append_escaped(sb, node->array[i]->key);
+				sb_append_char(sb, ':');
+				json_to_string_internal(node->array[i], sb);
 			}
-			sb_append_char(sb, '}');
-			break;
 		}
-		case JSON_TYPE_ARRAY:
+		sb_append_char(sb, '}');
+		break;
+	}
+	case JSON_TYPE_ARRAY:
+	{
+		sb_append_char(sb, '[');
+		if (node->array)
 		{
-			sb_append_char(sb, '[');
-			if (node->array)
+			for (size_t i = 0; node->array[i] != NULL; i++)
 			{
-				for (size_t i = 0; node->array[i] != NULL; i++)
-				{
-					if (i > 0)
-						sb_append_char(sb, ',');
-					json_to_string_internal(node->array[i], sb);
-				}
+				if (i > 0) sb_append_char(sb, ',');
+				json_to_string_internal(node->array[i], sb);
 			}
-			sb_append_char(sb, ']');
-			break;
 		}
-		default:
-			break;
+		sb_append_char(sb, ']');
+		break;
+	}
+	default:
+		break;
 	}
 }
 
@@ -475,59 +483,57 @@ static void json_to_formatted_string_internal(json_node *node, StringBuffer *sb,
 	char buffer[64];
 	switch (node->type)
 	{
-		case JSON_TYPE_NULL:
-			sb_append(sb, "null");
-			break;
-		case JSON_TYPE_NUMBER:
-			snprintf(buffer, sizeof(buffer), "%g", node->number);
-			sb_append(sb, buffer);
-			break;
-		case JSON_TYPE_STRING:
-			sb_append_escaped(sb, node->string);
-			break;
-		case JSON_TYPE_BOOL:
-			sb_append(sb, node->number ? "true" : "false");
-			break;
-		case JSON_TYPE_OBJECT:
+	case JSON_TYPE_NULL:
+		sb_append(sb, "null");
+		break;
+	case JSON_TYPE_NUMBER:
+		snprintf(buffer, sizeof(buffer), "%g", node->number);
+		sb_append(sb, buffer);
+		break;
+	case JSON_TYPE_STRING:
+		sb_append_escaped(sb, node->string);
+		break;
+	case JSON_TYPE_BOOL:
+		sb_append(sb, node->number ? "true" : "false");
+		break;
+	case JSON_TYPE_OBJECT:
+	{
+		sb_append(sb, "{\n");
+		if (node->array)
 		{
-			sb_append(sb, "{\n");
-			if (node->array)
+			for (size_t i = 0; node->array[i] != NULL; i++)
 			{
-				for (size_t i = 0; node->array[i] != NULL; i++)
-				{
-					sb_append_indent(sb, indent + 1);
-					sb_append_escaped(sb, node->array[i]->key);
-					sb_append(sb, ": ");
-					json_to_formatted_string_internal(node->array[i], sb, indent + 1);
-					if (node->array[i + 1] != NULL)
-						sb_append(sb, ",");
-					sb_append(sb, "\n");
-				}
+				sb_append_indent(sb, indent + 1);
+				sb_append_escaped(sb, node->array[i]->key);
+				sb_append(sb, ": ");
+				json_to_formatted_string_internal(node->array[i], sb, indent + 1);
+				if (node->array[i + 1] != NULL) sb_append(sb, ",");
+				sb_append(sb, "\n");
 			}
-			sb_append_indent(sb, indent);
-			sb_append(sb, "}");
-			break;
 		}
-		case JSON_TYPE_ARRAY:
+		sb_append_indent(sb, indent);
+		sb_append(sb, "}");
+		break;
+	}
+	case JSON_TYPE_ARRAY:
+	{
+		sb_append(sb, "[\n");
+		if (node->array)
 		{
-			sb_append(sb, "[\n");
-			if (node->array)
+			for (size_t i = 0; node->array[i] != NULL; i++)
 			{
-				for (size_t i = 0; node->array[i] != NULL; i++)
-				{
-					sb_append_indent(sb, indent + 1);
-					json_to_formatted_string_internal(node->array[i], sb, indent + 1);
-					if (node->array[i + 1] != NULL)
-						sb_append(sb, ",");
-					sb_append(sb, "\n");
-				}
+				sb_append_indent(sb, indent + 1);
+				json_to_formatted_string_internal(node->array[i], sb, indent + 1);
+				if (node->array[i + 1] != NULL) sb_append(sb, ",");
+				sb_append(sb, "\n");
 			}
-			sb_append_indent(sb, indent);
-			sb_append(sb, "]");
-			break;
 		}
-		default:
-			break;
+		sb_append_indent(sb, indent);
+		sb_append(sb, "]");
+		break;
+	}
+	default:
+		break;
 	}
 }
 
@@ -543,17 +549,14 @@ char *json_to_formatted_string(json_node *json)
 
 json_node *json_find_recursive(json_node *json, char *key)
 {
-	if (!json)
-		return NULL;
-	if (json->key && strcmp(json->key, key) == 0)
-		return json;
+	if (!json) return NULL;
+	if (json->key && strcmp(json->key, key) == 0) return json;
 	if (json->type == JSON_TYPE_OBJECT && json->array)
 	{
 		for (size_t i = 0; json->array[i] != NULL; i++)
 		{
 			json_node *found = json_find_recursive(json->array[i], key);
-			if (found)
-				return found;
+			if (found) return found;
 		}
 	}
 	else if (json->type == JSON_TYPE_ARRAY && json->array)
@@ -561,8 +564,7 @@ json_node *json_find_recursive(json_node *json, char *key)
 		for (size_t i = 0; json->array[i] != NULL; i++)
 		{
 			json_node *found = json_find_recursive(json->array[i], key);
-			if (found)
-				return found;
+			if (found) return found;
 		}
 	}
 	return NULL;
@@ -570,22 +572,19 @@ json_node *json_find_recursive(json_node *json, char *key)
 
 json_node *json_find(json_node *json, char *key)
 {
-	if (!json)
-		return NULL;
+	if (!json) return NULL;
 	if (json->type == JSON_TYPE_OBJECT && json->array)
 	{
 		for (size_t i = 0; json->array[i] != NULL; i++)
 		{
-			if (json->array[i]->key && strcmp(json->array[i]->key, key) == 0)
-				return json->array[i];
+			if (json->array[i]->key && strcmp(json->array[i]->key, key) == 0) return json->array[i];
 		}
 	}
 	else if (json->type == JSON_TYPE_ARRAY && json->array)
 	{
 		for (size_t i = 0; json->array[i] != NULL; i++)
 		{
-			if (json->array[i]->key && strcmp(json->array[i]->key, key) == 0)
-				return json->array[i];
+			if (json->array[i]->key && strcmp(json->array[i]->key, key) == 0) return json->array[i];
 		}
 	}
 	return NULL;
@@ -595,35 +594,32 @@ json_node *json_find(json_node *json, char *key)
 
 void free_json(json_node *json)
 {
-	if (!json)
-		return;
-	if (json->key)
-		free(json->key);
-	
+	if (!json) return;
+	if (json->key) free(json->key);
+
 	switch (json->type)
 	{
-		case JSON_TYPE_STRING:
-			if (json->string)
-				free(json->string);
-			break;
-		case JSON_TYPE_OBJECT:
-			if (json->array)
-			{
-				for (size_t i = 0; json->array[i] != NULL; i++)
-					free_json(json->array[i]);
-				free(json->array);
-			}
-			break;
-		case JSON_TYPE_ARRAY:
-			if (json->array)
-			{
-				for (size_t i = 0; json->array[i] != NULL; i++)
-					free_json(json->array[i]);
-				free(json->array);
-			}
-			break;
-		default:
-			break;
+	case JSON_TYPE_STRING:
+		if (json->string) free(json->string);
+		break;
+	case JSON_TYPE_OBJECT:
+		if (json->array)
+		{
+			for (size_t i = 0; json->array[i] != NULL; i++)
+				free_json(json->array[i]);
+			free(json->array);
+		}
+		break;
+	case JSON_TYPE_ARRAY:
+		if (json->array)
+		{
+			for (size_t i = 0; json->array[i] != NULL; i++)
+				free_json(json->array[i]);
+			free(json->array);
+		}
+		break;
+	default:
+		break;
 	}
 	free(json);
 }

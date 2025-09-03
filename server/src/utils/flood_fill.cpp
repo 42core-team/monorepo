@@ -3,31 +3,29 @@
 Position findFirstEmptyGridCell(Position startPos) // bfs / flood fill
 {
 	Position errorPos = {static_cast<int>(Config::game().gridSize), static_cast<int>(Config::game().gridSize)};
-	const int width  = Config::game().gridSize;
+	const int width = Config::game().gridSize;
 	const int height = Config::game().gridSize;
-	
+
 	if ((int)startPos.x < 0 || (int)startPos.x >= width || (int)startPos.y < 0 || (int)startPos.y >= height)
 		return errorPos;
-	
+
 	std::queue<Position> q;
 	std::unordered_set<int> visited;
 
 	const int dx[] = {1, -1, 0, 0};
 	const int dy[] = {0, 0, 1, -1};
-	
+
 	q.push(startPos);
 	visited.insert(startPos.x * height + startPos.y); // hash function: x * height + y
-	
+
 	while (!q.empty())
 	{
 		Position cur = q.front();
 		q.pop();
 
-		if ((int)cur.x < 0 || (int)cur.x >= width || (int)cur.y < 0 || (int)cur.y >= height)
-			continue;
+		if ((int)cur.x < 0 || (int)cur.x >= width || (int)cur.y < 0 || (int)cur.y >= height) continue;
 
-		if (Board::instance().getObjectAtPos(cur) == nullptr)
-			return cur;
+		if (Board::instance().getObjectAtPos(cur) == nullptr) return cur;
 
 		for (int i = 0; i < 4; i++)
 		{

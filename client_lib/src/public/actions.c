@@ -29,8 +29,7 @@ t_obj *core_action_createUnit(t_unit_type unit_type)
 	int unit_count = 0;
 	while (game.config.units != NULL && game.config.units[unit_count] != NULL)
 		unit_count++;
-	if ((int)unit_type < 0 || (int)unit_type >= unit_count)
-		return NULL;
+	if ((int)unit_type < 0 || (int)unit_type >= unit_count) return NULL;
 
 	core_static_ensureCapacity();
 	t_action *action = &actions.list[actions.count++];
@@ -73,8 +72,7 @@ void core_action_move(const t_obj *unit, t_pos pos)
 
 void core_action_attack(const t_obj *attacker, t_pos target_pos)
 {
-	if (!attacker)
-		return;
+	if (!attacker) return;
 	core_static_ensureCapacity();
 	t_action *action = &actions.list[actions.count++];
 	action->type = ACTION_ATTACK;
@@ -84,8 +82,7 @@ void core_action_attack(const t_obj *attacker, t_pos target_pos)
 
 void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned long amount)
 {
-	if (!source)
-		return;
+	if (!source) return;
 	core_static_ensureCapacity();
 	t_action *action = &actions.list[actions.count++];
 	action->type = ACTION_TRANSFER;
@@ -96,8 +93,7 @@ void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned lo
 
 void core_action_build(const t_obj *builder, t_pos pos)
 {
-	if (!builder)
-		return;
+	if (!builder) return;
 
 	core_static_ensureCapacity();
 	t_action *action = &actions.list[actions.count++];

@@ -35,24 +35,18 @@ json MoveAction::encodeJSON()
 
 std::string MoveAction::execute(Core *core)
 {
-	if (!is_valid_)
-		return "invalid input";
+	if (!is_valid_) return "invalid input";
 
 	Object *unitObj = Board::instance().getObjectById(getUnitId());
-	if (!unitObj || unitObj->getType() != ObjectType::Unit)
-		return "invalid or non-existing unit";
+	if (!unitObj || unitObj->getType() != ObjectType::Unit) return "invalid or non-existing unit";
 	Unit *unit = (Unit *)unitObj;
 
-	if (unit->getActionCooldown() > 0)
-		return "unit is on cooldown";
-	if (unit->getTeamId() != core->getTeamId())
-		return "unit does not belong to your team";
+	if (unit->getActionCooldown() > 0) return "unit is on cooldown";
+	if (unit->getTeamId() != core->getTeamId()) return "unit does not belong to your team";
 
 	Object *obj = Board::instance().getObjectAtPos(target_);
-	if (obj)
-		return "invalid target position. should be empty";
-	if (target_.distance(Board::instance().getObjectPositionById(unit->getId())) > 1)
-		return "invalid move";
+	if (obj) return "invalid target position. should be empty";
+	if (target_.distance(Board::instance().getObjectPositionById(unit->getId())) > 1) return "invalid move";
 
 	Board::instance().moveObjectById(unit->getId(), target_);
 	unit->resetActionCooldown();

@@ -17,33 +17,36 @@ enum class ObjectType
 
 class Object
 {
-	public:
-		Object(int hp, ObjectType type)
-			: id_(nextObjectId_++), hp_(hp), type_(type) {}
-		Object(const Object &other)
-			: id_(nextObjectId_++), hp_(other.hp_), type_(other.type_) {}
-		Object& operator=(const Object& other) {
-			if (this != &other) { hp_ = other.hp_; type_ = other.type_; }
-			return *this;
+  public:
+	Object(int hp, ObjectType type) : id_(nextObjectId_++), hp_(hp), type_(type) {}
+	Object(const Object &other) : id_(nextObjectId_++), hp_(other.hp_), type_(other.type_) {}
+	Object &operator=(const Object &other)
+	{
+		if (this != &other)
+		{
+			hp_ = other.hp_;
+			type_ = other.type_;
 		}
-		virtual ~Object() {}
+		return *this;
+	}
+	virtual ~Object() {}
 
-		virtual void tick(unsigned long long tickCount) = 0;
-		virtual void damage(Object *attacker, unsigned int damage) = 0;
+	virtual void tick(unsigned long long tickCount) = 0;
+	virtual void damage(Object *attacker, unsigned int damage) = 0;
 
-		unsigned int getId() const { return id_; };
-		int getHP() const { return hp_; };
-		ObjectType getType() const { return type_; };
+	unsigned int getId() const { return id_; };
+	int getHP() const { return hp_; };
+	ObjectType getType() const { return type_; };
 
-		void setHP(int hp) { hp_ = hp; };
+	void setHP(int hp) { hp_ = hp; };
 
-	protected:
-		unsigned int id_;
-		int hp_;
+  protected:
+	unsigned int id_;
+	int hp_;
 
-		static unsigned int nextObjectId_;
+	static unsigned int nextObjectId_;
 
-		ObjectType type_;
+	ObjectType type_;
 };
 
 inline unsigned int Object::nextObjectId_ = 1;

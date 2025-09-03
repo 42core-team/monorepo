@@ -10,14 +10,11 @@ static bool positionHasNeighbours(const Position &pos, int N)
 	{
 		for (int dy = -1; dy <= 1; ++dy)
 		{
-			if (dx == 0 && dy == 0)
-				continue;
+			if (dx == 0 && dy == 0) continue;
 			int nx = pos.x + dx;
 			int ny = pos.y + dy;
-			if (nx < 0 || nx >= N || ny < 0 || ny >= N)
-				continue;
-			if (Board::instance().getObjectAtPos(Position(nx, ny)))
-				return true;
+			if (nx < 0 || nx >= N || ny < 0 || ny >= N) continue;
+			if (Board::instance().getObjectAtPos(Position(nx, ny))) return true;
 		}
 	}
 	return false;
@@ -40,8 +37,7 @@ void SparseWorldGenerator::generateWorld(uint64_t seed)
 	auto withinCoreBuffer = [&](const Position &p)
 	{
 		for (const auto &c : Config::game().corePositions)
-			if (std::abs(p.x - c.x) + std::abs(p.y - c.y) <= coreBuffer)
-				return true;
+			if (std::abs(p.x - c.x) + std::abs(p.y - c.y) <= coreBuffer) return true;
 		return false;
 	};
 
@@ -50,18 +46,17 @@ void SparseWorldGenerator::generateWorld(uint64_t seed)
 	{
 		static std::uniform_int_distribution<int> dist(0, static_cast<int>(gridSize) - 1);
 		Position p{dist(eng_), dist(eng_)};
-		if (p.x < 0 || p.x >= N || p.y < 0 || p.y >= N)
-			return false;
-		if (Board::instance().getObjectAtPos(p))
-			return false;
-		if (positionHasNeighbours(p, N))
-			return false;
-		if (withinCoreBuffer(p))
-			return false;
-		if (p.x + p.y >= N - 1)
-			return false; // only place in upper left triangle, rest will be mirrored later
-		unsigned int randomDepositBalance = depositIncome + std::uniform_int_distribution<>(-depositBalanceVariation, depositBalanceVariation)(eng_);
-		unsigned int randomGemPileBalance = gemPileIncome + std::uniform_int_distribution<>(-gemPileBalanceVariation, gemPileBalanceVariation)(eng_);
+		if (p.x < 0 || p.x >= N || p.y < 0 || p.y >= N) return false;
+		if (Board::instance().getObjectAtPos(p)) return false;
+		if (positionHasNeighbours(p, N)) return false;
+		if (withinCoreBuffer(p)) return false;
+		if (p.x + p.y >= N - 1) return false; // only place in upper left triangle, rest will be mirrored later
+		unsigned int randomDepositBalance =
+				depositIncome +
+				std::uniform_int_distribution<>(-depositBalanceVariation, depositBalanceVariation)(eng_);
+		unsigned int randomGemPileBalance =
+				gemPileIncome +
+				std::uniform_int_distribution<>(-gemPileBalanceVariation, gemPileBalanceVariation)(eng_);
 		switch (t)
 		{
 		case ObjectType::Deposit:
@@ -86,8 +81,7 @@ void SparseWorldGenerator::generateWorld(uint64_t seed)
 		while (placed < k && attempts < maxAttempts)
 		{
 			attempts++;
-			if (tryPlace(t))
-				placed++;
+			if (tryPlace(t)) placed++;
 		}
 	};
 
@@ -96,11 +90,11 @@ void SparseWorldGenerator::generateWorld(uint64_t seed)
 	placeK(ObjectType::GemPile, gemPileCount / 2);
 	placeK(ObjectType::Wall, wallCount / 2);
 
-	std::vector<std::tuple<ObjectType, Position, unsigned int>> clones; // type, pos, balance (for deposits and gempiles)
+	std::vector<std::tuple<ObjectType, Position, unsigned int>>
+			clones; // type, pos, balance (for deposits and gempiles)
 	for (auto &obj : Board::instance())
 	{
-		if (obj.getType() == ObjectType::Core)
-			continue;
+		if (obj.getType() == ObjectType::Core) continue;
 		Position pos = Board::instance().getObjectPositionById(obj.getId());
 		Position newPos(gridSize - 1 - pos.x, gridSize - 1 - pos.y);
 		unsigned int balance = obj.getType() == ObjectType::Deposit	  ? static_cast<Deposit &>(obj).getBalance()

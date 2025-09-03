@@ -1,7 +1,7 @@
 #pragma once
 
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <sstream>
 
 enum class LogLevel
@@ -13,7 +13,7 @@ enum class LogLevel
 
 class Logger
 {
-public:
+  public:
 	static void Log(LogLevel level, const std::string &message);
 
 	static void Log(const std::string &message);

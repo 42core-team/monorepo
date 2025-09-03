@@ -1,11 +1,11 @@
 #ifndef ACTION_H
 #define ACTION_H
 
-#include <memory>
-#include <vector>
-
 #include "Config.h"
 #include "Core.h"
+
+#include <memory>
+#include <vector>
 
 class CreateAction;
 class MoveAction;
@@ -27,7 +27,7 @@ enum class ActionType
 
 class Action
 {
-public:
+  public:
 	Action(ActionType type);
 	virtual ~Action() {}
 
@@ -41,16 +41,16 @@ public:
 	virtual void decodeJSON(json msg) = 0;
 	virtual json encodeJSON() = 0;
 
-protected:
+  protected:
 	bool is_valid_;
 
 	ActionType type_;
 };
 
+#include "AttackAction.h"
+#include "BuildAction.h"
 #include "CreateAction.h"
 #include "MoveAction.h"
 #include "TransferGemsAction.h"
-#include "BuildAction.h"
-#include "AttackAction.h"
 
 #endif // ACTION_H

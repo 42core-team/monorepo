@@ -9,23 +9,23 @@ int core_internal_util_distance(t_pos pos1, t_pos pos2);
 
 // ----- Socket
 
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/select.h>
-#include <sys/socket.h>
-#include <netdb.h>
 #include <arpa/inet.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <netdb.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
+#include <sys/select.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
-int					core_internal_socket_init(struct sockaddr_in addr);
-int					core_internal_socket_send(int socket_fd, const char *msg);
-char				*core_internal_socket_read(int socket_fd);
-char				*core_internal_socket_read_once(int socket_fd);
-struct sockaddr_in	core_internal_socket_initAddr(const char *hostname, int port);
+int core_internal_socket_init(struct sockaddr_in addr);
+int core_internal_socket_send(int socket_fd, const char *msg);
+char *core_internal_socket_read(int socket_fd);
+char *core_internal_socket_read_once(int socket_fd);
+struct sockaddr_in core_internal_socket_initAddr(const char *hostname, int port);
 
 // ----- Actions
 
@@ -43,11 +43,31 @@ typedef struct s_action
 	t_action_type type;
 	union
 	{
-		struct { unsigned long unit_type; } create;
-		struct { unsigned long id; t_pos pos; } move;
-		struct { unsigned long id; t_pos pos; } attack;
-		struct { unsigned long source_id; t_pos target_pos; unsigned long amount; } transfer;
-		struct { unsigned long builder_id; t_pos pos; } build;
+		struct
+		{
+			unsigned long unit_type;
+		} create;
+		struct
+		{
+			unsigned long id;
+			t_pos pos;
+		} move;
+		struct
+		{
+			unsigned long id;
+			t_pos pos;
+		} attack;
+		struct
+		{
+			unsigned long source_id;
+			t_pos target_pos;
+			unsigned long amount;
+		} transfer;
+		struct
+		{
+			unsigned long builder_id;
+			t_pos pos;
+		} build;
 	} data;
 } t_action;
 
@@ -60,14 +80,14 @@ typedef struct s_actions
 
 extern t_actions actions;
 
-void	core_internal_reset_actions(void);
+void core_internal_reset_actions(void);
 
 // ----- JSON parsing and encoding
 
-void	core_internal_parse_state(char *json);
-void	core_internal_parse_config(char *json);
-char	*core_internal_encode_action();
-char	*core_internal_encode_login(const char *team_name, int argc, char **argv);
+void core_internal_parse_state(char *json);
+void core_internal_parse_config(char *json);
+char *core_internal_encode_action();
+char *core_internal_encode_login(const char *team_name, int argc, char **argv);
 
 // ----- JSON LIB
 
@@ -96,7 +116,7 @@ typedef struct s_json_node
 		double number;
 		struct s_json_node **array;
 	};
-}	json_node;
+} json_node;
 
 // --- Functions
 
@@ -104,7 +124,7 @@ json_node *string_to_json(char *string);					// Convert a JSON string into a JSO
 char *json_to_string(json_node *json);						// Convert a JSON tree to a JSON string
 char *json_to_formatted_string(json_node *json);			// Convert a JSON tree to a formatted JSON string
 json_node *json_find(json_node *json, char *key);			// Find a node in the JSON tree by key (top-level only)
-json_node *json_find_recursive(json_node *json, char *key);	// Find a node in the JSON tree by key (recursive)
+json_node *json_find_recursive(json_node *json, char *key); // Find a node in the JSON tree by key (recursive)
 void free_json(json_node *json);							// Free all memory allocated for the JSON tree
 json_node *create_node(json_type type);						// Create a new, empty-initialized node
 

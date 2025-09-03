@@ -1,12 +1,12 @@
 #ifndef CORE_LIB_H
 #define CORE_LIB_H
 
+#include <limits.h>
+#include <math.h>
+#include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <stdbool.h>
-#include <math.h>
-#include <stdio.h>
-#include <limits.h>
 
 // ----- OBJECTS -----
 

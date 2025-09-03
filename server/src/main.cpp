@@ -1,27 +1,27 @@
-#include <memory>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <iostream>
-#include <thread>
-#include <cstring>
-#include <vector>
-#include <unordered_map>
-#include <algorithm>
-#include <csignal>
-#include <cerrno>
-
 #include "Bridge.h"
-#include "Game.h"
 #include "Config.h"
+#include "Game.h"
 #include "Logger.h"
 #include "Server.h"
-
 #include "json.hpp"
+
+#include <algorithm>
+#include <arpa/inet.h>
+#include <cerrno>
+#include <csignal>
+#include <cstring>
+#include <iostream>
+#include <memory>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <thread>
+#include <unistd.h>
+#include <unordered_map>
+#include <vector>
+
 using json = nlohmann::ordered_json;
 
-static std::string sanitizeTeamName(const std::string& teamName, const std::string& defaultName = "Unnamed")
+static std::string sanitizeTeamName(const std::string &teamName, const std::string &defaultName = "Unnamed")
 {
 	constexpr size_t MAX_LEN = 16;
 	std::string sanitized;
@@ -31,8 +31,7 @@ static std::string sanitizeTeamName(const std::string& teamName, const std::stri
 		if ((std::isalnum(uc) != 0) || uc == '_' || uc == '.' || uc == '-')
 		{
 			sanitized += static_cast<char>(uc);
-			if (sanitized.size() >= MAX_LEN)
-				break;
+			if (sanitized.size() >= MAX_LEN) break;
 		}
 	}
 	if (sanitized.empty())
@@ -47,7 +46,9 @@ int main(int argc, char *argv[])
 {
 	if (argc < 6)
 	{
-		Logger::Log(LogLevel::ERROR, std::string("Usage: ") + argv[0] + " [server config file path] [game config file path] [data folder path] <teamId1> <teamId2> ... <teamIdN>");
+		Logger::Log(LogLevel::ERROR, std::string("Usage: ") + argv[0] +
+											 " [server config file path] [game config file path] [data folder path] "
+											 "<teamId1> <teamId2> ... <teamIdN>");
 		return 1;
 	}
 
@@ -112,7 +113,8 @@ int main(int argc, char *argv[])
 			Logger::Log(LogLevel::WARNING, "Did not receive a login message from the client.");
 			continue;
 		}
-		if (!loginMessage.contains("password") || loginMessage["password"] != "42") // very important and secure authentication
+		if (!loginMessage.contains("password") ||
+			loginMessage["password"] != "42") // very important and secure authentication
 		{
 			Logger::Log(LogLevel::WARNING, "Incorrect password.");
 			continue;
@@ -140,18 +142,24 @@ int main(int argc, char *argv[])
 	}
 	size_t placeCounter = expectedTeamIds.size() - 1;
 	std::vector<unsigned int> connectedTeamIds;
-	for (unsigned int teamId : expectedTeamIds) {
-		if (bridges.find(teamId) == bridges.end()) {
+	for (unsigned int teamId : expectedTeamIds)
+	{
+		if (bridges.find(teamId) == bridges.end())
+		{
 			ReplayEncoder::instance().setDeathReason(teamId, death_reason_t::DID_NOT_CONNECT);
 			ReplayEncoder::instance().setPlace(teamId, placeCounter--);
 		}
 	}
-	for (unsigned int teamId : expectedTeamIds) {
+	for (unsigned int teamId : expectedTeamIds)
+	{
 		auto it = bridges.find(teamId);
-		if (it != bridges.end() && it->second->isDisconnected()) {
+		if (it != bridges.end() && it->second->isDisconnected())
+		{
 			ReplayEncoder::instance().setDeathReason(teamId, death_reason_t::DISCONNECTED);
 			ReplayEncoder::instance().setPlace(teamId, placeCounter--);
-		} else if (it != bridges.end()) {
+		}
+		else if (it != bridges.end())
+		{
 			connectedTeamIds.push_back(teamId);
 		}
 	}
@@ -160,7 +168,7 @@ int main(int argc, char *argv[])
 
 	Game game(connectedTeamIds);
 
-	for (auto& pair : bridges)
+	for (auto &pair : bridges)
 		game.addBridge(std::move(pair.second));
 
 	game.run();

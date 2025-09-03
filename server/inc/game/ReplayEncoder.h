@@ -4,16 +4,16 @@
 #include "json.hpp"
 using json = nlohmann::ordered_json;
 
-#include "Logger.h"
-#include "Config.h"
 #include "Action.h"
-#include "Stats.h"
+#include "Config.h"
 #include "Core.h"
+#include "Logger.h"
+#include "Stats.h"
 
+#include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <unordered_map>
-#include <filesystem>
-#include <cstdlib>
 
 enum class death_reason_t
 {
@@ -38,13 +38,14 @@ typedef struct team_data_s
 
 class ReplayEncoder
 {
-public:
+  public:
 	ReplayEncoder() : ticks_(json::object()), lastTickCount_(0) {}
 	~ReplayEncoder() = default;
 
 	static ReplayEncoder &instance();
 
-	void addTickState(json &state, unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions);
+	void addTickState(json &state, unsigned long long tick,
+					  std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions);
 
 	void registerExpectedTeam(unsigned int teamId);
 	void setTeamName(unsigned int teamId, const std::string &teamName);
@@ -62,7 +63,7 @@ public:
 
 	static void verifyReplaySaveFolder();
 
-private:
+  private:
 	json encodeMiscSection() const;
 
 	json ticks_ = json::array();
