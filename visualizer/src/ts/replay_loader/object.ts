@@ -177,10 +177,7 @@ export function getBarMetrics(
 	// gems
 	if ((obj.type === 0 || obj.type === 1) && obj.gems > 0) {
 		// deposits and gem piles holding gems doesnt actually contain any info
-		let maxBalance = (getGameConfig()?.depositIncome || 175) * 3;
-		if (obj.gems > maxBalance) {
-			maxBalance = obj.gems;
-		}
+		const maxBalance = 500;
 		metrics.push({
 			key: "gems",
 			percentage: (obj.gems / maxBalance) * 100,
