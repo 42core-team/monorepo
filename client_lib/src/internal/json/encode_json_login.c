@@ -1,6 +1,6 @@
 #include "core_lib_internal.h"
 
-char	*core_internal_encode_login(const char *team_name, int argc, char **argv)
+char *core_internal_encode_login(const char *team_name, int argc, char **argv)
 {
 	if (argc < 2)
 	{
@@ -8,7 +8,7 @@ char	*core_internal_encode_login(const char *team_name, int argc, char **argv)
 		exit(1);
 	}
 
-	json_node * root = create_node(JSON_TYPE_OBJECT);
+	json_node *root = create_node(JSON_TYPE_OBJECT);
 	root->array = malloc(sizeof(json_node *) * 4);
 	root->array[3] = NULL;
 
@@ -27,7 +27,7 @@ char	*core_internal_encode_login(const char *team_name, int argc, char **argv)
 	name->key = strdup("name");
 	root->array[2] = name;
 
-	char * msg = json_to_string(root);
+	char *msg = json_to_string(root);
 	free_json(root);
 
 	int msg_len = strlen(msg);

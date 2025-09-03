@@ -1,19 +1,17 @@
 #include "core_lib_internal.h"
 
-t_game		game = {0};
-t_actions	actions = {0};
+t_game game = {0};
+t_actions actions = {0};
 
 static bool core_static_isMyCore(const t_obj *obj)
 {
-	if (!obj || obj->type != OBJ_CORE)
-		return false;
+	if (!obj || obj->type != OBJ_CORE) return false;
 	return (obj->s_core.team_id == game.my_team_id);
 }
 
 static void core_static_awaitEnterPress(void)
 {
-	if (!isatty(STDIN_FILENO))
-		return;
+	if (!isatty(STDIN_FILENO)) return;
 	printf("The game has ended! But who won?...\n");
 	printf("Press ENTER to reveal the result...\n");
 	fflush(stdout);
@@ -24,14 +22,18 @@ static void core_static_awaitEnterPress(void)
 	tv.tv_sec = 30;
 	tv.tv_usec = 0;
 	int rv = select(STDIN_FILENO + 1, &rfds, NULL, NULL, &tv);
-	if (rv > 0) {
+	if (rv > 0)
+	{
 		int c;
-		while ((c = getchar()) != '\n' && c != EOF) {}
+		while ((c = getchar()) != '\n' && c != EOF)
+		{
+		}
 	}
 }
 
 /**
- * @brief Starts the connection to the server. This function should be called before any other function from this library.
+ * @brief Starts the connection to the server. This function should be called before any other function from this
+ * library.
  *
  * @param team_name The name of your team.
  * @param argc The argc from the main function.
@@ -39,7 +41,7 @@ static void core_static_awaitEnterPress(void)
  * @param tick_callback A function that will be called every game tick.
  * @param debug Whether to enable debug mode or not.
  */
-int	core_startGame(const char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug)
+int core_startGame(const char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug)
 {
 	if (!tick_callback)
 	{
@@ -75,8 +77,7 @@ int	core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 		printf("Something went very awry and there was no json received.\n");
 		return 1;
 	}
-	if (debug)
-		printf("Received: %s\n", conf);
+	if (debug) printf("Received: %s\n", conf);
 	core_internal_parse_config(conf);
 	free(conf);
 
@@ -90,8 +91,7 @@ int	core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 		// send user-selected actions
 		char *tick_actions = core_internal_encode_action();
 		core_internal_reset_actions();
-		if (debug)
-			printf("Actions: %s\n", tick_actions);
+		if (debug) printf("Actions: %s\n", tick_actions);
 		core_internal_socket_send(socket_fd, tick_actions);
 		free(tick_actions);
 

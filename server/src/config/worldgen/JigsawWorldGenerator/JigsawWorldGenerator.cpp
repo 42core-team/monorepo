@@ -18,8 +18,7 @@ void JigsawWorldGenerator::loadTemplates()
 	const std::string templateFolder = Config::getDataFolderPath() + "/jigsaw-templates";
 	std::vector<std::string> files;
 	for (auto &e : std::filesystem::directory_iterator(templateFolder))
-		if (e.path().extension() == ".txt")
-			files.push_back(e.path().string());
+		if (e.path().extension() == ".txt") files.push_back(e.path().string());
 	std::sort(files.begin(), files.end());
 	for (auto &f : files)
 		templates_.emplace_back(f);
@@ -40,28 +39,26 @@ bool JigsawWorldGenerator::canPlaceTemplate(const MapTemplate &temp, int posX, i
 		for (int x = 0; x < temp.width; ++x)
 		{
 			char cell = temp.grid[y][x];
-			if (cell == ' ')
-				continue;
+			if (cell == ' ') continue;
 
 			int targetX = posX + x;
 			int targetY = posY + y;
 			Position targetPos(targetX, targetY);
 
-			if (Board::instance().getObjectAtPos(targetPos) != nullptr)
-				return false;
+			if (Board::instance().getObjectAtPos(targetPos) != nullptr) return false;
 
 			for (int sy = -minSpacing; sy <= minSpacing; ++sy)
 			{
 				for (int sx = -minSpacing; sx <= minSpacing; ++sx)
 				{
 					Position neighbor(targetX + sx, targetY + sy);
-					if (Board::instance().getObjectAtPos(neighbor) != nullptr)
-						return false;
+					if (Board::instance().getObjectAtPos(neighbor) != nullptr) return false;
 				}
 			}
 
 			for (const auto &obj : Board::instance())
-				if (obj.getType() == ObjectType::Core && Board::instance().getObjectPositionById(obj.getId()).distance(targetPos) < minCoreDistance)
+				if (obj.getType() == ObjectType::Core &&
+					Board::instance().getObjectPositionById(obj.getId()).distance(targetPos) < minCoreDistance)
 					return false;
 		}
 	}
@@ -69,33 +66,22 @@ bool JigsawWorldGenerator::canPlaceTemplate(const MapTemplate &temp, int posX, i
 }
 bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, int posY, bool force)
 {
-	if (!canPlaceTemplate(temp, posX, posY) && !force)
-		return false;
+	if (!canPlaceTemplate(temp, posX, posY) && !force) return false;
 
-	const std::unordered_map<char, int> moneyLikelihoodMap = {
-		{'K', 0},
-		{'L', 1},
-		{'N', 2},
-		{'O', 3},
-		{'P', 4},
-		{'Q', 5},
-		{'S', 6},
-		{'T', 7},
-		{'U', 8},
-		{'V', 9}};
+	const std::unordered_map<char, int> moneyLikelihoodMap = {{'K', 0}, {'L', 1}, {'N', 2}, {'O', 3}, {'P', 4},
+															  {'Q', 5}, {'S', 6}, {'T', 7}, {'U', 8}, {'V', 9}};
 
 	for (int y = 0; y < temp.height; ++y)
 	{
 		for (int x = 0; x < temp.width; ++x)
 		{
 			char cell = temp.grid[y][x];
-			if (cell == ' ')
-				continue;
+			if (cell == ' ') continue;
 
-			if (posX + x < 0 || posX + x >= (int)Config::game().gridSize || posY + y < 0 || posY + y >= (int)Config::game().gridSize)
+			if (posX + x < 0 || posX + x >= (int)Config::game().gridSize || posY + y < 0 ||
+				posY + y >= (int)Config::game().gridSize)
 				continue;
-			if (!isValidPreMirrorPos(Position(posX + x, posY + y)))
-				continue;
+			if (!isValidPreMirrorPos(Position(posX + x, posY + y))) continue;
 
 			Position targetPos(posX + x, posY + y);
 			if (cell == 'X')
@@ -108,22 +94,19 @@ bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, i
 			{
 				int wallLikelihood = cell - '0';
 				std::uniform_int_distribution<int> dist(0, 9);
-				if (dist(eng_) < wallLikelihood)
-					Board::instance().addObject<Wall>(Wall(), targetPos);
+				if (dist(eng_) < wallLikelihood) Board::instance().addObject<Wall>(Wall(), targetPos);
 			}
 			else if (std::string("abcdefghij").find(cell) != std::string::npos)
 			{
 				int depositLikelihood = cell - 'a';
 				std::uniform_int_distribution<int> dist(0, 9);
-				if (dist(eng_) < depositLikelihood)
-					Board::instance().addObject<Deposit>(Deposit(), targetPos);
+				if (dist(eng_) < depositLikelihood) Board::instance().addObject<Deposit>(Deposit(), targetPos);
 			}
 			else if (std::string("ABCDEFGHIJ").find(cell) != std::string::npos)
 			{
 				int gemPileLikelihood = cell - 'A';
 				std::uniform_int_distribution<int> dist(0, 9);
-				if (dist(eng_) < gemPileLikelihood)
-					Board::instance().addObject<GemPile>(GemPile(), targetPos);
+				if (dist(eng_) < gemPileLikelihood) Board::instance().addObject<GemPile>(GemPile(), targetPos);
 			}
 			else if (std::string("klmnopqrst").find(cell) != std::string::npos)
 			{
@@ -173,7 +156,8 @@ bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, i
 
 void JigsawWorldGenerator::placeWalls()
 {
-	int additionalWallPlaceAttemptCount = Config::game().worldGeneratorConfig.value("additionalWallPlaceAttemptCount", 100);
+	int additionalWallPlaceAttemptCount =
+			Config::game().worldGeneratorConfig.value("additionalWallPlaceAttemptCount", 100);
 	int minCoreDistance = Config::game().worldGeneratorConfig.value("minCoreDistance", 5);
 
 	std::uniform_int_distribution<int> distX(0, Config::game().gridSize - 1);
@@ -186,38 +170,33 @@ void JigsawWorldGenerator::placeWalls()
 		int y = distY(eng_);
 		Position pos(x, y);
 
-		if (Board::instance().getObjectAtPos(pos) != nullptr)
-			continue;
-		if (!isValidPreMirrorPos(pos))
-			continue;
+		if (Board::instance().getObjectAtPos(pos) != nullptr) continue;
+		if (!isValidPreMirrorPos(pos)) continue;
 
 		bool nearCore = false;
-		for (const Object & obj : Board::instance())
+		for (const Object &obj : Board::instance())
 		{
-			if (obj.getType() == ObjectType::Core && Board::instance().getObjectPositionById(obj.getId()).distance(pos) < minCoreDistance)
+			if (obj.getType() == ObjectType::Core &&
+				Board::instance().getObjectPositionById(obj.getId()).distance(pos) < minCoreDistance)
 			{
 				nearCore = true;
 				break;
 			}
 		}
-		if (nearCore)
-			continue;
+		if (nearCore) continue;
 
 		int adjacentObjects = 0;
 		for (int sy = -1; sy <= 1; ++sy)
 		{
 			for (int sx = -1; sx <= 1; ++sx)
 			{
-				if (sx == 0 && sy == 0)
-					continue;
+				if (sx == 0 && sy == 0) continue;
 				Position neighbor(x + sx, y + sy);
-				if (Board::instance().getObjectAtPos(neighbor) != nullptr)
-					adjacentObjects++;
+				if (Board::instance().getObjectAtPos(neighbor) != nullptr) adjacentObjects++;
 			}
 		}
 
-		if (adjacentObjects >= 4)
-			continue;
+		if (adjacentObjects >= 4) continue;
 
 		double placementProbability = 0.5;
 		if (adjacentObjects == 0)
@@ -229,8 +208,7 @@ void JigsawWorldGenerator::placeWalls()
 		else if (adjacentObjects == 3)
 			placementProbability = 0.2;
 
-		if (probDist(eng_) < placementProbability)
-			Board::instance().addObject<Wall>(Wall(), pos);
+		if (probDist(eng_) < placementProbability) Board::instance().addObject<Wall>(Wall(), pos);
 	}
 }
 
@@ -242,9 +220,8 @@ void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 	int minCoreDistance = Config::game().worldGeneratorConfig.value("minCoreDistance", 5);
 
 	std::vector<unsigned int> typeObjectIds;
-	for (auto & obj : Board::instance())
-		if (obj.getType() == type)
-			typeObjectIds.push_back(obj.getId());
+	for (auto &obj : Board::instance())
+		if (obj.getType() == type) typeObjectIds.push_back(obj.getId());
 	int currentObjCount = typeObjectIds.size();
 
 	if (currentObjCount > amount)
@@ -253,8 +230,7 @@ void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 		std::shuffle(typeObjectIds.begin(), typeObjectIds.end(), eng_);
 		for (unsigned int id : typeObjectIds)
 		{
-			if (removeCount-- <= 0)
-				break;
+			if (removeCount-- <= 0) break;
 			Board::instance().removeObjectById(id);
 		}
 	}
@@ -271,20 +247,21 @@ void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 			int y = distY(eng_);
 			Position pos(x, y);
 
-			if (!isValidPreMirrorPos(pos)) // outside of top left triangle, don't populate, rest of grid will be mirrored later
+			if (!isValidPreMirrorPos(
+						pos)) // outside of top left triangle, don't populate, rest of grid will be mirrored later
 				continue;
 
 			bool nearCore = false;
-			for (const Object & obj : Board::instance())
+			for (const Object &obj : Board::instance())
 			{
-				if (obj.getType() == ObjectType::Core && Board::instance().getObjectPositionById(obj.getId()).distance(pos) < minCoreDistance)
+				if (obj.getType() == ObjectType::Core &&
+					Board::instance().getObjectPositionById(obj.getId()).distance(pos) < minCoreDistance)
 				{
 					nearCore = true;
 					break;
 				}
 			}
-			if (nearCore)
-				continue;
+			if (nearCore) continue;
 
 			// likelihood tweaking based on surroundings for more interesting world gen
 			int rerollLikeliness = 100;
@@ -293,7 +270,7 @@ void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 			int wallsCount = 0;
 			for (int xW = -1; xW <= 1; xW++)
 				for (int yW = -1; yW <= 1; yW++)
-					if (Board::instance().getObjectAtPos(Position(x + xW, y + yW)) != nullptr && \
+					if (Board::instance().getObjectAtPos(Position(x + xW, y + yW)) != nullptr &&
 						Board::instance().getObjectAtPos(Position(x + xW, y + yW))->getType() == ObjectType::Wall)
 						wallsCount++;
 			rerollLikeliness -= wallsCount * 5;
@@ -304,12 +281,10 @@ void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 			int cornerDist = bottomLeftDistance < topRightDistance ? bottomLeftDistance : topRightDistance;
 			rerollLikeliness -= Config::game().gridSize - cornerDist;
 
-			if (rerollLikeliness < 0)
-				rerollLikeliness = 0;
+			if (rerollLikeliness < 0) rerollLikeliness = 0;
 
 			std::uniform_int_distribution<int> pick(0, 100);
-			if (pick(eng_) < rerollLikeliness)
-				continue ;
+			if (pick(eng_) < rerollLikeliness) continue;
 
 			if (Board::instance().getObjectAtPos(pos) == nullptr)
 			{
@@ -328,30 +303,31 @@ void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 void JigsawWorldGenerator::varyDepositIncome()
 {
 	const int baseDepositIncome = Config::game().worldGeneratorConfig.value("baseDepositIncome", 200);
-	const int additionalDepositIncomePerAdjacentWall = Config::game().worldGeneratorConfig.value("depositAdditionalIncomePerAdjacentWall", 20);
-	const float depositMultiplierIfFullySurrounded = Config::game().worldGeneratorConfig.value("depositMultiplierIfFullySurrounded", 1.3);
+	const int additionalDepositIncomePerAdjacentWall =
+			Config::game().worldGeneratorConfig.value("depositAdditionalIncomePerAdjacentWall", 20);
+	const float depositMultiplierIfFullySurrounded =
+			Config::game().worldGeneratorConfig.value("depositMultiplierIfFullySurrounded", 1.3);
 	const int randomDepositVariation = Config::game().worldGeneratorConfig.value("randomDepositIncomeVariation", 0);
 
 	const int baseGemPileIncome = Config::game().worldGeneratorConfig.value("moneyObjIncome", 75);
 	const int randomGemPileVariation = Config::game().worldGeneratorConfig.value("randomGemPileIncomeVariation", 0);
 
-	for (Object & obj : Board::instance())
+	for (Object &obj : Board::instance())
 	{
 		if (obj.getType() == ObjectType::Deposit)
 		{
 			Position pos = Board::instance().getObjectPositionById(obj.getId());
-			static Position dirs[] = {{1,0},{-1,0},{0,1},{0,-1}};
-			auto& board = Board::instance();
+			static Position dirs[] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+			auto &board = Board::instance();
 			int adjacentWalls = 0;
-			for (auto& d : dirs) {
-				auto* o = board.getObjectAtPos({pos.x + d.x, pos.y + d.y});
-				if (o && (o->getType() == ObjectType::Wall || o->getType() == ObjectType::Deposit))
-					adjacentWalls++;
+			for (auto &d : dirs)
+			{
+				auto *o = board.getObjectAtPos({pos.x + d.x, pos.y + d.y});
+				if (o && (o->getType() == ObjectType::Wall || o->getType() == ObjectType::Deposit)) adjacentWalls++;
 			}
 
 			int income = baseDepositIncome + additionalDepositIncomePerAdjacentWall * adjacentWalls;
-			if (adjacentWalls >= 4)
-				income = static_cast<int>(income * depositMultiplierIfFullySurrounded);
+			if (adjacentWalls >= 4) income = static_cast<int>(income * depositMultiplierIfFullySurrounded);
 
 			if (randomDepositVariation > 0)
 			{
@@ -361,7 +337,7 @@ void JigsawWorldGenerator::varyDepositIncome()
 				income = income - variation + d(eng_);
 			}
 
-			Deposit & DepositObj = static_cast<Deposit &>(obj);
+			Deposit &DepositObj = static_cast<Deposit &>(obj);
 			DepositObj.setBalance(income);
 		}
 		else if (obj.getType() == ObjectType::GemPile)
@@ -376,7 +352,7 @@ void JigsawWorldGenerator::varyDepositIncome()
 				income = income - variation + d(eng_);
 			}
 
-			GemPile & GemPileObj = static_cast<GemPile &>(obj);
+			GemPile &GemPileObj = static_cast<GemPile &>(obj);
 			GemPileObj.setBalance(income);
 		}
 	}
@@ -389,25 +365,36 @@ void JigsawWorldGenerator::mirrorWorld()
 	unsigned int gridSize = Config::game().gridSize;
 
 	std::vector<std::tuple<ObjectType, Position, int>> clones;
-	for (auto& obj : Board::instance())
+	for (auto &obj : Board::instance())
 	{
 		if (obj.getType() == ObjectType::Core) continue;
 		Position p = Board::instance().getObjectPositionById(obj.getId());
 		Position q(gridSize - 1 - p.x, gridSize - 1 - p.y);
 		int bal = 0;
-		if (obj.getType() == ObjectType::Deposit) bal = ((Deposit&)obj).getBalance();
-		else if (obj.getType() == ObjectType::GemPile) bal = ((GemPile&)obj).getBalance();
+		if (obj.getType() == ObjectType::Deposit)
+			bal = ((Deposit &)obj).getBalance();
+		else if (obj.getType() == ObjectType::GemPile)
+			bal = ((GemPile &)obj).getBalance();
 		clones.emplace_back(obj.getType(), q, bal);
 	}
 
-	for (auto& it : clones)
+	for (auto &it : clones)
 	{
 		auto [type, pos, bal] = it;
-		switch (type) {
-			case ObjectType::Deposit:  Board::instance().addObject<Deposit>(Deposit(bal), pos); break;
-			case ObjectType::GemPile:  Board::instance().addObject<GemPile>(GemPile(bal), pos); break;
-			case ObjectType::Wall:     Board::instance().addObject<Wall>(Wall(), pos); break;
-			default: Logger::Log("Unknown object type while mirroring: " + std::to_string(static_cast<int>(type))); break;
+		switch (type)
+		{
+		case ObjectType::Deposit:
+			Board::instance().addObject<Deposit>(Deposit(bal), pos);
+			break;
+		case ObjectType::GemPile:
+			Board::instance().addObject<GemPile>(GemPile(bal), pos);
+			break;
+		case ObjectType::Wall:
+			Board::instance().addObject<Wall>(Wall(), pos);
+			break;
+		default:
+			Logger::Log("Unknown object type while mirroring: " + std::to_string(static_cast<int>(type)));
+			break;
 		}
 	}
 }
@@ -439,7 +426,8 @@ void JigsawWorldGenerator::generateWorld(uint64_t seed)
 		int posX = distX(eng_) - 5;
 		int posY = distY(eng_) - 5;
 		if (tryPlaceTemplate(temp, posX, posY))
-			Logger::Log("Placed template " + original.name + " at (" + std::to_string(posX) + ", " + std::to_string(posY) + ")");
+			Logger::Log("Placed template " + original.name + " at (" + std::to_string(posX) + ", " +
+						std::to_string(posY) + ")");
 	}
 	Visualizer::visualizeGameState(0, true);
 
@@ -448,11 +436,13 @@ void JigsawWorldGenerator::generateWorld(uint64_t seed)
 	Visualizer::visualizeGameState(0, true);
 
 	Logger::Log("Step 3: Balancing Gem Deposits");
-	balanceObjectType(ObjectType::Deposit, Config::game().worldGeneratorConfig.value("depositCount", 20) / 2); // gems to half, will be doubled again later by mirroring
+	balanceObjectType(ObjectType::Deposit, Config::game().worldGeneratorConfig.value("depositCount", 20) /
+												   2); // gems to half, will be doubled again later by mirroring
 	Visualizer::visualizeGameState(0, true);
 
 	Logger::Log("Step 4: Balancing Gem Piles");
-	balanceObjectType(ObjectType::GemPile, Config::game().worldGeneratorConfig.value("gemPileCount", 20) / 2); // gems to half, will be doubled again later by mirroring
+	balanceObjectType(ObjectType::GemPile, Config::game().worldGeneratorConfig.value("gemPileCount", 20) /
+												   2); // gems to half, will be doubled again later by mirroring
 	Visualizer::visualizeGameState(0, true);
 
 	Logger::Log("Step 5: Varying Gem Pile & Deposit Income");

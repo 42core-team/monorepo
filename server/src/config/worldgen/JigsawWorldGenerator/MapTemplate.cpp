@@ -3,26 +3,22 @@
 void MapTemplate::loadFromFile(const std::string &filepath)
 {
 	std::ifstream infile(filepath);
-	if (!infile)
-		throw std::runtime_error("Unable to open template file: " + filepath);
+	if (!infile) throw std::runtime_error("Unable to open template file: " + filepath);
 
 	std::string line;
 	int maxWidth = 0;
 	while (std::getline(infile, line))
 	{
-		if (!line.empty() && line.back() == '\r')
-			line.pop_back();
+		if (!line.empty() && line.back() == '\r') line.pop_back();
 		std::vector<char> row(line.begin(), line.end());
 		maxWidth = std::max(maxWidth, static_cast<int>(row.size()));
 		grid.push_back(row);
 	}
-	if (grid.empty())
-		throw std::runtime_error("Empty template file: " + filepath);
+	if (grid.empty()) throw std::runtime_error("Empty template file: " + filepath);
 
 	for (auto &row : grid)
 	{
-		if (static_cast<int>(row.size()) < maxWidth)
-			row.resize(maxWidth, ' ');
+		if (static_cast<int>(row.size()) < maxWidth) row.resize(maxWidth, ' ');
 	}
 	height = static_cast<int>(grid.size());
 	width = maxWidth;

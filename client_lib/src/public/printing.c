@@ -12,39 +12,41 @@ void core_print_obj(t_obj *obj)
 
 	printf("---");
 	printf("ID: %lu\n", obj->id);
-	printf("Type: %s\n", obj->type == OBJ_CORE ? "Core" : 
-		obj->type == OBJ_UNIT ? "Unit" : 
-		obj->type == OBJ_DEPOSIT ? "Deposit" :
-		obj->type == OBJ_WALL ? "Wall" : 
-		obj->type == OBJ_GEM_PILE ? "Gem Pile" : "Unknown");
-		// obj->type == OBJ_BOMB ? "Bomb" : "Unknown");
-	printf("State: %s\n", obj->state == STATE_UNINITIALIZED ? "Uninitialized" :
-		obj->state == STATE_ALIVE ? "Alive" : 
-		obj->state == STATE_DEAD ? "Dead" : "Unknown");
+	printf("Type: %s\n", obj->type == OBJ_CORE		 ? "Core"
+						 : obj->type == OBJ_UNIT	 ? "Unit"
+						 : obj->type == OBJ_DEPOSIT	 ? "Deposit"
+						 : obj->type == OBJ_WALL	 ? "Wall"
+						 : obj->type == OBJ_GEM_PILE ? "Gem Pile"
+													 : "Unknown");
+	// obj->type == OBJ_BOMB ? "Bomb" : "Unknown");
+	printf("State: %s\n", obj->state == STATE_UNINITIALIZED ? "Uninitialized"
+						  : obj->state == STATE_ALIVE		? "Alive"
+						  : obj->state == STATE_DEAD		? "Dead"
+															: "Unknown");
 	printf("Position: (%hu, %hu)\n", obj->pos.x, obj->pos.y);
 	printf("HP: %lu\n", obj->hp);
 
 	switch (obj->type)
 	{
-		case OBJ_CORE:
-			printf("Team ID: %lu\n", obj->s_core.team_id);
-			printf("gems: %lu\n", obj->s_core.gems);
-			break;
-		case OBJ_UNIT:
-			printf("Unit Type: %lu\n", obj->s_unit.unit_type);
-			printf("Team ID: %lu\n", obj->s_unit.team_id);
-			printf("gems: %lu\n", obj->s_unit.gems);
-			printf("Action Cooldown: %lu\n", obj->s_unit.action_cooldown);
-			break;
-		case OBJ_DEPOSIT:
-		case OBJ_GEM_PILE:
-			printf("gems: %lu\n", obj->s_resource_gems_pile.gems);
-			break;
-		// case OBJ_BOMB:
-		// 	printf("Countdown: %lu\n", obj->s_bomb.countdown);
-		// 	break;
-		default:
-			break;
+	case OBJ_CORE:
+		printf("Team ID: %lu\n", obj->s_core.team_id);
+		printf("gems: %lu\n", obj->s_core.gems);
+		break;
+	case OBJ_UNIT:
+		printf("Unit Type: %lu\n", obj->s_unit.unit_type);
+		printf("Team ID: %lu\n", obj->s_unit.team_id);
+		printf("gems: %lu\n", obj->s_unit.gems);
+		printf("Action Cooldown: %lu\n", obj->s_unit.action_cooldown);
+		break;
+	case OBJ_DEPOSIT:
+	case OBJ_GEM_PILE:
+		printf("gems: %lu\n", obj->s_resource_gems_pile.gems);
+		break;
+	// case OBJ_BOMB:
+	// 	printf("Countdown: %lu\n", obj->s_bomb.countdown);
+	// 	break;
+	default:
+		break;
 	}
 }
 

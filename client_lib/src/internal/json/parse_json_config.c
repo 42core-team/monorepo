@@ -1,6 +1,6 @@
 #include "core_lib_internal.h"
 
-static void	core_static_util_perrorExit(char *msg)
+static void core_static_util_perrorExit(char *msg)
 {
 	perror(msg);
 	exit(EXIT_FAILURE);
@@ -15,14 +15,12 @@ static t_unit_config **core_static_parse_unitConfig(json_node *root)
 		array_size++;
 
 	t_unit_config **units = malloc(sizeof(t_unit_config *) * (array_size + 1));
-	if (!units)
-		core_static_util_perrorExit("Failed to allocate memory for unit configs\n");
+	if (!units) core_static_util_perrorExit("Failed to allocate memory for unit configs\n");
 
 	for (int i = 0; i < array_size; i++)
 	{
 		units[i] = malloc(sizeof(t_unit_config));
-		if (!units[i])
-			core_static_util_perrorExit("Failed to allocate memory for unit config\n");
+		if (!units[i]) core_static_util_perrorExit("Failed to allocate memory for unit config\n");
 
 		json_node *unit_node = json->array[i];
 

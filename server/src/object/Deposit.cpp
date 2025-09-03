@@ -1,12 +1,11 @@
 #include "Deposit.h"
 
-Deposit::Deposit()
-	: Object(Config::game().depositHp, ObjectType::Deposit),
-	  balance_(Config::game().depositIncome) {}
-Deposit::Deposit(unsigned int gems)
-	: Object(Config::game().depositHp,
-			 ObjectType::Deposit),
-	  balance_(gems) {}
+Deposit::Deposit() : Object(Config::game().depositHp, ObjectType::Deposit), balance_(Config::game().depositIncome)
+{
+}
+Deposit::Deposit(unsigned int gems) : Object(Config::game().depositHp, ObjectType::Deposit), balance_(gems)
+{
+}
 
 void Deposit::tick(unsigned long long tickCount)
 {
@@ -15,7 +14,7 @@ void Deposit::tick(unsigned long long tickCount)
 
 void Deposit::damage(Object *attacker, unsigned int damage)
 {
-	(void) attacker;
+	(void)attacker;
 
 	Stats::instance().inc(stat_keys::damage_deposits, damage);
 

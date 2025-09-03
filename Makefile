@@ -51,7 +51,7 @@ server_build_dev:
 server_build_prod:
 	make -C $(SERVER_FOLDER) prod
 
-build_clients: player_1_build player_2_build
+build_clients: player_1_build player_2_build setup-hooks
 
 player_1_build:
 	make -C client_lib
@@ -78,12 +78,16 @@ fclean: clean
 	make -C $(SERVER_FOLDER) fclean
 	make -C client_lib fclean
 
-# -------------------- Clean targets --------------------
+# -------------------- Meta / Monorepo Targets --------------------
 update:
 	git submodule update --init --recursive
 	git -C my-core-bot fetch origin --prune
 	git -C my-core-bot checkout -B $(CURRENT_BRANCH) --track origin/$(CURRENT_BRANCH) || git -C my-core-bot checkout -B $(CURRENT_BRANCH) origin/dev
 	git -C my-core-bot pull --ff-only
+
+setup-hooks:
+	chmod +x .githooks/*
+	git config core.hooksPath .githooks
 
 vis:
 	make visualizer

@@ -2,8 +2,9 @@
 
 #include <unordered_set>
 
-Bomb::Bomb()
-	: Object(1, ObjectType::Bomb), countdown_(Config::game().bombCountdown) {}
+Bomb::Bomb() : Object(1, ObjectType::Bomb), countdown_(Config::game().bombCountdown)
+{
+}
 
 void Bomb::explode()
 {
@@ -13,12 +14,14 @@ void Bomb::explode()
 	explosionTiles_.clear();
 	explosionTiles_.emplace(bomb);
 
-	auto isPositionExplosionBlocking = [](int x, int y) -> bool {
-		if (Object* o = Board::instance().getObjectAtPos(Position{x, y})) return o->getType() == ObjectType::Wall;
+	auto isPositionExplosionBlocking = [](int x, int y) -> bool
+	{
+		if (Object *o = Board::instance().getObjectAtPos(Position{x, y})) return o->getType() == ObjectType::Wall;
 		return false;
 	};
 
-	auto visitRayFromCenters = [&](int tx, int ty, auto&& onCell) {
+	auto visitRayFromCenters = [&](int tx, int ty, auto &&onCell)
+	{
 		double ox = bomb.x + 0.5, oy = bomb.y + 0.5;
 		double dx = (tx + 0.5) - ox, dy = (ty + 0.5) - oy;
 		int stepX = (dx > 0) - (dx < 0), stepY = (dy > 0) - (dy < 0);
@@ -33,52 +36,75 @@ void Bomb::explode()
 
 		const double EPS = 1e-12;
 
-		while (!(x == tx && y == ty)) {
-			if (std::fabs(tMaxX - tMaxY) < EPS) {
+		while (!(x == tx && y == ty))
+		{
+			if (std::fabs(tMaxX - tMaxY) < EPS)
+			{
 				int nx = x + stepX;
 				int ny = y + stepY;
 				bool blockX = isPositionExplosionBlocking(nx, y);
 				bool blockY = isPositionExplosionBlocking(x, ny);
 				if (blockX && blockY) break;
-				if (!blockX) { if (!onCell(nx, y)) break; }
-				if (!blockY) { if (!onCell(x, ny)) break; }
-				x = nx; y = ny;
+				if (!blockX)
+				{
+					if (!onCell(nx, y)) break;
+				}
+				if (!blockY)
+				{
+					if (!onCell(x, ny)) break;
+				}
+				x = nx;
+				y = ny;
 				tMaxX += tDeltaX;
 				tMaxY += tDeltaY;
 				if (!onCell(x, y)) break;
 				continue;
 			}
 
-			if (tMaxX < tMaxY) { x += stepX; tMaxX += tDeltaX; }
-			else               { y += stepY; tMaxY += tDeltaY; }
+			if (tMaxX < tMaxY)
+			{
+				x += stepX;
+				tMaxX += tDeltaX;
+			}
+			else
+			{
+				y += stepY;
+				tMaxY += tDeltaY;
+			}
 			if (!onCell(x, y)) break;
 		}
 	};
 
 	std::unordered_set<unsigned long long> toDamageIds;
-	std::vector<Object*> toDamage;
+	std::vector<Object *> toDamage;
 
-	for (int dy = -radius; dy <= radius; ++dy) {
-		for (int dx = -radius; dx <= radius; ++dx) {
+	for (int dy = -radius; dy <= radius; ++dy)
+	{
+		for (int dx = -radius; dx <= radius; ++dx)
+		{
 			if (Position(bomb.x + dx, bomb.y + dy).distance(bomb) > radius) continue;
 			if (dx == 0 && dy == 0) continue;
 			int tx = bomb.x + dx, ty = bomb.y + dy;
 
-			visitRayFromCenters(tx, ty, [&](int cx, int cy) {
-				if (isPositionExplosionBlocking(cx, cy)) return false;
-				if (Object* o = Board::instance().getObjectAtPos(Position{cx, cy})) {
-					if (o->getType() != ObjectType::Wall) {
-						auto id = o->getId();
-						if (toDamageIds.insert(id).second) toDamage.push_back(o);
-					}
-				}
-				explosionTiles_.emplace(Position{cx, cy});
-				return true;
-			});
+			visitRayFromCenters(tx, ty,
+								[&](int cx, int cy)
+								{
+									if (isPositionExplosionBlocking(cx, cy)) return false;
+									if (Object *o = Board::instance().getObjectAtPos(Position{cx, cy}))
+									{
+										if (o->getType() != ObjectType::Wall)
+										{
+											auto id = o->getId();
+											if (toDamageIds.insert(id).second) toDamage.push_back(o);
+										}
+									}
+									explosionTiles_.emplace(Position{cx, cy});
+									return true;
+								});
 		}
 	}
 
-	for (Object* o : toDamage)
+	for (Object *o : toDamage)
 	{
 		int damage = 0;
 		if (o->getType() == ObjectType::Core)
@@ -97,8 +123,7 @@ void Bomb::explode()
 void Bomb::tick(unsigned long long tickCount)
 {
 	(void)tickCount;
-	if (!countdownStarted_)
-		return;
+	if (!countdownStarted_) return;
 	if (countdown_ > 0)
 		countdown_--;
 	else
@@ -107,8 +132,8 @@ void Bomb::tick(unsigned long long tickCount)
 
 void Bomb::damage(Object *attacker, unsigned int damage)
 {
-	(void) attacker;
-	(void) damage;
+	(void)attacker;
+	(void)damage;
 
 	if (!countdownStarted_)
 		countdownStarted_ = true;

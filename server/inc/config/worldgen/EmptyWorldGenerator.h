@@ -5,10 +5,10 @@
 
 class EmptyWorldGenerator : public WorldGenerator
 {
-	public:
-		EmptyWorldGenerator();
+  public:
+	EmptyWorldGenerator();
 
-		void generateWorld(uint64_t seed);
+	void generateWorld(uint64_t seed);
 };
 
 #endif // EMPTY_WORLD_GENERATOR_H

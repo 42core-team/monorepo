@@ -1,17 +1,16 @@
 #ifndef CREATE_ACTION_H
 #define CREATE_ACTION_H
 
-#include <vector>
-
 #include "Action.h"
 #include "Utils.h"
-
 #include "json.hpp"
+
+#include <vector>
 using json = nlohmann::ordered_json;
 
 class CreateAction : public Action
 {
-public:
+  public:
 	CreateAction(json msg);
 
 	unsigned int getUnitType() const { return unit_type_; }
@@ -20,7 +19,7 @@ public:
 	void decodeJSON(json msg);
 	json encodeJSON();
 
-private:
+  private:
 	unsigned int unit_type_;
 };
 

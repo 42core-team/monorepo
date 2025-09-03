@@ -8,26 +8,24 @@ ReplayEncoder &ReplayEncoder::instance()
 	return inst;
 }
 
-void ReplayEncoder::addTickState(json &state, unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions)
+void ReplayEncoder::addTickState(json &state, unsigned long long tick,
+								 std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions)
 {
 	if (actions.size() > 0)
 	{
 		state["actions"] = json::array();
 		for (const auto &action : actions)
-			if (action.first)
-				state["actions"].push_back(action.first.get()->encodeJSON());
+			if (action.first) state["actions"].push_back(action.first.get()->encodeJSON());
 	}
 
-	if (!state.empty())
-		ticks_[std::to_string(tick)] = state;
+	if (!state.empty()) ticks_[std::to_string(tick)] = state;
 
 	lastTickCount_ = tick;
 }
 
 void ReplayEncoder::registerExpectedTeam(unsigned int teamId)
 {
-	if (!teamData_.count(teamId))
-		teamData_[teamId].teamId = teamId;
+	if (!teamData_.count(teamId)) teamData_[teamId].teamId = teamId;
 }
 void ReplayEncoder::setTeamName(unsigned int teamId, const std::string &teamName)
 {
@@ -73,8 +71,7 @@ void ReplayEncoder::verifyReplaySaveFolder()
 			continue;
 		}
 
-		if (!std::filesystem::exists(replaySaveFolder) ||
-			!std::filesystem::is_directory(replaySaveFolder))
+		if (!std::filesystem::exists(replaySaveFolder) || !std::filesystem::is_directory(replaySaveFolder))
 		{
 			Logger::Log(LogLevel::WARNING, "One replay save folder is incorrectly set to: " + replaySaveFolder);
 			continue;

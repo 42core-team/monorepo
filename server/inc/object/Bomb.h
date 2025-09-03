@@ -1,20 +1,19 @@
 #ifndef BOMB_H
 #define BOMB_H
 
-#include "Object.h"
+#include "Board.h"
 #include "Common.h"
 #include "Config.h"
-#include "Board.h"
+#include "Object.h"
 #include "Stats.h"
 
 #include <set>
 
 class Bomb : public Object
 {
-public:
+  public:
 	Bomb();
-	Bomb(const Bomb &other)
-		: Object(other), countdown_(other.countdown_), countdownStarted_(other.countdownStarted_) {}
+	Bomb(const Bomb &other) : Object(other), countdown_(other.countdown_), countdownStarted_(other.countdownStarted_) {}
 
 	void explode();
 	void tick(unsigned long long tickCount);
@@ -25,7 +24,7 @@ public:
 
 	std::set<Position> explosionTiles_;
 
-private:
+  private:
 	unsigned int countdown_ = 0; // Countdown for the bomb to explode
 	bool countdownStarted_ = false;
 };

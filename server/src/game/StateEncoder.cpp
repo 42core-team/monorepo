@@ -4,7 +4,7 @@ json StateEncoder::encodeFullState()
 {
 	json state = json::array();
 
-	for (const Object & obj : Board::instance())
+	for (const Object &obj : Board::instance())
 	{
 		json o;
 
@@ -38,11 +38,12 @@ json StateEncoder::encodeFullState()
 		{
 			o["countdown"] = ((Bomb &)obj).getCountdown();
 			o["countdownStarted"] = ((Bomb &)obj).isCountdownStarted();
-			
+
 			json tiles = json::array();
-			const Bomb& b = static_cast<const Bomb &>(obj);
+			const Bomb &b = static_cast<const Bomb &>(obj);
 			auto exploded = b.explosionTiles_;
-			for (const Position& p : exploded) {
+			for (const Position &p : exploded)
+			{
 				json t;
 				t["x"] = p.x;
 				t["y"] = p.y;
@@ -67,7 +68,9 @@ json StateEncoder::diffObject(const json &currentObj, const json &previousObj)
 	for (auto it = currentObj.begin(); it != currentObj.end(); ++it)
 	{
 		const std::string &key = it.key();
-		if (key == "id" || (key == "ActionCooldown" && currentObj.contains("ActionCooldown") && previousObj.contains("ActionCooldown") && currentObj["ActionCooldown"] <= previousObj["ActionCooldown"]))
+		if (key == "id" ||
+			(key == "ActionCooldown" && currentObj.contains("ActionCooldown") &&
+			 previousObj.contains("ActionCooldown") && currentObj["ActionCooldown"] <= previousObj["ActionCooldown"]))
 			continue;
 
 		if (previousObj.find(key) == previousObj.end() || previousObj.at(key) != it.value())
@@ -91,8 +94,7 @@ json StateEncoder::diffObjects(const json &previousObjects, const json &currentO
 			if (prevObj["id"] == currentObj["id"])
 			{
 				json objDiff = diffObject(currentObj, prevObj);
-				if (!objDiff.empty())
-					diffArray.push_back(objDiff);
+				if (!objDiff.empty()) diffArray.push_back(objDiff);
 				found = true;
 				break;
 			}
@@ -109,9 +111,12 @@ json StateEncoder::diffObjects(const json &previousObjects, const json &currentO
 	{
 		bool existed = false;
 		for (const auto &prevObj : previousObjects)
-			if (prevObj["id"] == currentObj["id"]) { existed = true; break; }
-		if (!existed)
-			diffArray.push_back(currentObj);
+			if (prevObj["id"] == currentObj["id"])
+			{
+				existed = true;
+				break;
+			}
+		if (!existed) diffArray.push_back(currentObj);
 	}
 
 	return diffArray;

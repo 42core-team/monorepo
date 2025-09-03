@@ -1,4 +1,5 @@
 #include "Game.h"
+
 #include <memory>
 
 Game::Game(std::vector<unsigned int> team_ids)
@@ -7,15 +8,17 @@ Game::Game(std::vector<unsigned int> team_ids)
 	for (unsigned int i = 0; i < team_ids.size(); ++i)
 		Board::instance().addObject<Core>(Core(team_ids[i]), Config::getCorePosition(i), true);
 
-	if (Config::game().usedRandomSeed)
-		Logger::Log("Generating world with random seed as no seed was provided.");
-	Logger::Log("Generating world with seed \"" + Config::game().seedString + "\". (hash: " + std::to_string(Config::game().seed) + ")");
+	if (Config::game().usedRandomSeed) Logger::Log("Generating world with random seed as no seed was provided.");
+	Logger::Log("Generating world with seed \"" + Config::game().seedString +
+				"\". (hash: " + std::to_string(Config::game().seed) + ")");
 	Config::game().worldGenerator->generateWorld(Config::game().seed);
 	ReplayEncoder::instance().getCustomData()["worldGeneratorSeed"] = Config::game().seedString;
 
 	Logger::Log("Game created with " + std::to_string(team_ids.size()) + " teams.");
 }
-Game::~Game() {}
+Game::~Game()
+{
+}
 
 void Game::addBridge(std::unique_ptr<Bridge> bridge)
 {
@@ -59,8 +62,7 @@ void Game::run()
 					}
 				}
 			}
-			if (all)
-				break;
+			if (all) break;
 		}
 		if (std::chrono::steady_clock::now() - waitStart >= std::chrono::milliseconds(maxWait))
 		{
@@ -69,7 +71,8 @@ void Game::run()
 				Bridge *bb = it->get();
 				if (!gotMsg[bb])
 				{
-					Logger::LogWarn("Bridge of team " + std::to_string(bb->getTeamId()) + " did not send an action in time. Disconnecting.");
+					Logger::LogWarn("Bridge of team " + std::to_string(bb->getTeamId()) +
+									" did not send an action in time. Disconnecting.");
 					for (auto &action : actions)
 					{
 						if (action.second && action.second->getTeamId() == bb->getTeamId())
@@ -119,7 +122,8 @@ void Game::run()
 	ReplayEncoder::instance().exportReplay();
 }
 
-void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, std::chrono::steady_clock::time_point serverStartTime)
+void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions,
+				std::chrono::steady_clock::time_point serverStartTime)
 {
 	std::vector<std::pair<int, std::string>> failures; // errors for clients
 
@@ -141,7 +145,9 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 		if (!err.empty())
 		{
 			// makes more sense to put the ticks where the actions were executed into the tick message
-			std::string fullErr = "Tick " + std::to_string(tick - 1) + ": Action Failure: " + Action::getActionName(action->getActionType()) + ": " + err + " (" + action->encodeJSON().dump() + ")";
+			std::string fullErr = "Tick " + std::to_string(tick - 1) +
+								  ": Action Failure: " + Action::getActionName(action->getActionType()) + ": " + err +
+								  " (" + action->encodeJSON().dump() + ")";
 			failures.emplace_back(core->getTeamId(), fullErr);
 			action = nullptr;
 		}
@@ -183,8 +189,7 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 
 			Board::instance().removeObjectById(obj.getId());
 
-			if (unitBalance > 0)
-				Board::instance().addObject<GemPile>(GemPile(unitBalance), objPos);
+			if (unitBalance > 0) Board::instance().addObject<GemPile>(GemPile(unitBalance), objPos);
 		}
 		// Cores must stay so clients know they died, Bombs must stay so the visualizer can get encoded positions where the explosion happened
 		else if (obj.getType() != ObjectType::Core && obj.getType() != ObjectType::Bomb)
@@ -195,8 +200,7 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 
 	// 4. CHECK TIMEOUT
 
-	if (tick >= Config::server().timeoutTicks)
-		killWorstPlayerOnTimeout();
+	if (tick >= Config::server().timeoutTicks) killWorstPlayerOnTimeout();
 	if (std::chrono::steady_clock::now() - serverStartTime >= std::chrono::milliseconds(Config::server().timeoutMs))
 		killWorstPlayerOnTimeout();
 
@@ -251,14 +255,12 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 	// must happen AFTER state send cause clients also do it locally for replay efficiency, otherwise we get a server/client desync with two decrements in one tick when ActionCooldown is reset
 
 	for (auto &obj : Board::instance())
-		if (obj.getType() == ObjectType::Unit)
-			static_cast<Unit &>(obj).tickActionCooldown();
+		if (obj.getType() == ObjectType::Unit) static_cast<Unit &>(obj).tickActionCooldown();
 }
 
 void Game::killWorstPlayerOnTimeout()
 {
-	if (Board::instance().getCoreCount() <= 1)
-		return;
+	if (Board::instance().getCoreCount() <= 1) return;
 
 	// determine winner: go to next number if still no clear winner
 
@@ -267,8 +269,7 @@ void Game::killWorstPlayerOnTimeout()
 	bool tie = false;
 	for (auto &obj : Board::instance())
 	{
-		if (obj.getType() != ObjectType::Core)
-			continue;
+		if (obj.getType() != ObjectType::Core) continue;
 		Core &core = (Core &)obj;
 		if (!weakest || core.getHP() < weakest->getHP())
 		{
@@ -282,7 +283,8 @@ void Game::killWorstPlayerOnTimeout()
 	}
 	if (weakest && !tie)
 	{
-		Logger::Log("Killing core of team " + std::to_string(weakest->getTeamId()) + " due to timeout (least core hp).");
+		Logger::Log("Killing core of team " + std::to_string(weakest->getTeamId()) +
+					" due to timeout (least core hp).");
 		weakest->setHP(0);
 		ReplayEncoder::instance().setDeathReason(weakest->getTeamId(), death_reason_t::TIMEOUT_CORE_HP);
 		return;
@@ -294,15 +296,13 @@ void Game::killWorstPlayerOnTimeout()
 	tie = false;
 	for (auto &obj : Board::instance())
 	{
-		if (obj.getType() != ObjectType::Core)
-			continue;
+		if (obj.getType() != ObjectType::Core) continue;
 		Core &core = (Core &)obj;
 		unsigned int teamId = core.getTeamId();
 		unsigned int totalUnitHp = 0;
 
 		for (auto &unit : Board::instance())
-			if (unit.getType() == ObjectType::Unit && ((Unit &)unit).getTeamId() == teamId)
-				totalUnitHp += unit.getHP();
+			if (unit.getType() == ObjectType::Unit && ((Unit &)unit).getTeamId() == teamId) totalUnitHp += unit.getHP();
 
 		if (totalUnitHp < minUnitHp)
 		{
@@ -317,7 +317,8 @@ void Game::killWorstPlayerOnTimeout()
 	}
 	if (minUnitHpCore && !tie)
 	{
-		Logger::Log("Killing core of team " + std::to_string(minUnitHpCore->getTeamId()) + " due to timeout (least unit hp total).");
+		Logger::Log("Killing core of team " + std::to_string(minUnitHpCore->getTeamId()) +
+					" due to timeout (least unit hp total).");
 		ReplayEncoder::instance().setDeathReason(minUnitHpCore->getTeamId(), death_reason_t::TIMEOUT_UNIT_HP);
 		minUnitHpCore->setHP(0);
 		return;
@@ -356,7 +357,8 @@ void Game::killWorstPlayerOnTimeout()
 	}
 }
 
-void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, unsigned long long tick, std::vector<std::pair<int, std::string>> &failures)
+void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, unsigned long long tick,
+					 std::vector<std::pair<int, std::string>> &failures)
 {
 	json state = stateEncoder_.generateObjectDiff();
 
@@ -370,8 +372,7 @@ void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &ac
 		teamState["errors"] = json::array();
 		const int teamId = bridge->getTeamId();
 		for (const auto &failure : failures)
-			if (failure.first == teamId)
-				teamState["errors"].push_back(failure.second);
+			if (failure.first == teamId) teamState["errors"].push_back(failure.second);
 		bridge->sendMessage(teamState);
 	}
 }

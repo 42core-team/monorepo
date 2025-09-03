@@ -1,10 +1,10 @@
 #include "Visualizer.h"
 
+#include <array>
 #include <iostream>
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <array>
 
 static const std::array<char, 2> CORE_SYMBOLS = {'H', 'h'};
 static const std::array<char, 2> WARRIOR_SYM = {'W', 'w'};
@@ -14,34 +14,24 @@ static const std::array<char, 2> BUILDER_SYM = {'B', 'b'};
 static const std::array<char, 2> BOMBER_SYM = {'Z', 'z'};
 
 static const std::unordered_map<ObjectType, char> OBJ_SYMBOL = {
-	{ObjectType::Deposit, 'R'},
-	{ObjectType::Wall, '#'},
-	{ObjectType::GemPile, '$'},
-	{ObjectType::Bomb, '*'}};
+		{ObjectType::Deposit, 'R'}, {ObjectType::Wall, '#'}, {ObjectType::GemPile, '$'}, {ObjectType::Bomb, '*'}};
 
 static constexpr char EMPTY_CELL = '.';
 
 void Visualizer::visualizeGameState(unsigned long long tick, bool force)
 {
-	if (!Config::server().enableTerminalVisualizer && !force)
-		return;
+	if (!Config::server().enableTerminalVisualizer && !force) return;
 
 
 	std::cout << "Tick: " << tick << "\n\n";
 
-	std::cout << "  Cores:   Team0 = '" << CORE_SYMBOLS[0]
-			  << "', Team1 = '" << CORE_SYMBOLS[1] << "'\n"
+	std::cout << "  Cores:   Team0 = '" << CORE_SYMBOLS[0] << "', Team1 = '" << CORE_SYMBOLS[1] << "'\n"
 			  << "  Units:\n"
-			  << "    Warrior:   Team0 = '" << WARRIOR_SYM[0]
-			  << "', Team1 = '" << WARRIOR_SYM[1] << "'\n"
-			  << "    Miner:     Team0 = '" << MINER_SYM[0]
-			  << "', Team1 = '" << MINER_SYM[1] << "'\n"
-			  << "    Carrier:   Team0 = '" << CARRIER_SYM[0]
-			  << "', Team1 = '" << CARRIER_SYM[1] << "'\n"
-			  << "    Builder:   Team0 = '" << BUILDER_SYM[0]
-			  << "', Team1 = '" << BUILDER_SYM[1] << "'\n"
-			  << "    Bomberman: Team0 = '" << BOMBER_SYM[0]
-			  << "', Team1 = '" << BOMBER_SYM[1] << "'\n\n"
+			  << "    Warrior:   Team0 = '" << WARRIOR_SYM[0] << "', Team1 = '" << WARRIOR_SYM[1] << "'\n"
+			  << "    Miner:     Team0 = '" << MINER_SYM[0] << "', Team1 = '" << MINER_SYM[1] << "'\n"
+			  << "    Carrier:   Team0 = '" << CARRIER_SYM[0] << "', Team1 = '" << CARRIER_SYM[1] << "'\n"
+			  << "    Builder:   Team0 = '" << BUILDER_SYM[0] << "', Team1 = '" << BUILDER_SYM[1] << "'\n"
+			  << "    Bomberman: Team0 = '" << BOMBER_SYM[0] << "', Team1 = '" << BOMBER_SYM[1] << "'\n\n"
 			  << "  Objects:\n"
 			  << "    Deposit  = '" << OBJ_SYMBOL.at(ObjectType::Deposit) << "'\n"
 			  << "    Wall     = '" << OBJ_SYMBOL.at(ObjectType::Wall) << "'\n"
@@ -49,10 +39,11 @@ void Visualizer::visualizeGameState(unsigned long long tick, bool force)
 			  << "    Bomb     = '" << OBJ_SYMBOL.at(ObjectType::Bomb) << "'\n"
 			  << "    Empty    = '" << EMPTY_CELL << "'\n\n";
 
-	for (const Object & obj : Board::instance())
+	for (const Object &obj : Board::instance())
 	{
 		ObjectType type = obj.getType();
-		if (type == ObjectType::Bomb || type == ObjectType::GemPile || type == ObjectType::Deposit || type == ObjectType::Wall)
+		if (type == ObjectType::Bomb || type == ObjectType::GemPile || type == ObjectType::Deposit ||
+			type == ObjectType::Wall)
 			continue;
 		std::cout << "ID: " << obj.getId() << " HP: " << obj.getHP();
 		if (obj.getType() == ObjectType::Core)
@@ -62,7 +53,7 @@ void Visualizer::visualizeGameState(unsigned long long tick, bool force)
 			std::cout << " Team: " << core.getTeamId();
 			std::cout << " gems: " << core.getBalance();
 		}
-		if  (obj.getType() == ObjectType::Unit)
+		if (obj.getType() == ObjectType::Unit)
 		{
 			const Unit &unit = dynamic_cast<const Unit &>(obj);
 			std::cout << " Type: Unit";
@@ -74,12 +65,10 @@ void Visualizer::visualizeGameState(unsigned long long tick, bool force)
 		std::cout << std::endl;
 	}
 
-	Core * core0 = Board::instance().getCoreByTeamId(1);
-	Core * core1 = Board::instance().getCoreByTeamId(2);
-	if (core0)
-		std::cout << "Core H Health: " << core0->getHP() << std::endl;
-	if (core1)
-		std::cout << "Core h Health: " << core1->getHP() << std::endl;
+	Core *core0 = Board::instance().getCoreByTeamId(1);
+	Core *core1 = Board::instance().getCoreByTeamId(2);
+	if (core0) std::cout << "Core H Health: " << core0->getHP() << std::endl;
+	if (core1) std::cout << "Core h Health: " << core1->getHP() << std::endl;
 
 	int H = Config::game().gridSize;
 	int W = Config::game().gridSize;
@@ -151,9 +140,7 @@ void Visualizer::visualizeGameState(unsigned long long tick, bool force)
 				default:
 				{
 					auto it = OBJ_SYMBOL.find(obj->getType());
-					symbol = (it != OBJ_SYMBOL.end()
-								  ? it->second
-								  : '?');
+					symbol = (it != OBJ_SYMBOL.end() ? it->second : '?');
 					break;
 				}
 				}

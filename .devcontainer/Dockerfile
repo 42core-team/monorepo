@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
 	curl \
 	build-essential \
 	clang \
+	clang-format \
 	npm \
 	pkg-config \
 	libssl-dev \

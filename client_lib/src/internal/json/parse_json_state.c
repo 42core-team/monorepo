@@ -6,12 +6,11 @@ static void core_static_updateObj(t_obj *existingObj, json_node *updates)
 	{
 		char *updatesFormatted = json_to_string(updates);
 		printf("Error: Supplied json node is not an array. Got: %s\n", updatesFormatted);
-		free (updatesFormatted);
+		free(updatesFormatted);
 		return;
 	}
 
-	if (existingObj->state == STATE_UNINITIALIZED)
-		existingObj->state = STATE_ALIVE; // units come alive on first update
+	if (existingObj->state == STATE_UNINITIALIZED) existingObj->state = STATE_ALIVE; // units come alive on first update
 
 	for (int i = 0; updates->array && updates->array[i]; i++)
 	{
@@ -20,8 +19,7 @@ static void core_static_updateObj(t_obj *existingObj, json_node *updates)
 		// even non-changing properties are included so the function can also fully set all fields of an empty obj
 		if (strncmp(property->key, "state", 5) == 0)
 		{
-			if (strncmp(property->string, "dead", 4) == 0)
-				existingObj->state = STATE_DEAD;
+			if (strncmp(property->string, "dead", 4) == 0) existingObj->state = STATE_DEAD;
 		}
 		else if (strncmp(property->key, "x", 1) == 0)
 			existingObj->pos.x = property->number;
@@ -39,18 +37,28 @@ static void core_static_updateObj(t_obj *existingObj, json_node *updates)
 		{
 			switch ((int)existingObj->type)
 			{
-				case OBJ_CORE: existingObj->s_core.team_id = property->number; break;
-				case OBJ_UNIT: existingObj->s_unit.team_id = property->number; break;
+			case OBJ_CORE:
+				existingObj->s_core.team_id = property->number;
+				break;
+			case OBJ_UNIT:
+				existingObj->s_unit.team_id = property->number;
+				break;
 			}
 		}
 		else if (strncmp(property->key, "gems", 7) == 0)
 		{
 			switch ((int)existingObj->type)
 			{
-				case OBJ_CORE: existingObj->s_core.gems = property->number; break;
-				case OBJ_UNIT: existingObj->s_unit.gems = property->number; break;
-				case OBJ_GEM_PILE:
-				case OBJ_DEPOSIT: existingObj->s_resource_gems_pile.gems = property->number; break;
+			case OBJ_CORE:
+				existingObj->s_core.gems = property->number;
+				break;
+			case OBJ_UNIT:
+				existingObj->s_unit.gems = property->number;
+				break;
+			case OBJ_GEM_PILE:
+			case OBJ_DEPOSIT:
+				existingObj->s_resource_gems_pile.gems = property->number;
+				break;
 			}
 		}
 		else if (strncmp(property->key, "ActionCooldown", 12) == 0)
@@ -62,8 +70,7 @@ static void core_static_updateObj(t_obj *existingObj, json_node *updates)
 
 static void core_static_applyObjToArray(json_node *new_obj)
 {
-	if (new_obj->type != JSON_TYPE_OBJECT)
-		return; // empty obj, no updates
+	if (new_obj->type != JSON_TYPE_OBJECT) return; // empty obj, no updates
 
 	long unsigned int new_obj_id = -1;
 	long unsigned int new_obj_type = -1;
@@ -88,10 +95,9 @@ static void core_static_applyObjToArray(json_node *new_obj)
 		// Update obj -> id
 		bool id_match = (game.objects[index]->id == new_obj_id);
 		// Update uninitialized unit initially
-		bool spawn_unit_match = (new_obj_type == OBJ_UNIT && \
-				game.objects[index]->state == STATE_UNINITIALIZED && \
-				game.objects[index]->s_unit.unit_type == new_obj_unit_type && \
-				game.objects[index]->s_unit.team_id == new_obj_team_id);
+		bool spawn_unit_match = (new_obj_type == OBJ_UNIT && game.objects[index]->state == STATE_UNINITIALIZED &&
+								 game.objects[index]->s_unit.unit_type == new_obj_unit_type &&
+								 game.objects[index]->s_unit.team_id == new_obj_team_id);
 		if (id_match || spawn_unit_match)
 		{
 			core_static_updateObj(game.objects[index], new_obj);
@@ -101,7 +107,9 @@ static void core_static_applyObjToArray(json_node *new_obj)
 
 	if (new_obj_type == OBJ_UNIT && new_obj_team_id == game.my_team_id)
 	{
-		printf("Error matching team units. This is never supposed to happen. Have you freed something you shouldn't have? Never free t_obj*s, just read them. Troublemaker: [id %lu, unit_type %lu, team %lu]\n", new_obj_id, new_obj_unit_type, new_obj_team_id);
+		printf("Error matching team units. This is never supposed to happen. Have you freed something you shouldn't "
+			   "have? Never free t_obj*s, just read them. Troublemaker: [id %lu, unit_type %lu, team %lu]\n",
+			   new_obj_id, new_obj_unit_type, new_obj_team_id);
 	}
 
 	// Add new obj
@@ -133,8 +141,7 @@ void core_internal_parse_state(char *json)
 	// update action cooldowns
 	for (size_t i = 0; game.objects[i]; i++)
 		if (game.objects[i]->type == OBJ_UNIT)
-			if (game.objects[i]->s_unit.action_cooldown > 0)
-				game.objects[i]->s_unit.action_cooldown--;
+			if (game.objects[i]->s_unit.action_cooldown > 0) game.objects[i]->s_unit.action_cooldown--;
 
 	game.elapsed_ticks = (unsigned long)json_find(root, "tick")->number;
 
@@ -150,7 +157,8 @@ void core_internal_parse_state(char *json)
 		for (size_t i = 0; game.objects[i] != NULL; i++)
 		{
 			t_obj *obj = game.objects[i];
-			if (obj->type == OBJ_UNIT && obj->state == STATE_UNINITIALIZED) {
+			if (obj->type == OBJ_UNIT && obj->state == STATE_UNINITIALIZED)
+			{
 				free(obj);
 				continue;
 			}

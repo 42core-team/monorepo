@@ -1,16 +1,15 @@
 #ifndef ATTACK_ACTION_H
 #define ATTACK_ACTION_H
 
-#include <vector>
-
 #include "Action.h"
-#include "Common.h"
-#include "GemPile.h"
-#include "Bomb.h"
-#include "Deposit.h"
-
 #include "Board.h"
+#include "Bomb.h"
+#include "Common.h"
+#include "Deposit.h"
+#include "GemPile.h"
 #include "Stats.h"
+
+#include <vector>
 
 class Unit;
 
@@ -19,7 +18,7 @@ using json = nlohmann::ordered_json;
 
 class AttackAction : public Action
 {
-public:
+  public:
 	AttackAction(json msg);
 	unsigned int getUnitId() const { return unit_id_; }
 	Position getTargetPos() const { return target_pos_; }
@@ -28,7 +27,7 @@ public:
 	void decodeJSON(json msg);
 	json encodeJSON();
 
-private:
+  private:
 	unsigned int unit_id_;
 	Position target_pos_;
 };
