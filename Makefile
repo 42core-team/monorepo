@@ -86,6 +86,7 @@ update:
 	git -C my-core-bot pull --ff-only
 
 setup-hooks:
+	chmod +x .githooks/*
 	git config core.hooksPath .githooks
 
 vis:
