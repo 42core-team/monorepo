@@ -1,7 +1,7 @@
 #include "core_lib_internal.h"
 
-t_game		game = {0};
-t_actions	actions = {0};
+t_game game = {0};
+t_actions actions = {0};
 
 static bool core_static_isMyCore(const t_obj *obj)
 {
@@ -9,6 +9,25 @@ static bool core_static_isMyCore(const t_obj *obj)
 		return false;
 	return (obj->s_core.team_id == game.my_team_id);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 static void core_static_awaitEnterPress(void)
 {
@@ -24,9 +43,12 @@ static void core_static_awaitEnterPress(void)
 	tv.tv_sec = 30;
 	tv.tv_usec = 0;
 	int rv = select(STDIN_FILENO + 1, &rfds, NULL, NULL, &tv);
-	if (rv > 0) {
+	if (rv > 0)
+	{
 		int c;
-		while ((c = getchar()) != '\n' && c != EOF) {}
+		while ((c = getchar()) != '\n' && c != EOF)
+		{
+		}
 	}
 }
 
@@ -39,7 +61,7 @@ static void core_static_awaitEnterPress(void)
  * @param tick_callback A function that will be called every game tick.
  * @param debug Whether to enable debug mode or not.
  */
-int	core_startGame(const char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug)
+int core_startGame(const char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug)
 {
 	if (!tick_callback)
 	{

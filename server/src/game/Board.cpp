@@ -21,8 +21,25 @@ bool Board::removeObjectById(unsigned int id)
 	}
 	return false;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // @return true if object was removed successfully
-bool Board::removeObjectAtPos(const Position & pos)
+bool Board::removeObjectAtPos(const Position &pos)
 {
 	if (!pos.isValid(grid_size_))
 		return false;
@@ -43,7 +60,7 @@ Object *Board::getObjectById(unsigned int id) const
 	return nullptr;
 }
 // @return nullptr if no object at given position
-Object *Board::getObjectAtPos(const Position & pos) const
+Object *Board::getObjectAtPos(const Position &pos) const
 {
 	if (!pos.isValid(grid_size_))
 		return nullptr;
@@ -65,7 +82,7 @@ Position Board::getObjectPositionById(unsigned int id) const
 {
 	for (unsigned int idx = 0; idx < objects_.size(); ++idx)
 	{
-		if (!objects_[idx]) 
+		if (!objects_[idx])
 			continue;
 		if (objects_[idx]->getId() == id)
 			return vecPosToGridPos(idx);
@@ -83,7 +100,7 @@ int Board::getCoreCount()
 	return count;
 }
 
-bool Board::moveObjectById(unsigned int id, const Position & newPos)
+bool Board::moveObjectById(unsigned int id, const Position &newPos)
 {
 	if (!newPos.isValid(grid_size_))
 		return false;
@@ -116,7 +133,7 @@ Position Board::vecPosToGridPos(unsigned int vecPos) const
 		return Position(-1, -1);
 	return pos;
 }
-unsigned int Board::gridPosToVecPos(const Position & gridPos) const
+unsigned int Board::gridPosToVecPos(const Position &gridPos) const
 {
 	if (!gridPos.isValid(grid_size_))
 		return -1; // purposeful overflow, max val to indicate invalidity
