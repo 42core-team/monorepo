@@ -75,3 +75,12 @@ MapTemplate MapTemplate::getTransformedTemplate(std::mt19937_64 &eng) const
 
 	return result;
 }
+
+int MapTemplate::occupiedCount() const
+{
+	int n = 0;
+	for (const auto &row : grid)
+		for (char c : row)
+			if (c != ' ' && c != '\t' && c != '\n') ++n;
+	return n > 0 ? n : 1;
+}

@@ -27,6 +27,11 @@ void JigsawWorldGenerator::loadTemplates()
 		Logger::Log(LogLevel::ERROR, "No valid templates found in template folder.");
 		exit(EXIT_FAILURE);
 	}
+
+	template_weights_.clear();
+	template_weights_.reserve(templates_.size());
+	for (const auto &t : templates_)
+		template_weights_.push_back(static_cast<double>(t.occupiedCount()));
 }
 
 bool JigsawWorldGenerator::canPlaceTemplate(const MapTemplate &temp, int posX, int posY)
@@ -416,12 +421,12 @@ void JigsawWorldGenerator::generateWorld(uint64_t seed)
 
 	std::uniform_int_distribution<int> distX(0, width + 10);
 	std::uniform_int_distribution<int> distY(0, height + 10);
-	std::uniform_int_distribution<size_t> templateDist(0, templates_.size() - 1);
+	std::discrete_distribution<size_t> pick(template_weights_.begin(), template_weights_.end());
 
 	Logger::Log("Step 1: Placing templates");
 	for (int i = 0; i < templatePlaceAttemptCount; ++i)
 	{
-		const MapTemplate &original = templates_[templateDist(eng_)];
+		const MapTemplate &original = templates_[pick(eng_)];
 		MapTemplate temp = original.getTransformedTemplate(eng_);
 		int posX = distX(eng_) - 5;
 		int posY = distY(eng_) - 5;

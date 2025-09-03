@@ -38,6 +38,7 @@ class JigsawWorldGenerator : public WorldGenerator
 
   private:
 	std::vector<MapTemplate> templates_;
+	std::vector<double> template_weights_;
 
 	std::mt19937_64 eng_ = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
 

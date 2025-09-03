@@ -27,6 +27,8 @@ class MapTemplate
 
 	MapTemplate rotate90() const;
 
+	int occupiedCount() const;
+
   private:
 	void loadFromFile(const std::string &filepath);
 
