@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# lint & format visualizer
+cd visualizer && npm i && npx lint-staged && cd ..
+
+# format client lib & server
+FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(c|cpp|h|hpp)$')
+[ -z "$FILES" ] && exit 0
+clang-format -i $FILES
+git add $FILES

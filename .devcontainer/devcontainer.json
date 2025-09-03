@@ -3,7 +3,9 @@
 	"build": {
 		"dockerfile": "Dockerfile"
 	},
-	"forwardPorts": [4242],
+	"forwardPorts": [
+		4242
+	],
 	"workspaceFolder": "/workspaces/monorepo",
 	"customizations": {
 		"vscode": {
@@ -23,7 +25,7 @@
 			]
 		}
 	},
-	"postStartCommand": "make update",
+	"postStartCommand": "make update && make setup-hooks",
 	"mounts": [
 		"source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached",
 		"source=${localEnv:HOME}/.gitconfig,target=/root/.gitconfig,type=bind,consistency=cached"
