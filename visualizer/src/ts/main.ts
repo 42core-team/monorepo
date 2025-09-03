@@ -1,5 +1,6 @@
 import { setupInfoPopupManager } from "./input_manager/infoPopupManager.js";
 import { loadSavedTheme } from "./input_manager/themeManager.js";
+import { setupRainbowMode } from "./input_manager/rainbowMode.js";
 
 const svgCanvas = document.getElementById("svg-canvas") as HTMLElement;
 
@@ -66,12 +67,17 @@ window.addEventListener("DOMContentLoaded", async () => {
 	// svg layout height renderer
 
 	function updateSvgSize() {
-		const svgHeight =
-			window.innerHeight - svgCanvas.getBoundingClientRect().top;
-		document.documentElement.style.setProperty(
-			"--svg-canvas-scale",
-			`${svgHeight - 24}px`,
-		);
+		const svgTop = svgCanvas.getBoundingClientRect().top;
+		const raw = window.innerHeight - svgTop - 10; // 10px as arbitrary padding to bottom
+
+		const gridSize = Number(getComputedStyle(document.documentElement)
+			.getPropertyValue("--grid-size").trim()) || 1;
+
+		// set size to a multiple of gridSize to avoid tiny gaps between object through breaking seams because of floating point calculation imprecision
+		const cell = Math.max(1, Math.floor(raw / gridSize));
+		const snapped = cell * gridSize;
+
+		document.documentElement.style.setProperty("--svg-canvas-scale", `${snapped}px`);
 	}
 	window.addEventListener("resize", updateSvgSize);
 	window.addEventListener("load", updateSvgSize);
@@ -82,4 +88,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 	// info popup manager
 	setupInfoPopupManager();
+
+	// setup rainbow mode
+	setupRainbowMode();
 });

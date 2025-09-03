@@ -15,10 +15,15 @@
 					var m = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 					var t = (o === 'dark' || o === 'light') ? o : (m ? 'dark' : 'light');
 					document.documentElement.setAttribute('data-theme', t);
+
+					// grid lines
+					var g = localStorage.getItem('ui.gridlines');
+					document.documentElement.setAttribute('data-gridlines', g === 'off' ? 'off' : 'on');
 				} catch (_) {}
 			})();
 		</script>
 		<link rel="stylesheet" href="/src/css/styles.css" />
+		<link rel="stylesheet" href="/src/css/color-picker.css" />
 	</head>
 	<body>
 		<script
@@ -27,14 +32,7 @@
 		></script>
 		<script type="module" src="/src/ts/main.ts"></script>
 
-		<button id="open-modal" class="icon-button">
-			<img
-				id="info-icon"
-				src="/assets/ui-svgs/info-button.svg"
-				alt="Display Infos"
-			/>
-		</button>
-		<dialog id="site-modal">
+		<dialog id="info-modal" class="popup-modal">
 			<h2>CORE GAME Visualizer</h2>
 			<p>The Visualizer requires a replay file to run. Replay files are generated when the gameserver is done executing a game with a minimum of two players.</p>
 			<p>You can even drag & drop a replay file into this page to rewatch an older replay!</p>
@@ -43,11 +41,6 @@
 			<h3>Replay Infos</h3>
 			<a id="download-replay-link"><button id="download-replay-btn" class="modal-button primary">Download current replay file</button></a>
 			<button id="copy-seed-btn" class="modal-button">Copy current map seed</button>
-
-			<h3>Customization</h3>
-			<input type="checkbox" id="dark_mode_checkbox"><label for="dark_mode_checkbox">Enable Dark Mode</label><br>
-			<input type="checkbox" id="gridlines_checkbox"><label for="gridlines_checkbox">Show Grid Lines</label><br>
-			<input type="color" id="color_scheme_input"><label for="color_scheme_input">Customize color scheme</label>
 
 			<h3>Keybinds</h3>
 			<ul>
@@ -66,22 +59,69 @@
 
 			<h3>Found a Bug?</h3>
 			<p>If you find a bug, please report it on our <a href="https://github.com/42core-team/monorepo/issues" target="_blank">GitHub Issues</a> page.</p>
+
+			<h3>Absolutely never...</h3>
+			<p>...press <kbd>C</kbd>, <kbd>O</kbd>, <kbd>R</kbd> and <kbd>E</kbd> all at once.</p>
 		</dialog>
+
+		<dialog id="settings-modal" class="popup-modal">
+			<h3>Settings / Customization</h3>
+
+			<div class="settings-toggle-row">
+				<button
+					id="fullscreen-toggle-button"
+					class="modal-button settings-toggle"
+					title="Toggle Fullscreen"
+					aria-label="Toggle Fullscreen"
+					aria-pressed="false">
+					<img id="fullscreen-icon" src="/assets/ui-svgs/fullscreen-open.svg" alt="Enter Fullscreen" />
+				</button>
+
+				<button
+					id="dark-mode-toggle-button"
+					class="modal-button settings-toggle"
+					title="Toggle Dark Mode"
+					aria-label="Toggle Dark Mode"
+					aria-pressed="false">
+					<img id="dark-mode-icon" src="/assets/ui-svgs/dark-mode-moon.svg" alt="Enable Dark Mode" />
+				</button>
+
+				<button
+					id="gridlines-toggle-button"
+					class="modal-button settings-toggle"
+					title="Toggle Grid Lines"
+					aria-label="Toggle Grid Lines"
+					aria-pressed="false">
+					<img id="gridlines-icon" src="/assets/ui-svgs/gridlines.svg" alt="Toggle Gridlines" />
+				</button>
+			</div>
+
+			<div class="settings-color-row">
+				<div class="color-picker" id="theme-color-picker">
+					<input type="color" id="color_scheme_input" />
+					<span class="swatch" aria-hidden="true"></span>
+					<span class="swatch-border" aria-hidden="true"></span>
+					<span class="swatch-checker" aria-hidden="true"></span>
+					<span class="color-text" aria-hidden="true"></span>
+				</div>
+			</div>
+		</dialog>
+
 
 		<div class="container">
 			<div class="top-bar">
-				<!-- Fullscreen Toggle Button -->
+
 				<button
-					id="fullscreen-toggle-button"
+					id="open-info-modal"
 					class="icon-button icon-left"
-					title="Toggle Fullscreen"
-					aria-label="Toggle Fullscreen"
+					title="Open Info Modal"
+					aria-label="Open Info Modal"
 					aria-pressed="false"
 				>
 					<img
-						id="fullscreen-icon"
-						src="/assets/ui-svgs/fullscreen-open.svg"
-						alt="Enter Fullscreen"
+						id="info-icon"
+						src="/assets/ui-svgs/info-button.svg"
+						alt="Open Info Modal"
 					/>
 				</button>
 
@@ -178,16 +218,16 @@
 
 				<!-- Dark Mode Toggle Button -->
 				<button
-					id="theme-toggle-button"
-					class="icon-button icon-right"
-					title="Toggle Theme"
-					aria-label="Toggle Theme"
+					id="open-settings-modal"
+					class="icon-button icon-left"
+					title="Open Settings Modal"
+					aria-label="Open Settings Modal"
 					aria-pressed="false"
 				>
 					<img
-						id="theme-icon"
-						src="/assets/ui-svgs/dark-mode-moon.svg"
-						alt="Toggle Theme"
+						id="settings"
+						src="/assets/ui-svgs/settings-icon.svg"
+						alt="Open Settings Modal"
 					/>
 				</button>
 			</div>

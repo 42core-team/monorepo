@@ -167,7 +167,7 @@ function drawObject(
 		bg.setAttribute("width", "1");
 		bg.setAttribute("height", String(bar.bottomBorder - bar.topBorder));
 		bg.setAttribute("fill", color);
-		bg.setAttribute("fill-opacity", String(0.3 * scaleFactor));
+		bg.setAttribute("fill-opacity", String(0.2 * scaleFactor));
 		svgCanvas.appendChild(bg);
 
 		const fg = document.createElementNS(svgNS, "rect");
@@ -179,7 +179,7 @@ function drawObject(
 		);
 		fg.setAttribute("height", String(bar.bottomBorder - bar.topBorder));
 		fg.setAttribute("fill", color);
-		fg.setAttribute("fill-opacity", String(0.7 * scaleFactor));
+		fg.setAttribute("fill-opacity", String(1 * scaleFactor));
 		svgCanvas.appendChild(fg);
 	}
 
