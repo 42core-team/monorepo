@@ -38,6 +38,22 @@ bool Board::removeObjectById(unsigned int id)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // @return true if object was removed successfully
 bool Board::removeObjectAtPos(const Position &pos)
 {
