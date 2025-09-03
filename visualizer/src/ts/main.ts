@@ -105,4 +105,31 @@ window.addEventListener("DOMContentLoaded", async () => {
 			el.style.display = "none";
 		});
 	}
+
+	// url parameters
+	const themeParam = urlParams.get("theme");
+	if (themeParam === "light" || themeParam === "dark") {
+		localStorage.setItem("ui.theme", themeParam);
+		document.documentElement.setAttribute("data-theme", themeParam);
+	}
+	const gridParam = urlParams.get("gridlines");
+	if (gridParam === "on" || gridParam === "off") {
+		localStorage.setItem("ui.gridlines", gridParam);
+		document.documentElement.setAttribute("data-gridlines", gridParam);
+	}
+	const themeColorParam = urlParams.get("themeColor");
+	if (
+		typeof themeColorParam === "string" &&
+		/^#[0-9a-fA-F]{6}$/.test(themeColorParam)
+	) {
+		localStorage.setItem("ui.themeColor", themeColorParam);
+		document.documentElement.style.setProperty(
+			"--theme-color",
+			themeColorParam,
+		);
+	}
+	const suppressParam = urlParams.get("suppress_version_warning");
+	if (suppressParam === "true" || suppressParam === "false") {
+		localStorage.setItem("suppressVersionWarning", suppressParam);
+	}
 });

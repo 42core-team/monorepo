@@ -123,9 +123,12 @@ class ReplayLoader {
 			);
 		}
 		if (this.replayData.misc.version !== expectedReplayVersion) {
-			alert(
-				`Unsupported replay version. (Expected ${expectedReplayVersion}, but got: ${this.replayData.misc.version}) Things might stop working unexpectedly.`,
-			);
+			const suppress = localStorage.getItem("suppressVersionWarning");
+			if (!suppress || suppress !== "true") {
+				alert(
+					`Unsupported replay version. (Expected ${expectedReplayVersion}, but got: ${this.replayData.misc.version}) Things might stop working unexpectedly.`,
+				);
+			}
 			console.error(
 				`Expected version: ${expectedReplayVersion}, but got: ${this.replayData.misc.version}`,
 			);
@@ -157,7 +160,8 @@ class ReplayLoader {
 				this.applyDiff(fullState, tickData);
 			}
 			for (const obj of Object.values(fullState)) {
-				if ("ActionCooldown" in obj && obj.ActionCooldown > 0) obj.ActionCooldown--;
+				if ("ActionCooldown" in obj && obj.ActionCooldown > 0)
+					obj.ActionCooldown--;
 			}
 			if (t % this.cacheInterval === 0) {
 				this.cache.set(t, deepClone(fullState));
