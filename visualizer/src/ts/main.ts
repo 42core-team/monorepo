@@ -118,14 +118,11 @@ window.addEventListener("DOMContentLoaded", async () => {
 		document.documentElement.setAttribute("data-gridlines", gridParam);
 	}
 	const themeColorParam = urlParams.get("themeColor");
-	if (
-		typeof themeColorParam === "string" &&
-		/^#[0-9a-fA-F]{6}$/.test(themeColorParam)
-	) {
-		localStorage.setItem("ui.themeColor", themeColorParam);
+	if (typeof themeColorParam === "string") {
+		localStorage.setItem("ui.themeColor", "#" + themeColorParam);
 		document.documentElement.style.setProperty(
 			"--theme-color",
-			themeColorParam,
+			"#" + themeColorParam,
 		);
 	}
 	const suppressParam = urlParams.get("suppress_version_warning");

@@ -18,7 +18,7 @@ You can control the visualizer via query parameters. Multiple values are support
 | `ui` | `"false"` or `"true"` | _shown_ | When `false`, hides all elements with class `.ui`. |
 | `theme` | `"light"` or `"dark"` | system/light | Sets theme, persisted to `localStorage["ui.theme"]`. |
 | `gridlines` | `"on"` \| `"off"` | `"on"` | Toggles grid rendering; persisted to `localStorage["ui.gridlines"]`. |
-| `themeColor` | hex `#RRGGBB` | `#5a7cff` | Sets accent color; persisted to `localStorage["ui.themeColor"]`. |
+| `themeColor` | hex `RRGGBB` | `5a7cff` | Sets accent color; persisted to `localStorage["ui.themeColor"]` Don't include the # hashtag. |
 | `suppress_version_warning` | `"true"` \| `"false"` | `"false"` | Stores preference in `localStorage["ui.suppressVersionWarning"]`. Hook into this in any version-check logic you add. |
 | `mode` | `"QUEUE"` \| `"SWISS"` \| `"ELIMINATION"` | `"QUEUE"` | Fireworks intensity profile (read by `fireworksRenderer`). Used by website when running tournament games. |
 | `round` | integer | none | Used with `mode=ELIMINATION` for fireworks strength. Used by website when running tournament games. |
