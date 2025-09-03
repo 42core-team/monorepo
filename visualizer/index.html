@@ -1,262 +1,189 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>⚡️ Core Game Visualizer</title>
-		<script>
-			(function () {
-				try {
-					// theme color
-					document.documentElement.style.setProperty('--theme-color', localStorage.getItem('ui.themeColor'));
-					
-					// theme
-					var o = localStorage.getItem('ui.theme');
-					var m = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-					var t = (o === 'dark' || o === 'light') ? o : (m ? 'dark' : 'light');
-					document.documentElement.setAttribute('data-theme', t);
 
-					// grid lines
-					var g = localStorage.getItem('ui.gridlines');
-					document.documentElement.setAttribute('data-gridlines', g === 'off' ? 'off' : 'on');
-				} catch (_) {}
-			})();
-		</script>
-		<link rel="stylesheet" href="/src/css/styles.css" />
-		<link rel="stylesheet" href="/src/css/color-picker.css" />
-	</head>
-	<body>
-		<script
-			type="module"
-			src="/src/ts/renderer/fireworksRenderer.ts"
-		></script>
-		<script type="module" src="/src/ts/main.ts"></script>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>⚡️ Core Game Visualizer</title>
+	<script>
+		(function () {
+			try {
+				// theme color
+				document.documentElement.style.setProperty('--theme-color', localStorage.getItem('ui.themeColor'));
 
-		<dialog id="info-modal" class="popup-modal">
-			<h2>CORE GAME Visualizer</h2>
-			<p>The Visualizer requires a replay file to run. Replay files are generated when the gameserver is done executing a game with a minimum of two players.</p>
-			<p>You can even drag & drop a replay file into this page to rewatch an older replay!</p>
-			<p>All Infos about what CORE GAME is & how to participate can be found <a href="https://coregame.de/" target="_blank">here</a> and the source code can be found <a href="https://github.com/42core-team" target="_blank">here</a>.</p>
+				// theme
+				var o = localStorage.getItem('ui.theme');
+				var m = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+				var t = (o === 'dark' || o === 'light') ? o : (m ? 'dark' : 'light');
+				document.documentElement.setAttribute('data-theme', t);
 
-			<h3>Replay Infos</h3>
-			<a id="download-replay-link"><button id="download-replay-btn" class="modal-button primary">Download current replay file</button></a>
-			<button id="copy-seed-btn" class="modal-button">Copy current map seed</button>
+				// grid lines
+				var g = localStorage.getItem('ui.gridlines');
+				document.documentElement.setAttribute('data-gridlines', g === 'off' ? 'off' : 'on');
+			} catch (_) { }
+		})();
+	</script>
+	<link rel="stylesheet" href="/src/css/styles.css" />
+	<link rel="stylesheet" href="/src/css/color-picker.css" />
+</head>
 
-			<h3>Keybinds</h3>
-			<ul>
-				<li><kbd>Space</kbd>: Play/Pause</li>
-				<li><kbd>Left Arrow</kbd>: Previous Tick</li>
-				<li><kbd>Right Arrow</kbd>: Next Tick</li>
-				<li><kbd>Up Arrow</kbd>: Increase Speed</li>
-				<li><kbd>Down Arrow</kbd>: Decrease Speed</li>
-				<li><kbd>R</kbd>/<kbd>S</kbd>: Skip to Start</li>
-				<li><kbd>E</kbd>: Skip to End</li>
-				<li><kbd>F</kbd>: Toggle Fullscreen</li>
-				<li><kbd>D</kbd>: Enable Dark Mode</li>
-				<li><kbd>L</kbd>: Enable Light Mode</li>
-				<li><kbd>T</kbd>: Toggle Dark/Light Mode</li>
-			</ul>
+<body>
+	<script type="module" src="/src/ts/renderer/fireworksRenderer.ts"></script>
+	<script type="module" src="/src/ts/main.ts"></script>
 
-			<h3>Found a Bug?</h3>
-			<p>If you find a bug, please report it on our <a href="https://github.com/42core-team/monorepo/issues" target="_blank">GitHub Issues</a> page.</p>
+	<dialog id="info-modal" class="popup-modal ui">
+		<h2>CORE GAME Visualizer</h2>
+		<p>The Visualizer requires a replay file to run. Replay files are generated when the gameserver is done
+			executing a game with a minimum of two players.</p>
+		<p>You can even drag & drop a replay file into this page to rewatch an older replay!</p>
+		<p>All Infos about what CORE GAME is & how to participate can be found <a href="https://coregame.de/"
+				target="_blank">here</a> and the source code can be found <a href="https://github.com/42core-team"
+				target="_blank">here</a>.</p>
 
-			<h3>Absolutely never...</h3>
-			<p>...press <kbd>C</kbd>, <kbd>O</kbd>, <kbd>R</kbd> and <kbd>E</kbd> all at once.</p>
-		</dialog>
+		<h3>Replay Infos</h3>
+		<a id="download-replay-link"><button id="download-replay-btn" class="modal-button primary">Download current
+				replay file</button></a>
+		<button id="copy-seed-btn" class="modal-button">Copy current map seed</button>
 
-		<dialog id="settings-modal" class="popup-modal">
-			<h3>Settings / Customization</h3>
+		<h3>Keybinds</h3>
+		<ul>
+			<li><kbd>Space</kbd>: Play/Pause</li>
+			<li><kbd>Left Arrow</kbd>: Previous Tick</li>
+			<li><kbd>Right Arrow</kbd>: Next Tick</li>
+			<li><kbd>Up Arrow</kbd>: Increase Speed</li>
+			<li><kbd>Down Arrow</kbd>: Decrease Speed</li>
+			<li><kbd>R</kbd>/<kbd>S</kbd>: Skip to Start</li>
+			<li><kbd>E</kbd>: Skip to End</li>
+			<li><kbd>F</kbd>: Toggle Fullscreen</li>
+			<li><kbd>D</kbd>: Enable Dark Mode</li>
+			<li><kbd>L</kbd>: Enable Light Mode</li>
+			<li><kbd>T</kbd>: Toggle Dark/Light Mode</li>
+		</ul>
 
-			<div class="settings-toggle-row">
-				<button
-					id="fullscreen-toggle-button"
-					class="modal-button settings-toggle"
-					title="Toggle Fullscreen"
-					aria-label="Toggle Fullscreen"
-					aria-pressed="false">
-					<img id="fullscreen-icon" src="/assets/ui-svgs/fullscreen-open.svg" alt="Enter Fullscreen" />
-				</button>
+		<h3>Found a Bug?</h3>
+		<p>If you find a bug, please report it on our <a href="https://github.com/42core-team/monorepo/issues"
+				target="_blank">GitHub Issues</a> page.</p>
 
-				<button
-					id="dark-mode-toggle-button"
-					class="modal-button settings-toggle"
-					title="Toggle Dark Mode"
-					aria-label="Toggle Dark Mode"
-					aria-pressed="false">
-					<img id="dark-mode-icon" src="/assets/ui-svgs/dark-mode-moon.svg" alt="Enable Dark Mode" />
-				</button>
+		<h3>Absolutely never...</h3>
+		<p>...press <kbd>C</kbd>, <kbd>O</kbd>, <kbd>R</kbd> and <kbd>E</kbd> all at once.</p>
+	</dialog>
 
-				<button
-					id="gridlines-toggle-button"
-					class="modal-button settings-toggle"
-					title="Toggle Grid Lines"
-					aria-label="Toggle Grid Lines"
-					aria-pressed="false">
-					<img id="gridlines-icon" src="/assets/ui-svgs/gridlines.svg" alt="Toggle Gridlines" />
-				</button>
-			</div>
+	<dialog id="settings-modal" class="popup-modal ui">
+		<h3>Settings / Customization</h3>
 
-			<div class="settings-color-row">
-				<div class="color-picker" id="theme-color-picker">
-					<input type="color" id="color_scheme_input" />
-					<span class="swatch" aria-hidden="true"></span>
-					<span class="swatch-border" aria-hidden="true"></span>
-					<span class="swatch-checker" aria-hidden="true"></span>
-					<span class="color-text" aria-hidden="true"></span>
-				</div>
-			</div>
-		</dialog>
+		<div class="settings-toggle-row">
+			<button id="fullscreen-toggle-button" class="modal-button settings-toggle" title="Toggle Fullscreen"
+				aria-label="Toggle Fullscreen" aria-pressed="false">
+				<img id="fullscreen-icon" src="/assets/ui-svgs/fullscreen-open.svg" alt="Enter Fullscreen" />
+			</button>
 
+			<button id="dark-mode-toggle-button" class="modal-button settings-toggle" title="Toggle Dark Mode"
+				aria-label="Toggle Dark Mode" aria-pressed="false">
+				<img id="dark-mode-icon" src="/assets/ui-svgs/dark-mode-moon.svg" alt="Enable Dark Mode" />
+			</button>
 
-		<div class="container">
-			<div class="top-bar">
-
-				<button
-					id="open-info-modal"
-					class="icon-button icon-left"
-					title="Open Info Modal"
-					aria-label="Open Info Modal"
-					aria-pressed="false"
-				>
-					<img
-						id="info-icon"
-						src="/assets/ui-svgs/info-button.svg"
-						alt="Open Info Modal"
-					/>
-				</button>
-
-				<!-- Time controls box -->
-				<div id="time-controls" class="control-panel">
-					<div class="control-row">
-						<button id="prev-tick-button">
-							<img
-								src="/assets/ui-svgs/tick_previous.svg"
-								alt="Previous Tick"
-							/>
-						</button>
-						<div class="slider-group">
-							<label for="tick-timeline-slider">Ticks</label>
-							<input
-								type="range"
-								id="tick-timeline-slider"
-								min="0"
-								max="100"
-								value="0"
-							/>
-						</div>
-						<input
-							type="number"
-							id="tick-timeline-number-input"
-							min="0"
-							max="100"
-							value="0"
-						/>
-						<button id="next-tick-button">
-							<img
-								src="/assets/ui-svgs/tick_next.svg"
-								alt="Next Tick"
-							/>
-						</button>
-					</div>
-
-					<div class="control-row primary">
-						<button id="skip-start-button">
-							<img
-								src="/assets/ui-svgs/skip_start.svg"
-								alt="Jump to Start"
-							/>
-						</button>
-						<button id="play-pause-button">
-							<img
-								src="/assets/ui-svgs/play.svg"
-								alt="Play/Pause"
-								id="playPauseIcon"
-							/>
-						</button>
-						<button id="skip-end-button">
-							<img
-								src="/assets/ui-svgs/skip_end.svg"
-								alt="Jump to End"
-							/>
-						</button>
-					</div>
-
-					<div class="control-row">
-						<button id="speed-down-button">
-							<img
-								src="/assets/ui-svgs/speed_down.svg"
-								alt="Decrease Playback Speed"
-							/>
-						</button>
-						<div class="slider-group">
-							<label for="speed-slider">Ticks/sec</label>
-							<input
-								type="range"
-								id="speed-slider"
-								min="0.5"
-								max="50"
-								step="0.5"
-								value="5"
-							/>
-						</div>
-						<input
-							type="number"
-							id="speed-number-input"
-							min="0.5"
-							max="50"
-							step="0.5"
-							value="5"
-						/>
-						<button id="speed-up-button">
-							<img
-								src="/assets/ui-svgs/speed_up.svg"
-								alt="Increase Playback Speed"
-							/>
-						</button>
-					</div>
-				</div>
-
-				<!-- Dark Mode Toggle Button -->
-				<button
-					id="open-settings-modal"
-					class="icon-button icon-left"
-					title="Open Settings Modal"
-					aria-label="Open Settings Modal"
-					aria-pressed="false"
-				>
-					<img
-						id="settings"
-						src="/assets/ui-svgs/settings-icon.svg"
-						alt="Open Settings Modal"
-					/>
-				</button>
-			</div>
-
-			<!-- SVG Output Canvas -->
-			<div class="game-area">
-				<div class="teamName" id="team-one-name">Team One</div>
-				<svg id="svg-canvas" xmlns="http://www.w3.org/2000/svg"></svg>
-				<div class="teamName" id="team-two-name">Team Two</div>
-			</div>
-			<div id="tooltip"></div>
-
-			<!-- Win Display -->
-			<div id="win-display-box" class="win-display">
-				<h1>🎖️🎉 Winner: <span id="winnername"></span> 🎈🏁</h1>
-				<h3 id="winreason"></h3>
-			</div>
-			<div id="background-darkener" class="win-display"></div>
-			<div class="fireworks win-display"></div>
-
-			<!-- Corner Buttons -->
-
-			<a href="https://github.com/42core-team" target="_blank">
-				<button id="corner-bottom-left" class="corner-button"></button>
-			</a>
-
-			<a href="https://coregame.de/" target="_blank">
-				<button id="corner-top-right" class="corner-button"></button>
-			</a>
+			<button id="gridlines-toggle-button" class="modal-button settings-toggle" title="Toggle Grid Lines"
+				aria-label="Toggle Grid Lines" aria-pressed="false">
+				<img id="gridlines-icon" src="/assets/ui-svgs/gridlines.svg" alt="Toggle Gridlines" />
+			</button>
 		</div>
-	</body>
+
+		<div class="settings-color-row">
+			<div class="color-picker" id="theme-color-picker">
+				<input type="color" id="color_scheme_input" />
+				<span class="swatch" aria-hidden="true"></span>
+				<span class="swatch-border" aria-hidden="true"></span>
+				<span class="swatch-checker" aria-hidden="true"></span>
+				<span class="color-text" aria-hidden="true"></span>
+			</div>
+		</div>
+	</dialog>
+
+
+	<div class="container">
+		<div class="top-bar ui">
+
+			<button id="open-info-modal" class="icon-button icon-left" title="Open Info Modal"
+				aria-label="Open Info Modal" aria-pressed="false">
+				<img id="info-icon" src="/assets/ui-svgs/info-button.svg" alt="Open Info Modal" />
+			</button>
+
+			<!-- Time controls box -->
+			<div id="time-controls" class="control-panel">
+				<div class="control-row">
+					<button id="prev-tick-button">
+						<img src="/assets/ui-svgs/tick_previous.svg" alt="Previous Tick" />
+					</button>
+					<div class="slider-group">
+						<label for="tick-timeline-slider">Ticks</label>
+						<input type="range" id="tick-timeline-slider" min="0" max="100" value="0" />
+					</div>
+					<input type="number" id="tick-timeline-number-input" min="0" max="100" value="0" />
+					<button id="next-tick-button">
+						<img src="/assets/ui-svgs/tick_next.svg" alt="Next Tick" />
+					</button>
+				</div>
+
+				<div class="control-row primary">
+					<button id="skip-start-button">
+						<img src="/assets/ui-svgs/skip_start.svg" alt="Jump to Start" />
+					</button>
+					<button id="play-pause-button">
+						<img src="/assets/ui-svgs/play.svg" alt="Play/Pause" id="playPauseIcon" />
+					</button>
+					<button id="skip-end-button">
+						<img src="/assets/ui-svgs/skip_end.svg" alt="Jump to End" />
+					</button>
+				</div>
+
+				<div class="control-row">
+					<button id="speed-down-button">
+						<img src="/assets/ui-svgs/speed_down.svg" alt="Decrease Playback Speed" />
+					</button>
+					<div class="slider-group">
+						<label for="speed-slider">Ticks/sec</label>
+						<input type="range" id="speed-slider" min="0.5" max="50" step="0.5" value="5" />
+					</div>
+					<input type="number" id="speed-number-input" min="0.5" max="50" step="0.5" value="5" />
+					<button id="speed-up-button">
+						<img src="/assets/ui-svgs/speed_up.svg" alt="Increase Playback Speed" />
+					</button>
+				</div>
+			</div>
+
+			<!-- Dark Mode Toggle Button -->
+			<button id="open-settings-modal" class="icon-button icon-left" title="Open Settings Modal"
+				aria-label="Open Settings Modal" aria-pressed="false">
+				<img id="settings" src="/assets/ui-svgs/settings-icon.svg" alt="Open Settings Modal" />
+			</button>
+		</div>
+
+		<!-- SVG Output Canvas -->
+		<div class="game-area">
+			<div class="teamName" id="team-one-name">Team One</div>
+			<svg id="svg-canvas" xmlns="http://www.w3.org/2000/svg"></svg>
+			<div class="teamName" id="team-two-name">Team Two</div>
+		</div>
+		<div id="tooltip"></div>
+
+		<!-- Win Display -->
+		<div id="win-display-box" class="win-display">
+			<h1>🎖️🎉 Winner: <span id="winnername"></span> 🎈🏁</h1>
+			<h3 id="winreason"></h3>
+		</div>
+		<div id="background-darkener" class="win-display"></div>
+		<div class="fireworks win-display"></div>
+
+		<!-- Corner Buttons -->
+
+		<a href="https://github.com/42core-team" target="_blank">
+			<button id="corner-bottom-left" class="corner-button ui"></button>
+		</a>
+
+		<a href="https://coregame.de/" target="_blank">
+			<button id="corner-top-right" class="corner-button ui"></button>
+		</a>
+	</div>
+</body>
+
 </html>

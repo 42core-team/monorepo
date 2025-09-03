@@ -98,4 +98,11 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 	// setup rainbow mode
 	setupRainbowMode();
+
+	// disable ui if specified
+	if (urlParams.get("ui") === "false") {
+		document.querySelectorAll<HTMLElement>(".ui").forEach((el) => {
+			el.style.display = "none";
+		});
+	}
 });
