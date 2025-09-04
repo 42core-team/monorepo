@@ -4,7 +4,7 @@ import type { TickAction } from "./action";
 import type { GameConfig } from "./config";
 import type { TickObject } from "./object";
 
-const expectedReplayVersion = "1.2.0";
+const expectedReplayVersion = "1.3.0";
 const winnerNameElement = document.getElementById(
 	"winnername",
 ) as HTMLSpanElement;

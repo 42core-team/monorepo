@@ -1,6 +1,8 @@
 #ifndef CORE_LIB_H
 #define CORE_LIB_H
 
+#include "units.h"
+
 #include <limits.h>
 #include <math.h>
 #include <stdbool.h>
@@ -29,16 +31,6 @@ typedef enum e_obj_state
 	STATE_ALIVE = 2,
 	STATE_DEAD = 3
 } t_obj_state;
-
-/// @brief Type of unit.
-typedef enum e_unit_type
-{
-	UNIT_WARRIOR = 0,
-	UNIT_MINER = 1,
-	UNIT_CARRIER = 2,
-	UNIT_BUILDER = 3,
-	UNIT_BOMBERMAN = 4
-} t_unit_type;
 
 /// @brief Position structure for 2D coordinates. 0 indexed. Valid coordinates are 0,1,2,...gridSize-3,gridSize-2,gridSize-1.
 typedef struct s_pos

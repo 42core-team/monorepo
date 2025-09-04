@@ -246,6 +246,7 @@
 			"additionalProperties": false,
 			"required": [
 				"name",
+				"visualizer_asset_path",
 				"cost",
 				"hp",
 				"baseActionCooldown",
@@ -260,6 +261,10 @@
 			],
 			"properties": {
 				"name": {
+					"type": "string",
+					"minLength": 1
+				},
+				"visualizer_asset_path": {
 					"type": "string",
 					"minLength": 1
 				},
