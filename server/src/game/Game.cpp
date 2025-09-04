@@ -80,6 +80,13 @@ void Game::run()
 							action.second = nullptr; // invalidate actions for this team
 						}
 					}
+					// Kill the core for the disconnected/timed out team
+					Core *core = Board::instance().getCoreByTeamId(bb->getTeamId());
+					if (core)
+					{
+						core->setHP(0);
+					}
+					
 					if (bb->isDisconnected())
 						ReplayEncoder::instance().setDeathReason(bb->getTeamId(), death_reason_t::DISCONNECTED);
 					else
