@@ -28,10 +28,15 @@ Bridge::~Bridge()
 	disconnected_ = true;
 
 	auto core = Board::instance().getCoreByTeamId(team_id_);
-	if (core != nullptr)
+	if (core != nullptr && core->getHP() > 0)
 	{
+		// Only remove core if it's still alive - let normal game logic handle dead cores
 		Board::instance().removeObjectById(core->getId());
-		Logger::Log("Core of team " + std::to_string(team_id_) + " has been removed from the board.");
+		Logger::Log("Core of team " + std::to_string(team_id_) + " has been removed from the board due to disconnection.");
+	}
+	else if (core != nullptr)
+	{
+		Logger::Log("Core of team " + std::to_string(team_id_) + " is already dead, letting normal game logic handle removal.");
 	}
 	else
 	{
