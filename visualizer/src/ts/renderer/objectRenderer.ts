@@ -248,10 +248,16 @@ function drawObject(
 	img.removeAttribute("y");
 	img.setAttribute("width", "1");
 	img.setAttribute("height", "1");
-	img.setAttribute(
-		"transform",
-		`translate(${xOffset + offset},${yOffset + offset}) scale(${scale * scaleFactor})`,
-	);
+	const baseTransform =
+		`translate(${xOffset + offset},${yOffset + offset}) scale(${scale * scaleFactor})`;
+
+	// flip team 1s units horizontally
+	let finalTransform = baseTransform;
+	if (obj.type === 1 && getTeamIndex(obj.teamId) === 1) {
+		finalTransform += " translate(1,0) scale(-1,1)";
+	}
+
+	img.setAttribute("transform", finalTransform);
 
 	svgCanvas.appendChild(img);
 }
