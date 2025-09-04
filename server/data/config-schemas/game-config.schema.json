@@ -180,6 +180,44 @@
 					}
 				}
 			}
+		},
+		{
+			"if": {
+				"properties": {
+					"worldGenerator": {
+						"const": "hardcoded"
+					}
+				},
+				"required": [
+					"worldGenerator"
+				]
+			},
+			"then": {
+				"properties": {
+					"worldGeneratorConfig": {
+						"$ref": "#/$defs/hardcodedCfg"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"worldGenerator": {
+						"const": "empty"
+					}
+				},
+				"required": [
+					"worldGenerator"
+				]
+			},
+			"then": {
+				"properties": {
+					"worldGeneratorConfig": {
+						"$ref": "#/$defs/emptyCfg"
+					}
+				}
+			}
 		}
 	],
 	"$defs": {
@@ -392,6 +430,28 @@
 					"maximum": 1000
 				}
 			}
+		},
+		"hardcodedCfg": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"map"
+			],
+			"properties": {
+				"map": {
+					"type": "array",
+					"minItems": 1,
+					"items": {
+						"type": "string",
+						"minLength": 1
+					}
+				}
+			}
+		},
+		"emptyCfg": {
+			"type": "object",
+			"additionalProperties": false,
+			"maxProperties": 0
 		}
 	}
 }
