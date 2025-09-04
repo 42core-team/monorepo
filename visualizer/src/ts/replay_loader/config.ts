@@ -1,5 +1,6 @@
 export interface UnitConfig {
 	name: string;
+	visualizer_asset_path: string;
 	cost: number;
 	hp: number;
 	baseActionCooldown: number;
