@@ -41,9 +41,9 @@ Bridge::~Bridge()
 
 	writeCv_.notify_all();
 	readCv_.notify_all();
-	shutdown(socket_fd_, SHUT_RDWR);
 	if (readThread_.joinable()) readThread_.join();
 	if (writeThread_.joinable()) writeThread_.join();
+	shutdown(socket_fd_, SHUT_RDWR);
 	close(socket_fd_);
 }
 
@@ -162,7 +162,7 @@ void Bridge::writeLoop()
 {
 	try
 	{
-		while (!disconnected_)
+		for (;;)
 		{
 			std::unique_lock<std::mutex> lock(writeMutex_);
 			writeCv_.wait(lock, [this] { return !writeQueue_.empty() || disconnected_; });
@@ -188,6 +188,7 @@ void Bridge::writeLoop()
 				}
 				lock.lock();
 			}
+			if (disconnected_ && writeQueue_.empty()) break;
 		}
 	}
 	catch (std::exception &e)
