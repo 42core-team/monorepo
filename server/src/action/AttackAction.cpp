@@ -64,6 +64,8 @@ std::string AttackAction::execute(Core *core)
 		damage = Config::game().units[unit->getUnitType()].damageDeposit;
 	else if (obj->getType() == ObjectType::Wall)
 		damage = Config::game().units[unit->getUnitType()].damageWall;
+	else if (obj->getType() == ObjectType::Bomb)
+		damage = Config::game().units[unit->getUnitType()].damageBomb;
 	obj->damage(unit, damage);
 
 	Stats::instance().inc(stat_keys::actions_executed);

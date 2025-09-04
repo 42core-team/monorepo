@@ -8,6 +8,8 @@ Bomb::Bomb() : Object(1, ObjectType::Bomb), countdown_(Config::game().bombCountd
 
 void Bomb::explode()
 {
+	if (this->getHP() <= 0) return;
+
 	const int radius = Config::game().bombReach;
 	const Position bomb = Board::instance().getObjectPositionById(this->getId());
 
@@ -135,8 +137,7 @@ void Bomb::damage(Object *attacker, unsigned int damage)
 	(void)attacker;
 	(void)damage;
 
-	if (!countdownStarted_)
-		countdownStarted_ = true;
-	else
-		countdown_ = 0;
+	if (!countdownStarted_) countdownStarted_ = true;
+
+	this->setHP(this->getHP() - damage);
 }

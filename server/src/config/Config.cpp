@@ -111,6 +111,7 @@ static GameConfig parseGameConfig()
 	config.initialBalance = j.value("initialBalance", 200);
 	config.wallHp = j.value("wallHp", 100);
 	config.wallBuildCost = j.value("wallBuildCost", 20);
+	config.bombHp = j.value("bombHp", 25);
 	config.bombCountdown = j.value("bombCountdown", 25);
 	config.bombThrowCost = j.value("bombThrowCost", 50);
 	config.bombReach = j.value("bombReach", 3);
@@ -149,6 +150,7 @@ static GameConfig parseGameConfig()
 			unit.damageUnit = unitJson.value("damageUnit", 0);
 			unit.damageDeposit = unitJson.value("damageDeposit", 0);
 			unit.damageWall = unitJson.value("damageWall", 0);
+			unit.damageBomb = unitJson.value("damageBomb", 0);
 
 			std::string buildTypeJson = unitJson.value("buildType", "none");
 			if (buildTypeJson == "none")
