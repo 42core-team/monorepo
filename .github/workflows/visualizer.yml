@@ -76,12 +76,18 @@ jobs:
           ARCH_TAGS=""
 
           while IFS= read -r tag; do
-            if [[ -n "$tag" ]]; then
-              if [[ -z "$ARCH_TAGS" ]]; then
-                ARCH_TAGS="${tag}-${{ matrix.architecture }}"
-              else
-                ARCH_TAGS="${ARCH_TAGS}\n${tag}-${{ matrix.architecture }}"
-              fi
+            # Skip invalid tags (empty ref or ref starting with '-')
+            if [[ -z "$tag" ]]; then
+              continue
+            fi
+            ref_part="${tag##*:}"
+            if [[ -z "$ref_part" || "$ref_part" == -* ]]; then
+              continue
+            fi
+            if [[ -z "$ARCH_TAGS" ]]; then
+              ARCH_TAGS="${tag}-${{ matrix.architecture }}"
+            else
+              ARCH_TAGS="${ARCH_TAGS}\n${tag}-${{ matrix.architecture }}"
             fi
           done <<< "$BASE_TAGS"
 
@@ -195,8 +201,13 @@ jobs:
 
           # Create manifest for each tag from metadata
           for tag in $TAGS; do
-            # Skip empty tags
+            # Skip empty or invalid tags (ref part empty or starting with '-')
             if [[ -z "$tag" ]]; then
+              continue
+            fi
+            ref_part="${tag##*:}"
+            if [[ -z "$ref_part" || "$ref_part" == -* ]]; then
+              echo "Skipping invalid tag: $tag"
               continue
             fi
 
