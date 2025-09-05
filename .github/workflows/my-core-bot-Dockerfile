@@ -22,6 +22,7 @@ FROM ubuntu-gcc AS release
 COPY --from=game /core/server /core/server
 COPY --from=game /core/data /core/data
 COPY --from=connection /connection/inc/core_lib.h /core/inc/core_lib.h
+COPY --from=connection /connection/inc/bot.h /core/inc/bot.h
 COPY --from=connection /connection/core_lib.a /core/core_lib.a
 # Also provide legacy name if expected by consumers
 COPY --from=connection /connection/core_lib.a /core/con_lib.a
