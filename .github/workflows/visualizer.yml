@@ -91,6 +91,12 @@ jobs:
             fi
           done <<< "$BASE_TAGS"
 
+          # Ensure we produced at least one valid tag
+          if [[ -z "$ARCH_TAGS" ]]; then
+            echo "ERROR: No valid tags produced for architecture-specific build."
+            exit 1
+          fi
+
           echo "arch-tags<<EOF" >> $GITHUB_OUTPUT
           echo -e "$ARCH_TAGS" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
@@ -328,8 +334,12 @@ jobs:
         id: image
         run: |
           BRANCH="${{ github.ref_name }}"
-          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
-          TAG="${BRANCH}-${SHORT_SHA}"
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            TAG="$BRANCH"
+          else
+            SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+            TAG="${BRANCH}-${SHORT_SHA}"
+          fi
           echo "repo=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}" >> $GITHUB_OUTPUT
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
           echo "Deploying image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${TAG}"
