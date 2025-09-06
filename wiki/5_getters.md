@@ -60,7 +60,7 @@ Get the nearest object to a given position matching a custom filtering condition
 t_obj *core_get_obj_filter_nearest(t_pos pos, bool (*condition)(const t_obj *));
 ```
 
-## `core_get_objs_filter_count(bool (*condition)(const t_obj *))
+## `core_get_objs_filter_count(bool (*condition)(const t_obj *))`
 
 Get the count of objects that match a certain custom filtering condition.
 
