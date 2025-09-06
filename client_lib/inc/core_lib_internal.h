@@ -5,7 +5,9 @@
 
 // ----- General
 
-int core_internal_util_distance(t_pos pos1, t_pos pos2);
+int core_internal_distance(t_pos pos1, t_pos pos2);
+void core_internal_freeGame(void);
+void core_internal_freeAndExit(const char *msg, int count, ...);
 
 // ----- Socket
 
@@ -80,7 +82,7 @@ typedef struct s_actions
 
 extern t_actions actions;
 
-void core_internal_reset_actions(void);
+void core_internal_resetActions(void);
 
 // ----- JSON parsing and encoding
 

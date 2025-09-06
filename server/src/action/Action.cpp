@@ -19,7 +19,7 @@ std::vector<std::unique_ptr<Action>> Action::parseActions(json msg)
 				newAction = std::make_unique<MoveAction>(actionJson);
 			else if (actionJson["type"] == "create")
 				newAction = std::make_unique<CreateAction>(actionJson);
-			else if (actionJson["type"] == "transfer_money")
+			else if (actionJson["type"] == "transfer_gems")
 				newAction = std::make_unique<TransferGemsAction>(actionJson);
 			else if (actionJson["type"] == "build")
 				newAction = std::make_unique<BuildAction>(actionJson);

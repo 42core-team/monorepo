@@ -73,8 +73,8 @@ bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, i
 {
 	if (!canPlaceTemplate(temp, posX, posY) && !force) return false;
 
-	const std::unordered_map<char, int> moneyLikelihoodMap = {{'K', 0}, {'L', 1}, {'N', 2}, {'O', 3}, {'P', 4},
-															  {'Q', 5}, {'S', 6}, {'T', 7}, {'U', 8}, {'V', 9}};
+	const std::unordered_map<char, int> gemsLikelihoodMap = {{'K', 0}, {'L', 1}, {'N', 2}, {'O', 3}, {'P', 4},
+															 {'Q', 5}, {'S', 6}, {'T', 7}, {'U', 8}, {'V', 9}};
 
 	for (int y = 0; y < temp.height; ++y)
 	{
@@ -124,29 +124,29 @@ bool JigsawWorldGenerator::tryPlaceTemplate(const MapTemplate &temp, int posX, i
 			}
 			else if (std::string("uvwxyz!/$%").find(cell) != std::string::npos)
 			{
-				int moneyLikelihood = cell - 'u';
+				int gemsLikelihood = cell - 'u';
 				if (cell == '!')
-					moneyLikelihood = 6;
+					gemsLikelihood = 6;
 				else if (cell == '/')
-					moneyLikelihood = 7;
+					gemsLikelihood = 7;
 				else if (cell == '$')
-					moneyLikelihood = 8;
+					gemsLikelihood = 8;
 				else if (cell == '%')
-					moneyLikelihood = 9;
+					gemsLikelihood = 9;
 				std::uniform_int_distribution<int> dist(0, 9);
-				if (dist(eng_) < moneyLikelihood)
+				if (dist(eng_) < gemsLikelihood)
 					Board::instance().addObject<GemPile>(GemPile(), targetPos);
 				else
 					Board::instance().addObject<Wall>(Wall(), targetPos);
 			}
 			else if (std::string("KLNOPQSTUV").find(cell) != std::string::npos)
 			{
-				auto it = moneyLikelihoodMap.find(cell);
-				if (it != moneyLikelihoodMap.end())
+				auto it = gemsLikelihoodMap.find(cell);
+				if (it != gemsLikelihoodMap.end())
 				{
-					int moneyLikelihood = it->second;
+					int gemsLikelihood = it->second;
 					std::uniform_int_distribution<int> dist(0, 9);
-					if (dist(eng_) < moneyLikelihood)
+					if (dist(eng_) < gemsLikelihood)
 						Board::instance().addObject<GemPile>(GemPile(), targetPos);
 					else
 						Board::instance().addObject<Deposit>(Deposit(), targetPos);
@@ -307,14 +307,14 @@ void JigsawWorldGenerator::balanceObjectType(ObjectType type, int amount)
 
 void JigsawWorldGenerator::varyDepositIncome()
 {
-	const int baseDepositIncome = Config::game().worldGeneratorConfig.value("baseDepositIncome", 200);
+	const int baseDepositIncome = Config::game().depositIncome;
 	const int additionalDepositIncomePerAdjacentWall =
 			Config::game().worldGeneratorConfig.value("depositAdditionalIncomePerAdjacentWall", 20);
 	const float depositMultiplierIfFullySurrounded =
 			Config::game().worldGeneratorConfig.value("depositMultiplierIfFullySurrounded", 1.3);
 	const int randomDepositVariation = Config::game().worldGeneratorConfig.value("randomDepositIncomeVariation", 0);
 
-	const int baseGemPileIncome = Config::game().worldGeneratorConfig.value("moneyObjIncome", 75);
+	const int baseGemPileIncome = Config::game().gemPileIncome;
 	const int randomGemPileVariation = Config::game().worldGeneratorConfig.value("randomGemPileIncomeVariation", 0);
 
 	for (Object &obj : Board::instance())

@@ -40,7 +40,7 @@ void core_print_obj(t_obj *obj)
 		break;
 	case OBJ_DEPOSIT:
 	case OBJ_GEM_PILE:
-		printf("gems: %lu\n", obj->s_resource_gems_pile.gems);
+		printf("gems: %lu\n", obj->s_deposit_gems_pile.gems);
 		break;
 	// case OBJ_BOMB:
 	// 	printf("Countdown: %lu\n", obj->s_bomb.countdown);

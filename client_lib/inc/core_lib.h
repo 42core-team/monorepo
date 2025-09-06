@@ -80,7 +80,7 @@ typedef struct s_obj
 		{
 			/// @brief The amount of gems the deposit / gem pile contains.
 			unsigned long gems;
-		} s_resource_gems_pile;
+		} s_deposit_gems_pile;
 		struct
 		{
 			/// @brief How much longer the bomb will take to explode.
@@ -183,7 +183,7 @@ typedef struct s_game
 	 */
 	unsigned long my_team_id;
 	/**
-	 * @brief List of all objects (units, cores, resources, etc.) and their informations. NULL-terminated.
+	 * @brief List of all objects (units, cores, deposits, etc.) and their informations. NULL-terminated.
 	 */
 	t_obj **objects;
 } t_game;

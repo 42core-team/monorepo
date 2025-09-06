@@ -1,5 +1,5 @@
-#ifndef DISTANCED_RESOURCE_WORLD_GENERATOR_H
-#define DISTANCED_RESOURCE_WORLD_GENERATOR_H
+#ifndef SPARSE_WORLD_GENERATOR_H
+#define SPARSE_WORLD_GENERATOR_H
 
 #include "Board.h"
 #include "Deposit.h"
@@ -23,4 +23,4 @@ class SparseWorldGenerator : public WorldGenerator
 	std::mt19937_64 eng_{};
 };
 
-#endif // DISTANCED_RESOURCE_WORLD_GENERATOR_H
+#endif // SPARSE_WORLD_GENERATOR_H

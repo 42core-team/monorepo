@@ -15,6 +15,7 @@
 - server/ -> previously even_COREnier, the gameplay server, single source of truth connection players during matches, cpp
 - visualizer/ -> previously debug_visualizerm displays replay files generated from the server with vanilla html ts css
 - my-core-bot/ -> bot coding environment for Core players, containing two bots. Imported here as a submodule because players must receive a fork of my-core-bot only during events. This is included here so monorepo can also work with the same bots and configs as my-core-bot without us having duplicate code and copying files around.
+- wiki/ -> previously it's own repo, handles all the documentation. Deployed under wiki.coregame.de; Please make sure to also update the wiki when something wiki-relevant changes.
 
 ---
 

@@ -57,7 +57,7 @@ static void core_static_updateObj(t_obj *existingObj, json_node *updates)
 				break;
 			case OBJ_GEM_PILE:
 			case OBJ_DEPOSIT:
-				existingObj->s_resource_gems_pile.gems = property->number;
+				existingObj->s_deposit_gems_pile.gems = property->number;
 				break;
 			}
 		}
@@ -119,6 +119,7 @@ static void core_static_applyObjToArray(json_node *new_obj)
 	game.objects = realloc(game.objects, sizeof(t_obj *) * (arrLen + 2));
 	game.objects[arrLen + 1] = NULL;
 	game.objects[arrLen] = malloc(sizeof(t_obj));
+	memset(game.objects[arrLen], 0, sizeof(t_obj));
 	core_static_updateObj(game.objects[arrLen], new_obj);
 	game.objects[arrLen]->state = STATE_ALIVE;
 }

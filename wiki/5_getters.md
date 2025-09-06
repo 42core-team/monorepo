@@ -1,4 +1,4 @@
-# ----- GETTER FUNCTIONS -----
+# Getters
 
 > GETTER FUNCTIONS are used to get information about the current game state. They are **highly useful** and it is suggested to utilize them, though if you don't want to you can just loop over all the data in `game.objects`.
 

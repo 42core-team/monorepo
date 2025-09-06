@@ -1,4 +1,4 @@
-# ----- OBJECTS -----
+# Objects
 
 ## `t_obj`
 
@@ -16,7 +16,7 @@ Game object structure representing all entities in the game
 - `s_unit.team_id`: The id of the team that owns the unit.
 - `s_unit.gems`: The amount of gems the unit is carrying.
 - `s_unit.action_cooldown`: Countdown to the next tick the unit can move, defined by it's action cooldown & how many gems it's carrying.
-- `s_resource_gems_pile.gems`: The amount of gems the deposit or gem pile contains.
+- `s_deposit_gems_pile.gems`: The amount of gems the deposit or gem pile contains.
 - `s_bomb.countdown`: The time until the bomb will explode. **TAKE COVER!**
 
 ```c
@@ -45,7 +45,7 @@ typedef struct s_obj
 		struct
 		{
 			unsigned long gems;
-		} s_resource_gems_pile;
+		} s_deposit_gems_pile;
 		struct
 		{
 			unsigned long countdown;
@@ -53,6 +53,8 @@ typedef struct s_obj
 	};
 } t_obj;
 ```
+
+Walls don't have any special properties so they don't need a unionized struct, deposits and gem piles share the same additional properties so they share the same unionized struct (`s_deposit_gems_pile`).
 
 > **TIP**: The `void *data` field is **especially powerful & useful**. The library will never touch this field, it's yours to mess with for whatever you want, and it can already safely be set when a unit is still uninitialized, so immediately after unit creation, in the same tick. It's generally used to store specific jobs, tasks or targets of the unit in the easiest way possible.
 

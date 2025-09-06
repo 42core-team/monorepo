@@ -1,5 +1,5 @@
-#ifndef TRANSFER_MONEY_ACTION_H
-#define TRANSFER_MONEY_ACTION_H
+#ifndef TRANSFER_GEMS_ACTION_H
+#define TRANSFER_GEMS_ACTION_H
 
 #include "Action.h"
 #include "Common.h"
@@ -22,7 +22,7 @@ class TransferGemsAction : public Action
 	Position target_;
 	unsigned int amount_;
 
-	std::string dropMoney(Core *core, Object *srcObj);
+	std::string dropGems(Core *core, Object *srcObj);
 };
 
-#endif // TRANSFER_MONEY_ACTION_H
+#endif // TRANSFER_GEMS_ACTION_H

@@ -66,7 +66,7 @@ char *core_internal_encode_action(void)
 			}
 			break;
 		case ACTION_TRANSFER:
-			t->string = strdup("transfer_money");
+			t->string = strdup("transfer_gems");
 			obj->array[idx++] = t;
 			{
 				json_node *src = create_node(JSON_TYPE_NUMBER);

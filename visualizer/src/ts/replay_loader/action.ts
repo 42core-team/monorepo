@@ -8,7 +8,7 @@ export interface MoveAction extends BaseAction {
 	y: number;
 }
 export interface TransferGemsAction extends BaseAction {
-	type: "transfer_money";
+	type: "transfer_gems";
 	source_id: number;
 	x: number;
 	y: number;

@@ -32,7 +32,7 @@ json TransferGemsAction::encodeJSON()
 	return js;
 }
 
-std::string TransferGemsAction::dropMoney(Core *core, Object *srcObj)
+std::string TransferGemsAction::dropGems(Core *core, Object *srcObj)
 {
 	if (srcObj->getType() != ObjectType::Unit) return "only units can drop gems on the floor";
 
@@ -66,7 +66,7 @@ std::string TransferGemsAction::execute(Core *core)
 	if (!srcObj) return "invalid source object";
 
 	Object *dstObj = Board::instance().getObjectAtPos(target_);
-	if (!dstObj) return dropMoney(core, srcObj);
+	if (!dstObj) return dropGems(core, srcObj);
 
 	if (srcObj->getId() == dstObj->getId()) return "can't transfer gems to yourself"; // can't transfer gems to itself
 

@@ -8,7 +8,7 @@ export interface UnitConfig {
 	balancePerCooldownStep: number;
 	damageCore: number;
 	damageUnit: number;
-	damageResource: number;
+	damageDeposit: number;
 	damageWall: number;
 	buildType: number;
 }

@@ -328,7 +328,6 @@
 				"gemPileCount",
 				"minTemplateSpacing",
 				"minCoreDistance",
-				"baseDepositIncome",
 				"depositAdditionalIncomePerAdjacentWall",
 				"depositMultiplierIfFullySurrounded",
 				"randomDepositIncomeVariation",
@@ -364,11 +363,6 @@
 					"type": "integer",
 					"minimum": 0,
 					"maximum": 1000
-				},
-				"baseDepositIncome": {
-					"type": "integer",
-					"minimum": 0,
-					"maximum": 10000000
 				},
 				"depositAdditionalIncomePerAdjacentWall": {
 					"type": "integer",

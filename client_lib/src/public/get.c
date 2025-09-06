@@ -77,7 +77,7 @@ t_obj *core_get_obj_filter_nearest(t_pos pos, bool (*condition)(const t_obj *))
 	unsigned int min_distance = -1;
 	for (int i = 0; objects[i] != NULL; i++)
 	{
-		unsigned int distance = core_internal_util_distance(pos, objects[i]->pos);
+		unsigned int distance = core_internal_distance(pos, objects[i]->pos);
 		if (distance < min_distance)
 		{
 			min_distance = distance;

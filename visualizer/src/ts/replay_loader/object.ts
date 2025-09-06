@@ -1,4 +1,4 @@
-import { getGameConfig } from "./replayLoader";
+import { getGameConfig, getGameMisc } from "./replayLoader";
 
 export interface BaseObject {
 	id: number;
@@ -71,20 +71,20 @@ export function formatObjectData(obj: TickObject): string {
 	});
 	lines.push({
 		line: `#️⃣ ID: ${num(obj.id)}`,
-		priority: 5,
+		priority: 7,
 		color: "var(--text)",
 	});
 	lines.push({
 		line: `📍 Position: [x: ${num(obj.x)}, y: ${num(obj.y)}]`,
-		priority: 6,
+		priority: 8,
 		color: "var(--text)",
 	});
 
 	switch (obj.type) {
 		case 0:
 			lines.push({
-				line: `🏁 Team ID: ${num(obj.teamId)}`,
-				priority: 5,
+				line: `🏁 Team ID: ${num(obj.teamId)} (${getGameMisc()?.team_results.find((team) => team.id === obj.teamId)?.name || "Unknown Name"})`,
+				priority: 6,
 				color: "var(--text)",
 			});
 			lines.push({
@@ -95,8 +95,13 @@ export function formatObjectData(obj: TickObject): string {
 			break;
 		case 1:
 			lines.push({
-				line: `🏁 Team ID: ${num(obj.teamId)}`,
+				line: `⚔️ Unit Type: ${getGameConfig()?.units?.[obj.unit_type]?.name || num(obj.unit_type)}`,
 				priority: 5,
+				color: "var(--text)",
+			});
+			lines.push({
+				line: `🏁 Team ID: ${num(obj.teamId)} (${getGameMisc()?.team_results.find((team) => team.id === obj.teamId)?.name || "Unknown Name"})`,
+				priority: 6,
 				color: "var(--text)",
 			});
 			lines.push({
@@ -133,7 +138,7 @@ export function formatObjectData(obj: TickObject): string {
 	let prevPriority = -Infinity;
 	for (const { line, priority, color } of lines) {
 		if (prevPriority <= 2 && priority >= 3) {
-			result.push("");
+			result.push(""); // add visual separator
 		}
 		result.push(`<span style="color: ${color}">${line}</span>`);
 		prevPriority = priority;

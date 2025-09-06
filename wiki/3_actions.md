@@ -1,8 +1,8 @@
-# ----- ACTION FUNCTIONS -----
+# Actions
 
 > ACTION FUNCTIONS are used to perform actions in the game, like creating units, moving them, attacking, etc. Their changes are applied between ticks.
 
-> ACTION FUNCTIONS are the only way to interact with the game state. Use them to perform actions.
+> ACTION FUNCTIONS are the only way to interact with the game state. There is no point in setting the values of object structs locally, as they won't have an effect on the actual gamestate, only actions will.
 
 ## Position limits
 
@@ -20,7 +20,7 @@ Multiple action functions, like move and build, only work up, down left or right
 
 Say we have unit `u` at [4,4]. The move action will fail if you try to move it anywhere but [3,4], [4,3], [5,4], [4,5].
 
-We still use absolute positions even if almost none of them are valid as converting to a relative position would be pain.
+We still use absolute positions even if almost none of them are valid as converting to a relative position would be annoying and unnecessary in most pathfinding-related scenarios.
 
 ## `core_action_createUnit`
 
