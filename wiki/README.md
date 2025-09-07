@@ -104,6 +104,8 @@ You can also open the `gridmaster/` directory to look at your local default oppo
 
 ### 📚 Are there any limitations to what I can add to the bot?
 > Your bot will be run in a seperate Docker container from the server and other bots, and this container won't have an internet connection.
+>
+> See also: [Running on the Website](7_website)
 
 ### 🧐 I have found a bug! What do I do?
 
