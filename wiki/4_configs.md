@@ -13,11 +13,9 @@ Once you've cloned your bot, find the configs in the configs/ folder.
 
 If it's easier, you can also print the config using the provided core library functions.
 
-## Fun fact
+> **FUN FACT**: You can totally edit the configs in your local folder, and it will work. It's a lot of fun to play around with and see how stable and reactive your bot is, but it won't have an effect on games played on the website or in the final tournament.
 
-You can totally edit the configs in your local folder, and it will work. It's a lot of fun to play around with and see how stable and reactive your bot is, but it won't have an effect on games played on the website or in the final tournament.
-
-## Library Structs
+## Client Lib Functions & Structs
 
 ### `t_unit_config`
 
@@ -52,8 +50,6 @@ typedef struct s_unit_config
 } t_unit_config;
 ```
 
-> **NOTE**: Building won't be within the scope of this Rush, so don't worry about constructing walls or blowing things up with bombs.
-
 ### `t_build_type`
 
 ```c
@@ -82,7 +78,7 @@ Determines whether and what the unit will build if you use it as the builder arg
 - `bomb_hp`: How many healthpoints a bomb has.
 - `bomb_countdown`: How many ticks a bomb takes to explode after being thrown.
 - `bomb_throw_cost`: How much it costs to throw a bomb.
-- `bomb_reach`: How big the explosion of a bomb is. (Plus-shaped, like amazing bomberman. This value describes the radius.)
+- `bomb_reach`: How big the explosion of a bomb is. See the [objects](./2_objects) page for more info on the bomb explosion pattern.
 - `bomb_damage`: How much damage a bomb does to objects hit by its explosion.
 - `units`: List of all unit types that are available in the game. NULL-terminated.
 
@@ -106,4 +102,15 @@ typedef struct s_config
 	unsigned long bomb_damage;
 	t_unit_config **units;
 } t_config;
+```
+
+### `core_get_unitConfig`
+
+Get the unit config for a specific unit type.
+
+- `type`: The type of unit to get the config for
+- `return`: The unit config or NULL if no such unit type or unit config exists.
+
+```c
+t_unit_config *core_get_unitConfig(t_unit_type type);
 ```

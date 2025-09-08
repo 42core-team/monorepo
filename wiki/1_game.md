@@ -1,11 +1,15 @@
 # Game Struct
 
-## `t_game`
+The game struct is your primary source of information about the happenings in the game
+
+## Client Lib Functions & Structs
+
+### `t_game`
 
 Contains all the data about the game. Read it to your liking! Access it anywhere by typing `game.`
 
 - `elapsed_ticks`: The elapsed ticks since the game started. Same as what you're passed in your tick callback function.
-- `config`: The config contains base informations about the game that don't change such as the map size and the unit types.
+- `config`: The config contains base information about the game that don't change such as the map size and the unit types.
 - `my_team_id`: The id of the team that you are playing for. Saved in the team_id field of your cores and units.
 - `objects`: List of all objects (units, cores, deposits, gem piles, bombs, walls etc.) and their informations. NULL-terminated.
 
@@ -19,16 +23,17 @@ typedef struct s_game
 } t_game;
 ```
 
-## `game`
+### `game`
 
 This variable contains all the data about the game.
 It gets updated every time your function is called.
+Include `core_lib.h` in every file you want to use it.
 
 ```c
 extern t_game game;
 ```
 
-## `core_startGame`
+### `core_startGame`
 
 Starts the connection lib up, initializes the game, connects to the server & starts the game.
 

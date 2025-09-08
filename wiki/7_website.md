@@ -1,6 +1,6 @@
 # Running on the Website
 
-> As long as you keep the folder name `my-core-bot` and not modify the `my-core-bot/Makefile`, your bot will run fine on the website.
+> Generally, you don't need to worry about going through this page, just test that your bot runs on the website once and you'll be fine. As long as you keep the folder name `my-core-bot` and not modify the `my-core-bot/Makefile`, your bot will run fine on the website. If your bot doesn't run on the website though, this is the page for you.
 
 > For more details read this. Website runs are stricter than local.
 
@@ -55,6 +55,6 @@ cd my-core-bot && make && ./bot 42
 - "Can I change the folder name or move sources?"
   - No. Keep `my-core-bot/` and produce `./bot` after `make`.
 - "Can I use the network for fetching data?"
-  - No. Put datat into your repo if needed and keep sizes small.
+  - No. Put data into your repo if needed and keep sizes small.
 - "Can I create files at runtime?"
   - Yes, inside the repo mount. Avoid writing outside `/shared-data/repo`.

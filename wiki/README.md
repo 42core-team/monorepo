@@ -4,7 +4,7 @@
 
 Read it carefully, there are many helpful tidbits hidden in here.
 
-Especially the tips & tricks section down below and the tip boxes in the Core Library can be incredibly helpful.
+Especially the tips & tricks section down below and the tip boxes in the Core Library Pages can be incredibly helpful.
 
 Reading the documentation sucks, but it was handwritten to be as helpful as possible and is worth a skim. If there was a question that the documentation didn't answer, please let us know so we can tell you and improve the documentation.
 
@@ -69,7 +69,7 @@ To start building your own CORE bot, ensure you've completed the following prere
 
 ### Play and test against other Teams 🎮
 
-Once the default test bot is to boring and you always win, feel free to share your compiled bot with other teams and play against them. You can do this via the queue feature on the website or locally. Of course, you can't force them but it might benefit both of you to see your bots in _real_ action.
+Once the default test bot is too boring and you always win, feel free to share your compiled bot with other teams and play against them. You can do this via the queue feature on the website or locally. Of course, you can't force them but it might benefit both of you to see your bots in _real_ action.
 
 ## 📝 Example Code
 
@@ -84,13 +84,13 @@ You can also open the `gridmaster/` directory to look at your local default oppo
 
 > Be careful about attacking Ghosts! Object could be uninitialized or dead, so take care not to start your full assault on a unit thats already ascended into the afterlife. Check an objects state to avoid this.
 
-> Consider the powerful possibilities of the data field in every object! Here, you can save any data you want, allowing you to easily execute more detailed strategies and coordiante your troops efficiently! Just remember to free everything at the end.
+> Consider the powerful possibilities of the data field in every object! Here, you can save any data you want, allowing you to easily execute more detailed strategies and coordinate your troops efficiently! Just remember to free everything at the end.
 
 > If you can't find a standard library function to do what you're looking for, don't sweat it! Everything there is to know about the game at the current moment can be found in `the game struct`. Get any info you want yourself!
 
 > Be careful what you free! Some standard library functions need you to free their returned array, some don't! You never need to free anything in the game struct, and you never need to free a single `t_obj *` you haven't manually allocated yourself! If you free things wrong, the library and subsequently your bot will fail pretty spectacularly pretty quickly.
 
-> Looking at the [taxicab / manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry) might be useful. It's what the entire project uses. Who like Pythagoras and euclidian geometry anyways?
+> Looking at the [taxicab / manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry) might be useful. It's what the entire project uses. Who like Pythagoras and euclidian geometry anyways? Diamonds for the win!
 
 ---
 
@@ -103,7 +103,7 @@ You can also open the `gridmaster/` directory to look at your local default oppo
 > First, make sure the **Docker container** is running properly, that you've cloned with SSH and that you're able to see logs from your bot in the terminal. Check for any errors in the console or in your logs. Double-check the user loop logic to ensure it’s being executed as expected. Quit the devcontainer and reopen it using the `make devcontainer` command.
 
 ### 📚 Are there any limitations to what I can add to the bot?
-> Your bot will be run in a seperate Docker container from the server and other bots, and this container won't have an internet connection.
+> Your bot will be run in a separate Docker container from the server and other bots, and this container won't have an internet connection.
 >
 > See also: [Running on the Website](7_website)
 
@@ -111,7 +111,7 @@ You can also open the `gridmaster/` directory to look at your local default oppo
 
 > 👀
 
-> (Please tell us and open a GitHub issue.)
+> (Please tell us and open a [GitHub issue](https://github.com/42core-team/monorepo/issues).)
 
 # 🔎 On the Core Game Library
 
