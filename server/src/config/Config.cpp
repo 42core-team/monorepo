@@ -39,18 +39,117 @@ static void validate_or_die(const json &instance, const std::string &schema_name
 	}
 }
 
+static std::string read_file_strip_json_comments(const std::string &path)
+{
+	std::ifstream in(path, std::ios::in | std::ios::binary);
+	if (!in) return {};
+
+	std::ostringstream raw;
+	raw << in.rdbuf();
+	std::string s = raw.str();
+	std::string out;
+	out.reserve(s.size());
+
+	bool in_string = false;		// inside JSON string literal?
+	bool escaped = false;		// previous char was a backslash inside a string
+	bool in_sl_comment = false; // inside // ... \n
+	bool in_ml_comment = false; // inside /* ... */
+	const size_t n = s.size();
+
+	for (size_t i = 0; i < n; ++i)
+	{
+		const char c = s[i];
+		const char next = (i + 1 < n) ? s[i + 1] : '\0';
+
+		if (in_sl_comment)
+		{
+			// consume until newline, but keep the newline
+			if (c == '\n')
+			{
+				in_sl_comment = false;
+				out.push_back('\n');
+			}
+			// else drop char
+			continue;
+		}
+
+		if (in_ml_comment)
+		{
+			// consume until closing */
+			if (c == '*' && next == '/')
+			{
+				in_ml_comment = false;
+				++i; // skip '/'
+			}
+			else if (c == '\n')
+			{
+				// preserve newlines to keep line numbers stable
+				out.push_back('\n');
+			}
+			continue;
+		}
+
+		// not in any comment
+		if (!in_string)
+		{
+			// start of // comment?
+			if (c == '/' && next == '/')
+			{
+				in_sl_comment = true;
+				++i; // skip second '/'
+				continue;
+			}
+			// start of /* comment?
+			if (c == '/' && next == '*')
+			{
+				in_ml_comment = true;
+				++i; // skip '*'
+				continue;
+			}
+			// entering a string?
+			if (c == '\"')
+			{
+				in_string = true;
+				escaped = false;
+				out.push_back(c);
+				continue;
+			}
+			// normal char
+			out.push_back(c);
+		}
+		else
+		{
+			// inside string literal
+			out.push_back(c);
+			if (escaped)
+			{
+				escaped = false;
+			}
+			else
+			{
+				if (c == '\\')
+					escaped = true;
+				else if (c == '\"')
+					in_string = false;
+			}
+		}
+	}
+
+	return out;
+}
+
 static ServerConfig parseServerConfig()
 {
 	ServerConfig config;
 
-	std::ifstream inFile(Config::getServerConfigFilePath());
-	if (!inFile)
+	const std::string cleaned = read_file_strip_json_comments(Config::getServerConfigFilePath());
+	if (cleaned.empty())
 	{
 		Logger::LogErr("Could not open server config file: " + Config::getServerConfigFilePath());
 		exit(EXIT_FAILURE);
 	}
 
-	json j = json::parse(inFile);
+	json j = json::parse(cleaned);
 	validate_or_die(j, "server-config.schema.json");
 
 	if (j.contains("replayFolderPaths") && j["replayFolderPaths"].is_array())
@@ -82,14 +181,14 @@ static GameConfig parseGameConfig()
 {
 	GameConfig config;
 
-	std::ifstream inFile(Config::getGameConfigFilePath());
-	if (!inFile)
+	const std::string cleaned = read_file_strip_json_comments(Config::getGameConfigFilePath());
+	if (cleaned.empty())
 	{
 		Logger::Log(LogLevel::ERROR, "Could not open config file: " + Config::getGameConfigFilePath());
 		exit(EXIT_FAILURE);
 	}
 
-	json j = json::parse(inFile);
+	json j = json::parse(cleaned);
 	validate_or_die(j, "game-config.schema.json");
 
 	config.gridSize = j.value("gridSize", 25);
@@ -220,13 +319,11 @@ UnitConfig &Config::getUnitConfig(unsigned int unit_type)
 
 json Config::encodeConfig()
 {
-	std::ifstream inFile(Config::getGameConfigFilePath());
-	if (!inFile)
+	const std::string cleaned = read_file_strip_json_comments(Config::getGameConfigFilePath());
+	if (cleaned.empty())
 	{
 		Logger::Log(LogLevel::ERROR, "Could not open config file: " + Config::getGameConfigFilePath());
 		exit(EXIT_FAILURE);
 	}
-
-	json j = json::parse(inFile);
-	return j;
+	return json::parse(cleaned);
 }
