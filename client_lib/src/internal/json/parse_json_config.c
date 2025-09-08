@@ -6,6 +6,14 @@ static void core_static_util_perrorExit(char *msg)
 	exit(EXIT_FAILURE);
 }
 
+static t_build_type core_static_parse_buildType(json_node *node)
+{
+	if (strcasecmp(node->string, "none") == 0) return BUILD_TYPE_NONE;
+	if (strcasecmp(node->string, "wall") == 0) return BUILD_TYPE_WALL;
+	if (strcasecmp(node->string, "bomb") == 0) return BUILD_TYPE_BOMB;
+	return BUILD_TYPE_NONE;
+}
+
 static t_unit_config **core_static_parse_unitConfig(json_node *root)
 {
 	json_node *json = json_find(root, "units");
@@ -30,11 +38,13 @@ static t_unit_config **core_static_parse_unitConfig(json_node *root)
 		units[i]->hp = (unsigned long)json_find(unit_node, "hp")->number;
 		units[i]->baseActionCooldown = (unsigned long)json_find(unit_node, "baseActionCooldown")->number;
 		units[i]->maxActionCooldown = (unsigned long)json_find(unit_node, "maxActionCooldown")->number;
+		units[i]->balancePerCooldownStep = (unsigned long)json_find(unit_node, "balancePerCooldownStep")->number;
 		units[i]->dmg_core = (long)json_find(unit_node, "damageCore")->number;
 		units[i]->dmg_unit = (long)json_find(unit_node, "damageUnit")->number;
 		units[i]->dmg_deposit = (long)json_find(unit_node, "damageDeposit")->number;
 		units[i]->dmg_wall = (long)json_find(unit_node, "damageWall")->number;
-		units[i]->build_type = (t_build_type)json_find(unit_node, "buildType")->number;
+		units[i]->dmg_bomb = (long)json_find(unit_node, "damageBomb")->number;
+		units[i]->build_type = core_static_parse_buildType(json_find(unit_node, "buildType"));
 	}
 	units[array_size] = NULL;
 

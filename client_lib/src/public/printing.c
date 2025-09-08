@@ -42,9 +42,9 @@ void core_print_obj(t_obj *obj)
 	case OBJ_GEM_PILE:
 		printf("gems: %lu\n", obj->s_deposit_gems_pile.gems);
 		break;
-	// case OBJ_BOMB:
-	// 	printf("Countdown: %lu\n", obj->s_bomb.countdown);
-	// 	break;
+	case OBJ_BOMB:
+		printf("Countdown: %lu\n", obj->s_bomb.countdown);
+		break;
 	default:
 		break;
 	}
@@ -83,6 +83,7 @@ void core_print_config_unit(t_unit_type unit_type)
 	printf("	- Damage to Unit: %lu\n", unit_config->dmg_unit);
 	printf("	- Damage to Deposit: %lu\n", unit_config->dmg_deposit);
 	printf("	- Damage to Wall: %lu\n", unit_config->dmg_wall);
+	printf("	- Damage to Bombs: %lu\n", unit_config->dmg_bomb);
 	char *build_type = "None";
 	if (unit_config->build_type == BUILD_TYPE_WALL)
 		build_type = "Wall";
@@ -91,7 +92,7 @@ void core_print_config_unit(t_unit_type unit_type)
 	printf("	- Build Type: %s\n", build_type);
 	printf("	- Base Action Cooldown: %lu\n", unit_config->baseActionCooldown);
 	printf("	- Max Action Cooldown: %lu\n", unit_config->maxActionCooldown);
-	printf("	- Can Build: %s\n", unit_config->can_build ? "Yes" : "No");
+	printf("	- Balance per Cooldown Step: %lu\n", unit_config->balancePerCooldownStep);
 }
 
 void core_print_config_game(void)

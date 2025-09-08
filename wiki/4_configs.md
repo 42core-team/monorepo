@@ -25,10 +25,11 @@ If it's easier, you can also print the config using the provided core library fu
 - `dmg_unit`: How much damage the unit deals to units.
 - `dmg_deposit`: How much damage the unit deals to deposits.
 - `dmg_wall`: How much damage the unit deals to walls.
-- `build_type`: The units build type.
+- `dmg_bomb`: How much damage the unit deals to walls.
+- `build_type`: The units build type. If "none", the unit can't build.
 - `baseActionCooldown`: The time a unit waits between moves if it is not carrying any gems.
 - `maxActionCooldown`: The maximum boundary of a units wait time between moves if it's carrying a ton of gems.
-- `can_build`: Whether the unit can build walls or bombs.
+- `balancePerCooldownStep`: Defines increase of delay between action executions.
 
 ```c
 typedef struct s_unit_config

@@ -9,7 +9,7 @@ npx lint-staged
 cd ..
 
 # format client lib & server
-FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(c|cpp|h|hpp)$')
+FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(c|cpp|h|hpp)$' || true)
 [ -z "$FILES" ] && exit 0
 clang-format -i $FILES
 git add $FILES

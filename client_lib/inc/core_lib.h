@@ -109,6 +109,12 @@ typedef struct s_unit_config
 	unsigned long cost;
 	/// @brief How much healthpoints the unit has.
 	unsigned long hp;
+	/// @brief The time a unit waits between moves if it is not carrying gems.
+	unsigned long baseActionCooldown;
+	/// @brief The minimum time a unit waits between moves.
+	unsigned long maxActionCooldown;
+	/// @brief Defines increase of delay between action executions
+	unsigned long balancePerCooldownStep;
 	/// @brief How much damage the unit deals to cores.
 	unsigned long dmg_core;
 	/// @brief How much damage the unit deals to units.
@@ -117,14 +123,10 @@ typedef struct s_unit_config
 	unsigned long dmg_deposit;
 	/// @brief How much damage the unit deals to walls.
 	unsigned long dmg_wall;
+	/// @brief How much damage the unit deals to bombs.
+	unsigned long dmg_bomb;
 	/// @brief The units build type.
 	t_build_type build_type;
-	/// @brief The time a unit waits between moves if it is not carrying gems.
-	unsigned long baseActionCooldown;
-	/// @brief The minimum time a unit waits between moves.
-	unsigned long maxActionCooldown;
-	/// @brief Whether the unit can build walls or bombs.
-	bool can_build;
 } t_unit_config;
 /// @brief Game configuration structure containing all game settings
 typedef struct s_config
