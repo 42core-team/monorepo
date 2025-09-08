@@ -15,9 +15,13 @@ window.addEventListener("DOMContentLoaded", async () => {
 		if (!Number.isNaN(v)) localStorage.setItem("tm.speed", String(v));
 	}
 
-	let replays: string[] = [ "/replays/replay_latest.json" ];
+	let replays: string[] = ["/replays/replay_latest.json"];
 	if (urlParams.has("replays")) {
-		replays = urlParams.get("replays")?.split(",").map((s) => s.trim()) || replays;
+		replays =
+			urlParams
+				.get("replays")
+				?.split(",")
+				.map((s) => s.trim()) || replays;
 	}
 
 	// project imports
@@ -29,7 +33,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 	await setupReplayLoader(replays[0]);
 	await setupTimeManager();
-	if (urlParams.has("autoplay") && urlParams.get("autoplay") != "off")
+	if (urlParams.has("autoplay") && urlParams.get("autoplay") !== "off")
 		startPlayback();
 
 	let idx = 0;
@@ -46,7 +50,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 			}
 		}, 500);
 	};
-	if (urlParams.has("autoplay") && urlParams.get("autoplay") == "full")
+	if (urlParams.has("autoplay") && urlParams.get("autoplay") === "full")
 		watchAndAdvance();
 
 	// svg layout height renderer
@@ -104,10 +108,10 @@ window.addEventListener("DOMContentLoaded", async () => {
 	}
 	const themeColorParam = urlParams.get("themeColor");
 	if (typeof themeColorParam === "string") {
-		localStorage.setItem("ui.themeColor", "#" + themeColorParam);
+		localStorage.setItem("ui.themeColor", `#${themeColorParam}`);
 		document.documentElement.style.setProperty(
 			"--theme-color",
-			"#" + themeColorParam,
+			`#${themeColorParam}`,
 		);
 	}
 	const suppressParam = urlParams.get("suppress_version_warning");

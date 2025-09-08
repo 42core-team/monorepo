@@ -9,7 +9,7 @@
 
 	--theme-color: #6a0dad;
 
-	--gridline-color: rgba(127,127,127,0.5);
+	--gridline-color: rgba(127, 127, 127, 0.5);
 
 	--control-height: 48px;
 }
@@ -40,7 +40,11 @@
 	--gems-color: rgb(0, 215, 0);
 	--cooldown-color: #0066ffff;
 
-	--panel-bg: color-mix(in srgb, color-mix(in srgb, var(--theme-color) 25%, white), black 70%);
+	--panel-bg: color-mix(
+		in srgb,
+		color-mix(in srgb, var(--theme-color) 25%, white),
+		black 70%
+	);
 	--panel-outline: color-mix(in srgb, var(--theme-color) 45%, white);
 	--panel-track: color-mix(in srgb, var(--theme-color) 60%, white);
 	--panel-thumb: color-mix(in srgb, var(--theme-color) 30%, white);
@@ -88,6 +92,10 @@
 }
 
 /* Gridlines toggling */
+.grid-cell {
+	fill: var(--grid-bg);
+	pointer-events: none;
+}
 :root[data-gridlines="off"] .grid-cell {
 	display: none;
 }
@@ -120,7 +128,9 @@ a {
 	margin: 10px 0 10px 0;
 	color: var(--svg-icon-fill);
 
-	background-position: 0 0, 0 0;
+	background-position:
+		0 0,
+		0 0;
 	background-repeat: repeat, repeat;
 }
 :root[data-gridlines="on"] #svg-canvas {
@@ -128,16 +138,12 @@ a {
 	background-image:
 		linear-gradient(to right, var(--gridline-color) 1px, transparent 1px),
 		linear-gradient(to bottom, var(--gridline-color) 1px, transparent 1px);
-	background-size: var(--cell) 100%, 100% var(--cell);
+	background-size:
+		var(--cell) 100%,
+		100% var(--cell);
 }
 :root[data-gridlines="off"] #svg-canvas {
 	background-image: none;
-}
-
-
-.grid-cell {
-	fill: var(--grid-bg);
-	pointer-events: none;
 }
 
 #tooltip {
@@ -232,7 +238,7 @@ svg path {
 	height: 1.5rem;
 	display: block;
 }
-.icon-button img{
+.icon-button img {
 	filter: var(--svg-icon-filter, none);
 }
 
@@ -258,8 +264,12 @@ svg path {
 	background-color: color-mix(in srgb, var(--theme-color) 80%, black);
 }
 
-:root[data-theme="light"] { --svg-icon-filter: none; }
-:root[data-theme="dark"]  { --svg-icon-filter: invert(1) brightness(1.1); }
+:root[data-theme="light"] {
+	--svg-icon-filter: none;
+}
+:root[data-theme="dark"] {
+	--svg-icon-filter: invert(1) brightness(1.1);
+}
 
 .slider-group {
 	display: flex;
@@ -506,7 +516,6 @@ svg path {
 	height: 22px;
 	filter: var(--svg-icon-filter, none);
 }
-
 
 kbd {
 	background-color: #eeeeee;

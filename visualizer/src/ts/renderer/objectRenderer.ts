@@ -3,7 +3,6 @@ import { getBarMetrics, type TickObject } from "../replay_loader/object";
 import {
 	getActionsByExecutor,
 	getGameConfig,
-	getNameOfUnitType,
 	getStateAt,
 } from "../replay_loader/replayLoader";
 import {
@@ -145,7 +144,7 @@ export function drawSpawnPreviewForNextTick(
 		const cfgTotal = Math.max(1, getGameConfig()?.bombCountdown ?? 1);
 		const currLeft = Math.max(
 			0,
-			Math.min(cfgTotal, (spawnObj as any).countdown ?? 0),
+			Math.min(cfgTotal, (spawnObj as { countdown?: number }).countdown ?? 0),
 		);
 		const p = 1 - currLeft / cfgTotal;
 		const bombScale = 0.65 + 0.65 * p;
@@ -345,14 +344,17 @@ export function calcAndDrawObject(
 		const cfgTotal = Math.max(1, getGameConfig()?.bombCountdown ?? 1);
 		const currLeft = Math.max(
 			0,
-			Math.min(cfgTotal, (currObj as any).countdown ?? 0),
+			Math.min(cfgTotal, (currObj as { countdown?: number }).countdown ?? 0),
 		);
 		const inferredNext = Math.max(0, currLeft - 1);
 		const nextLeftRaw =
 			nextObj &&
 			nextObj.type === 5 &&
-			typeof (nextObj as any).countdown === "number"
-				? Math.max(0, Math.min(cfgTotal, (nextObj as any).countdown))
+			typeof (nextObj as { countdown?: number }).countdown === "number"
+				? Math.max(
+						0,
+						Math.min(cfgTotal, (nextObj as { countdown?: number }).countdown),
+					)
 				: inferredNext;
 		const leftSmooth =
 			currLeft + (nextLeftRaw - currLeft) * currentTickData.tickProgress;
@@ -374,35 +376,37 @@ export function calcAndDrawObject(
 	if (
 		nextObj &&
 		nextObj.type === 5 &&
-		nextObj.countdown === 0 &&
-		Array.isArray((nextObj as any).explosionTiles) &&
-		(nextObj as any).explosionTiles.length > 0
+		(nextObj as { countdown?: number }).countdown === 0
 	) {
-		const s = Math.max(
-			0,
-			Math.min(1, explosionScale(currentTickData.tickProgress)),
-		);
-		for (const tile of (nextObj as any).explosionTiles as {
-			x: number;
-			y: number;
-		}[]) {
-			const key = `exp-${tile.x},${tile.y}`;
-			let img = svgCanvas.querySelector(
-				`image[data-exp-key="${key}"]`,
-			) as SVGImageElement | null;
-			if (!img) {
-				img = document.createElementNS(svgNS, "image");
-				img.setAttribute("data-exp-key", key);
-				img.setAttribute("href", "/assets/object-svgs/explosion.svg");
+		const tiles = (
+			nextObj as {
+				explosionTiles?: { x: number; y: number }[];
 			}
-			img.classList.add("game-object");
-			img.classList.remove("not-touched");
-			img.setAttribute("width", "1");
-			img.setAttribute("height", "1");
-			const tx = tile.x + 0.5 - 0.5 * s;
-			const ty = tile.y + 0.5 - 0.5 * s;
-			img.setAttribute("transform", `translate(${tx},${ty}) scale(${s})`);
-			if (img.parentNode !== svgCanvas) svgCanvas.appendChild(img);
+		).explosionTiles;
+		if (tiles && tiles.length > 0) {
+			const s = Math.max(
+				0,
+				Math.min(1, explosionScale(currentTickData.tickProgress)),
+			);
+			for (const tile of tiles) {
+				const key = `exp-${tile.x},${tile.y}`;
+				let img = svgCanvas.querySelector(
+					`image[data-exp-key="${key}"]`,
+				) as SVGImageElement | null;
+				if (!img) {
+					img = document.createElementNS(svgNS, "image");
+					img.setAttribute("data-exp-key", key);
+					img.setAttribute("href", "/assets/object-svgs/explosion.svg");
+				}
+				img.classList.add("game-object");
+				img.classList.remove("not-touched");
+				img.setAttribute("width", "1");
+				img.setAttribute("height", "1");
+				const tx = tile.x + 0.5 - 0.5 * s;
+				const ty = tile.y + 0.5 - 0.5 * s;
+				img.setAttribute("transform", `translate(${tx},${ty}) scale(${s})`);
+				if (img.parentNode !== svgCanvas) svgCanvas.appendChild(img);
+			}
 		}
 	}
 }

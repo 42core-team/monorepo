@@ -58,8 +58,17 @@ export function loadSavedTheme(): void {
 		};
 		if ("addEventListener" in mql) {
 			mql.addEventListener("change", onSystemChange);
-		} else if (typeof (mql as any).addListener === "function") {
-			(mql as any).addListener(onSystemChange);
+		} else if (
+			typeof (mql as MediaQueryList & { addListener?: unknown }).addListener ===
+			"function"
+		) {
+			(
+				mql as MediaQueryList & {
+					addListener: (
+						listener: (this: MediaQueryList, ev: MediaQueryListEvent) => void,
+					) => void;
+				}
+			).addListener(onSystemChange);
 		}
 	}
 

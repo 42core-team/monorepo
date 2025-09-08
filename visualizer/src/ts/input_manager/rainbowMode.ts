@@ -1,4 +1,4 @@
-import { setColorSwitchPreview } from './infoPopupManager.ts';
+import { setColorSwitchPreview } from "./infoPopupManager.ts";
 
 let rafId: number | null = null;
 let startTs = 0;
@@ -12,7 +12,7 @@ function step(timestamp: number) {
 	const hue = (t * 100) % 360;
 	const color = `hsl(${hue} 100% 75%)`;
 	document.documentElement.style.setProperty("--theme-color", color);
-	localStorage.setItem('ui.themeColor', color);
+	localStorage.setItem("ui.themeColor", color);
 	setColorSwitchPreview(color);
 
 	rafId = requestAnimationFrame(step);
@@ -20,7 +20,7 @@ function step(timestamp: number) {
 
 export function setupRainbowMode(): void {
 	const down = new Set<string>();
-	const secret = new Set(["c","o","r","e"]);
+	const secret = new Set(["c", "o", "r", "e"]);
 
 	function checkCombo() {
 		for (const k of secret) if (!down.has(k)) return false;

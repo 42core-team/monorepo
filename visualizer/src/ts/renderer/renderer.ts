@@ -6,9 +6,11 @@ import {
 	getGameMisc,
 	getStateAt,
 } from "../replay_loader/replayLoader";
-import { calcAndDrawObject, drawSpawnPreviewForNextTick, initializeTeamMapping } from "./objectRenderer";
-
-const svgNS = "http://www.w3.org/2000/svg";
+import {
+	calcAndDrawObject,
+	drawSpawnPreviewForNextTick,
+	initializeTeamMapping,
+} from "./objectRenderer";
 
 const svgCanvasElement = document.getElementById("svg-canvas");
 if (!svgCanvasElement || !(svgCanvasElement instanceof SVGSVGElement)) {
@@ -66,15 +68,18 @@ function drawFrame(timestamp: number): void {
 
 	for (const currObj of replayData.objects) {
 		// bombs will still persist for one more tick with 0 hp to communicate the explosion positions, but mustnt be rendered
-		if (currObj.hp > 0)
-			calcAndDrawObject(currObj, svgCanvas, currentTickData);
+		if (currObj.hp > 0) calcAndDrawObject(currObj, svgCanvas, currentTickData);
 	}
 	const nextTickData = getStateAt(currentTickData.tick + 1);
 	if (nextTickData) {
 		const currentIds = new Set(replayData.objects.map((o) => o.id));
 		for (const spawn of nextTickData.objects) {
 			if (!currentIds.has(spawn.id)) {
-				drawSpawnPreviewForNextTick(spawn as TickObject, svgCanvas, currentTickData);
+				drawSpawnPreviewForNextTick(
+					spawn as TickObject,
+					svgCanvas,
+					currentTickData,
+				);
 			}
 		}
 	}
@@ -108,7 +113,9 @@ function refreshTooltipFromSVGPoint(
 
 	// if there was nothing at that pos but there is now, it was a move action and we can safely show the tooltip on both tiles
 	if (!obj) {
-		const movedObj = nextObjects.find((o: TickObject) => o.x === tx && o.y === ty);
+		const movedObj = nextObjects.find(
+			(o: TickObject) => o.x === tx && o.y === ty,
+		);
 		obj = currentObjects.find((o: TickObject) => o.id === movedObj?.id);
 	}
 
