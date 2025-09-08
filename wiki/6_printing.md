@@ -1,5 +1,3 @@
-# Printing
-
 > PRINT FUNCTIONS are used to print information about the game state to the console.
 
 ## Usage Example:

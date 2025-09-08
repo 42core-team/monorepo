@@ -1,5 +1,3 @@
-# Actions
-
 > ACTION FUNCTIONS are used to perform actions in the game, like creating units, moving them, attacking, etc. Their changes are applied between ticks.
 
 > ACTION FUNCTIONS are the only way to interact with the game state. There is no point in setting the values of object structs locally, as they won't have an effect on the actual gamestate, only actions will.

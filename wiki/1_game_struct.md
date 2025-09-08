@@ -1,5 +1,3 @@
-# Game Struct
-
 The game struct is your primary source of information about the happenings in the game
 
 ## Client Lib Functions & Structs

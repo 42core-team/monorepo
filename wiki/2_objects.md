@@ -1,5 +1,3 @@
-# Objects
-
 Everything that can be on the game grid is an object.
 
 There are never two objects in one grid position.

@@ -1,5 +1,3 @@
-# Configs
-
 If you are in an event, **look at the config**! They contain invaluable info.
 
 ## Config Types

@@ -1,4 +1,4 @@
-# Running on the Website
+This page is focused around making sure your bot can properly run on the website. Otherwise, it won't be able to compete in the tournament or win.
 
 > Generally, you don't need to worry about going through this page, just test that your bot runs on the website once and you'll be fine. As long as you keep the folder name `my-core-bot` and not modify the `my-core-bot/Makefile`, your bot will run fine on the website. If your bot doesn't run on the website though, this is the page for you.
 

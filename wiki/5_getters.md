@@ -1,5 +1,3 @@
-# Getters
-
 GETTER FUNCTIONS are used to get information about the current game state. They are **highly useful** and it is suggested to utilize them, though if you don't want to you can just loop over all the data in `game.objects`.
 
 > **TIP**: If you are unsure about how to use the getter functions and the function filtering pointers, you are provided with a `getter.c` file that uses them and provides some basic functions with them. Have a look to figure things out.
