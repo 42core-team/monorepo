@@ -7,11 +7,7 @@ const svgCanvas = document.getElementById("svg-canvas") as HTMLElement;
 window.addEventListener("DOMContentLoaded", async () => {
 	// load url parameters
 
-	let replayFilePath = "/replays/replay_latest.json";
 	const urlParams = new URLSearchParams(window.location.search);
-	if (urlParams.has("replay")) {
-		replayFilePath = urlParams.get("replay") || replayFilePath;
-	}
 
 	const speedParam = urlParams.get("speed");
 	if (speedParam) {
@@ -19,11 +15,10 @@ window.addEventListener("DOMContentLoaded", async () => {
 		if (!Number.isNaN(v)) localStorage.setItem("tm.speed", String(v));
 	}
 
-	const autoplayRaw = urlParams.getAll("autoplay");
-	const autoplayList = autoplayRaw
-		.flatMap((s) => s.split(","))
-		.map((s) => s.trim())
-		.filter(Boolean);
+	let replays: string[] = [ "/replays/replay_latest.json" ];
+	if (urlParams.has("replays")) {
+		replays = urlParams.get("replays")?.split(",").map((s) => s.trim()) || replays;
+	}
 
 	// project imports
 
@@ -31,38 +26,28 @@ window.addEventListener("DOMContentLoaded", async () => {
 	const { setupTimeManager, startPlayback, isAtEnd } = await import(
 		"./input_manager/timeManager.js"
 	);
-	const { setupRenderer } = await import("./renderer/renderer.js");
 
-	// autoplay enabled
-
-	if (autoplayList.length > 0) {
-		await setupReplayLoader(autoplayList[0]);
-		await setupTimeManager();
-		await setupRenderer();
+	await setupReplayLoader(replays[0]);
+	await setupTimeManager();
+	if (urlParams.has("autoplay") && urlParams.get("autoplay") != "off")
 		startPlayback();
 
-		let idx = 0;
-		const watchAndAdvance = () => {
-			const timer = setInterval(() => {
-				if (isAtEnd()) {
-					clearInterval(timer);
-					setTimeout(async () => {
-						idx = (idx + 1) % autoplayList.length;
-						await setupReplayLoader(autoplayList[idx]);
-						startPlayback();
-						watchAndAdvance();
-					}, 5000);
-				}
-			}, 400);
-		};
+	let idx = 0;
+	const watchAndAdvance = () => {
+		const timer = setInterval(() => {
+			if (isAtEnd()) {
+				clearInterval(timer);
+				setTimeout(async () => {
+					idx = (idx + 1) % replays.length;
+					await setupReplayLoader(replays[idx]);
+					startPlayback();
+					watchAndAdvance();
+				}, 5000);
+			}
+		}, 500);
+	};
+	if (urlParams.has("autoplay") && urlParams.get("autoplay") == "full")
 		watchAndAdvance();
-	} else {
-		// normal, manual playback
-
-		await setupReplayLoader(replayFilePath);
-		await setupTimeManager();
-		await setupRenderer();
-	}
 
 	// svg layout height renderer
 
