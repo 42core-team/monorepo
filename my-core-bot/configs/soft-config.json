@@ -1,0 +1,86 @@
+{
+	"gridSize": 20,
+	"seed": "",
+	"idleIncome": 1,
+	"idleIncomeTimeOut": 1000,
+	"depositHp": 50,
+	"depositIncome": 200,
+	"gemPileIncome": 75,
+	"coreHp": 200,
+	"initialBalance": 100,
+	"wallHp": 50,
+	"wallBuildCost": 20,
+	"bombHp": 25,
+	"bombCountdown": 10,
+	"bombThrowCost": 50,
+	"bombReach": 3,
+	"bombDamageCore": 50,
+	"bombDamageUnit": 30,
+	"bombDamageDeposit": 40,
+	"worldGenerator": "sparse",
+	"worldGeneratorConfig": {
+		"depositCount": 20,
+		"depositBalanceVariation": 100,
+		"gemPileCount": 10,
+		"gemPileBalanceVariation": 50,
+		"wallCount": 30,
+		"coreBuffer": 3
+	},
+	"units": [
+		{
+			"name": "Warrior",
+			"visualizer_asset_path": "warrior",
+			"cost": 150,
+			"hp": 35,
+			"baseActionCooldown": 5,
+			"maxActionCooldown": 20,
+			"balancePerCooldownStep": 30,
+			"damageCore": 12,
+			"damageUnit": 6,
+			"damageDeposit": 4,
+			"damageWall": 5,
+			"damageBomb": 5,
+			"buildType": "none"
+		},
+		{
+			"name": "Miner",
+			"visualizer_asset_path": "miner",
+			"cost": 100,
+			"hp": 20,
+			"baseActionCooldown": 5,
+			"maxActionCooldown": 10,
+			"balancePerCooldownStep": 100,
+			"damageCore": 5,
+			"damageUnit": 2,
+			"damageDeposit": 10,
+			"damageWall": 12,
+			"damageBomb": 5,
+			"buildType": "none"
+		},
+		{
+			"name": "Carrier",
+			"visualizer_asset_path": "carrier",
+			"cost": 200,
+			"hp": 10,
+			"baseActionCooldown": 0,
+			"maxActionCooldown": 1,
+			"balancePerCooldownStep": 500,
+			"damageCore": 0,
+			"damageUnit": 0,
+			"damageDeposit": 0,
+			"damageWall": 3,
+			"damageBomb": 5,
+			"buildType": "none"
+		}
+	],
+	"corePositions": [
+		{
+			"x": 0,
+			"y": 0
+		},
+		{
+			"x": 19,
+			"y": 19
+		}
+	]
+}

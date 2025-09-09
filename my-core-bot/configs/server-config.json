@@ -1,0 +1,13 @@
+{
+	"replayFolderPaths": [
+		"/workspace/replays",
+		"/workspaces/monorepo",
+		"/workspaces/monorepo/visualizer/public/replays",
+		"./replays"
+	],
+	"timeoutTicks": 3000,
+	"timeoutMs": 30000,
+	"clientWaitTimeoutMs": 500,
+	"clientConnectTimeoutMs": 30000,
+	"enableTerminalVisualizer": false
+}
