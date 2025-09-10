@@ -4,7 +4,7 @@ This page is focused around making sure your bot can properly run on the website
 
 > For more details read this. Website runs are stricter than local.
 
-## What the Website Expects
+# What the Website Expects
 
 - **Repository layout**: Your bot source must live at `my-core-bot/` at the repo root.
 - **Build command**: The website runner executes `make` inside `my-core-bot/`.
@@ -19,30 +19,30 @@ This page is focused around making sure your bot can properly run on the website
    └─ ...
 ```
 
-## Do NOT modify these
+# Do NOT modify these
 
 - **Makefile interface**: Keep `make` building the default target to `bot`. Do not rename the binary or require custom targets like `make run`.
 - **Working directory assumption**: The job will `cd /shared-data/repo/my-core-bot && make && ./bot <id>`.
   - Changing folder names, nesting deeper, or relocating sources will break website runs.
 
-## Environment & Security Constraints
+# Environment & Security Constraints
 
 - **No outbound network**: Egress for the bot UID is blocked to anything but loopback. Assume no internet.
 - **Non-root user**: The bot runs as an unprivileged user (UID 2000), non-root enforced.
 - **Read-only root FS**: Container root filesystem is read-only. Your repo is mounted writable at `/shared-data/repo`.
 - **Resource limits**: Typical per-bot limits around CPU `1`, memory `512Mi`, and a volume size limit of `250Mi` at `/shared-data`. Code should be efficient and avoid large transient allocations.
 
-## Logging & Diagnostics
+# Logging & Diagnostics
 
 - **Stdout/stderr**: Use standard output for logs. They can be viewed on the website.
 
-## Common Pitfalls (and fixes)
+# Common Pitfalls (and fixes)
 
 - **Binary not named `bot`**: Ensure your `Makefile` links to an output named `bot` in `my-core-bot/`.
 - **Wrong paths**: Includes or assets should be relative to your repo and not depend on absolute local paths.
 - **Writes to root**: Write temp files inside your repo (e.g., `./tmp/`) not to `/tmp` if your code assumes permissions; prefer within `/shared-data/repo/`.
 
-## Local Parity Tips
+# Local Parity Tips
 
 - Test by running exactly what the website runs:
 
@@ -50,7 +50,8 @@ This page is focused around making sure your bot can properly run on the website
 cd my-core-bot && make && ./bot 42
 ```
 > The result should be your bot running trying to connect
-## FAQ
+
+# FAQ
 
 - "Can I change the folder name or move sources?"
   - No. Keep `my-core-bot/` and produce `./bot` after `make`.

@@ -6,7 +6,7 @@ If you are wondering why a certain action is failing, look through [its code in 
 
 All actions from all teams are put into a list which order gets randomized before any actions get executed. That means if two actions conflict each other, a random decision is made, and everything is always 100% fair.
 
-## Position limits
+# Position limits
 
 Multiple action functions, like move and build, only work up, down left or right of a units position. Here's an example based on the `core_action_move` function:
 
@@ -24,7 +24,7 @@ Say we have unit `u` at [4,4]. The move action will fail if you try to move it a
 
 We still use absolute positions even if almost none of them are valid as converting to a relative position would be annoying and unnecessary in most pathfinding-related scenarios.
 
-## Action Cooldown
+# Action Cooldown
 
 Every unit has an action cooldown limiting the speed at which the unit can operate. A unit can only execute an action when it's action cooldown is 0. The action cooldown automatically counts down by 1 every tick. After any action, the unit’s cooldown becomes base + something depending on how many gems it carries (bounded between 1 and max).
 
@@ -40,9 +40,9 @@ e.g.:
 - base = 0; max = 0;  step = 0;  gems = 99999; => actionCooldown gets reset to 0; unit can immediately act again next tick.
 ```
 
-## Client Lib Functions & Structs
+# Client Lib Functions & Structs
 
-### `core_action_createUnit`
+## function `core_action_createUnit`
 
 Create a new unit of specified type.
 The unit will be uninitialized. For more info on what that means, check out the objects page (t_obj_state section).
@@ -56,7 +56,7 @@ t_obj *core_action_createUnit(t_unit_type unit_type);
 
 > **TIP**: Units are spawned as close to your core as possible - but if all positions directly next to your core are occupied, a flood fill algorithm will be used looking for the next empty space and the unit will be placed there. 
 
-### `core_action_move`
+## function `core_action_move`
 
 Moves a unit to a specific position.
 Units can only move one tile up, down, left or right; and only if their action_cooldown is 0.
@@ -68,7 +68,7 @@ Units can only move one tile up, down, left or right; and only if their action_c
 void core_action_move(const t_obj *unit, t_pos pos);
 ```
 
-### `core_action_attack`
+## function `core_action_attack`
 
 Attacks a target position with a unit.
 Units can only attack one tile up, down, left or right; and only if their action_cooldown is 0.
@@ -86,7 +86,7 @@ void core_action_attack(const t_obj *attacker, t_pos pos);
 
 > **TIP**: Attacking a bomb is what starts its detonation countdown. *Keep calm and don't blow up!*
 
-### `core_action_transferGems`
+## function `core_action_transferGems`
 
 Gives gems to another object or drops it on the floor.
 
@@ -100,7 +100,7 @@ void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned lo
 
 > **TIP**: But what if my core is surrounded by units? How will I get gems to and from it? -> The transferGems action will work back and forth between a unit and its core provided the unit is at *the closest possible unoccupied position* to its core in Manhattan distance. If the core is surrounded, the unit must simply get as close as possible for this action to work then, as determined by a floodfill algorithm and the manhattan distance.
 
-### `core_action_build`
+## function `core_action_build`
 
 Builds a new object.
 Objects can only be built one tile up, down, left or right from the builder; and only if their builders action_cooldown is 0.

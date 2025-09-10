@@ -1,11 +1,53 @@
 If you are in an event, **look at the config**! They contain invaluable info.
 
-## Config Types
+# Config Types
 
 - The Game Config contains all gameplay-related settings: Units and their damage values, deposit gem counts, and bomb countdowns.
 - The Server Config contains settings about how the game runs, e.g. timeouts.
 
-## Where do I find the Config
+> **WARNING**: The configs shown here are unlikely to be the actual configs used in your project. Use one of the methods below to figure out what exact config you're working with.
+
+Game Configs generally look something like this:
+
+```json
+<div id="game-config-display"></div>
+```
+<script>
+	const GAME_URL = "https://raw.githubusercontent.com/42core-team/monorepo/refs/heads/dev/my-core-bot/configs/hard-config.json";
+	(async () => {
+		const el = document.getElementById("game-config-display");
+		el.textContent = "Loading game config…";
+		try {
+			const res = await fetch(GAME_URL, {cache:"no-store"});
+			if(!res.ok) throw new Error(`HTTP ${res.status}`);
+			el.innerHTML = await res.text();
+		} catch (e) {
+			el.textContent = "Failed to load game config: " + e.message;
+		}
+	})();
+</script>
+
+Server Configs generally look something like this:
+
+```json
+<div id="server-config-display"></div>
+```
+<script>
+	const SERVER_URL = "https://raw.githubusercontent.com/42core-team/monorepo/refs/heads/dev/my-core-bot/configs/server-config.json";
+	(async () => {
+		const el = document.getElementById("server-config-display");
+		el.textContent = "Loading game config…";
+		try {
+			const res = await fetch(SERVER_URL, {cache:"no-store"});
+			if(!res.ok) throw new Error(`HTTP ${res.status}`);
+			el.innerHTML = await res.text();
+		} catch (e) {
+			el.textContent = "Failed to load game config: " + e.message;
+		}
+	})();
+</script>
+
+# Where do I find the Config
 
 Once you've cloned your bot, find the configs in the configs/ folder.
 
@@ -13,9 +55,9 @@ If it's easier, you can also print the config using the provided core library fu
 
 > **FUN FACT**: You can totally edit the configs in your local folder, and it will work. It's a lot of fun to play around with and see how stable and reactive your bot is, but it won't have an effect on games played on the website or in the final tournament.
 
-## Client Lib Functions & Structs
+# Client Lib Functions & Structs
 
-### `t_unit_config`
+## struct `t_unit_config`
 
 - `name`: The name of the unit.
 - `unit_type`: The unit type of the unit.
@@ -49,7 +91,7 @@ typedef struct s_unit_config
 } t_unit_config;
 ```
 
-### `t_build_type`
+## struct `t_build_type`
 
 ```c
 typedef enum e_build_type
@@ -62,7 +104,7 @@ typedef enum e_build_type
 
 Determines whether and what the unit will build if you use it as the builder argument when executing a build action.
 
-### `t_config`
+## struct `t_config`
 
 - `gridSize`: The width & height of the map. It's always square.
 - `idle_income`: How much idle income you get every second.
@@ -103,7 +145,7 @@ typedef struct s_config
 } t_config;
 ```
 
-### `core_get_unitConfig`
+## function `core_get_unitConfig`
 
 Get the unit config for a specific unit type.
 

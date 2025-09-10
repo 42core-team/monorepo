@@ -2,7 +2,7 @@ GETTER FUNCTIONS are used to get information about the current game state. They 
 
 > **TIP**: If you are unsure about how to use the getter functions and the function filtering pointers, you are provided with a `getter.c` file that uses them and provides some basic functions with them. Have a look to figure things out.
 
-## Getter Filtering
+# Getter Filtering
 
 Filtering lets you pass in a custom function to some getter functions that decides whether an object should be included or not.
 
@@ -26,9 +26,9 @@ void example(void)
 
 Here, `is_deposit` acts as the condition. The getter runs this check on every object in the game and returns the one closest to `(5,5)` that passes.
 
-## Client Lib Functions & Structs
+# Client Lib Functions & Structs
 
-### `core_get_obj_from_id`
+## function `core_get_obj_from_id`
 
 Get any object based on its id.
 - `return`: The object or NULL if no such object exists.
@@ -37,7 +37,7 @@ Get any object based on its id.
 t_obj *core_get_obj_from_id(unsigned long id);
 ```
 
-### `core_get_obj_from_pos`
+## function `core_get_obj_from_pos`
 
 Get any object based on its position.
 - `return`: The object at the position or NULL if no such object exists.
@@ -46,7 +46,7 @@ Get any object based on its position.
 t_obj *core_get_obj_from_pos(t_pos pos);
 ```
 
-### `core_get_objs_filter`
+## function `core_get_objs_filter`
 
 Get all objects matching a custom filtering condition.
 
@@ -59,7 +59,7 @@ t_obj **core_get_objs_filter(bool (*condition)(const t_obj *));
 
 > **WARNING**: You are responsibility to free the array returned by this function, but not the objects in it themselves, they are the same object instances as in the `game.objects` array.
 
-### `core_get_obj_filter_first`
+## function `core_get_obj_filter_first`
 
 Get the first object matching a custom filtering condition. Which one it is is not defined and unpredictable, but most likely the object matching the condition with the smallest id.
 
@@ -72,7 +72,7 @@ t_obj *core_get_obj_filter_first(bool (*condition)(const t_obj *));
 
 > **TIP**: Why is this useful? - Because you won't need an array if you want any instance of an object, regardless of which one specifically. Like when getting your own core or another one-of-a-kind object.
 
-### `core_get_obj_filter_nearest`
+## function `core_get_obj_filter_nearest`
 
 Get the nearest object to a given position matching a custom filtering condition. Manhattan distance is used to determine distance. If two objects or more have the same distance, either could be picked.
 
@@ -84,7 +84,7 @@ Get the nearest object to a given position matching a custom filtering condition
 t_obj *core_get_obj_filter_nearest(t_pos pos, bool (*condition)(const t_obj *));
 ```
 
-### `core_get_objs_filter_count`
+## function `core_get_objs_filter_count`
 
 Get the count of objects that match a certain custom filtering condition.
 

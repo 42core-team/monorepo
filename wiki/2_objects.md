@@ -4,7 +4,7 @@ There are never two objects in one grid position.
 
 Each object has a unique id that never changes and never gets reused.
 
-## Bomb Explosions
+# Bomb Explosions
 
 To start a bombs countdown, attack it.
 
@@ -20,9 +20,9 @@ The bomb reach is in addition the the tile the bomb is standing on, so a bomb re
 
 For more info & specifics, please check out [the server bomb code](https://github.com/42core-team/monorepo/blob/dev/server/src/object/Bomb.cpp) directly.
 
-## Client Lib Functions & Structs
+# Client Lib Functions & Structs
 
-### `t_obj`
+## struct `t_obj`
 
 Game object structure representing all game objects.
 
@@ -88,7 +88,7 @@ There is no limit to how many gems units or cores can hold.
 
 > **WARNING**: Objects that have `state` set to `STATE_UNINITIALIZED` can only be partially interacted with. See down at `t_obj_state`for specifics.
 
-### `t_obj_type`
+## struct `t_obj_type`
 
 Type of object
 
@@ -111,7 +111,7 @@ typedef enum e_obj_type
 - **Gem Piles**: Gems lying around on the floor.
 - **Bombs**: Careful!
 
-### `t_obj_state`
+## struct `t_obj_state`
 
 Object state.
 
@@ -124,21 +124,21 @@ typedef enum e_obj_state
 } t_obj_state;
 ```
 
-> Units will stay uninitialized during the same tick they were created. In the next tick, they will be full, normal units. Uninitialized objects should only have their type, state, team_id & unit_type read and their data field set.
+Units will stay uninitialized during the same tick they were created. In the next tick, they will be full, normal units. Uninitialized objects should only have their type, state, team_id & unit_type read and their data field set.
 
-> **TIP**: Be careful to verify that a unit is alive before executing an action it. Otherwise, the action will fail.
+> **WARNING**: Be careful to verify that a unit is alive before executing an action it. Otherwise, the action will fail.
 
 > **TIP**: Why are uninitialized units even a thing? Because even though when you call `core_action_createUnit` the unit will have a delay of one tick until it can spawn, the memory position will still stay consistent. You can therefore already give the unit a specific task / job, set their data field, save it in your structs, whatever you want.
 
 > **TIP**: Why are dead units a thing? So you can free the things you've allocated in your objects `void *data` field and other places before the program ends, preventing memory leaks. Similarly, you can, thanks to this, save pointers to the unit anywhere and they won't start dangling when the unit is killed. A dead unit is no longer considered anywhere else by the server, so you can walk and build on their corpses. 👀
 
-### `t_unit_type`
+## struct `t_unit_type`
 
 Type of unit. Which are available differs from event to event
 
 > **TIP**: Type `UNIT_` and autocomplete will show you all the available units. There is an overview of all the unit types and their properties and settings in the config.
 
-### `t_pos`
+## struct `t_pos`
 
 Position structure for 2D coordinates
 

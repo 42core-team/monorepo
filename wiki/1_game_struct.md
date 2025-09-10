@@ -1,8 +1,8 @@
 The game struct is your primary source of information about the happenings in the game
 
-## Client Lib Functions & Structs
+# Client Lib Functions & Structs
 
-### `t_game`
+## struct `t_game`
 
 Contains all the data about the game. Read it to your liking! Access it anywhere by typing `game.`
 
@@ -21,7 +21,7 @@ typedef struct s_game
 } t_game;
 ```
 
-### `game`
+## variable `game`
 
 This variable contains all the data about the game.
 It gets updated every time your function is called.
@@ -31,7 +31,7 @@ Include `core_lib.h` in every file you want to use it.
 extern t_game game;
 ```
 
-### `core_startGame`
+## function `core_startGame`
 
 Starts the connection lib up, initializes the game, connects to the server & starts the game.
 
@@ -46,4 +46,4 @@ Starts the connection lib up, initializes the game, connects to the server & sta
 int core_startGame(const char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug);
 ```
 
-> **NOTE**: Do not free the central objects array or the objects themselves. They are fully handled by the library and freeing anything you're not supposed to will probably mess up your bot entirely. Functions that give you the responsibility to free the result when you call them are explicitly marked in this wiki.
+> **WARNING**: Do not free the central objects array or the objects themselves. They are fully handled by the library and freeing anything you're not supposed to will probably mess up your bot entirely. Functions that give you the responsibility to free the result when you call them are explicitly marked in this wiki.

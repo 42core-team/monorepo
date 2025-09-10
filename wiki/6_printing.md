@@ -1,6 +1,6 @@
 > PRINT FUNCTIONS are used to print information about the game state to the console.
 
-## Usage Example:
+# Usage Example:
 
 ```c
 free(core_print_objs(core_get_objs_filter(ft_is_deposit)));
@@ -8,9 +8,9 @@ free(core_print_objs(core_get_objs_filter(ft_is_deposit)));
 
 This will get an array of all deposits using the getter system, print it, then free it, all in the same line. *Awesome!*
 
-## Client Lib Functions & Structs
+# Client Lib Functions & Structs
 
-### `core_print_obj`
+## function `core_print_obj`
 
 Prints all information about the current game state of a given object.
 
@@ -20,7 +20,7 @@ Prints all information about the current game state of a given object.
 void core_print_obj(t_obj *obj);
 ```
 
-### `core_print_objs`
+## function `core_print_objs`
 
 Prints multiple objects.
 
@@ -31,7 +31,7 @@ Prints multiple objects.
 t_obj **core_print_objs(t_obj **objs);
 ```
 
-### `core_print_config_unit`
+## function `core_print_config_unit`
 
 Prints a selected unit config.
 
@@ -41,7 +41,7 @@ Prints a selected unit config.
 void core_print_config_unit(t_unit_type unit_type);
 ```
 
-### `core_print_config_game`
+## function `core_print_config_game`
 
 Prints the game config.
 
@@ -49,7 +49,7 @@ Prints the game config.
 void core_print_config_game(void);
 ```
 
-### `core_print_config`
+## function `core_print_config`
 
 Prints the entire game config and all unit configs
 
