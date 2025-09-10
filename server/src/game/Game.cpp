@@ -200,9 +200,16 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 
 	// 4. CHECK TIMEOUT
 
-	if (tick >= Config::server().timeoutTicks) killWorstPlayerOnTimeout();
-	if (std::chrono::steady_clock::now() - serverStartTime >= std::chrono::milliseconds(Config::server().timeoutMs))
+	if (tick >= Config::server().timeoutTicks)
+	{
+		Logger::Log("Maximum game ticks reached. Killing worst player each tick until one remains.");
 		killWorstPlayerOnTimeout();
+	}
+	if (std::chrono::steady_clock::now() - serverStartTime >= std::chrono::milliseconds(Config::server().timeoutMs))
+	{
+		Logger::Log("Maximum game time reached. Killing worst player each tick until one remains.");
+		killWorstPlayerOnTimeout();
+	}
 
 	// 5. SEND STATE
 

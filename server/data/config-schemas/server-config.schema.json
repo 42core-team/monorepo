@@ -28,7 +28,7 @@
 		"timeoutMs": {
 			"type": "integer",
 			"minimum": 1,
-			"maximum": 600000
+			"maximum": 3000000
 		},
 		"clientWaitTimeoutMs": {
 			"type": "integer",

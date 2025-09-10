@@ -79,12 +79,6 @@ fclean: clean
 	make -C client_lib fclean
 
 # -------------------- Meta / Monorepo Targets --------------------
-update:
-	git submodule update --init --recursive
-	git -C my-core-bot fetch origin --prune
-	git -C my-core-bot checkout -B $(CURRENT_BRANCH) --track origin/$(CURRENT_BRANCH) || git -C my-core-bot checkout -B $(CURRENT_BRANCH) origin/dev
-	git -C my-core-bot pull --ff-only
-
 setup-hooks:
 	chmod +x .githooks/*
 	git config core.hooksPath .githooks
@@ -94,4 +88,4 @@ vis:
 visualizer:
 	cd visualizer && npm i && npm run dev
 
-.PHONY: all re run start dev redev prod reprod stop server_build_dev server_build_prod build_clients player_1_build player_2_build visualizer_build clean fclean update vis visualizer
+.PHONY: all re run start dev redev prod reprod stop server_build_dev server_build_prod build_clients player_1_build player_2_build visualizer_build clean fclean vis visualizer
