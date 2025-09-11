@@ -1,0 +1,12 @@
+{
+  "files.exclude": {
+    "**/.DS_Store": true,
+    ".devcontainer": true,
+    ".coreignore": true,
+    "Makefile": true,
+    "freddatron-6000": true,
+    ".gitignore": true,
+	".vscode": true,
+	"gridmaster": true
+  }
+}
