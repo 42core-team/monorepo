@@ -9,7 +9,7 @@
 				"${workspaceFolder}/client_lib/inc",
 				"${workspaceFolder}/my-core-bot/gridmaster/inc",
 				"${workspaceFolder}/my-core-bot/my-core-bot/inc",
-				"${workspaceFolder}/my-core-bot/my-core-bot/bombadilo/inc",
+				"${workspaceFolder}/my-core-bot/bombadilo/inc",
 				"${workspaceFolder}/my-core-bot/freddatron-6000/inc",
 				"${workspaceFolder}/server/inc/**",
 				"${workspaceFolder}/server/inc/**/**",

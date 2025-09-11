@@ -51,7 +51,7 @@ static unsigned long movement_cost(t_pos pos, t_obj *unit)
 		{
 			if (ft_util_distance(pos, unit->pos) > 1)
 				return 1;
-			return  ULONG_MAX / 2;
+			return ULONG_MAX / 2;
 		}
 		else
 		{
@@ -102,7 +102,10 @@ t_pos *find_path(t_pos start, t_pos target, t_obj *unit, int *path_length)
 		int current_index = -1;
 		unsigned long min_cost = ULONG_MAX;
 		int *candidates = malloc(total * sizeof(int));
-		if (!candidates) break;
+		if (!candidates) {
+			free(nodes);
+			break;
+		}
 		int candidate_count = 0;
 		
 		for (int i = 0; i < total; i++) {
@@ -186,16 +189,16 @@ void ft_travel_to_pos(t_obj *unit, t_pos pos)
 	if (biggestAxisX)
 	{
 		if (unit->pos.x < pos.x)
-			core_action_move(unit, (t_pos){unit->pos.x - 1, unit->pos.y});
-		else if (unit->pos.x > pos.x)
 			core_action_move(unit, (t_pos){unit->pos.x + 1, unit->pos.y});
+		else if (unit->pos.x > pos.x)
+			core_action_move(unit, (t_pos){unit->pos.x - 1, unit->pos.y});
 	}
 	else
 	{
 		if (unit->pos.y < pos.y)
-			core_action_move(unit, (t_pos){unit->pos.x, unit->pos.y + 1});
-		else if (unit->pos.y > pos.y)
 			core_action_move(unit, (t_pos){unit->pos.x, unit->pos.y - 1});
+		else if (unit->pos.y > pos.y)
+			core_action_move(unit, (t_pos){unit->pos.x, unit->pos.y + 1});
 	}
 }
 
