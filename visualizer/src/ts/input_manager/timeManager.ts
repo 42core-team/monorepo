@@ -1,6 +1,7 @@
 import { setRenderFireworks } from "../renderer/fireworksRenderer";
 import { getTotalReplayTicks } from "../replay_loader/replayLoader";
-import { applyTheme, toggleTheme } from "./themeManager";
+import { initDoubleSpeedHandler } from "./spaceHandler";
+import { toggleTheme } from "./themeManager";
 
 const playButton = document.getElementById(
 	"play-pause-button",
@@ -49,7 +50,7 @@ const fullscreenToggleButton = document.getElementById(
 // consts
 
 const minSpeed = 0.5;
-const maxSpeed = 50;
+export const maxSpeed = 50;
 const speedIncrement = 0.5;
 
 // Time Tracking Variables
@@ -100,6 +101,24 @@ export function isAtEnd(): boolean {
 export function startPlayback(): void {
 	setPlaying(true);
 	lastTimestamp = Date.now();
+}
+export function pausePlayback(): void {
+	setPlaying(false);
+}
+export function isPlaying(): boolean {
+	return playing;
+}
+
+export function setPlaybackSpeed(newSpeed: number): void {
+	const stepped = Math.round(newSpeed / speedIncrement) * speedIncrement;
+	speedApS = Math.min(maxSpeed, Math.max(minSpeed, stepped));
+	speedSlider.value = String(speedApS);
+	speedNumberInput.value = String(speedApS);
+	localStorage.setItem("tm.speed", String(speedApS));
+	renderDirty = true;
+}
+export function getPlaybackSpeed(): number {
+	return speedApS;
 }
 
 // Fullscreen handling
@@ -271,10 +290,8 @@ export async function setupTimeManager() {
 		string,
 		{ action: () => void; button?: HTMLButtonElement }
 	> = {
-		" ": { action: () => playButton.click(), button: playButton },
 		r: { action: () => skipStartButton.click(), button: skipStartButton },
 		s: { action: () => skipStartButton.click(), button: skipStartButton },
-		e: { action: () => skipEndButton.click(), button: skipEndButton },
 		ArrowRight: {
 			action: () => nextTickButton.click(),
 			button: nextTickButton,
@@ -292,9 +309,10 @@ export async function setupTimeManager() {
 			button: speedDownButton,
 		},
 		f: { action: () => toggleFullscreen(), button: fullscreenToggleButton },
-		d: { action: () => applyTheme("dark") },
-		l: { action: () => applyTheme("light") },
 		t: { action: () => toggleTheme() },
+		g: {
+			action: () => document.getElementById("gridlines-toggle-button")?.click(),
+		},
 	};
 
 	window.addEventListener("keydown", (event) => {
@@ -333,6 +351,9 @@ export async function setupTimeManager() {
 	document.addEventListener("fullscreenchange", updateFullscreenUI);
 	document.addEventListener("webkitfullscreenchange", updateFullscreenUI);
 	updateFullscreenUI();
+
+	// setup double-speed handling
+	initDoubleSpeedHandler();
 }
 
 export function getCurrentTickData(): tickData {
