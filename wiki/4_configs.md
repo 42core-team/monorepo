@@ -66,7 +66,7 @@ If it's easier, you can also print the config using the provided core library fu
 - `deposit_income`: A gem pile object with what balance the deposit will drop at its previous position when it is destroyed.
 - `gem_pile_income`: How many gems a default gem pile object contains.
 - `core_hp`: How much healthpoints a core has at the start of the game.
-- `core_spawn_cooldown`: Time it takes after a unit was spawned before core can spawn another unit.
+- `core_spawn_cooldown`: Ticks it takes after a unit was spawned before core can spawn another unit.
 - `initial_balance`: How many gems in their core a team starts with.
 - `wall_hp`: How many healthpoints a wall has at the start of the game.
 - `wall_build_cost`: How much it costs for a builder to build a wall.

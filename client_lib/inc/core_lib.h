@@ -147,7 +147,7 @@ typedef struct s_config
 	unsigned long gem_pile_income;
 	/// @brief How much healthpoints a core has at the start of the game.
 	unsigned long core_hp;
-	/// @brief Time it takes after a unit was spawned before core can spawn another unit.
+	/// @brief Ticks it takes after a unit was spawned before core can spawn another unit.
 	unsigned long core_spawn_cooldown;
 	/// @brief How many gems a team starts with.
 	unsigned long initial_balance;
