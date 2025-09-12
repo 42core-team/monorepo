@@ -19,7 +19,7 @@ static bool ft_is_own_team_warrior(const t_obj *obj)
 
 void ft_on_tick(unsigned long tick)
 {
-	printf("-----> [⚡️ TICK %ld🔥]\n", tick);
+	printf("-----> [⚡️ TICK %ld 🔥]\n", tick);
 
 	core_action_createUnit(UNIT_WARRIOR);
 

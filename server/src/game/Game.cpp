@@ -258,11 +258,16 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 		}
 	}
 
-	// 8. ActionCooldown DECREMENT FOR UNITS
-	// must happen AFTER state send cause clients also do it locally for replay efficiency, otherwise we get a server/client desync with two decrements in one tick when ActionCooldown is reset
+	// 8. ActionCooldown / SpawnCooldown DECREMENT FOR UNITS / CORES
+	// must happen AFTER state send cause clients & visualizer also do it locally for replay efficiency, otherwise we get a server/client desync with two decrements in one tick when ActionCooldown is reset
 
 	for (auto &obj : Board::instance())
-		if (obj.getType() == ObjectType::Unit) static_cast<Unit &>(obj).tickActionCooldown();
+	{
+		if (obj.getType() == ObjectType::Unit)
+			static_cast<Unit &>(obj).tickActionCooldown();
+		else if (obj.getType() == ObjectType::Core)
+			static_cast<Core &>(obj).tickSpawnCooldown();
+	}
 }
 
 void Game::killWorstPlayerOnTimeout()

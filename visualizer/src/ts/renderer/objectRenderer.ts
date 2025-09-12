@@ -44,7 +44,7 @@ function computeSmoothBarInstructions(
 	yOffset: number,
 	progress: number,
 ): BarDrawingInstructions[] {
-	const ORDER = ["hp", "gems", "ActionCooldown"] as const;
+	const ORDER = ["hp", "gems", "cooldown"] as const;
 	const toMap = (arr: { key: string; percentage: number }[]) =>
 		Object.fromEntries(
 			arr.map(({ key, percentage }) => [key, percentage / 100]),

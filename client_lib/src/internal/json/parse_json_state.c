@@ -63,6 +63,8 @@ static void core_static_updateObj(t_obj *existingObj, json_node *updates)
 		}
 		else if (strncmp(property->key, "ActionCooldown", 12) == 0)
 			existingObj->s_unit.action_cooldown = property->number;
+		else if (strncmp(property->key, "SpawnCooldown", 11) == 0)
+			existingObj->s_core.spawn_cooldown = property->number;
 		else if (strncmp(property->key, "countdown", 9) == 0)
 			existingObj->s_bomb.countdown = property->number;
 	}
@@ -139,10 +141,13 @@ void core_internal_parse_state(char *json)
 		game.objects[0] = NULL;
 	}
 
-	// update action cooldowns
+	// update action cooldowns & spawn cooldowns
 	for (size_t i = 0; game.objects[i]; i++)
 		if (game.objects[i]->type == OBJ_UNIT)
 			if (game.objects[i]->s_unit.action_cooldown > 0) game.objects[i]->s_unit.action_cooldown--;
+	for (size_t i = 0; game.objects[i]; i++)
+		if (game.objects[i]->type == OBJ_CORE)
+			if (game.objects[i]->s_core.spawn_cooldown > 0) game.objects[i]->s_core.spawn_cooldown--;
 
 	game.elapsed_ticks = (unsigned long)json_find(root, "tick")->number;
 

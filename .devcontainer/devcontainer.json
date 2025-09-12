@@ -11,7 +11,7 @@
 		"vscode": {
 			"settings": {
 				"terminal.integrated.shell.linux": "/bin/zsh",
-				"editor.formatOnPaste": true,
+				"editor.formatOnPaste": false,
 				"editor.formatOnSave": true,
 				"files.autoSave": "onFocusChange",
 				"editor.cursorSmoothCaretAnimation": "on",

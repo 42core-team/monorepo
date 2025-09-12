@@ -64,6 +64,8 @@ typedef struct s_obj
 			unsigned long team_id;
 			/// @brief The current gems of the core.
 			unsigned long gems;
+			/// @brief Countdown to the next tick the core can spawn a unit, defined by core_spawn_cooldown.
+			unsigned long spawn_cooldown;
 		} s_core;
 		struct
 		{
@@ -145,6 +147,8 @@ typedef struct s_config
 	unsigned long gem_pile_income;
 	/// @brief How much healthpoints a core has at the start of the game.
 	unsigned long core_hp;
+	/// @brief Time it takes after a unit was spawned before core can spawn another unit.
+	unsigned long core_spawn_cooldown;
 	/// @brief How many gems a team starts with.
 	unsigned long initial_balance;
 	/// @brief How much healthpoints a wall has at the start of the game.

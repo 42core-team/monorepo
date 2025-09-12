@@ -32,6 +32,7 @@ struct GameConfig
 	unsigned int gemPileIncome;
 
 	unsigned int coreHp;
+	unsigned int coreSpawnCooldown;
 	unsigned int initialBalance;
 
 	unsigned int wallHp;

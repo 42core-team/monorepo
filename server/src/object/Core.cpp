@@ -1,7 +1,8 @@
 #include "Core.h"
 
 Core::Core(unsigned int teamId)
-	: Object(Config::game().coreHp, ObjectType::Core), balance_(Config::game().initialBalance), team_id_(teamId)
+	: Object(Config::game().coreHp, ObjectType::Core), balance_(Config::game().initialBalance), team_id_(teamId),
+	  spawn_cooldown_(0)
 {
 }
 
@@ -19,4 +20,9 @@ void Core::damage(Object *attacker, unsigned int damage)
 		Stats::instance().inc(stat_keys::damage_opponent, damage);
 	else
 		Stats::instance().inc(stat_keys::damage_self, damage);
+}
+
+void Core::tickSpawnCooldown()
+{
+	if (spawn_cooldown_ > 0) spawn_cooldown_--;
 }

@@ -35,6 +35,7 @@ Game object structure representing all game objects.
 ---
 - `s_core.team_id`: The id of the team that owns the core.
 - `s_core.gems`: The current gems stored in the core.
+- `s_core.spawn_cooldown`: Countdown to the next tick the core can spawn a unit, defined by core_spawn_cooldown in the config.
 ---
 - `s_unit.unit_type`: Which type of unit this is.
 - `s_unit.team_id`: The id of the team that owns the unit.
@@ -60,6 +61,7 @@ typedef struct s_obj
 		{
 			unsigned long team_id;
 			unsigned long gems;
+			unsigned long spawn_cooldown;
 		} s_core;
 		struct
 		{

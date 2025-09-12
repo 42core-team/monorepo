@@ -207,6 +207,7 @@ static GameConfig parseGameConfig()
 	config.depositIncome = j.value("depositIncome", 200);
 	config.gemPileIncome = j.value("gemPileIncome", 100);
 	config.coreHp = j.value("coreHp", 350);
+	config.coreSpawnCooldown = j.value("coreSpawnCooldown", 20);
 	config.initialBalance = j.value("initialBalance", 200);
 	config.wallHp = j.value("wallHp", 100);
 	config.wallBuildCost = j.value("wallBuildCost", 20);
