@@ -7,46 +7,6 @@ If you are in an event, **look at the config**! They contain invaluable info.
 
 > **WARNING**: The configs shown here are unlikely to be the actual configs used in your project. Use one of the methods below to figure out what exact config you're working with.
 
-Game Configs generally look something like this:
-
-```json
-<div id="game-config-display"></div>
-```
-<script>
-	const GAME_URL = "https://raw.githubusercontent.com/42core-team/monorepo/refs/heads/dev/my-core-bot/configs/hard-config.json";
-	(async () => {
-		const el = document.getElementById("game-config-display");
-		el.textContent = "Loading game config…";
-		try {
-			const res = await fetch(GAME_URL, {cache:"no-store"});
-			if(!res.ok) throw new Error(`HTTP ${res.status}`);
-			el.innerHTML = await res.text();
-		} catch (e) {
-			el.textContent = "Failed to load game config: " + e.message;
-		}
-	})();
-</script>
-
-Server Configs generally look something like this:
-
-```json
-<div id="server-config-display"></div>
-```
-<script>
-	const SERVER_URL = "https://raw.githubusercontent.com/42core-team/monorepo/refs/heads/dev/my-core-bot/configs/server-config.json";
-	(async () => {
-		const el = document.getElementById("server-config-display");
-		el.textContent = "Loading game config…";
-		try {
-			const res = await fetch(SERVER_URL, {cache:"no-store"});
-			if(!res.ok) throw new Error(`HTTP ${res.status}`);
-			el.innerHTML = await res.text();
-		} catch (e) {
-			el.textContent = "Failed to load game config: " + e.message;
-		}
-	})();
-</script>
-
 # Where do I find the Config
 
 Once you've cloned your bot, find the configs in the configs/ folder.

@@ -131,33 +131,3 @@ You can also open the `gridmaster/` directory to look at your local default oppo
 > Play against other players as often as possible!
 
 > Have fun! Don't take things too seriously & be nice to each other. Embrace the good vibes in a friendly competition! ⚡️
-
----
-
-- [x] Create Team
-- [x] Setup my-core-bot
-- [x] Read documentation
-- [ ] Win Core Game
-
-
----
-
-
-# Freddys cool testing section ignore this
-
-hopefully someone removes it before the even tlol but id love to know if these work
-
-> [!INFO] This is an info
-> You can pass `--token` to use an existing session.
-
-> [!TIP] This is a tip
-> You can pass `--token` to use an existing session.
-
-> [!CAUTION] This is a caution
-> You can pass `--token` to use an existing session.
-
-> [!WARNING] This is a warning
-> You can pass `--token` to use an existing session.
-
-> [!NOTE] This is a note
-> You can pass `--token` to use an existing session.
