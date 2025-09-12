@@ -7,7 +7,7 @@
 	"depositIncome": 200,
 	"gemPileIncome": 75,
 	"coreHp": 200,
-	"coreSpawnCooldown": 20,
+	"coreSpawnCooldown": 30,
 	"initialBalance": 100,
 	"wallHp": 50,
 	"wallBuildCost": 20,
