@@ -9,7 +9,7 @@ class Core : public Object
 {
   public:
 	Core(unsigned int teamId);
-	Core(const Core &other) : Object(other), balance_(other.balance_), team_id_(other.team_id_), spawn_cooldown_(0) {}
+	Core(const Core &other) : Object(other), balance_(other.balance_), team_id_(other.team_id_), spawn_cooldown_(other.spawn_cooldown_) {}
 	Core &operator=(const Core &other)
 	{
 		if (this == &other) return *this;
