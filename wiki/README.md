@@ -102,6 +102,11 @@ You can also open the `gridmaster/` directory to look at your local default oppo
 ### 🐞 What should I do if my bot isn't responding / starting up?
 > First, make sure the **Docker container** is running properly, that you've cloned with SSH and that you're able to see logs from your bot in the terminal. Check for any errors in the console or in your logs. Double-check the user loop logic to ensure it’s being executed as expected. Quit the devcontainer and reopen it using the `make devcontainer` command.
 
+### 🔍 It seems I am missing some files. Where are they?
+> We have hidden some files when you open up your core bot repository in Visual Studio Code. These are not useful to you unless you want to start tinkering around a bit, so don't worry about us hiding critical info. We did this so nobody gets confused. If you want to disable it, look at the repository outside of VSCode or via the terminal, go into `.vscode/settings.json` and remove every file you don't want hidden from the exclude list.
+>
+> If that doesn't help you, you probably accidentally deleted something. Well, it's a git repository for a reason.
+
 ### 📚 Are there any limitations to what I can add to the bot?
 > Your bot will be run in a separate Docker container from the server and other bots, and this container won't have an internet connection.
 >
@@ -126,3 +131,33 @@ You can also open the `gridmaster/` directory to look at your local default oppo
 > Play against other players as often as possible!
 
 > Have fun! Don't take things too seriously & be nice to each other. Embrace the good vibes in a friendly competition! ⚡️
+
+---
+
+- [x] Create Team
+- [x] Setup my-core-bot
+- [x] Read documentation
+- [ ] Win Core Game
+
+
+---
+
+
+# Freddys cool testing section ignore this
+
+hopefully someone removes it before the even tlol but id love to know if these work
+
+> [!INFO] This is an info
+> You can pass `--token` to use an existing session.
+
+> [!TIP] This is a tip
+> You can pass `--token` to use an existing session.
+
+> [!CAUTION] This is a caution
+> You can pass `--token` to use an existing session.
+
+> [!WARNING] This is a warning
+> You can pass `--token` to use an existing session.
+
+> [!NOTE] This is a note
+> You can pass `--token` to use an existing session.

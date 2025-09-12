@@ -1,5 +1,9 @@
 The game struct is your primary source of information about the happenings in the game
 
+> **WARNING**: Do not free the central objects array or the objects themselves. They are managed by the library and freeing anything you're not supposed to will probably mess up your bot entirely. Functions that give you the responsibility to free the result when you call them are explicitly marked in this wiki with a big warning box.
+
+> => IF YOU DIDN'T ALLOCATE IT, DON'T FREE IT.
+
 # Client Lib Functions & Structs
 
 ## struct `t_game`
@@ -45,5 +49,3 @@ Starts the connection lib up, initializes the game, connects to the server & sta
 ```c
 int core_startGame(const char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug);
 ```
-
-> **WARNING**: Do not free the central objects array or the objects themselves. They are fully handled by the library and freeing anything you're not supposed to will probably mess up your bot entirely. Functions that give you the responsibility to free the result when you call them are explicitly marked in this wiki.

@@ -6,7 +6,11 @@
     "Makefile": true,
     "freddatron-6000": true,
     ".gitignore": true,
-	".vscode": true,
-	"gridmaster": true
+    ".vscode": true,
+    "gridmaster": true,
+    "my-core-bot/build": true,
+    "my-core-bot/bot": true,
+    "my-core-bot/Makefile": true,
+    "configs/soft-config.json": true
   }
 }

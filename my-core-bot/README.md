@@ -4,7 +4,7 @@
 
 # 🌟 CORE REPO
 
-## 🎉 Good Luck, Have Fun, and RTFM!1!!1 🚀
+## 🎉 Good Luck, Have Fun, and [RTFM](https://coregame.de/wiki/)!1!!1 🚀
 
 Welcome to the **CORE** project repository! We’re excited to have you on board for this coding adventure.
 
@@ -58,3 +58,7 @@ To completely remove the Dev Container, use:
 make remove-devcontainer
 ```
 This will delete the container and its associated resources.
+
+> ❓ **QnA**: Why can't I see all of the files?
+> Some files are hidden by VSCode. These files are generally not relevant. If you want to see all of them, follow the guide on how to show them in the FAQ page on the wiki.
+

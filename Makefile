@@ -12,8 +12,8 @@ SERVER_EXECUTABLE := server
 
 # Configs
 CONFIG_FOLDER := my-core-bot/configs
-CONFIG_SERVER_FILE := $(CONFIG_FOLDER)/server-config.json
-CONFIG_GAME_FILE := $(CONFIG_FOLDER)/hard-config.json
+CONFIG_SERVER_FILE := $(CONFIG_FOLDER)/server.config.json
+CONFIG_GAME_FILE := $(CONFIG_FOLDER)/game.config.json
 
 DATA_FOLDER_PATH := server/data
 
