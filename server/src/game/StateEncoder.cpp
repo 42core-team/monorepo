@@ -18,6 +18,7 @@ json StateEncoder::encodeFullState()
 		{
 			o["teamId"] = ((Core &)obj).getTeamId();
 			o["gems"] = ((Core &)obj).getBalance();
+			o["SpawnCooldown"] = ((Core &)obj).getSpawnCooldown();
 		}
 		if (obj.getType() == ObjectType::Unit)
 		{
@@ -68,9 +69,12 @@ json StateEncoder::diffObject(const json &currentObj, const json &previousObj)
 	for (auto it = currentObj.begin(); it != currentObj.end(); ++it)
 	{
 		const std::string &key = it.key();
-		if (key == "id" ||
-			(key == "ActionCooldown" && currentObj.contains("ActionCooldown") &&
-			 previousObj.contains("ActionCooldown") && currentObj["ActionCooldown"] <= previousObj["ActionCooldown"]))
+		if (key == "id") continue;
+		if (key == "ActionCooldown" && currentObj.contains("ActionCooldown") &&
+			previousObj.contains("ActionCooldown") && currentObj["ActionCooldown"] <= previousObj["ActionCooldown"])
+			continue;
+		if (key == "SpawnCooldown" && currentObj.contains("SpawnCooldown") && previousObj.contains("SpawnCooldown") &&
+			currentObj["SpawnCooldown"] <= previousObj["SpawnCooldown"])
 			continue;
 
 		if (previousObj.find(key) == previousObj.end() || previousObj.at(key) != it.value())

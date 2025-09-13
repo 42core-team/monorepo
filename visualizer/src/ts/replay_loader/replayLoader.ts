@@ -162,6 +162,8 @@ class ReplayLoader {
 			for (const obj of Object.values(fullState)) {
 				if ("ActionCooldown" in obj && obj.ActionCooldown > 0)
 					obj.ActionCooldown--;
+				if ("SpawnCooldown" in obj && obj.SpawnCooldown > 0)
+					obj.SpawnCooldown--;
 			}
 			if (t % this.cacheInterval === 0) {
 				this.cache.set(t, deepClone(fullState));
@@ -215,12 +217,10 @@ class ReplayLoader {
 				this.applyDiff(state, tickData);
 			}
 			for (const obj of Object.values(state)) {
-				if (!("ActionCooldown" in obj)) {
-					continue;
-				}
-				if (obj.ActionCooldown > 0) {
+				if ("ActionCooldown" in obj && obj.ActionCooldown > 0)
 					obj.ActionCooldown--;
-				}
+				if ("SpawnCooldown" in obj && obj.SpawnCooldown > 0)
+					obj.SpawnCooldown--;
 			}
 		}
 

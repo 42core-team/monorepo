@@ -12,6 +12,7 @@ export interface CoreObject extends BaseObject {
 	type: 0; // Core
 	teamId: number;
 	gems: number;
+	SpawnCooldown: number;
 }
 export interface UnitObject extends BaseObject {
 	type: 1; // Unit
@@ -91,6 +92,11 @@ export function formatObjectData(obj: TickObject): string {
 				line: `💎 Gems: ${num(obj.gems)}`,
 				priority: 1,
 				color: "var(--gems-color)",
+			});
+			lines.push({
+				line: `🔢 Spawn Cooldown: ${num(obj.SpawnCooldown)}`,
+				priority: 2,
+				color: "var(--cooldown-color)",
 			});
 			break;
 		case 1:
@@ -189,7 +195,7 @@ export function getBarMetrics(
 		});
 	}
 
-	// Action Cooldown
+	// Action Cooldown / Spawn Cooldown
 	if (obj.type === 1) {
 		const cfg = getGameConfig();
 		if (!cfg) return metrics;
@@ -201,9 +207,20 @@ export function getBarMetrics(
 		calc = Math.max(1, calc);
 		const denom = Math.max(calc, obj.ActionCooldown);
 		metrics.push({
-			key: "ActionCooldown",
+			key: "cooldown",
 			percentage: (obj.ActionCooldown / denom) * 100,
 		});
+	} else if (obj.type === 0) {
+		const cfg = getGameConfig();
+		if (!cfg) return metrics;
+		const total = cfg.coreSpawnCooldown;
+		if (total > 0 && obj.SpawnCooldown > 0) {
+			const denom = Math.max(total, obj.SpawnCooldown);
+			metrics.push({
+				key: "cooldown",
+				percentage: (obj.SpawnCooldown / denom) * 100,
+			});
+		}
 	}
 
 	return metrics;

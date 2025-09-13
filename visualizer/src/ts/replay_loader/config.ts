@@ -20,6 +20,7 @@ export interface GameConfig {
 	depositIncome: number;
 	gemPileIncome: number;
 	coreHp: number;
+	coreSpawnCooldown: number;
 	initialBalance: number;
 	wallHp: number;
 	wallBuildCost: number;

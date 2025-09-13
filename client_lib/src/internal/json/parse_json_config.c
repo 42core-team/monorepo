@@ -62,6 +62,7 @@ void core_internal_parse_config(char *json)
 	game.config.deposit_income = (unsigned long)json_find(root, "depositIncome")->number;
 	game.config.gem_pile_income = (unsigned long)json_find(root, "gemPileIncome")->number;
 	game.config.core_hp = (unsigned long)json_find(root, "coreHp")->number;
+	game.config.core_spawn_cooldown = (unsigned long)json_find(root, "coreSpawnCooldown")->number;
 	game.config.initial_balance = (unsigned long)json_find(root, "initialBalance")->number;
 	game.config.wall_hp = (unsigned long)json_find(root, "wallHp")->number;
 	game.config.wall_build_cost = (unsigned long)json_find(root, "wallBuildCost")->number;

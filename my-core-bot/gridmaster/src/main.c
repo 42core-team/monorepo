@@ -48,6 +48,10 @@ void ft_on_tick(unsigned long tick)
 		if (target_unit > 1) target_unit = 0;
 	}
 
+	printf("My cores spawn cooldown is %ld\n", ft_get_core_own()->s_core.spawn_cooldown);
+	printf("price for a %d unit is %lu and I have %ld money\n", target_unit, core_get_unitConfig(target_unit)->cost,
+		   ft_get_core_own()->s_core.gems);
+
 	// move units
 	t_obj **units = ft_get_units_own();
 	for (int i = 0; units && units[i]; i++)

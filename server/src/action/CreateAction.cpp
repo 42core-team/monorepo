@@ -29,6 +29,9 @@ std::string CreateAction::execute(Core *core)
 {
 	if (!is_valid_) return "invalid input";
 
+	if (core->getSpawnCooldown() > 0)
+		return "core spawn cooldown not done - wait " + std::to_string(core->getSpawnCooldown()) + " ticks";
+
 	Position closestEmptyPos = findFirstEmptyGridCell(Board::instance().getObjectPositionById(core->getId()));
 	if (!closestEmptyPos.isValid(Config::game().gridSize)) return "no valid position found - entire grid is filled up";
 
@@ -43,6 +46,8 @@ std::string CreateAction::execute(Core *core)
 
 	Stats::instance().inc(stat_keys::units_spawned);
 	Stats::instance().inc(stat_keys::actions_executed);
+
+	core->setSpawnCooldown(Config::game().coreSpawnCooldown);
 
 	return "";
 }

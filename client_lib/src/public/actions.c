@@ -1,15 +1,6 @@
 #include "core_lib.h"
 #include "core_lib_internal.h"
 
-static bool core_static_isMyCore(const t_obj *obj)
-{
-	return obj && obj->type == OBJ_CORE && obj->s_core.team_id == game.my_team_id;
-}
-static t_obj *core_static_get_myCore(void)
-{
-	return core_get_obj_filter_first(core_static_isMyCore);
-}
-
 static void core_static_ensureCapacity(void)
 {
 	if (actions.list == NULL)
@@ -55,8 +46,6 @@ t_obj *core_action_createUnit(t_unit_type unit_type)
 	game.objects = realloc(game.objects, sizeof(t_obj *) * (objLen + 2));
 	game.objects[objLen] = newUnit;
 	game.objects[objLen + 1] = NULL;
-
-	core_static_get_myCore()->s_core.gems -= game.config.units[unit_type]->cost;
 
 	return newUnit;
 }
