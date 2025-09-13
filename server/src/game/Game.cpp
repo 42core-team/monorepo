@@ -84,7 +84,7 @@ void Game::run()
 						ReplayEncoder::instance().setDeathReason(bb->getTeamId(), death_reason_t::DISCONNECTED);
 					else
 						ReplayEncoder::instance().setDeathReason(bb->getTeamId(), death_reason_t::TIMEOUT_SENDING_DATA);
-					ReplayEncoder::instance().setPlace(bb->getTeamId(), Board::instance().getCoreCount());
+					ReplayEncoder::instance().setPlace(bb->getTeamId(), Board::instance().getCoreCount() - 1);
 					it = bridges_.erase(it);
 				}
 				else
