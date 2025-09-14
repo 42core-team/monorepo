@@ -3,6 +3,8 @@ name: Trigger website relaunch frontend
 on:
   push:
     branches: [dev]
+    paths:
+      - 'wiki/**'
   release:
     types: [published]
 
