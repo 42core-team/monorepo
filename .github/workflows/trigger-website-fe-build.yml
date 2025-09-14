@@ -1,0 +1,50 @@
+name: Trigger website relaunch frontend
+
+on:
+  push:
+    branches: [dev]
+  release:
+    types: [published]
+
+env:
+  TARGET_OWNER: 42core-team
+  TARGET_REPO: website_relaunch
+  TARGET_WORKFLOW_FILE: frontend-build.yml
+  TARGET_REF: dev
+
+jobs:
+  dispatch-dev:
+    name: Dispatch DEV deploy
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Call workflow_dispatch in website_relaunch (dev)
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.WSR_PAT }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: process.env.TARGET_OWNER,
+              repo: process.env.TARGET_REPO,
+              workflow_id: process.env.TARGET_WORKFLOW_FILE,
+              ref: 'dev',
+              inputs: { environment: 'dev' }
+            });
+
+  dispatch-prod:
+    name: Dispatch PROD deploy
+    if: github.event_name == 'release' && github.event.action == 'published'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Call workflow_dispatch in website_relaunch (prod)
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.WSR_PAT }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: process.env.TARGET_OWNER,
+              repo: process.env.TARGET_REPO,
+              workflow_id: process.env.TARGET_WORKFLOW_FILE,
+              ref: 'main',
+              inputs: { environment: 'prod' }
+            });
