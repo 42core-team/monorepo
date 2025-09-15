@@ -1,21 +1,21 @@
 {
 	"gridSize": 20, // tile count in each x and y directions of map, map will always be square
 	"seed": "", // if server is run twice with same seed, exact same world is generated. specify any string of any length, leave empty for a random seed
-	"idleIncome": 0, // amount of gems automatically deposited into each core each tick before the timeout
-	"idleIncomeTimeOut": 0, // how many ticks the idleIncome last before no more gems are deposited
+	"idleIncome": 3, // amount of gems automatically deposited into each core each tick before the timeout
+	"idleIncomeTimeOut": 100, // how many ticks the idleIncome last before no more gems are deposited
 	"depositHp": 50, // default HP when a deposit object is spawned
-	"depositIncome": 200, // default amount of gems a deposit is spawned with, might be modified depending on world generator
-	"gemPileIncome": 75, // default amount of gems a gem pile is spawned with, might be modified depending on world generator
+	"depositIncome": 100, // default amount of gems a deposit is spawned with, might be modified depending on world generator
+	"gemPileIncome": 35, // default amount of gems a gem pile is spawned with, might be modified depending on world generator
 	"coreHp": 99, // health points of a core when its spawned
 	"coreSpawnCooldown": 25, // cooldown in in ticks a core must wait after spawning a unit before it can spawn another unit
-	"initialBalance": 150, // default amount of gems a core is spawned with, might be modified depending on world generator
-	"wallHp": 75, // health points of a wall when its spawned
+	"initialBalance": 175, // default amount of gems a core is spawned with, might be modified depending on world generator
+	"wallHp": 77, // health points of a wall when its spawned
 	"wallBuildCost": 10, // amount of gems a wall builder unit must pay to build a wall
 	"bombHp": 10, // health points of a bomb when its spawned
 	"bombCountdown": 8, // countdown in ticks from when a bomb is first attacked to when it explodes
 	"bombThrowCost": 25, // amount of gems a bomb builder unit must pay to build a wall
 	"bombReach": 2, // bomb explosion range
-	"bombDamageCore": 20, // damage a bomb does to a core
+	"bombDamageCore": 49, // damage a bomb does to a core
 	"bombDamageUnit": 14, // damage a bomb does to a unit
 	"bombDamageDeposit": 25, // damage a bomb does to a deposit
 	"worldGenerator": "jigsaw",
@@ -36,10 +36,10 @@
 			"name": "Warrior", // name, for aesthetic / display purposes only
 			"visualizer_asset_path": "warrior", // folder that the units visuals are picked from
 			"cost": 150, // amount of gems needed to spawn the unit
-			"hp": 25, // amount of healthpoints the unit spawns with
+			"hp": 20, // amount of healthpoints the unit spawns with
 			"baseActionCooldown": 3, // base delay between action executions
 			"maxActionCooldown": 12, // max delay between action executions if unit is holding a lot of gems
-			"balancePerCooldownStep": 15, // defines increase of delay between action executions, see wiki for details
+			"balancePerCooldownStep": 12, // defines increase of delay between action executions, see wiki for details
 			"damageCore": 10, // damage the unit does to a core
 			"damageUnit": 6, // damage the unit does to a unit
 			"damageDeposit": 2, // damage the unit does to a deposit
@@ -51,21 +51,21 @@
 			"name": "Miner",
 			"visualizer_asset_path": "miner",
 			"cost": 100,
-			"hp": 15,
+			"hp": 12,
 			"baseActionCooldown": 4,
 			"maxActionCooldown": 8,
-			"balancePerCooldownStep": 30,
+			"balancePerCooldownStep": 35,
 			"damageCore": 4,
 			"damageUnit": 2,
 			"damageDeposit": 10,
-			"damageWall": 12,
+			"damageWall": 15,
 			"damageBomb": 6,
 			"buildType": "none"
 		},
 		{
 			"name": "Carrier",
 			"visualizer_asset_path": "carrier",
-			"cost": 125,
+			"cost": 175,
 			"hp": 5,
 			"baseActionCooldown": 0,
 			"maxActionCooldown": 0,
@@ -82,13 +82,13 @@
 			"visualizer_asset_path": "builder",
 			"cost": 200,
 			"hp": 13,
-			"baseActionCooldown": 5,
+			"baseActionCooldown": 6,
 			"maxActionCooldown": 8,
 			"balancePerCooldownStep": 10,
 			"damageCore": 5,
 			"damageUnit": 3,
 			"damageDeposit": 2,
-			"damageWall": 3,
+			"damageWall": 16,
 			"damageBomb": 5,
 			"buildType": "wall"
 		},
@@ -103,7 +103,7 @@
 			"damageCore": 20,
 			"damageUnit": 10,
 			"damageDeposit": 5,
-			"damageWall": 10,
+			"damageWall": 3,
 			"damageBomb": 1,
 			"buildType": "bomb"
 		}
