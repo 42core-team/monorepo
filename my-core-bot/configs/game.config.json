@@ -13,7 +13,7 @@
 	"wallBuildCost": 10, // amount of gems a wall builder unit must pay to build a wall
 	"bombHp": 10, // health points of a bomb when its spawned
 	"bombCountdown": 8, // countdown in ticks from when a bomb is first attacked to when it explodes
-	"bombThrowCost": 25, // amount of gems a bomb builder unit must pay to build a wall
+	"bombThrowCost": 24, // amount of gems a bomb builder unit must pay to build a wall
 	"bombReach": 2, // bomb explosion range
 	"bombDamageCore": 49, // damage a bomb does to a core
 	"bombDamageUnit": 14, // damage a bomb does to a unit
@@ -36,7 +36,7 @@
 			"name": "Warrior", // name, for aesthetic / display purposes only
 			"visualizer_asset_path": "warrior", // folder that the units visuals are picked from
 			"cost": 150, // amount of gems needed to spawn the unit
-			"hp": 20, // amount of healthpoints the unit spawns with
+			"hp": 22, // amount of healthpoints the unit spawns with
 			"baseActionCooldown": 3, // base delay between action executions
 			"maxActionCooldown": 12, // max delay between action executions if unit is holding a lot of gems
 			"balancePerCooldownStep": 12, // defines increase of delay between action executions, see wiki for details
@@ -51,7 +51,7 @@
 			"name": "Miner",
 			"visualizer_asset_path": "miner",
 			"cost": 100,
-			"hp": 12,
+			"hp": 15,
 			"baseActionCooldown": 4,
 			"maxActionCooldown": 8,
 			"balancePerCooldownStep": 35,
