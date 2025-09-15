@@ -132,4 +132,4 @@ You can also open the `gridmaster/` directory to look at your local default oppo
 
 > Have fun! Don't take things too seriously & be nice to each other. Embrace the good vibes in a friendly competition! ⚡️
 
-Good luck from the CORE team! 🚀🎸🔥
+Good luck from the CORE team! 🚀🎸🔥💥🗿
