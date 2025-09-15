@@ -30,7 +30,7 @@ jobs:
               repo: process.env.TARGET_REPO,
               workflow_id: process.env.TARGET_WORKFLOW_FILE,
               ref: 'dev',
-              inputs: { environment: 'dev', force_rebuild: 'true' }
+              inputs: { environment: 'dev', force_rebuild: true }
             });
 
   dispatch-prod:
@@ -48,5 +48,5 @@ jobs:
               repo: process.env.TARGET_REPO,
               workflow_id: process.env.TARGET_WORKFLOW_FILE,
               ref: 'main',
-              inputs: { environment: 'prod', force_rebuild: 'true' }
+              inputs: { environment: 'prod', force_rebuild: true }
             });
