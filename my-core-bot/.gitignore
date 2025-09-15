@@ -6,4 +6,4 @@ old-logs/
 
 devpod
 
-replays/*
+replays/replay_latest.json
