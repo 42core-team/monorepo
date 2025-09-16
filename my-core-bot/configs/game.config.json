@@ -40,7 +40,7 @@
 			"baseActionCooldown": 3, // base delay between action executions
 			"maxActionCooldown": 12, // max delay between action executions if unit is holding a lot of gems
 			"balancePerCooldownStep": 12, // defines increase of delay between action executions, see wiki for details
-			"damageCore": 10, // damage the unit does to a core
+			"damageCore": 7, // damage the unit does to a core
 			"damageUnit": 6, // damage the unit does to a unit
 			"damageDeposit": 2, // damage the unit does to a deposit
 			"damageWall": 2, // damage the unit does to a wall
@@ -55,7 +55,7 @@
 			"baseActionCooldown": 4,
 			"maxActionCooldown": 8,
 			"balancePerCooldownStep": 35,
-			"damageCore": 4,
+			"damageCore": 3,
 			"damageUnit": 2,
 			"damageDeposit": 10,
 			"damageWall": 15,
@@ -85,10 +85,10 @@
 			"baseActionCooldown": 6,
 			"maxActionCooldown": 8,
 			"balancePerCooldownStep": 10,
-			"damageCore": 5,
+			"damageCore": 3,
 			"damageUnit": 3,
 			"damageDeposit": 2,
-			"damageWall": 16,
+			"damageWall": 8,
 			"damageBomb": 5,
 			"buildType": "wall"
 		},
@@ -100,11 +100,11 @@
 			"baseActionCooldown": 4,
 			"maxActionCooldown": 4,
 			"balancePerCooldownStep": 99999,
-			"damageCore": 20,
-			"damageUnit": 10,
+			"damageCore": 4,
+			"damageUnit": 3,
 			"damageDeposit": 5,
 			"damageWall": 3,
-			"damageBomb": 1,
+			"damageBomb": 5,
 			"buildType": "bomb"
 		}
 	],
