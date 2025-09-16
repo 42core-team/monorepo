@@ -118,6 +118,8 @@ void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned lo
 
 > **TIP**: But what if my core is surrounded by units? How will I get gems to and from it? -> The transferGems action will work back and forth between a unit and its core provided the unit is at *the closest possible unoccupied position* to its core in Manhattan distance. If the core is surrounded, the unit must simply get as close as possible for this action to work then, as determined by a floodfill algorithm and the manhattan distance.
 
+> **TIP**: Unlike other action parameters, the server won't stop executing the transfer gems action if the gems amount parameter is set higher than the possible amount. That means you can pass `99999` or `-1` (the unsigned integer will underflow), even if the source object is only holding `42` gems, to transfer the maximum possible amount of gems anyways.
+
 Alternatively, you can use `core_action_transferGems_toObj` to be able to pass in the object directly into the transfer gems action function. It will behave the same as calling the main transfer gems action function on the target objects position.
 
 ```c
