@@ -90,6 +90,8 @@ There is no limit to how many gems units or cores can hold.
 
 > **WARNING**: Objects that have `state` set to `STATE_UNINITIALIZED` can only be partially interacted with. See down at `t_obj_state`for specifics.
 
+---
+
 ## struct `t_obj_type`
 
 Type of object
@@ -113,6 +115,8 @@ typedef enum e_obj_type
 - **Gem Piles**: Gems lying around on the floor.
 - **Bombs**: Careful!
 
+---
+
 ## struct `t_obj_state`
 
 Object state.
@@ -134,11 +138,15 @@ Units will stay uninitialized during the same tick they were created. In the nex
 
 > **TIP**: Why are dead units a thing? So you can free the things you've allocated in your objects `void *data` field and other places before the program ends, preventing memory leaks. Similarly, you can, thanks to this, save pointers to the unit anywhere and they won't start dangling when the unit is killed. A dead unit is no longer considered anywhere else by the server, so you can walk and build on their corpses. 👀
 
+---
+
 ## struct `t_unit_type`
 
 Type of unit. Which are available differs from event to event
 
 > **TIP**: Type `UNIT_` and autocomplete will show you all the available units. There is an overview of all the unit types and their properties and settings in the config.
+
+---
 
 ## struct `t_pos`
 

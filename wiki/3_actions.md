@@ -56,6 +56,8 @@ t_obj *core_action_createUnit(t_unit_type unit_type);
 
 > **TIP**: Units are spawned as close to your core as possible - but if all positions directly next to your core are occupied, a flood fill algorithm will be used looking for the next empty space and the unit will be placed there. 
 
+---
+
 ## function `core_action_move`
 
 Moves a unit to a specific position.
@@ -67,6 +69,14 @@ Units can only move one tile up, down, left or right; and only if their action_c
 ```c
 void core_action_move(const t_obj *unit, t_pos pos);
 ```
+
+Alternatively, `core_action_moveTowards` is a very simple pathfinding logic implementation. It won't help you win, but it can be used to easily get started. When you call it, it will determine the next move to make and then immediately either move there or attack objects in its way, provided the objects in its way aren't your units or core.
+
+```c
+void core_action_moveTowards(const t_obj *unit, t_pos pos);
+```
+
+---
 
 ## function `core_action_attack`
 
@@ -86,6 +96,14 @@ void core_action_attack(const t_obj *attacker, t_pos pos);
 
 > **TIP**: Attacking a bomb is what starts its detonation countdown. *Keep calm and don't blow up!*
 
+Alternatively, you can use `core_action_attack_obj` to be able to pass in the object directly into the attack action function. It will behave the same as calling the main attack action function on the target objects position.
+
+```c
+void core_action_attack_obj(const t_obj *attacker, const t_obj *target);
+```
+
+---
+
 ## function `core_action_transferGems`
 
 Gives gems to another object or drops it on the floor.
@@ -99,6 +117,14 @@ void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned lo
 ```
 
 > **TIP**: But what if my core is surrounded by units? How will I get gems to and from it? -> The transferGems action will work back and forth between a unit and its core provided the unit is at *the closest possible unoccupied position* to its core in Manhattan distance. If the core is surrounded, the unit must simply get as close as possible for this action to work then, as determined by a floodfill algorithm and the manhattan distance.
+
+Alternatively, you can use `core_action_transferGems_toObj` to be able to pass in the object directly into the transfer gems action function. It will behave the same as calling the main transfer gems action function on the target objects position.
+
+```c
+void core_action_transferGems_toObj(const t_obj *source, t_obj *target, unsigned long amount);
+```
+
+---
 
 ## function `core_action_build`
 
