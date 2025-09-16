@@ -132,6 +132,7 @@ void core_action_attack(const t_obj *attacker, t_pos target_pos)
 }
 void core_action_attack_obj(const t_obj *attacker, const t_obj *target)
 {
+	if (!target) return;
 	core_action_attack(attacker, target->pos);
 }
 
