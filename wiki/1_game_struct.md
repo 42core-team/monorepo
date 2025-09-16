@@ -25,6 +25,8 @@ typedef struct s_game
 } t_game;
 ```
 
+---
+
 ## variable `game`
 
 This variable contains all the data about the game.
@@ -34,6 +36,8 @@ Include `core_lib.h` in every file you want to use it.
 ```c
 extern t_game game;
 ```
+
+---
 
 ## function `core_startGame`
 

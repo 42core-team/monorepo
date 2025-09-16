@@ -37,6 +37,8 @@ Get any object based on its id.
 t_obj *core_get_obj_from_id(unsigned long id);
 ```
 
+---
+
 ## function `core_get_obj_from_pos`
 
 Get any object based on its position.
@@ -45,6 +47,8 @@ Get any object based on its position.
 ```c
 t_obj *core_get_obj_from_pos(t_pos pos);
 ```
+
+---
 
 ## function `core_get_objs_filter`
 
@@ -59,6 +63,8 @@ t_obj **core_get_objs_filter(bool (*condition)(const t_obj *));
 
 > **WARNING**: You are responsibility to free the array returned by this function, but not the objects in it themselves, they are the same object instances as in the `game.objects` array.
 
+---
+
 ## function `core_get_obj_filter_first`
 
 Get the first object matching a custom filtering condition. Which one it is is not defined and unpredictable, but most likely the object matching the condition with the smallest id.
@@ -72,6 +78,8 @@ t_obj *core_get_obj_filter_first(bool (*condition)(const t_obj *));
 
 > **TIP**: Why is this useful? - Because you won't need an array if you want any instance of an object, regardless of which one specifically. Like when getting your own core or another one-of-a-kind object.
 
+---
+
 ## function `core_get_obj_filter_nearest`
 
 Get the nearest object to a given position matching a custom filtering condition. Manhattan distance is used to determine distance. If two objects or more have the same distance, either could be picked.
@@ -83,6 +91,8 @@ Get the nearest object to a given position matching a custom filtering condition
 ```c
 t_obj *core_get_obj_filter_nearest(t_pos pos, bool (*condition)(const t_obj *));
 ```
+
+---
 
 ## function `core_get_objs_filter_count`
 

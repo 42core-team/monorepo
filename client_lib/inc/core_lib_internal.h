@@ -6,6 +6,7 @@
 // ----- General
 
 int core_internal_distance(t_pos pos1, t_pos pos2);
+bool core_internal_isPosValid(t_pos pos);
 void core_internal_freeGame(void);
 void core_internal_freeAndExit(const char *msg, int count, ...);
 

@@ -20,6 +20,8 @@ Prints all information about the current game state of a given object.
 void core_print_obj(t_obj *obj);
 ```
 
+---
+
 ## function `core_print_objs`
 
 Prints multiple objects.
@@ -31,6 +33,8 @@ Prints multiple objects.
 t_obj **core_print_objs(t_obj **objs);
 ```
 
+---
+
 ## function `core_print_config_unit`
 
 Prints a selected unit config.
@@ -41,6 +45,8 @@ Prints a selected unit config.
 void core_print_config_unit(t_unit_type unit_type);
 ```
 
+---
+
 ## function `core_print_config_game`
 
 Prints the game config.
@@ -48,6 +54,8 @@ Prints the game config.
 ```c
 void core_print_config_game(void);
 ```
+
+---
 
 ## function `core_print_config`
 

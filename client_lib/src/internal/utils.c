@@ -13,6 +13,11 @@ int core_internal_distance(t_pos pos1, t_pos pos2)
 	return ((int)(deltaX + deltaY));
 }
 
+bool core_internal_isPosValid(t_pos pos)
+{
+	return (pos.y < game.config.gridSize && pos.x < game.config.gridSize);
+}
+
 void core_internal_resetActions(void)
 {
 	free(actions.list);

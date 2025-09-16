@@ -96,6 +96,9 @@ You can also open the `gridmaster/` directory to look at your local default oppo
 
 # ❓ Frequently Asked Questions (FAQ)
 
+### 💃 Do I need to adhere to 42 Norminette?
+> No! *Dobby is free!*
+
 ### 🔧 Where can I see the implementations of the standard library?
 > Check out [our GitHub](https://github.com/42core-team) to see all of the CORE source code - it may give you an easy starting point for some functionalities.
 

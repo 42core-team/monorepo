@@ -60,6 +60,8 @@ typedef struct s_config
 } t_config;
 ```
 
+---
+
 ## struct `t_unit_config`
 
 - `name`: The name of the unit.
@@ -94,6 +96,8 @@ typedef struct s_unit_config
 } t_unit_config;
 ```
 
+---
+
 ## struct `t_build_type`
 
 ```c
@@ -106,6 +110,8 @@ typedef enum e_build_type
 ```
 
 Determines whether and what the unit will build if you use it as the builder argument when executing a build action.
+
+---
 
 ## function `core_get_unitConfig`
 
