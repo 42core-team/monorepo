@@ -147,6 +147,7 @@ void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned lo
 }
 void core_action_transferGems_toObj(const t_obj *source, t_obj *target, unsigned long amount)
 {
+	if (!target) return;
 	core_action_transferGems(source, target->pos, amount);
 }
 
