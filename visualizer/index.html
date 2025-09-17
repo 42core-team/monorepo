@@ -23,6 +23,16 @@
 			} catch (_) { }
 		})();
 	</script>
+	<script>
+		(function() {
+			var s = document.createElement('script');
+			s.defer = true;
+			s.setAttribute('data-domain', location.hostname);
+			s.src = 'https://plausible.coregame.de/js/script.js';
+			document.head.appendChild(s);
+		})();
+	</script>
+	<script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
 	<link rel="stylesheet" href="/src/css/styles.css" />
 	<link rel="stylesheet" href="/src/css/color-picker.css" />
 </head>
