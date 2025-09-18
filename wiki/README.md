@@ -126,6 +126,11 @@ In the `src/` folder there will already be a little example bot that does basic 
 
 > (Please tell us and open a [GitHub issue](https://github.com/42core-team/monorepo/issues).)
 
+### 🪻 Are there limits to how many gems units or cores can hold?
+> No. Go nuts.
+
+##### Other questions? Let us know and this section will get longer!
+
 # 🏆 To win the event
 
 > Don't overcomplicate things! Simple but well-balanced bots may often reign over overcomplicated but ineffective bots.
