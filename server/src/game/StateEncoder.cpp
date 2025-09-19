@@ -26,6 +26,20 @@ json StateEncoder::encodeFullState()
 			o["unit_type"] = ((Unit &)obj).getUnitType();
 			o["gems"] = ((Unit &)obj).getBalance();
 			o["ActionCooldown"] = ((Unit &)obj).getActionCooldown();
+
+			const auto &path = ((Unit &)obj).getDebugPath();
+			if (!path.empty())
+			{
+				json pathArr = json::array();
+				for (const Position &p : path)
+				{
+					json pt;
+					pt["x"] = p.x;
+					pt["y"] = p.y;
+					pathArr.push_back(pt);
+				}
+				o["debugPath"] = pathArr;
+			}
 		}
 		if (obj.getType() == ObjectType::Deposit)
 		{

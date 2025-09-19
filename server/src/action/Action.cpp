@@ -1,5 +1,9 @@
 #include "Action.h"
 
+#include <iostream>
+
+#include "SetUnitDataAction.h"
+
 Action::Action(ActionType type) : is_valid_(true), type_(type)
 {
 }
@@ -25,6 +29,8 @@ std::vector<std::unique_ptr<Action>> Action::parseActions(json msg)
 				newAction = std::make_unique<BuildAction>(actionJson);
 			else if (actionJson["type"] == "attack")
 				newAction = std::make_unique<AttackAction>(actionJson);
+			else if (actionJson["type"] == "set_unit_data")
+				newAction = std::make_unique<SetUnitDataAction>(actionJson);
 			if (newAction && !newAction->is_valid_) newAction = nullptr;
 		}
 
@@ -48,6 +54,8 @@ std::string Action::getActionName(ActionType type)
 		return "transfer_gems";
 	case ActionType::BUILD:
 		return "build";
+	case ActionType::SET_UNIT_DATA:
+		return "set_unit_data";
 	default:
 		return "unknown";
 	}

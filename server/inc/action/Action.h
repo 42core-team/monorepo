@@ -22,7 +22,8 @@ enum class ActionType
 	ATTACK,
 	CREATE,
 	TRANSFER_GEMS,
-	BUILD
+	BUILD,
+	SET_UNIT_DATA
 };
 
 class Action
