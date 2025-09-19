@@ -43,6 +43,81 @@ function scheduleNextFrame(): void {
 	}
 }
 let isInitialRender = true;
+
+// Track hovered unit debug path (array of positions)
+let hoveredDebugPath: { x: number; y: number }[] | null = null;
+
+function drawHoveredDebugPathOverlay(): void {
+	// Remove markers for previous frames is done by global cleanup; here we (re)create/update and mark as touched
+	if (!hoveredDebugPath || hoveredDebugPath.length === 0) return;
+
+	// Draw connecting polyline between centers
+	const pointsAttr = hoveredDebugPath
+		.map(({ x, y }) => `${x + 0.5},${y + 0.5}`)
+		.join(" ");
+	const polyKey = "dbg-path-poly";
+	let poly = svgCanvas.querySelector(`polyline[data-dbg-path="${polyKey}"]`) as SVGPolylineElement | null;
+	if (!poly) {
+		poly = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+		poly.setAttribute("data-dbg-path", polyKey);
+		poly.setAttribute("fill", "none");
+		poly.setAttribute("pointer-events", "none");
+	}
+	poly.classList.remove("not-touched");
+	poly.setAttribute("points", pointsAttr);
+	poly.setAttribute("stroke", "var(--theme-color)");
+	poly.setAttribute("stroke-opacity", "0.9");
+	poly.setAttribute("stroke-width", "0.07");
+	if (poly.parentNode !== svgCanvas) svgCanvas.appendChild(poly);
+
+	// Draw tile markers and indices
+	for (let i = 0; i < hoveredDebugPath.length; i++) {
+		const { x, y } = hoveredDebugPath[i];
+		const rectKey = `dbg-path-rect-${x},${y},${i}`;
+		let rect = svgCanvas.querySelector(
+			`rect[data-dbg-path="${rectKey}"]`,
+		) as SVGRectElement | null;
+		if (!rect) {
+			rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+			rect.setAttribute("data-dbg-path", rectKey);
+			rect.setAttribute("width", "1");
+			rect.setAttribute("height", "1");
+			rect.setAttribute("rx", "0.15");
+			rect.setAttribute("ry", "0.15");
+			rect.setAttribute("pointer-events", "none");
+		}
+		rect.classList.remove("not-touched");
+		rect.setAttribute("x", String(x));
+		rect.setAttribute("y", String(y));
+		rect.setAttribute("fill", "var(--theme-color)");
+		rect.setAttribute("fill-opacity", i === 0 ? "0.25" : "0.15");
+		rect.setAttribute("stroke", "var(--theme-color)");
+		rect.setAttribute("stroke-opacity", i === 0 ? "1" : "0.7");
+		rect.setAttribute("stroke-width", i === 0 ? "0.12" : "0.08");
+		if (rect.parentNode !== svgCanvas) svgCanvas.appendChild(rect);
+
+		const textKey = `dbg-path-text-${x},${y},${i}`;
+		let txt = svgCanvas.querySelector(
+			`text[data-dbg-path="${textKey}"]`,
+		) as SVGTextElement | null;
+		if (!txt) {
+			txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+			txt.setAttribute("data-dbg-path", textKey);
+			txt.setAttribute("text-anchor", "middle");
+			txt.setAttribute("dominant-baseline", "central");
+			txt.setAttribute("pointer-events", "none");
+		}
+		txt.classList.remove("not-touched");
+		txt.setAttribute("x", String(x + 0.5));
+		txt.setAttribute("y", String(y + 0.5));
+		txt.setAttribute("font-size", "0.35");
+		txt.setAttribute("fill", "#000");
+		txt.setAttribute("fill-opacity", "0.9");
+		txt.textContent = String(i);
+		if (txt.parentNode !== svgCanvas) svgCanvas.appendChild(txt);
+	}
+}
+
 function drawFrame(timestamp: number): void {
 	lastRenderTime = timestamp;
 
@@ -84,9 +159,13 @@ function drawFrame(timestamp: number): void {
 		}
 	}
 
+	// ensure tooltip and hovered path are synced even while animating
 	if (tooltipElement.style.display === "block" && lastSVGPoint) {
 		refreshTooltipFromSVGPoint(lastSVGPoint, lastClientX, lastClientY);
 	}
+
+	// draw hovered debug path overlay last so it sits on top
+	drawHoveredDebugPathOverlay();
 
 	for (const element of svgCanvas.querySelectorAll(".not-touched")) {
 		element.remove();
@@ -125,6 +204,7 @@ function refreshTooltipFromSVGPoint(
 		obj = nextObjects.find((o: TickObject) => o.id === objId);
 	}
 
+	// Position and show tooltip
 	const offsetX = 10;
 	const offsetY =
 		clientY > window.innerHeight / 2 ? -tooltipElement.offsetHeight - 10 : 10;
@@ -135,8 +215,17 @@ function refreshTooltipFromSVGPoint(
 	tooltipElement.style.display = "block";
 	if (obj) {
 		tooltipElement.innerHTML = formatObjectData(obj);
+		// update hovered debug path when hovering units with debugPath
+		const dbg = (obj as unknown as { debugPath?: { x: number; y: number }[] })
+			.debugPath;
+		if (obj.type === 1 && Array.isArray(dbg) && dbg.length > 0) {
+			hoveredDebugPath = dbg;
+		} else {
+			hoveredDebugPath = null;
+		}
 	} else {
 		tooltipElement.innerHTML = `📍 Position: [x: ${tx}, y: ${ty}]`;
+		hoveredDebugPath = null;
 	}
 }
 export async function setupRenderer(): Promise<void> {
@@ -192,6 +281,7 @@ export async function setupRenderer(): Promise<void> {
 			const ctm = svgCanvas.getScreenCTM();
 			if (!ctm) {
 				tooltipElement.style.display = "none";
+				hoveredDebugPath = null;
 				return;
 			}
 			const svgP = pt.matrixTransform(ctm.inverse());
@@ -209,11 +299,13 @@ export async function setupRenderer(): Promise<void> {
 				e.clientY > rect.bottom
 			) {
 				tooltipElement.style.display = "none";
+				hoveredDebugPath = null;
 			}
 		};
 		document.addEventListener("mousemove", hideIfOutside);
 		window.addEventListener("blur", () => {
 			tooltipElement.style.display = "none";
+			hoveredDebugPath = null;
 		});
 		svgCanvas.dataset.listenersBound = "1";
 	}
