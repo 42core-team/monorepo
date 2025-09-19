@@ -73,7 +73,7 @@ Once the default test bot is too boring and you always win, feel free to share y
 
 ## 📝 Example Code
 
-In the `src/` folder there will already be a little example bot that does basic actions.
+In the `my-core-bot/src/` folder there will already be a little example bot that does basic actions.
 
 # 🔎 On the Core Game Library
 
