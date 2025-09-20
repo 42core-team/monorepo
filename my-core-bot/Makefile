@@ -29,7 +29,7 @@ fclean: clean
 re: fclean run
 
 stop:
-	@pkill core > /dev/null || true &
+	@pkill server > /dev/null || true &
 	@pkill bot > /dev/null || true &
 	@pkill gridmaster > /dev/null || true
 
