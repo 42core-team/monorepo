@@ -13,6 +13,7 @@
 
 	--control-height: 48px;
 }
+
 :root[data-theme="light"] {
 	--hp-color: #c70202ff;
 	--gems-color: #008600ff;
@@ -35,6 +36,7 @@
 
 	--fireworks-darkening-layer: rgba(0, 0, 0, 0.75);
 }
+
 :root[data-theme="dark"] {
 	--hp-color: rgb(242, 12, 12);
 	--gems-color: rgb(0, 215, 0);
@@ -66,17 +68,21 @@
 	filter: invert(100%) sepia(96%) saturate(17%) hue-rotate(214deg)
 		brightness(104%) contrast(100);
 }
+
 :root[data-theme="light"] .game-object.team-1 {
 	opacity: 0.5;
 }
+
 :root[data-theme="dark"] .game-object.team-1 {
 	opacity: 0.7;
 }
 
 :root[data-theme="light"] ::selection {
 	background: color-mix(in srgb, var(--theme-color) 65%, black);
-	color: var(--tooltip-shadow-contrast); /* white in light mode */
+	color: var(--tooltip-shadow-contrast);
+	/* white in light mode */
 }
+
 :root[data-theme="light"] ::-moz-selection {
 	background: color-mix(in srgb, var(--theme-color) 65%, black);
 	color: var(--tooltip-shadow-contrast);
@@ -84,8 +90,10 @@
 
 :root[data-theme="dark"] ::selection {
 	background: color-mix(in srgb, var(--theme-color) 65%, white);
-	color: var(--tooltip-shadow-contrast); /* black in dark mode */
+	color: var(--tooltip-shadow-contrast);
+	/* black in dark mode */
 }
+
 :root[data-theme="dark"] ::-moz-selection {
 	background: color-mix(in srgb, var(--theme-color) 65%, white);
 	color: var(--tooltip-shadow-contrast);
@@ -96,6 +104,7 @@
 	fill: var(--grid-bg);
 	pointer-events: none;
 }
+
 :root[data-gridlines="off"] .grid-cell {
 	display: none;
 }
@@ -133,6 +142,7 @@ a {
 		0 0;
 	background-repeat: repeat, repeat;
 }
+
 :root[data-gridlines="on"] #svg-canvas {
 	--cell: calc(var(--svg-canvas-scale) / var(--grid-size));
 	background-image:
@@ -142,6 +152,7 @@ a {
 		var(--cell) 100%,
 		100% var(--cell);
 }
+
 :root[data-gridlines="off"] #svg-canvas {
 	background-image: none;
 }
@@ -157,6 +168,7 @@ a {
 	color: var(--text);
 	pointer-events: none;
 }
+
 #tooltip span[style*="var(--hp-color)"],
 #tooltip span[style*="var(--gems-color)"],
 #tooltip span[style*="var(--cooldown-color)"] {
@@ -186,9 +198,11 @@ svg path {
 #team-one-name {
 	place-self: start end;
 }
+
 #team-two-name {
 	place-self: end start;
 }
+
 .teamName {
 	font-size: 1.5rem;
 	font-weight: bold;
@@ -238,6 +252,7 @@ svg path {
 	height: 1.5rem;
 	display: block;
 }
+
 .icon-button img {
 	filter: var(--svg-icon-filter, none);
 }
@@ -251,14 +266,17 @@ svg path {
 :root[data-theme="light"] .control-panel button:active {
 	background-color: color-mix(in srgb, var(--theme-color) 30%, white);
 }
+
 :root[data-theme="dark"] .control-panel button.active,
 :root[data-theme="dark"] .control-panel button:active {
 	background-color: color-mix(in srgb, var(--theme-color) 80%, black);
 }
+
 :root[data-theme="light"] .icon-button.active,
 :root[data-theme="light"] .icon-button:active {
 	background-color: color-mix(in srgb, var(--theme-color) 30%, white);
 }
+
 :root[data-theme="dark"] .icon-button.active,
 :root[data-theme="dark"] .icon-button:active {
 	background-color: color-mix(in srgb, var(--theme-color) 80%, black);
@@ -267,6 +285,7 @@ svg path {
 :root[data-theme="light"] {
 	--svg-icon-filter: none;
 }
+
 :root[data-theme="dark"] {
 	--svg-icon-filter: invert(1) brightness(1.1);
 }
@@ -383,6 +402,7 @@ svg path {
 	transition: transform 0.1s ease-in-out;
 	z-index: 7500;
 }
+
 .corner-button:hover {
 	transform: scale(1.1);
 }
@@ -393,6 +413,7 @@ svg path {
 	clip-path: polygon(0 100%, 0 0, 100% 100%);
 	transform-origin: bottom left;
 }
+
 #corner-bottom-left::after {
 	content: "";
 	position: absolute;
@@ -403,6 +424,7 @@ svg path {
 	background-position: 17% 83%;
 	pointer-events: none;
 }
+
 :root[data-theme="light"] #corner-bottom-left::after {
 	filter: invert(1);
 }
@@ -413,6 +435,7 @@ svg path {
 	clip-path: polygon(0 0, 100% 0, 100% 100%);
 	transform-origin: top right;
 }
+
 #corner-top-right::after {
 	content: "";
 	position: absolute;
@@ -423,6 +446,7 @@ svg path {
 	background-position: 83% 17%;
 	pointer-events: none;
 }
+
 :root[data-theme="light"] #corner-top-right::after {
 	filter: invert(1);
 }
@@ -446,6 +470,7 @@ svg path {
 	z-index: 1000;
 	pointer-events: none;
 }
+
 #winreason {
 	white-space: pre-line;
 }
@@ -481,13 +506,16 @@ svg path {
 	word-break: break-word;
 	overflow-wrap: break-word;
 	max-width: 450px;
-	height: min(max-content, 75vh);
+	height: max-content;
+	max-height: 75vh;
 }
+
 #open-modal {
 	position: absolute;
 	z-index: 5001;
 	border-bottom-left-radius: 0;
 }
+
 #info-icon {
 	width: 1.5rem;
 	height: 1.5rem;
@@ -504,6 +532,7 @@ svg path {
 	gap: 12px;
 	margin: 8px 0 12px;
 }
+
 .settings-toggle {
 	display: flex;
 	align-items: center;
@@ -511,6 +540,7 @@ svg path {
 	padding: 10px 12px;
 	border-radius: 10px;
 }
+
 .settings-toggle img {
 	width: 22px;
 	height: 22px;
@@ -539,9 +569,11 @@ kbd {
 	gap: 0.75rem;
 	margin-top: 0.5rem;
 }
+
 #replay_infos a {
 	text-decoration: none;
 }
+
 .modal-button {
 	display: inline-flex;
 	align-items: center;
@@ -561,20 +593,25 @@ kbd {
 		background-color 120ms,
 		box-shadow 120ms;
 }
+
 .modal-button:hover,
 .modal-button:active {
 	background: color-mix(in srgb, var(--theme-color) 12%, var(--panel-bg));
 	transform: translateY(-1px);
 }
+
 .modal-button:active {
 	transform: translateY(0);
 }
+
 .modal-button.primary {
 	background: color-mix(in srgb, var(--theme-color) 18%, var(--panel-bg));
 }
+
 :root[data-theme="dark"] .modal-button.primary {
 	background: color-mix(in srgb, var(--theme-color) 28%, var(--panel-bg));
 }
+
 .modal-button:focus-visible {
 	outline: none;
 	box-shadow: 0 0 0 3px

@@ -1,0 +1,15 @@
+{
+	"configurations": [
+		{
+			"name": "Linux",
+			"compilerPath": "/usr/bin/cc",
+			"cStandard": "c23",
+			"intelliSenseMode": "linux-gcc-x64",
+			"includePath": [
+				"${workspaceFolder}/my-core-bot/inc",
+				"/core/inc/"
+			]
+		}
+	],
+	"version": 4
+}

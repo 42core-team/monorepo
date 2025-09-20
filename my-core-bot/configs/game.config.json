@@ -1,3 +1,11 @@
+/*
+	For this event, there are 5 different unit types available:
+	1. Warrior: A melee combat unit that excels in attacking enemy cores and units.
+	2. Miner: A unit specialized in breaking hard objects such as gem deposits and walls.
+	3. Carrier: A non-combat unit that is very quick, even when carrying many gems.
+	4. Builder: A versatile unit that can construct walls to fortify positions.
+	5. Bomberman: A unit capable of planting bombs to deal area damage to enemies and structures.
+*/
 {
 	"gridSize": 20, // tile count in each x and y directions of map, map will always be square
 	"seed": "", // if server is run twice with same seed, exact same world is generated. specify any string of any length, leave empty for a random seed
@@ -16,7 +24,7 @@
 	"bombThrowCost": 24, // amount of gems a bomb builder unit must pay to build a wall
 	"bombReach": 2, // bomb explosion range
 	"bombDamageCore": 49, // damage a bomb does to a core
-	"bombDamageUnit": 14, // damage a bomb does to a unit
+	"bombDamageUnit": 15, // damage a bomb does to a unit
 	"bombDamageDeposit": 25, // damage a bomb does to a deposit
 	"worldGenerator": "jigsaw",
 	"worldGeneratorConfig": {
