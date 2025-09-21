@@ -4,7 +4,7 @@ TARGET = my-core-bot/bot
 PLAYER1_ID := 42
 PLAYER2_ID := 43
 
-run: build build-gridmaster
+run: stop build build-gridmaster
 	@echo ""
 	@echo "$(COLOR_INFO)🎮 Visualizer is running at: localhost:4000 $(COLOR_RESET)"
 	@echo ""
