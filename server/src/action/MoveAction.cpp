@@ -41,12 +41,14 @@ std::string MoveAction::execute(Core *core)
 	if (!unitObj || unitObj->getType() != ObjectType::Unit) return "invalid or non-existing unit";
 	Unit *unit = (Unit *)unitObj;
 
-	if (unit->getActionCooldown() > 0) return "unit is on cooldown";
+	if (unit->getActionCooldown() > 0)
+		return "unit is on action cooldown (action cooldown should be 0) or has already moved this tick";
 	if (unit->getTeamId() != core->getTeamId()) return "unit does not belong to your team";
 
 	Object *obj = Board::instance().getObjectAtPos(target_);
 	if (obj) return "invalid target position. should be empty";
-	if (target_.distance(Board::instance().getObjectPositionById(unit->getId())) > 1) return "invalid move";
+	if (target_.distance(Board::instance().getObjectPositionById(unit->getId())) > 1)
+		return "targeted position too far away";
 
 	Board::instance().moveObjectById(unit->getId(), target_);
 	unit->resetActionCooldown();

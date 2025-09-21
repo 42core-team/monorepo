@@ -42,7 +42,7 @@ std::string TransferGemsAction::dropGems(Core *core, Object *srcObj)
 
 	Unit *srcUnit = (Unit *)srcObj;
 	if (srcUnit->getTeamId() != core->getTeamId()) return "can't drop gems from another team";
-	if (srcUnit->getActionCooldown() > 0) return "unit is on cooldown";
+	if (srcUnit->getActionCooldown() > 0) return "unit is on action cooldown (action cooldown should be 0)";
 
 	if (srcUnit->getBalance() < amount_) amount_ = srcUnit->getBalance();
 	if (amount_ <= 0) return "invalid amount";
@@ -74,7 +74,8 @@ std::string TransferGemsAction::execute(Core *core)
 	if (srcObj->getType() != ObjectType::Core && srcObj->getType() != ObjectType::Unit)
 		return "invalid source object type";
 	if (dstObj->getType() != ObjectType::Core && dstObj->getType() != ObjectType::Unit)
-		return "invalid destination object type";
+		return "invalid destination object type. please transfer gems only ot object that can hold gems (cores, "
+			   "units).";
 
 	// only as-close-together-as-possible objects can transfer gems
 	Position srcPos = Board::instance().getObjectPositionById(srcObj->getId());
@@ -96,7 +97,7 @@ std::string TransferGemsAction::execute(Core *core)
 	{
 		Unit *srcUnit = (Unit *)srcObj;
 		if (srcUnit->getTeamId() != core->getTeamId()) return "can't transfer gems from another team unit";
-		if (srcUnit->getActionCooldown() > 0) return "unit is on cooldown";
+		if (srcUnit->getActionCooldown() > 0) return "unit is on action cooldown (action cooldown should be 0)";
 		srcUnit->resetActionCooldown();
 		if (srcUnit->getBalance() < amount_) amount_ = srcUnit->getBalance();
 		if (srcUnit->getBalance() <= 0) return "invalid amount";

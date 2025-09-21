@@ -41,7 +41,7 @@ std::string BuildAction::execute(Core *core)
 	Unit *builder = dynamic_cast<Unit *>(builderObj);
 	if (builder->getTeamId() != core->getTeamId()) return "unit does not belong to your team";
 
-	if (builder->getActionCooldown() > 0) return "unit is on cooldown";
+	if (builder->getActionCooldown() > 0) return "unit is on action cooldown (action cooldown should be 0)";
 
 	BuildType buildType = Config::game().units[builder->getUnitType()].buildType;
 	if (buildType == BuildType::NONE) return "unit unable to build";
