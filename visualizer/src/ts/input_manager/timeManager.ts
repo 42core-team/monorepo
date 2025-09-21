@@ -170,15 +170,14 @@ function toggleFullscreen(): void {
 // External Functions
 
 export async function setupTimeManager() {
-	const total = Math.max(1, getTotalTicks());
 	const s = parseFloat(localStorage.getItem("tm.speed") || "");
 	if (!Number.isNaN(s)) {
 		const stepped = Math.round(s / speedIncrement) * speedIncrement;
 		speedApS = Math.min(maxSpeed, Math.max(minSpeed, stepped));
 	}
 	tick = 0;
-	tickTimelineSlider.max = String(total - 1);
-	tickTimelineNumberInput.max = String(total - 1);
+	tickTimelineSlider.max = String(Math.max(1, getTotalTicks()) - 1);
+	tickTimelineNumberInput.max = String(Math.max(1, getTotalTicks()) - 1);
 	tickTimelineSlider.value = "0";
 	tickTimelineNumberInput.value = "0";
 	speedSlider.value = String(speedApS);
@@ -212,7 +211,7 @@ export async function setupTimeManager() {
 	});
 
 	nextTickButton.addEventListener("click", () => {
-		if (tick < total - 1) {
+		if (tick < Math.max(1, getTotalTicks()) - 1) {
 			tick += 1;
 			tickProgress = 0;
 			tickTimelineSlider.value = String(tick);
@@ -237,7 +236,7 @@ export async function setupTimeManager() {
 		renderDirty = true;
 	});
 	skipEndButton.addEventListener("click", () => {
-		tick = total - 1;
+		tick = Math.max(1, getTotalTicks()) - 1;
 		tickProgress = 1;
 		tickTimelineSlider.value = String(tick);
 		tickTimelineNumberInput.value = String(tick);
@@ -246,7 +245,7 @@ export async function setupTimeManager() {
 
 	tickTimelineSlider.addEventListener("input", () => {
 		const v = Math.min(
-			total - 1,
+			Math.max(1, getTotalTicks()) - 1,
 			Math.max(0, parseInt(tickTimelineSlider.value, 10)),
 		);
 		if (!Number.isNaN(v)) {
@@ -259,7 +258,7 @@ export async function setupTimeManager() {
 	});
 	tickTimelineNumberInput.addEventListener("input", () => {
 		const v = Math.min(
-			total - 1,
+			Math.max(1, getTotalTicks()) - 1,
 			Math.max(0, parseInt(tickTimelineNumberInput.value, 10)),
 		);
 		if (!Number.isNaN(v)) {
