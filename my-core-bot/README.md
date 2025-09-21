@@ -15,7 +15,7 @@ Welcome to the **CORE** project repository! We’re excited to have you on board
    git clone your-repo-url && cd my-core-bot && make devcontainer
    ```
 2. Run `make` in the terminal to test.
-3. Open [localhost](http://localhost) in your browser to see the gameplay.
+3. Open [localhost:4000](http://localhost:4000) in your browser to see the gameplay.
 4. Keep going writing your bot! Get started under `my-core-bot/src/main.c`!
 
 ### 📚 Useful Links
