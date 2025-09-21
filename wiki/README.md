@@ -62,10 +62,13 @@ To start building your own CORE bot, ensure you've completed the following prere
 2. **Clone Your CORE Repository** 📧
 	- You will find an invite link to your dedicated CORE repository on GitHub on your teams page.
 
-2. **Follow the README in the repository** 📧
+3. **Follow the README in the repository** 📧
 	- Basically, run `make devcontainer`, and then you can get started! Compile using `make`, visualizer to view the games is under `localhost:4000`, everything in `src/` will be compiled into your bot.
 
 🎉 **You are now ready to start coding!** 😎
+
+4. **Push some code!** 🔝
+	- The code you pushed will be used to execute games in the queue and in the final tournament. So make sure to push your code regularly and use to queue to test your bot against other participants!
 
 ### Play and test against other Teams 🎮
 
@@ -121,14 +124,14 @@ In the `my-core-bot/src/` folder there will already be a little example bot that
 >
 > See also: [Running on the Website](7_website)
 
+### 🪻 Are there limits to how many gems units or cores can hold?
+> No. Go nuts.
+
 ### 🧐 I have found a bug! What do I do?
 
 > 👀
 
 > (Please tell us and open a [GitHub issue](https://github.com/42core-team/monorepo/issues).)
-
-### 🪻 Are there limits to how many gems units or cores can hold?
-> No. Go nuts.
 
 ##### Other questions? Let us know and this section will get longer!
 
