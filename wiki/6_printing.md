@@ -10,7 +10,7 @@ This will get an array of all deposits using the getter system, print it, then f
 
 # Client Lib Functions & Structs
 
-## function `core_print_obj`
+## function [`core_print_obj`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/printing.c#L5)
 
 Prints all information about the current game state of a given object.
 
@@ -22,7 +22,7 @@ void core_print_obj(t_obj *obj);
 
 ---
 
-## function `core_print_objs`
+## function [`core_print_objs`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/printing.c#L53)
 
 Prints multiple objects.
 
@@ -37,7 +37,7 @@ This returns the objects that were given to it as an input. See the usage exampl
 
 ---
 
-## function `core_print_config_unit`
+## function [`core_print_config_unit`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/printing.c#L70)
 
 Prints a selected unit config.
 
@@ -49,7 +49,7 @@ void core_print_config_unit(t_unit_type unit_type);
 
 ---
 
-## function `core_print_config_game`
+## function [`core_print_config_game`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/printing.c#L98)
 
 Prints the game config.
 
@@ -59,7 +59,7 @@ void core_print_config_game(void);
 
 ---
 
-## function `core_print_config`
+## function [`core_print_config`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/printing.c#L118)
 
 Prints the entire game config and all unit configs
 

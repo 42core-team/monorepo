@@ -17,7 +17,9 @@ If it's easier, you can also print the config using the provided core library fu
 
 # Client Lib Functions & Structs
 
-## struct `t_config`
+The following is not comprehensive, there are some more config-related utilites relating to printing as detailed in the [printing](6_printing) section.
+
+## struct [`t_config`](https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L134)
 
 - `gridSize`: The width & height of the map. It's always square.
 - `idle_income`: How much idle income you get every second.
@@ -62,7 +64,7 @@ typedef struct s_config
 
 ---
 
-## struct `t_unit_config`
+## struct [`t_unit_config`](https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L104)
 
 - `name`: The name of the unit.
 - `unit_type`: The unit type of the unit.
@@ -98,7 +100,7 @@ typedef struct s_unit_config
 
 ---
 
-## struct `t_build_type`
+## struct [`t_build_type`](https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L97)
 
 ```c
 typedef enum e_build_type
@@ -113,7 +115,7 @@ Determines whether and what the unit will build if you use it as the builder arg
 
 ---
 
-## function `core_get_unitConfig`
+## function [`core_get_unitConfig`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L25)
 
 Get the unit config for a specific unit type.
 

@@ -22,7 +22,7 @@ For more info & specifics, please check out [the server bomb code](https://githu
 
 # Client Lib Functions & Structs
 
-## struct `t_obj`
+## struct [`t_obj`](https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L45)
 
 Game object structure representing all game objects.
 
@@ -92,7 +92,7 @@ There is no limit to how many gems units or cores can hold.
 
 ---
 
-## struct `t_obj_type`
+## struct [`t_obj_type`](https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L16)
 
 Type of object
 
@@ -117,7 +117,7 @@ typedef enum e_obj_type
 
 ---
 
-## struct `t_obj_state`
+## struct [`t_obj_state`](https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L28)
 
 Object state.
 
@@ -140,7 +140,7 @@ Units will stay uninitialized during the same tick they were created. In the nex
 
 ---
 
-## struct `t_unit_type`
+## struct [`t_unit_type`](https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/units.h#L5)
 
 Type of unit. Which are available differs from event to event
 
@@ -148,7 +148,7 @@ Type of unit. Which are available differs from event to event
 
 ---
 
-## struct `t_pos`
+## struct [`t_pos`](https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L36)
 
 Position structure for 2D coordinates
 

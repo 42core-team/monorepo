@@ -6,7 +6,7 @@ The game struct is your primary source of information about the happenings in th
 
 # Client Lib Functions & Structs
 
-## struct `t_game`
+## struct [`t_game`](https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L177)
 
 Contains all the data about the game. Read it to your liking! Access it anywhere by typing `game.`
 
@@ -27,7 +27,7 @@ typedef struct s_game
 
 ---
 
-## variable `game`
+## variable [`game`](https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L201)
 
 This variable contains all the data about the game.
 It gets updated every time your function is called.
@@ -39,7 +39,7 @@ extern t_game game;
 
 ---
 
-## function `core_startGame`
+## function [`core_startGame`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/con_lib.c#L44)
 
 Starts the connection lib up, initializes the game, connects to the server & starts the game.
 

@@ -42,7 +42,7 @@ e.g.:
 
 # Client Lib Functions & Structs
 
-## function `core_action_createUnit`
+## function [`core_action_createUnit`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#L24)
 
 Create a new unit of specified type.
 The unit will be uninitialized. For more info on what that means, check out the objects page (t_obj_state section).
@@ -58,7 +58,7 @@ t_obj *core_action_createUnit(t_unit_type unit_type);
 
 ---
 
-## function `core_action_move`
+## function [`core_action_move`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#L59)
 
 Moves a unit to a specific position.
 Units can only move one tile up, down, left or right; and only if their action_cooldown is 0.
@@ -70,7 +70,7 @@ Units can only move one tile up, down, left or right; and only if their action_c
 void core_action_move(const t_obj *unit, t_pos pos);
 ```
 
-Alternatively, `core_action_moveTowards` is a very simple pathfinding logic implementation. It won't help you win, but it can be used to easily get started. When you call it, it will determine the next move to make and then immediately either move there or attack objects in its way, provided the objects in its way aren't your units or core.
+Alternatively, [`core_action_moveTowards`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#L67) is a very simple pathfinding logic implementation. It won't help you win, but it can be used to easily get started. When you call it, it will determine the next move to make and then immediately either move there or attack objects in its way, provided the objects in its way aren't your units or core.
 
 ```c
 void core_action_moveTowards(const t_obj *unit, t_pos pos);
@@ -78,7 +78,7 @@ void core_action_moveTowards(const t_obj *unit, t_pos pos);
 
 ---
 
-## function `core_action_attack`
+## function [`core_action_attack`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#L124)
 
 Attacks a target position with a unit.
 Units can only attack one tile up, down, left or right; and only if their action_cooldown is 0.
@@ -96,7 +96,7 @@ void core_action_attack(const t_obj *attacker, t_pos pos);
 
 > **TIP**: Attacking a bomb is what starts its detonation countdown. *Keep calm and don't blow up!*
 
-Alternatively, you can use `core_action_attack_obj` to be able to pass in the object directly into the attack action function. It will behave the same as calling the main attack action function on the target objects position.
+Alternatively, you can use [`core_action_attack_obj`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#L133) to be able to pass in the object directly into the attack action function. It will behave the same as calling the main attack action function on the target objects position.
 
 ```c
 void core_action_attack_obj(const t_obj *attacker, const t_obj *target);
@@ -104,7 +104,7 @@ void core_action_attack_obj(const t_obj *attacker, const t_obj *target);
 
 ---
 
-## function `core_action_transferGems`
+## function [`core_action_transferGems`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#L139)
 
 Gives gems to another object or drops it on the floor.
 
@@ -120,7 +120,7 @@ void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned lo
 
 > **TIP**: Unlike other action parameters, the server won't stop executing the transfer gems action if the gems amount parameter is set higher than the possible amount. That means you can pass `99999` or `-1` (the unsigned integer will underflow), even if the source object is only holding `42` gems, to transfer the maximum possible amount of gems anyways.
 
-Alternatively, you can use `core_action_transferGems_toObj` to be able to pass in the object directly into the transfer gems action function. It will behave the same as calling the main transfer gems action function on the target objects position.
+Alternatively, you can use [`core_action_transferGems_toObj`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#L149) to be able to pass in the object directly into the transfer gems action function. It will behave the same as calling the main transfer gems action function on the target objects position.
 
 ```c
 void core_action_transferGems_toObj(const t_obj *source, t_obj *target, unsigned long amount);
@@ -128,7 +128,7 @@ void core_action_transferGems_toObj(const t_obj *source, t_obj *target, unsigned
 
 ---
 
-## function `core_action_build`
+## function [`core_action_build`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#L155)
 
 Builds a new object.
 Objects can only be built one tile up, down, left or right from the builder; and only if their builders action_cooldown is 0.

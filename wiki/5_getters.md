@@ -28,7 +28,7 @@ Here, `is_deposit` acts as the condition. The getter runs this check on every ob
 
 # Client Lib Functions & Structs
 
-## function `core_get_obj_from_id`
+## function [`core_get_obj_from_id`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L4)
 
 Get any object based on its id.
 - `return`: The object or NULL if no such object exists.
@@ -39,7 +39,7 @@ t_obj *core_get_obj_from_id(unsigned long id);
 
 ---
 
-## function `core_get_obj_from_pos`
+## function [`core_get_obj_from_pos`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L12)
 
 Get any object based on its position.
 - `return`: The object at the position or NULL if no such object exists.
@@ -50,7 +50,7 @@ t_obj *core_get_obj_from_pos(t_pos pos);
 
 ---
 
-## function `core_get_objs_filter`
+## function [`core_get_objs_filter`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L40)
 
 Get all objects matching a custom filtering condition.
 
@@ -65,7 +65,7 @@ t_obj **core_get_objs_filter(bool (*condition)(const t_obj *));
 
 ---
 
-## function `core_get_obj_filter_first`
+## function [`core_get_obj_filter_first`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L63)
 
 Get the first object matching a custom filtering condition. Which one it is is not defined and unpredictable, but most likely the object matching the condition with the smallest id.
 
@@ -80,7 +80,7 @@ t_obj *core_get_obj_filter_first(bool (*condition)(const t_obj *));
 
 ---
 
-## function `core_get_obj_filter_nearest`
+## function [`core_get_obj_filter_nearest`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L72)
 
 Get the nearest object to a given position matching a custom filtering condition. Manhattan distance is used to determine distance. If two objects or more have the same distance, either could be picked.
 
@@ -94,7 +94,7 @@ t_obj *core_get_obj_filter_nearest(t_pos pos, bool (*condition)(const t_obj *));
 
 ---
 
-## function `core_get_objs_filter_count`
+## function [`core_get_objs_filter_count`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L92)
 
 Get the count of objects that match a certain custom filtering condition.
 
