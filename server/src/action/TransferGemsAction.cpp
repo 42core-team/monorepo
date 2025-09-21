@@ -63,7 +63,7 @@ std::string TransferGemsAction::execute(Core *core)
 	if (!is_valid_) return "invalid input";
 
 	Object *srcObj = Board::instance().getObjectById(source_id_);
-	if (!srcObj) return "invalid source object";
+	if (!srcObj) return "no object with source_id " + std::to_string(source_id_);
 
 	Object *dstObj = Board::instance().getObjectAtPos(target_);
 	if (!dstObj) return dropGems(core, srcObj);
@@ -73,16 +73,18 @@ std::string TransferGemsAction::execute(Core *core)
 	// only active objects can transfer gems
 	if (srcObj->getType() != ObjectType::Core && srcObj->getType() != ObjectType::Unit)
 		return "invalid source object type";
-	if (dstObj->getType() != ObjectType::Core && dstObj->getType() != ObjectType::Unit)
-		return "invalid destination object type. please transfer gems only ot object that can hold gems (cores, "
-			   "units).";
+	if (dstObj->getType() != ObjectType::Core && dstObj->getType() != ObjectType::Unit &&
+		dstObj->getType() != ObjectType::GemPile)
+		return "invalid destination object type. please transfer gems only ot object that can hold gems (e.g. cores, "
+			   "units, gem piles).";
 
 	// only as-close-together-as-possible objects can transfer gems
 	Position srcPos = Board::instance().getObjectPositionById(srcObj->getId());
 	Position dstPos = Board::instance().getObjectPositionById(dstObj->getId());
 	Position firstEmptyGridCell = findFirstEmptyGridCell(dstPos);
 	unsigned int maxDist = dstPos.distance(firstEmptyGridCell);
-	if (srcPos.distance(dstPos) > maxDist) return "invalid transfer distance";
+	if (srcPos.distance(dstPos) > maxDist)
+		return "invalid transfer distance; objects aren't as close as possible in Manhattan distance";
 
 	// cant transfer someone else's gems
 	if (srcObj->getType() == ObjectType::Core)
@@ -90,7 +92,8 @@ std::string TransferGemsAction::execute(Core *core)
 		Core *srcCore = (Core *)srcObj;
 		if (srcCore->getTeamId() != core->getTeamId()) return "can't transfer gems from another team core";
 		if (srcCore->getBalance() < amount_) amount_ = srcCore->getBalance();
-		if (srcCore->getBalance() <= 0) return "invalid amount";
+		if (srcCore->getBalance() <= 0)
+			return "invalid amount (tried to transfer " + std::to_string(amount_) + " gems)";
 		srcCore->setBalance(srcCore->getBalance() - amount_);
 	}
 	if (srcObj->getType() == ObjectType::Unit)
@@ -100,7 +103,8 @@ std::string TransferGemsAction::execute(Core *core)
 		if (srcUnit->getActionCooldown() > 0) return "unit is on action cooldown (action cooldown should be 0)";
 		srcUnit->resetActionCooldown();
 		if (srcUnit->getBalance() < amount_) amount_ = srcUnit->getBalance();
-		if (srcUnit->getBalance() <= 0) return "invalid amount";
+		if (srcUnit->getBalance() <= 0)
+			return "invalid amount (tried to transfer " + std::to_string(amount_) + " gems)";
 		srcUnit->setBalance(srcUnit->getBalance() - amount_);
 	}
 
@@ -113,6 +117,11 @@ std::string TransferGemsAction::execute(Core *core)
 	{
 		Unit *dstUnit = (Unit *)dstObj;
 		dstUnit->setBalance(dstUnit->getBalance() + amount_);
+	}
+	if (dstObj->getType() == ObjectType::GemPile)
+	{
+		GemPile *dstGemPile = (GemPile *)dstObj;
+		dstGemPile->setBalance(dstGemPile->getBalance() + amount_);
 	}
 
 	Stats::instance().inc(stat_keys::actions_executed);
