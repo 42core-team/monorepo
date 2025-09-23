@@ -155,15 +155,15 @@ class ReplayLoader {
 		this.cache.set(0, deepClone(fullState));
 
 		for (let t = 1; t <= totalReplayTicks; t++) {
+			const tickData = this.replayData.ticks[t.toString()];
+			if (tickData?.objects) {
+				this.applyDiff(fullState, tickData);
+			}
 			for (const obj of Object.values(fullState)) {
 				if ("ActionCooldown" in obj && obj.ActionCooldown > 0)
 					obj.ActionCooldown--;
 				if ("SpawnCooldown" in obj && obj.SpawnCooldown > 0)
 					obj.SpawnCooldown--;
-			}
-			const tickData = this.replayData.ticks[t.toString()];
-			if (tickData?.objects) {
-				this.applyDiff(fullState, tickData);
 			}
 			if (t % this.cacheInterval === 0) {
 				this.cache.set(t, deepClone(fullState));
@@ -212,15 +212,15 @@ class ReplayLoader {
 		}
 		const state: State = deepClone(cachedState);
 		for (let t = snapshotTick + 1; t <= tick; t++) {
+			const tickData = this.replayData.ticks[t.toString()];
+			if (tickData?.objects) {
+				this.applyDiff(state, tickData);
+			}
 			for (const obj of Object.values(state)) {
 				if ("ActionCooldown" in obj && obj.ActionCooldown > 0)
 					obj.ActionCooldown--;
 				if ("SpawnCooldown" in obj && obj.SpawnCooldown > 0)
 					obj.SpawnCooldown--;
-			}
-			const tickData = this.replayData.ticks[t.toString()];
-			if (tickData?.objects) {
-				this.applyDiff(state, tickData);
 			}
 		}
 
