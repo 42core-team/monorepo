@@ -108,7 +108,6 @@ window.addEventListener("DOMContentLoaded", async () => {
 	}
 	const themeColorParam = urlParams.get("themeColor");
 	if (typeof themeColorParam === "string") {
-		localStorage.setItem("ui.themeColor", `#${themeColorParam}`);
 		document.documentElement.style.setProperty(
 			"--theme-color",
 			`#${themeColorParam}`,
