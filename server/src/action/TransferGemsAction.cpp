@@ -18,6 +18,12 @@ void TransferGemsAction::decodeJSON(json msg)
 	int x = msg["x"];
 	target_ = Position(x, y);
 	amount_ = msg["amount"];
+
+	if (!Position(x, y).isValid(Config::game().gridSize) || amount_ < 0)
+	{
+		is_valid_ = false;
+		return;
+	}
 }
 json TransferGemsAction::encodeJSON()
 {
