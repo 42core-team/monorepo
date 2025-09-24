@@ -112,7 +112,7 @@ function refreshTooltipFromSVGPoint(
 	let obj = currentObjects.find((o: TickObject) => o.x === tx && o.y === ty);
 
 	// if there was nothing at that pos but there is now, it was a move action and we can safely show the tooltip on both tiles
-	if (!obj) {
+	if (!obj && getCurrentTickData().tickProgress > 0) {
 		const movedObj = nextObjects.find(
 			(o: TickObject) => o.x === tx && o.y === ty,
 		);
