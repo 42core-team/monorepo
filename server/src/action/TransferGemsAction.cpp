@@ -19,7 +19,7 @@ void TransferGemsAction::decodeJSON(json msg)
 	target_ = Position(x, y);
 	amount_ = msg["amount"];
 
-	if (!Position(x, y).isValid(Config::game().gridSize) || amount_ < 0)
+	if (!Position(x, y).isValid(Config::game().gridSize))
 	{
 		is_valid_ = false;
 		return;
