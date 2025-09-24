@@ -2,7 +2,7 @@
 
 #include <unordered_set>
 
-Bomb::Bomb() : Object(1, ObjectType::Bomb), countdown_(Config::game().bombCountdown)
+Bomb::Bomb() : Object(Config::game().bombHp, ObjectType::Bomb), countdown_(Config::game().bombCountdown)
 {
 }
 
