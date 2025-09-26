@@ -4,7 +4,11 @@
 
 1. Clone this via SSH
 2. Open this via [Microsoft devcontainer extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) in VSCode
-3. Run `make` to build, `make dev` / `make prod` to run with or without debug flags, `make vis` to start the visualizer.
+3. Run `make` to build, `make vis` to start the visualizer.
+	- `make hp` -> Run the game with the hardcore config on prod stage;
+	- `make sp` -> Run the game with the softcore config on prod stage;
+	- `make hd` -> Run the game with the hardcore config on dev stage;
+	- `make sd` -> Run the game with the softcore config on dev stage;
 
 ---
 
@@ -13,7 +17,7 @@
 - client_lib/ -> previously connection, the C helper lib used by participants
 - server/ -> previously even_COREnier, the gameplay server, single source of truth connection players during matches, cpp
 - visualizer/ -> previously debug_visualizerm displays replay files generated from the server with vanilla html ts css
-- my-core-bot/ -> bot coding environment for Core players. Put files or folders into the .coreignore to not have them show up in the generated player repositories.
+- bots/ -> bot coding environment for Core players. Put files or folders into the .coreignore to not have them show up in the generated player repositories.
 - wiki/ -> previously it's own repo, handles all the documentation. Deployed under wiki.coregame.de; Please make sure to also update the wiki when something wiki-relevant changes.
 
 ---
