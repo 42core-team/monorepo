@@ -229,14 +229,18 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 		if (obj.getType() == ObjectType::Core && obj.getHP() <= 0)
 			removeTeamIds.push_back(static_cast<Core &>(obj).getTeamId());
 	}
-	for (unsigned tid : removeTeamIds)
+	shuffle_vector(removeTeamIds);
+	for (int i = 0; i < (int)removeTeamIds.size(); i++)
 	{
+		unsigned int tid = removeTeamIds[i];
+
 		for (auto it = bridges_.begin(); it != bridges_.end(); ++it)
 		{
 			if ((*it)->getTeamId() == tid)
 			{
 				ReplayEncoder::instance().setDeathReason(tid, death_reason_t::CORE_DESTROYED);
 				unsigned int place = Board::instance().getCoreCount();
+				if (removeTeamIds.size() > 1) place += i; // if multiple died at once, place them randomly
 				ReplayEncoder::instance().setPlace(tid, place);
 				if (place == 0)
 				{
