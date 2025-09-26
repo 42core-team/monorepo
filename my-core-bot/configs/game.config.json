@@ -76,7 +76,7 @@
 			"cost": 175,
 			"hp": 5,
 			"baseActionCooldown": 0,
-			"maxActionCooldown": 0,
+			"maxActionCooldown": 1,
 			"balancePerCooldownStep": 999999,
 			"damageCore": 0,
 			"damageUnit": 0,
