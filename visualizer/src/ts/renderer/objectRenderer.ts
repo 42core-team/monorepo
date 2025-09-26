@@ -106,8 +106,8 @@ export function initializeTeamMapping(): void {
 	const leftCore = cores[0];
 	const rightCore = cores[1];
 
-	if (leftCore !== undefined) teamIdMapping.set(leftCore.teamId, 1);
-	if (rightCore !== undefined) teamIdMapping.set(rightCore.teamId, 0);
+	if (leftCore !== undefined && leftCore.teamId !== undefined) teamIdMapping.set(leftCore.teamId, 1);
+	if (rightCore !== undefined && rightCore.teamId !== undefined) teamIdMapping.set(rightCore.teamId, 0);
 }
 
 function getTeamIndex(teamId: number | undefined): AssetTeam {
