@@ -1,0 +1,129 @@
+/*
+	For this event, there are 5 different unit types available:
+	1. Warrior: A melee combat unit that excels in attacking enemy cores and units.
+	2. Miner: A unit specialized in breaking hard objects such as gem deposits and walls.
+	3. Carrier: A non-combat unit that is very quick, even when carrying many gems.
+	4. Builder: A versatile unit that can construct walls to fortify positions.
+	5. Bomberman: A unit capable of planting bombs to deal area damage to enemies and structures.
+*/
+{
+	"gridSize": 20, // tile count in each x and y directions of map, map will always be square
+	"seed": "", // if server is run twice with same seed, exact same world is generated. specify any string of any length, leave empty for a random seed
+	"idleIncome": 3, // amount of gems automatically deposited into each core each tick before the timeout
+	"idleIncomeTimeOut": 100, // how many ticks the idleIncome last before no more gems are deposited
+	"depositHp": 50, // default HP when a deposit object is spawned
+	"depositIncome": 100, // default amount of gems a deposit is spawned with, might be modified depending on world generator
+	"gemPileIncome": 35, // default amount of gems a gem pile is spawned with, might be modified depending on world generator
+	"coreHp": 99, // health points of a core when its spawned
+	"coreSpawnCooldown": 25, // cooldown in in ticks a core must wait after spawning a unit before it can spawn another unit
+	"initialBalance": 175, // default amount of gems a core is spawned with, might be modified depending on world generator
+	"wallHp": 77, // health points of a wall when its spawned
+	"wallBuildCost": 10, // amount of gems a wall builder unit must pay to build a wall
+	"bombHp": 10, // health points of a bomb when its spawned
+	"bombCountdown": 8, // countdown in ticks from when a bomb is first attacked to when it explodes
+	"bombThrowCost": 24, // amount of gems a bomb builder unit must pay to build a wall
+	"bombReach": 2, // bomb explosion range
+	"bombDamageCore": 49, // damage a bomb does to a core
+	"bombDamageUnit": 15, // damage a bomb does to a unit
+	"bombDamageDeposit": 25, // damage a bomb does to a deposit
+	"worldGenerator": "jigsaw",
+	"worldGeneratorConfig": {
+		"templatePlaceAttemptCount": 5000,
+		"additionalWallPlaceAttemptCount": 50,
+		"depositCount": 35,
+		"gemPileCount": 25,
+		"minTemplateSpacing": 1,
+		"minCoreDistance": 5,
+		"depositAdditionalIncomePerAdjacentWall": 40,
+		"depositMultiplierIfFullySurrounded": 1.3,
+		"randomDepositIncomeVariation": 100,
+		"randomGemPileIncomeVariation": 20
+	},
+	"units": [
+		{
+			"name": "Warrior", // name, for aesthetic / display purposes only
+			"visualizer_asset_path": "warrior", // folder that the units visuals are picked from
+			"cost": 150, // amount of gems needed to spawn the unit
+			"hp": 22, // amount of healthpoints the unit spawns with
+			"baseActionCooldown": 3, // base delay between action executions
+			"maxActionCooldown": 12, // max delay between action executions if unit is holding a lot of gems
+			"balancePerCooldownStep": 12, // defines increase of delay between action executions, see wiki for details
+			"damageCore": 7, // damage the unit does to a core
+			"damageUnit": 6, // damage the unit does to a unit
+			"damageDeposit": 2, // damage the unit does to a deposit
+			"damageWall": 2, // damage the unit does to a wall
+			"damageBomb": 4, // damage the unit does to a bomb
+			"buildType": "none" // whether & what the unit can build
+		},
+		{
+			"name": "Miner",
+			"visualizer_asset_path": "miner",
+			"cost": 100,
+			"hp": 15,
+			"baseActionCooldown": 4,
+			"maxActionCooldown": 8,
+			"balancePerCooldownStep": 35,
+			"damageCore": 3,
+			"damageUnit": 2,
+			"damageDeposit": 10,
+			"damageWall": 15,
+			"damageBomb": 6,
+			"buildType": "none"
+		},
+		{
+			"name": "Carrier",
+			"visualizer_asset_path": "carrier",
+			"cost": 175,
+			"hp": 5,
+			"baseActionCooldown": 0,
+			"maxActionCooldown": 1,
+			"balancePerCooldownStep": 999999,
+			"damageCore": 0,
+			"damageUnit": 0,
+			"damageDeposit": 0,
+			"damageWall": 1,
+			"damageBomb": 2,
+			"buildType": "none"
+		},
+		{
+			"name": "Builder",
+			"visualizer_asset_path": "builder",
+			"cost": 200,
+			"hp": 13,
+			"baseActionCooldown": 6,
+			"maxActionCooldown": 8,
+			"balancePerCooldownStep": 10,
+			"damageCore": 3,
+			"damageUnit": 3,
+			"damageDeposit": 2,
+			"damageWall": 8,
+			"damageBomb": 5,
+			"buildType": "wall"
+		},
+		{
+			"name": "Bomberman",
+			"visualizer_asset_path": "bomberman",
+			"cost": 400,
+			"hp": 8,
+			"baseActionCooldown": 4,
+			"maxActionCooldown": 4,
+			"balancePerCooldownStep": 99999,
+			"damageCore": 4,
+			"damageUnit": 3,
+			"damageDeposit": 5,
+			"damageWall": 3,
+			"damageBomb": 5,
+			"buildType": "bomb"
+		}
+	],
+	"corePositions": [
+		{
+			"x": 0,
+			"y": 0
+		},
+		{
+			"x": 19,
+			"y": 19
+		}
+	]
+}
