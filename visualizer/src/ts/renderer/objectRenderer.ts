@@ -106,12 +106,8 @@ export function initializeTeamMapping(): void {
 	const leftCore = cores[0];
 	const rightCore = cores[1];
 
-	const flip = Math.random() < 0.5;
-	const teamForLight = flip ? leftCore.teamId : rightCore.teamId;
-	const teamForDark = flip ? rightCore.teamId : leftCore.teamId;
-
-	if (teamForLight !== undefined) teamIdMapping.set(teamForLight, 1);
-	if (teamForDark !== undefined) teamIdMapping.set(teamForDark, 0);
+	if (leftCore !== undefined) teamIdMapping.set(leftCore.teamId, 1);
+	if (rightCore !== undefined) teamIdMapping.set(rightCore.teamId, 0);
 }
 
 function getTeamIndex(teamId: number | undefined): AssetTeam {
@@ -162,14 +158,21 @@ function drawObject(
 	scaleFactor: number = 1,
 	metricBars: BarDrawingInstructions[],
 ): void {
-	for (const bar of metricBars) {
-		const color =
-			bar.key === "hp"
+	const teamIndex = getTeamIndex(obj.teamId);
+
+	// Color mixing helper (light team gets lighter metric bars)
+	const colorFor = (key: string): string => {
+		const base =
+			key === "hp"
 				? "var(--hp-color)"
-				: bar.key === "gems"
+				: key === "gems"
 					? "var(--gems-color)"
 					: "var(--cooldown-color)";
+		return teamIndex === 1 ? `color-mix(in srgb, ${base} 55%, white)` : base;
+	};
 
+	for (const bar of metricBars) {
+		const color = colorFor(bar.key);
 		const bg = document.createElementNS(svgNS, "rect");
 		bg.setAttribute("x", xOffset.toString());
 		bg.setAttribute("y", bar.topBorder.toString());
