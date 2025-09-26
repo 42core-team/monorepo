@@ -24,9 +24,10 @@
 
 ## How to write a bot
 
-- configs are at my-core-bot/configs
-- to write a test bot, write it in my-core-bot/your_bot
+- configs are at bots/*/configs
+- to write a test bot, write it in bots/*/your_bot
 - you can also add a new folder for your bot if and add the folder to the coreignore, this will stop it from being added to the user repos
+- please be careful about keeping powerful bots public and making the events uninteresting
 
 ---
 
@@ -35,19 +36,12 @@
 - Label the issue with all the areas of the repo that it relates to. Issue Label names should exactly mirror the names of the respective directoris in the repo.
 - Give all issues a clear type.
 
---- 
-
-## Branches
-
-- my-core-bot branches are 100% synced with this repos branches. If a monorepo branch gets deleted or merged, do the same for the my-core-bot branch.
-
 ---
 
 ## Commit naming structure
 
 - Mirroring the way issues are labeled, we'll start all commits with `[...]` and putting in there the areas the commit is impacting, mirroring label names or the folder names
-- Following our versioning, add a number representing which of the 4 versioning numbers should be incremented by this commit, if any. If no number should be incremented use `"-"` instead.
 
-=> `2 [server|visualizer] Replay format move action contract tweaks`
-=> `4 [client_lib] core_util_distance() math error bugfix`
-=> `- [wiki] Fix some spelling mistakes`
+=> `[server|visualizer] Replay format move action contract tweaks`
+=> `[client_lib] core_util_distance() math error bugfix`
+=> `[wiki] Fix some spelling mistakes`

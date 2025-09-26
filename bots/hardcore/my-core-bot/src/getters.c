@@ -17,6 +17,14 @@ static bool is_deposit(const t_obj *obj)
 {
 	return (obj->type == OBJ_DEPOSIT && obj->state == STATE_ALIVE);
 }
+static bool is_gems(const t_obj *obj)
+{
+	return (obj->type == OBJ_GEM_PILE && obj->state == STATE_ALIVE);
+}
+static bool is_deposit_gems(const t_obj *obj)
+{
+	return (is_deposit(obj) || is_gems(obj));
+}
 
 static bool is_unit(const t_obj *obj)
 {
@@ -47,6 +55,10 @@ t_obj *ft_get_core_opponent(void)
 t_obj *ft_get_deposit_nearest(t_pos pos)
 {
 	return core_get_obj_filter_nearest(pos, is_deposit);
+}
+t_obj *ft_get_deposit_gems_nearest(t_pos pos)
+{
+	return core_get_obj_filter_nearest(pos, is_deposit_gems);
 }
 
 t_obj **ft_get_units_own(void)
