@@ -18,12 +18,6 @@ void TransferGemsAction::decodeJSON(json msg)
 	int x = msg["x"];
 	target_ = Position(x, y);
 	amount_ = msg["amount"];
-
-	if (!Position(x, y).isValid(Config::game().gridSize))
-	{
-		is_valid_ = false;
-		return;
-	}
 }
 json TransferGemsAction::encodeJSON()
 {
@@ -40,6 +34,8 @@ json TransferGemsAction::encodeJSON()
 
 std::string TransferGemsAction::dropGems(Core *core, Object *srcObj)
 {
+	if (!target_.isValid(Config::game().gridSize)) return "target position is out of bounds";
+
 	if (srcObj->getType() != ObjectType::Unit) return "only units can drop gems on the floor";
 
 	if (Board::instance().getObjectPositionById(srcObj->getId()).distance(target_) > 1) return "invalid drop position";
