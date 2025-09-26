@@ -288,7 +288,7 @@
 				},
 				"maxActionCooldown": {
 					"type": "integer",
-					"minimum": 0
+					"minimum": 1
 				},
 				"balancePerCooldownStep": {
 					"type": "integer",
