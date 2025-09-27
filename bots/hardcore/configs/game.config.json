@@ -15,7 +15,7 @@
 	"depositIncome": 100, // default amount of gems a deposit is spawned with, might be modified depending on world generator
 	"gemPileIncome": 35, // default amount of gems a gem pile is spawned with, might be modified depending on world generator
 	"coreHp": 99, // health points of a core when its spawned
-	"coreSpawnCooldown": 25, // cooldown in in ticks a core must wait after spawning a unit before it can spawn another unit
+	"coreSpawnCooldown": 12, // cooldown in in ticks a core must wait after spawning a unit before it can spawn another unit
 	"initialBalance": 175, // default amount of gems a core is spawned with, might be modified depending on world generator
 	"wallHp": 77, // health points of a wall when its spawned
 	"wallBuildCost": 10, // amount of gems a wall builder unit must pay to build a wall
