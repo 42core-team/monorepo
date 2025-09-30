@@ -42,6 +42,28 @@ static std::string sanitizeTeamName(const std::string &teamName, const std::stri
 	return sanitized;
 }
 
+// Build final team name for a given teamId
+// based on client-provided name or website-provided env var if set
+static std::string resolveTeamName(unsigned int teamId, const std::string &clientName)
+{
+	const std::string envKey = "PLAYER_" + std::to_string(teamId) + "_NAME";
+	const char *rawEnv = std::getenv(envKey.c_str());
+	const std::string fallback = "Team" + std::to_string(teamId);
+
+	if (rawEnv && *rawEnv)
+	{
+		std::string fromEnv = sanitizeTeamName(rawEnv, fallback);
+		if (!clientName.empty())
+		{
+			Logger::Log("Using website-provided team name for team " + std::to_string(teamId) + ": '" + fromEnv + "'");
+		}
+		return fromEnv;
+	}
+
+	return sanitizeTeamName(clientName, fallback);
+}
+
+
 int main(int argc, char *argv[])
 {
 	if (argc < 6)
@@ -120,7 +142,7 @@ int main(int argc, char *argv[])
 			continue;
 		}
 		unsigned int teamId = loginMessage["id"];
-		std::string teamName = sanitizeTeamName(loginMessage["name"], std::string("Team") + std::to_string(teamId));
+		std::string teamName = resolveTeamName(teamId, static_cast<std::string>(loginMessage["name"]));
 		bridge->setTeamId(teamId);
 		bridge->setTeamName(teamName);
 		ReplayEncoder::instance().setTeamName(teamId, teamName);
