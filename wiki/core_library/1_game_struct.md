@@ -30,11 +30,21 @@ typedef struct s_game
 ## variable [`game`](https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L201)
 
 This variable contains all the data about the game.
-It gets updated every time your function is called.
+It is the library-provided instance of the t_game struct.
 Include `core_lib.h` in every file you want to use it.
 
 ```c
 extern t_game game;
+```
+
+#### Usage Example:
+
+```c
+for (int i = 0; game.objects && game.objects[i]; i++)
+{
+	t_obj *obj = game.objects[i];
+	// do something with the object here
+}
 ```
 
 ---

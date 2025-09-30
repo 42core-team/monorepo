@@ -1,13 +1,5 @@
 > PRINT FUNCTIONS are used to print information about the game state to the console.
 
-# Usage Example:
-
-```c
-free(core_print_objs(core_get_objs_filter(ft_is_deposit)));
-```
-
-This will get an array of all deposits using the getter system, print it, then free it, all in the same line. *Awesome!*
-
 # Client Lib Functions & Structs
 
 ## function [`core_print_obj`](https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/printing.c#L5)
@@ -34,6 +26,14 @@ t_obj **core_print_objs(t_obj **objs);
 ```
 
 This returns the objects that were given to it as an input. See the usage example above to find out why this may be useful.
+
+#### Usage Example:
+
+```c
+free(core_print_objs(core_get_objs_filter(ft_is_deposit)));
+```
+
+This example will get an array of all deposits using the getter system, print it, then free it, all in the same line. *Awesome!*
 
 ---
 
