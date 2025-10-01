@@ -113,8 +113,4 @@ window.addEventListener("DOMContentLoaded", async () => {
 			`#${themeColorParam}`,
 		);
 	}
-	const suppressParam = urlParams.get("suppress_version_warning");
-	if (suppressParam === "true" || suppressParam === "false") {
-		localStorage.setItem("suppressVersionWarning", suppressParam);
-	}
 });
