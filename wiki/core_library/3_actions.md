@@ -56,7 +56,7 @@ t_obj *core_action_createUnit(t_unit_type unit_type);
 
 > **TIP**: Units are spawned as close to your core as possible - but if all positions directly next to your core are occupied, a flood fill algorithm will be used looking for the next empty space and the unit will be placed there. 
 
-#### Usage Example
+#### Usage Example (core_action_createUnit)
 
 ```c
 if (core_get_objs_filter_count(ft_is_own_team_warrior) < 3)
@@ -79,7 +79,7 @@ Units can only move one tile up, down, left or right; and only if their action_c
 void core_action_move(const t_obj *unit, t_pos pos);
 ```
 
-#### Usage Example:
+#### Usage Example (core_action_move)
 
 ```c
 t_obj *target = ft_get_target();
@@ -105,7 +105,7 @@ Alternatively, `core_action_moveTowards` is a very simple pathfinding logic impl
 void core_action_moveTowards(const t_obj *unit, t_pos pos);
 ```
 
-#### Usage Example:
+#### Usage Example (core_action_moveTowards)
 
 ```c
 t_obj **own_team_warriors = core_get_objs_filter(ft_is_own_team_warrior);
@@ -135,7 +135,7 @@ void core_action_attack(const t_obj *attacker, t_pos pos);
 
 > **TIP**: Attacking a bomb is what starts its detonation countdown. *Keep calm and don't blow up!*
 
-#### Usage Example:
+#### Usage Example (core_action_attack)
 
 ```c
 t_obj *target = ft_get_target();
@@ -155,7 +155,7 @@ Alternatively, you can use `core_action_attack_obj` to be able to pass in the ob
 void core_action_attack_obj(const t_obj *attacker, const t_obj *target);
 ```
 
-#### Usage Example:
+#### Usage Example (core_action_attackObj)
 
 ```c
 t_obj *target = ft_get_target();
@@ -193,7 +193,7 @@ Alternatively, you can use [`core_action_transferGems_toObj`](https://github.com
 void core_action_transferGems_toObj(const t_obj *source, t_obj *target, unsigned long amount);
 ```
 
-#### Usage Example:
+#### Usage Example (core_action_transferGems_toObj)
 
 ```c
 t_obj *nearest_deposit = ft_get_deposit_nearest(obj->pos);
@@ -222,7 +222,7 @@ void core_action_build(const t_obj *builder, t_pos pos);
 
 The `t_build_type` of the builder unit in the config will determine what gets built (e.g. bomb or wall).
 
-#### Usage Example:
+#### Usage Example (core_action_build)
 
 ```c
 t_obj *unit = ft_get_wall_builder_unit();

@@ -1,6 +1,6 @@
 ### 📜 Let's exp**LORE** the **CORE** **LORE**
 
-> This is required reading and you will immediately lose Core Game if you don't memorize the following text.
+> This is required reading and you will immediately lose Core Game if you don't *memorize* the following text.
 
 In the year 2542, as the burned remains of World War III ushered in
 a fragile new beginning, Earth rose once more from the ashes of a

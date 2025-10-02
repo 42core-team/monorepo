@@ -37,7 +37,7 @@ Include `core_lib.h` in every file you want to use it.
 extern t_game game;
 ```
 
-#### Usage Example:
+#### Usage Example (Game)
 
 ```c
 for (int i = 0; game.objects && game.objects[i]; i++)

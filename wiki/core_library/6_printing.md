@@ -27,7 +27,7 @@ t_obj **core_print_objs(t_obj **objs);
 
 This returns the objects that were given to it as an input. See the usage example above to find out why this may be useful.
 
-#### Usage Example:
+#### Usage Example (core_print_objs)
 
 ```c
 free(core_print_objs(core_get_objs_filter(ft_is_deposit)));

@@ -38,13 +38,17 @@ To start building your own CORE bot, ensure you've completed the following prere
 4. **Push some code!** 🔝
 	- The code you pushed will be used to execute games in the queue and in the final tournament. So make sure to push your code regularly and use to queue to test your bot against other participants!
 
+### 📝 Example Code
+
+In the `my-core-bot/src/` folder there will already be a little example bot that does basic actions.
+
+### 🔎 Get into Core Game!
+
+Look at all the different Core Game Library Info Pages in the sidebar to get sense of how things work! This wiki is your key to the trophy. 🏆
+
 ### Play and test against other Teams 🎮
 
 Once the default test bot is too boring and you always win, feel free to share your compiled bot with other teams and play against them. You can do this via the queue feature on the website or locally. Of course, you can't force them but it might benefit both of you to see your bots in _real_ action.
-
-## 📝 Example Code
-
-In the `my-core-bot/src/` folder there will already be a little example bot that does basic actions.
 
 # 🏆 To win the event
 

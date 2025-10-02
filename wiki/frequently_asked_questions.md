@@ -27,4 +27,4 @@
 
 > (Please tell us and open a [GitHub issue](https://github.com/42core-team/monorepo/issues).)
 
-##### Other questions? Let us know and this section will get longer!
+Other questions? Let us know and this section will get longer!
