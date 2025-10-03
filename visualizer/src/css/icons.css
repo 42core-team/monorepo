@@ -1,0 +1,31 @@
+:root {
+	--team-one-color: hsl(145, 100%, 50%);
+	--team-two-color: hsl(220, 100%, 50%);
+
+	--board-tint-strength: 18%;
+}
+
+:root[data-theme="light"] {
+	--svg-icon-fill: hsl(220 15% 25%);
+}
+:root[data-theme="dark"] {
+	--svg-icon-fill: hsl(220 15% 85%);
+}
+
+.icon {
+	fill: var(--svg-icon-fill);
+}
+
+.team-0.icon {
+	fill: color-mix(in srgb, var(--team-two-color) 70%, var(--svg-icon-fill) 30%);
+}
+.team-1.icon {
+	fill: color-mix(in srgb, var(--team-one-color) 70%, var(--svg-icon-fill) 30%);
+}
+
+:root[data-theme="dark"] .team-0.icon {
+	fill: color-mix(in srgb, var(--team-two-color) 70%, var(--svg-icon-fill) 60%);
+}
+:root[data-theme="dark"] .team-1.icon {
+	fill: color-mix(in srgb, var(--team-one-color) 70%, var(--svg-icon-fill) 60%);
+}

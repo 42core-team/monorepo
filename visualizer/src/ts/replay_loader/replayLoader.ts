@@ -1,4 +1,5 @@
 import { resetTimeManager } from "../input_manager/timeManager";
+import { ensureIcons } from "../renderer/iconManager";
 import { setupRenderer } from "../renderer/renderer";
 import type { TickAction } from "./action";
 import type { GameConfig } from "./config";
@@ -287,6 +288,7 @@ async function resetReplay(reason: string = "reset"): Promise<void> {
 	tempStateCache = null;
 	resetTimeManager();
 	setupRenderer();
+	ensureIcons();
 	console.debug(
 		`Replay reset (${reason}). override=${Boolean(replayDataOverride)} etag=${lastEtag}`,
 	);

@@ -12,19 +12,6 @@ import {
 
 const svgNS = "http://www.w3.org/2000/svg";
 
-export type AssetTeam = 0 | 1;
-const svgAssets = {
-	0: {
-		0: "cores/1.svg",
-		1: "cores/2.svg",
-	},
-	1: {},
-	2: "deposit.svg",
-	3: "wall.svg",
-	4: "gem_pile.svg",
-	5: "bomb.svg",
-} as const;
-
 // metric bar interpolator
 
 type BarDrawingInstructions = {
@@ -94,6 +81,7 @@ function computeSmoothBarInstructions(
 
 // team mapping utils
 
+export type AssetTeam = 0 | 1;
 const teamIdMapping: Map<number, AssetTeam> = new Map(); // number / asset id
 
 export function initializeTeamMapping(): void {
@@ -194,54 +182,49 @@ function drawObject(
 
 	// object icon
 
-	let path: string;
-
-	switch (obj.type) {
-		case 0: {
-			// Core
-			const cores = svgAssets[0];
-			const teamIndex = getTeamIndex(obj.teamId);
-			path = cores[teamIndex];
-			break;
-		}
-		case 1: {
-			// Unit
-			const unitType = obj.unit_type;
-			if (obj.unit_type === undefined) {
-				throw new Error(`Unit object ${obj.id} missing unit_type 🤯`);
+	const symbolId = (() => {
+		switch (obj.type) {
+			case 0:
+				return getTeamIndex(obj.teamId) === 0 ? "icon-core-1" : "icon-core-2";
+			case 1: {
+				const assetPath =
+					getGameConfig()?.units[obj.unit_type!]?.visualizer_asset_path;
+				return `icon-unit-${assetPath}-${getTeamIndex(obj.teamId) + 1}`;
 			}
-			const assetPath = getGameConfig()?.units[unitType]?.visualizer_asset_path;
-			const teamIndex = getTeamIndex(obj.teamId);
-			path = `units/${assetPath}/${teamIndex + 1}.svg`;
-			break;
+			case 2:
+				return "icon-deposit";
+			case 3:
+				return "icon-wall";
+			case 4:
+				return "icon-gem";
+			case 5:
+				return "icon-bomb";
 		}
-		case 2:
-		case 3:
-		case 4:
-		case 5: {
-			path = svgAssets[obj.type as 2 | 3 | 4 | 5];
-			break;
-		}
+	})();
+
+	let use = svgCanvas.querySelector(
+		`use[data-obj-id="${obj.id}"]`,
+	) as SVGUseElement | null;
+	if (!use) {
+		use = document.createElementNS(svgNS, "use");
+		use.setAttribute("data-obj-id", String(obj.id));
+	}
+	use.setAttribute("href", `#${symbolId}`);
+
+	use.classList.add("game-object", "icon");
+	use.classList.remove("not-touched");
+
+	use.classList.remove("team-0", "team-1");
+	if ("teamId" in obj) {
+		use.classList.add(`team-${getTeamIndex(obj.teamId)}`);
 	}
 
-	let img = document.querySelector(
-		`image[data-obj-id="${obj.id}"]`,
-	) as SVGImageElement | null;
-
-	if (!img) {
-		img = document.createElementNS(svgNS, "image");
-		img.setAttribute("data-obj-id", obj.id.toString());
-	}
-	img.classList.add("game-object");
-	img.classList.remove("not-touched");
-	img.classList.remove("team-0", "team-1");
-	if (obj.type === 0 || obj.type === 1) {
-		img.classList.add(`team-${getTeamIndex(obj.teamId)}`);
-	}
-	const href = `/assets/object-svgs/${path}`;
-	if (img.getAttribute("href") !== href) {
-		img.setAttribute("href", href);
-	}
+	use.setAttribute("href", `#${symbolId}`);
+	use.setAttributeNS(
+		"http://www.w3.org/1999/xlink",
+		"xlink:href",
+		`#${symbolId}`,
+	);
 
 	let scale = 0.8;
 	if (obj.type === 2) {
@@ -252,10 +235,10 @@ function drawObject(
 		scale = 0.6; // Gem Pile
 	}
 	const offset = (1 - scale * scaleFactor) / 2;
-	img.removeAttribute("x");
-	img.removeAttribute("y");
-	img.setAttribute("width", "1");
-	img.setAttribute("height", "1");
+	use.removeAttribute("x");
+	use.removeAttribute("y");
+	use.setAttribute("width", "1");
+	use.setAttribute("height", "1");
 	const baseTransform = `translate(${xOffset + offset},${yOffset + offset}) scale(${scale * scaleFactor})`;
 
 	// flip team 1s units horizontally
@@ -264,9 +247,9 @@ function drawObject(
 		finalTransform += " translate(1,0) scale(-1,1)";
 	}
 
-	img.setAttribute("transform", finalTransform);
+	use.setAttribute("transform", finalTransform);
 
-	svgCanvas.appendChild(img);
+	svgCanvas.appendChild(use);
 }
 
 export function calcAndDrawObject(

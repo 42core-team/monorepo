@@ -60,10 +60,10 @@ function drawFrame(timestamp: number): void {
 		return;
 	}
 
-	const nonPersistentElements = svgCanvas.querySelectorAll(":not(.persistent)");
-
-	for (const element of nonPersistentElements) {
-		element.classList.add("not-touched");
+	for (const element of svgCanvas.querySelectorAll("*")) {
+		if (!(element as Element).closest(".persistent")) {
+			element.classList.add("not-touched");
+		}
 	}
 
 	for (const currObj of replayData.objects) {
@@ -89,7 +89,9 @@ function drawFrame(timestamp: number): void {
 	}
 
 	for (const element of svgCanvas.querySelectorAll(".not-touched")) {
-		element.remove();
+		if (!(element as Element).closest(".persistent")) {
+			element.remove();
+		}
 	}
 
 	scheduleNextFrame();
