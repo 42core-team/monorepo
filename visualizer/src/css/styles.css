@@ -15,10 +15,6 @@
 }
 
 :root[data-theme="light"] {
-	--hp-color: #c70202ff;
-	--gems-color: #008600ff;
-	--cooldown-color: #0066ffff;
-
 	--panel-bg: color-mix(in srgb, var(--theme-color) 7%, white);
 	--panel-outline: color-mix(in srgb, var(--theme-color) 50%, white);
 	--panel-track: color-mix(in srgb, white, black 45%);
@@ -30,16 +26,14 @@
 	--app-bg: color-mix(in srgb, var(--theme-color) 25%, white);
 	--grid-bg: var(--panel-bg);
 
+	--gridline-color: rgba(0, 0, 0, 0.12);
+
 	--corner-buttons-color: var(--theme-color);
 
 	--fireworks-darkening-layer: rgba(0, 0, 0, 0.75);
 }
 
 :root[data-theme="dark"] {
-	--hp-color: rgb(242, 12, 12);
-	--gems-color: rgb(0, 215, 0);
-	--cooldown-color: #0066ffff;
-
 	--panel-bg: color-mix(
 		in srgb,
 		color-mix(in srgb, var(--theme-color) 25%, white),
@@ -51,6 +45,8 @@
 
 	--text: #e8e8ea;
 	--tooltip-shadow-contrast: #000000;
+
+	--gridline-color: rgba(0, 0, 0, 0.28);
 
 	--app-bg: color-mix(in srgb, var(--theme-color) 40%, black);
 	--grid-bg: color-mix(in srgb, var(--panel-bg) 50%, black);
@@ -121,22 +117,30 @@ a {
 
 	background-position:
 		0 0,
+		0 0,
 		0 0;
-	background-repeat: repeat, repeat;
+	background-repeat: repeat, repeat, no-repeat;
+	background-size:
+		auto,
+		auto,
+		100% 100%;
 }
 
 :root[data-gridlines="on"] #svg-canvas {
 	--cell: calc(var(--svg-canvas-scale) / var(--grid-size));
 	background-image:
 		linear-gradient(to right, var(--gridline-color) 1px, transparent 1px),
-		linear-gradient(to bottom, var(--gridline-color) 1px, transparent 1px);
+		linear-gradient(to bottom, var(--gridline-color) 1px, transparent 1px),
+		var(--field-gradient);
 	background-size:
 		var(--cell) 100%,
-		100% var(--cell);
+		100% var(--cell),
+		100% 100%;
+	background-blend-mode: multiply, multiply, normal;
 }
 
 :root[data-gridlines="off"] #svg-canvas {
-	background-image: none;
+	background-image: var(--field-gradient);
 }
 
 #tooltip {

@@ -177,6 +177,11 @@ function drawObject(
 		fg.setAttribute("height", String(bar.bottomBorder - bar.topBorder));
 		fg.setAttribute("fill", color);
 		fg.setAttribute("fill-opacity", String(1 * scaleFactor));
+		fg.setAttribute(
+			"stroke",
+			"color-mix(in srgb, var(--panel-outline) 70%, transparent)",
+		);
+		fg.setAttribute("stroke-width", "0.02");
 		svgCanvas.appendChild(fg);
 	}
 

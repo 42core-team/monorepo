@@ -1,15 +1,45 @@
 :root {
-	--team-one-color: hsl(145, 100%, 50%);
-	--team-two-color: hsl(220, 100%, 50%);
+	--team-one-color: #0072b2;
+	--team-two-color: #d55e00;
 
-	--board-tint-strength: 18%;
+	--board-tint-strength: 50%;
 }
 
 :root[data-theme="light"] {
 	--svg-icon-fill: hsl(220 15% 25%);
+
+	--hp-color: #cc79a7;
+	--gems-color: #f0e442;
+	--cooldown-color: #009e73;
 }
 :root[data-theme="dark"] {
 	--svg-icon-fill: hsl(220 15% 85%);
+
+	--hp-color: #e18ac1;
+	--gems-color: #f3e96b;
+	--cooldown-color: #22b488;
+}
+
+:root {
+	--field-stop-tl: color-mix(
+		in srgb,
+		var(--grid-bg) calc(100% - var(--board-tint-strength)),
+		var(--team-one-color) var(--board-tint-strength)
+	);
+	--field-stop-mid: var(--grid-bg);
+	--field-stop-br: color-mix(
+		in srgb,
+		var(--grid-bg) calc(100% - var(--board-tint-strength)),
+		var(--team-two-color) var(--board-tint-strength)
+	);
+
+	--field-gradient: linear-gradient(
+		to bottom right,
+		var(--field-stop-tl) 0%,
+		var(--field-stop-mid) 25%,
+		var(--field-stop-mid) 75%,
+		var(--field-stop-br) 100%
+	);
 }
 
 .icon {
