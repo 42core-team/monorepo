@@ -1,25 +1,3 @@
-Everything that can be on the game grid is an object.
-
-There are never two objects in one grid position.
-
-Each object has a unique id that never changes and never gets reused.
-
-# Bomb Explosions
-
-To start a bombs countdown, attack it.
-
-The bombs countdown will then continue to decrement by 1 each tick. After a bombs countdown has ended, an explosion will trigger. The explosion will realistically flood out, stopping only at walls.
-
-If an idle or still-counting-down bomb is within range of an explosion, it will explode immediately, creating a chain reaction.
-
-If the bomb receives enough damage while its countdown is going down to reach 0 hp before its explosion, the bomb will be defused, destroying it without causing an explosion.
-
-The algorithm used to determine whether a given grid position should be hit with explosion damage is a sort of reversed Bresenham / raycast type algorithm. From every possible position in range that could explode, we'll draw a metaphorical line between the center of that grid position and the center of the bomb. If this line crosses over any walls, the position won't explode, otherwise it will. If the line crosses over an edge of a wall exactly, that won't count as the wall overlapping.
-
-The bomb reach is in addition the the tile the bomb is standing on, so a bomb reach of three would result in an explosion with a diameter of 7.
-
-For more info & specifics, please check out [the server bomb code](https://github.com/42core-team/monorepo/blob/dev/server/src/object/Bomb.cpp) directly.
-
 # Client Lib Functions & Structs
 
 ## struct [`t_obj`](https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L45)
