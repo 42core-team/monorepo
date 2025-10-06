@@ -29,10 +29,10 @@ void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned lo
 ```c
 t_obj *nearest_deposit = ft_get_deposit_nearest(obj->pos);
 if (nearest_deposit && obj->s_unit.gems <= 0)
-	core_action_moveTowards(obj, nearest_deposit->pos);
+	core_action_pathfind(obj, nearest_deposit->pos);
 else
 {
-	core_action_moveTowards(obj, ft_get_core_own()->pos);
+	core_action_pathfind(obj, ft_get_core_own()->pos);
 	core_action_transferGems(obj, ft_get_core_own()->pos, -1);
 }
 ```

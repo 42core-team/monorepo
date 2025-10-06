@@ -1,10 +1,10 @@
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#L124
+https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#L133
 
 ## Description
 
-Attacks a target position with a unit.
+Attacks a target with a unit.
 
 This action not only used to damage any object, but it's also good for destroying deposits, picking up gem piles & lighting a bomb's fuse.
 
@@ -15,13 +15,13 @@ Units can only attack one tile up, down, left or right; and only if their action
 ## Signature
 
 ```c
-void core_action_attack(const t_obj *attacker, t_pos pos);
+void core_action_attack(const t_obj *attacker, const t_obj *target);
 ```
 
 ## Parameters
 
 - `attacker`: The unit that should attack
-- `pos`: The position where the unit should attack
+- `target`: The object the unit should attack
 
 ## Examples
 
@@ -31,7 +31,7 @@ t_obj *unit = ft_get_attacker_unit();
 
 if (manhattan_distance(unit->pos, target->pos) <= 1)
 {
-	core_action_attack(unit, target->pos);
+	core_action_attack(unit, target);
 }
 ```
 

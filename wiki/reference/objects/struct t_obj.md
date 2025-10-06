@@ -13,15 +13,12 @@ There is no limit to how many gems units or cores can hold.
 > **TIP**: The `void *data` field is **especially powerful & useful**. The library will never touch this field, it's yours to mess with for whatever you want.\
 It can already safely be set when a unit is still uninitialized, so immediately after unit creation, in the same tick. It's generally used to store specific jobs, tasks or targets of the unit in the easiest way possible.
 
-> **WARNING**: Objects that have `state` set to `STATE_UNINITIALIZED` can only be partially interacted with. See `t_obj_state`for specifics.
-
 ## Signature
 
 ```c
 typedef struct s_obj
 {
 	t_obj_type type;
-	t_obj_state state;
 	void *data;
 	unsigned long id;
 	t_pos pos;
@@ -56,7 +53,6 @@ typedef struct s_obj
 ## Parameters
 
 - `type`: Type of the obj
-- `state`: State of the obj
 - `data`: Custom data, save whatever you want here, it will persist across ticks.
 - `id`: The unique id of the obj
 - `pos`: The position of the obj

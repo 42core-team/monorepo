@@ -4,7 +4,7 @@ Filtering lets you pass in a custom function to some getter functions that decid
 // Simple filter: return true only if obj is a deposit and alive
 static bool is_deposit(const t_obj *obj)
 {
-	return (obj->type == OBJ_DEPOSIT && obj->state == STATE_ALIVE);
+	return (obj->type == OBJ_DEPOSIT);
 }
 
 void example(void)
