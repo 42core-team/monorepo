@@ -13,9 +13,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        Please try to give the issue an appropriate label based on the components of Core Game it likely affects.
+        Please don't forget to select an appropriate issue type.
 
   - type: markdown
     attributes:
       value: |
-        Please try to select an appropriate issue type.
+        Please try to give the issue an appropriate label based on the components of Core Game it likely affects.
