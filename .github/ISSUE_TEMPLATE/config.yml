@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Website Repo
+    url: https://github.com/42core-team/website
+    about: Please open an issue in this repository instead if the topic is website-/online-matchmaking-related.
