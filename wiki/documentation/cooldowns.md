@@ -8,7 +8,7 @@ The cooldowns automatically count down by 1 every tick.
 After any action, the unit’s action cooldown becomes base + something depending on how many gems it carries (bounded between 1 and max).
 
 The value the action cooldown is reset to after a unit performed an action is calculated like this:
-`max( 1, min( {the units maxActionCooldown from config}, {the units baseActionCooldown from config} +  {the units gems} / {the units balancePerCooldownStep from config} ) )`. Integer devision is used.
+`max( 1, min( {the units maxActionCooldown from config}, {the units baseActionCooldown from config} +  {the units gems} / {the units balancePerCooldownStep from config} ) )`. Integer division is used.
 
 e.g.:
 

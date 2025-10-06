@@ -37,7 +37,7 @@ typedef struct s_unit_config
 - `unsigned long dmg_unit`: How much damage the unit deals to units.
 - `unsigned long dmg_deposit`: How much damage the unit deals to deposits.
 - `unsigned long dmg_wall`: How much damage the unit deals to walls.
-- `unsigned long dmg_bomb`: How much damage the unit deals to walls.
+- `unsigned long dmg_bomb`: How much damage the unit deals to bombs.
 - `t_build_type build_type`: The units build type. If "none", the unit can't build.
 - `unsigned long baseActionCooldown`: The time a unit waits between moves if it is not carrying any gems.
 - `unsigned long maxActionCooldown`: The maximum boundary of a units wait time between moves if it's carrying a ton of gems.

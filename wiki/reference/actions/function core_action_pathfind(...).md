@@ -4,7 +4,7 @@ https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c
 
 ## Description
 
-Cery simple pathfinding logic implementation. It won't help you win, but it can be used to easily get started while you figure out how the game works.
+Very simple pathfinding logic implementation. It won't help you win, but it can be used to easily get started while you figure out how the game works.
 
 When you call it, it will determine the next move to make and then immediately either move there or attack objects in its way, provided the objects in its way aren't your units or core.
 
