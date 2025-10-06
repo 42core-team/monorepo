@@ -4,7 +4,7 @@
 
 Read it carefully, there are many helpful tidbits hidden in here.
 
-Especially the tips & tricks section down below and the tip boxes in the Core Library Pages can be incredibly helpful.
+Especially the [tips & tricks section](tips_and_tricks) down below and the tip boxes in the [Core Library Pages](core_library/README) can be incredibly helpful.
 
 Reading the documentation sucks, but it was handwritten to be as helpful as possible and is worth a skim. If there was a question that the documentation didn't answer, please let us know so we can tell you and improve the documentation.
 
@@ -14,7 +14,7 @@ CORE GAME is a programming competition where you can write a bot and compete aga
 
 You don't have any direct access to the game while its playing, like in a classic game. Instead you create a program that executes your strategy and dynamically adapts to any situation thrown at it. Later, your bot can play against the bots the other event participants wrote.
 
-To avoid being defeated, you can spawn a variety of units to defend and attack your opponent. These all have different stats, abilities and drawbacks. To spawn them, you need gems. To have a look at what units are available, look at the [config](4_configs).
+To avoid being defeated, you can spawn a variety of units to defend and attack your opponent. These all have different stats, abilities and drawbacks. To spawn them, you need gems. To have a look at what units are available, look at the [config](core_library/4_configs).
 
 You can receive gems by having your units attack the gem deposits on the map or via idle income which you get automatically. Good resource management is critical to creating a successful bot.
 
@@ -25,7 +25,7 @@ To start building your own CORE bot, ensure you've completed the following prere
 ### Prerequisites
 
 1. **Be a Registered CORE Participant/Team** ✨
-	- Visit our website, [COREGAME.de](https://coregame.de/), sign up, and add your team members.
+	- Visit our website, [COREGAME.de](https://coregame.de/), sign up, join the right event, and add your team members.
 
 2. **Clone Your CORE Repository** 📧
 	- You will find an invite link to your dedicated CORE repository on GitHub on your teams page.
@@ -44,7 +44,7 @@ In the `my-core-bot/src/` folder there will already be a little example bot that
 
 ### 🔎 Get into Core Game!
 
-Look at all the different Core Game Library Info Pages in the sidebar to get sense of how things work! This wiki is your key to the trophy. 🏆
+Look at all the different [Core Game Library Info Pages](core_library/README) in the sidebar to get sense of how things work! This wiki is your key to the trophy. 🏆
 
 ### Play and test against other Teams 🎮
 
