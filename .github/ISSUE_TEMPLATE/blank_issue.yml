@@ -1,0 +1,21 @@
+name: 📋 Blank Issue
+description: Report unexpected or unintended behaviour
+type: Bug
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Add a description
+      placeholder: Type your description here...
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        Please try to give the issue an appropriate label based on the components of Core Game it likely affects.
+
+  - type: markdown
+    attributes:
+      value: |
+        Please try to select an appropriate issue type.

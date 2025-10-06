@@ -12,16 +12,14 @@ body:
     id: explanation
     attributes:
       label: Feature Summary
-      description: Short explanation of the feature or improvement.
-      placeholder: A concise summary of your idea...
+      placeholder: Short explanation of the feature or improvement.
     validations:
       required: true
 
   - type: textarea
     id: usefulness
     attributes:
-      label: Why is this useful?
-      description: Why would this feature be needed or beneficial?
+      label: Why is this needed / beneficial?
       placeholder: Describe how it improves the experience or solves a problem.
     validations:
       required: true
@@ -30,15 +28,13 @@ body:
     id: implementation
     attributes:
       label: How could it work?
-      description: How do you imagine this feature being implemented or functioning in-game?
-      placeholder: Outline a rough idea of the implementation details.
+      placeholder: How do you imagine this feature being implemented or functioning in-game?
 
   - type: textarea
     id: references
     attributes:
       label: References / Examples
-      description: Optional links, examples, screenshots, or notes.
-      placeholder: Add any helpful context or inspiration links here.
+      placeholder: Optional links, examples, screenshots, or notes.
 
   - type: markdown
     attributes:
