@@ -1,5 +1,4 @@
 name: 📋 Blank Issue
-description: Report unexpected or unintended behaviour
 type: Bug
 body:
   - type: textarea
