@@ -1,3 +1,7 @@
+## URL
+
+https://github.com/42core-team/monorepo/blob/dev/client_lib/src/con_lib.c#L44
+
 ## Description
 
 Starts the Core lib up, initializes the game, connects to the server & starts the game.

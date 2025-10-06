@@ -1,3 +1,7 @@
+## URL
+
+https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L177
+
 ## Description
 
 The game struct is your primary source of information about the happenings in the game. It contains the entire game state.
