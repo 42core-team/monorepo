@@ -1,7 +1,7 @@
 Filtering lets you pass in a custom function to some getter functions that decides whether an object should be included or not.
 
 ```c
-// Simple filter: return true only if obj is a deposit and alive
+// Simple filter: return true only if obj is a deposit
 static bool is_deposit(const t_obj *obj)
 {
 	return (obj->type == OBJ_DEPOSIT);
@@ -19,3 +19,5 @@ void example(void)
 ```
 
 Here, `is_deposit` acts as the condition. The getter runs this check on every object in the game and returns the one closest to `(5,5)` that passes.
+
+This can be used with a large variety of different getter functions.

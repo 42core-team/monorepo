@@ -16,12 +16,15 @@ int core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 
 ## Parameters
 
-- `team_name`: Name of your team
-- `argc`: Argument count from main function
-- `argv`: Arguments from main function
-- `tick_callback`: Function that will be called every game tick once new server data is available.
-- `debug`: Set to true to enable logging of all client/server packets sent & received.
-- `return`: 0 on success, another number on failure.
+- `const char *team_name`: Name of your team
+- `int argc`: Argument count from main function
+- `char **argv`: Arguments from main function
+- `void (*tick_callback)(unsigned long)`: Function that will be called every game tick once new server data is available.
+- `bool debug`: Set to true to enable logging of all client/server packets sent & received. Largely used for Core Game Development, probably not useful in events.
+
+## Return
+
+- `int`: Returns 0 on success, another number on failure.
 
 ## Examples
 

@@ -14,6 +14,12 @@ void core_print_config_game(void);
 
 ## Parameters
 
+void
+
+## Return
+
+void
+
 ## Examples
 
 ## Related

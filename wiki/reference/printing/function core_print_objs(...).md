@@ -14,8 +14,11 @@ t_obj **core_print_objs(t_obj **objs);
 
 ## Parameters
 
-- `objs`: The objects to print information about.
-- `return`: The inputted objects array, so you can easily free in the same line as you print.
+- `t_obj **objs`: The objects to print information about.
+
+## Return
+
+- `t_obj **`: Returns the inputted objects array, so you can easily free in the same line as you print. (see example)
 
 ## Examples
 

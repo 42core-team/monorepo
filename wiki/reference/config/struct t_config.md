@@ -33,23 +33,23 @@ typedef struct s_config
 
 ## Parameters
 
-- `gridSize`: The width & height of the map. It's always square.
-- `idle_income`: How much idle income you get every second.
-- `idle_income_timeout`: After how many ticks from the start of the game you'll stop receiving idle income.
-- `deposit_hp`: How much healthpoints a deposit has at the start of the game.
-- `deposit_income`: A gem pile object with what balance the deposit will drop at its previous position when it is destroyed.
-- `gem_pile_income`: How many gems a default gem pile object contains.
-- `core_hp`: How much healthpoints a core has at the start of the game.
-- `core_spawn_cooldown`: Ticks it takes after a unit was spawned before core can spawn another unit.
-- `initial_balance`: How many gems in their core a team starts with.
-- `wall_hp`: How many healthpoints a wall has at the start of the game.
-- `wall_build_cost`: How much it costs for a builder to build a wall.
-- `bomb_hp`: How many healthpoints a bomb has.
-- `bomb_countdown`: How many ticks a bomb takes to explode after being thrown.
-- `bomb_throw_cost`: How much it costs to throw a bomb.
-- `bomb_reach`: How big the explosion of a bomb is. See the [objects](./2_objects) page for more info on the bomb explosion pattern.
-- `bomb_damage`: How much damage a bomb does to objects hit by its explosion.
-- `units`: List of all unit types that are available in the game. NULL-terminated.
+- `unsigned long gridSize`: The width & height of the map. It's always square.
+- `unsigned long idle_income`: How much idle income you get every second.
+- `unsigned long idle_income_timeout`: After how many ticks from the start of the game you'll stop receiving idle income.
+- `unsigned long deposit_hp`: How much healthpoints a deposit has at the start of the game.
+- `unsigned long deposit_income`: A gem pile object with what balance the deposit will drop at its previous position when it is destroyed.
+- `unsigned long gem_pile_income`: How many gems a default gem pile object contains.
+- `unsigned long core_hp`: How much healthpoints a core has at the start of the game.
+- `unsigned long core_spawn_cooldown`: Ticks it takes after a unit was spawned before core can spawn another unit.
+- `unsigned long initial_balance`: How many gems in their core a team starts with.
+- `unsigned long wall_hp`: How many healthpoints a wall has at the start of the game.
+- `unsigned long wall_build_cost`: How much it costs for a builder to build a wall.
+- `unsigned long bomb_hp`: How many healthpoints a bomb has.
+- `unsigned long bomb_countdown`: How many ticks a bomb takes to explode after being thrown.
+- `unsigned long bomb_throw_cost`: How much it costs to throw a bomb.
+- `unsigned long bomb_reach`: How big the explosion of a bomb is. See the [objects](./2_objects) page for more info on the bomb explosion pattern.
+- `unsigned long bomb_damage`: How much damage a bomb does to objects hit by its explosion.
+- `t_unit_config **units`: List of all unit types that are available in the game. NULL-terminated.
 
 ## Examples
 

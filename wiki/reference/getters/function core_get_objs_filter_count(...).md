@@ -14,8 +14,11 @@ unsigned int core_get_objs_filter_count(bool (*condition)(const t_obj *));
 
 ## Parameters
 
-- `condition`: Selection function filtering pointer returning if the inputted object should be counted
-- `return`: Count of objects in the game that match condition.
+- `bool (*condition)(const t_obj *)`: Selection function filtering pointer returning if the inputted object should be counted
+
+## Return
+
+- `unsigned int`: Count of objects in the game that match the condition.
 
 ## Examples
 

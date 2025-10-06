@@ -14,7 +14,11 @@ void core_print_obj(t_obj *obj);
 
 ## Parameters
 
-- `obj`: The object to print information about
+- `t_obj *obj`: The object to print information about
+
+## Return
+
+void
 
 ## Examples
 

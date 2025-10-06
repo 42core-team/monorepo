@@ -14,7 +14,11 @@ void core_print_config_unit(t_unit_type unit_type);
 
 ## Parameters
 
-- `unit_type`: The type of unit to print the config for
+- `t_unit_type unit_type`: The type of unit to print the config for
+
+## Return
+
+void
 
 ## Examples
 

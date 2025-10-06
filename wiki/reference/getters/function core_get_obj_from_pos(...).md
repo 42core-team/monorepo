@@ -14,7 +14,11 @@ t_obj *core_get_obj_from_pos(t_pos pos);
 
 ## Parameters
 
-- `return`: The object at the position or NULL if no such object exists.
+- `t_pos pos`: The position of the object the function should get
+
+## Return
+
+- `t_obj *`: The object at the position or NULL if no such object exists.
 
 ## Examples
 

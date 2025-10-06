@@ -20,9 +20,13 @@ void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned lo
 
 ## Parameters
 
-- `source`: The object that the gems should be transferred from. (e.g. Core / Unit)
-- `target_pos`: The position of the object to transfer the gems to, or the non-occupied position where the gems pile should be dropped
-- `amount`: The amount of gems to transfer or drop
+- `const t_obj *source`: The object that the gems should be transferred from. (e.g. Core / Unit)
+- `const t_obj *target_pos`: The position of the object to transfer the gems to, or the non-occupied position where the gems pile should be dropped
+- `unsigned long amount`: The amount of gems to transfer or drop
+
+## Return
+
+void
 
 ## Examples
 

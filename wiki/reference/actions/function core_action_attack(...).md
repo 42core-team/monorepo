@@ -20,8 +20,12 @@ void core_action_attack(const t_obj *attacker, const t_obj *target);
 
 ## Parameters
 
-- `attacker`: The unit that should attack
-- `target`: The object the unit should attack
+- `const t_obj *attacker`: The unit that should attack
+- `const t_obj *target`: The object the unit should attack
+
+## Return
+
+void
 
 ## Examples
 

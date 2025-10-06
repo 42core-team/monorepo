@@ -16,8 +16,12 @@ void core_action_pathfind(const t_obj *unit, t_pos pos);
 
 ## Parameters
 
-- `unit`: The unit that should move
-- `pos`: The position where the unit should move to
+- `const t_obj *unit`: The unit that should move
+- `t_pos pos`: The position where the unit should move to
+
+## Return
+
+void
 
 ## Examples
 

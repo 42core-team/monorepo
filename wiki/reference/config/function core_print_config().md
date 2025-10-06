@@ -14,6 +14,12 @@ void core_print_config(void);
 
 ## Parameters
 
+void
+
+## Return
+
+void
+
 ## Examples
 
 ## Related

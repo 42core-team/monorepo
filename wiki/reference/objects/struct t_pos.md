@@ -22,8 +22,8 @@ typedef struct s_pos
 
 ## Parameters
 
-- `x`: X coordinate
-- `y`: Y coordinate
+- `unsigned short x`: X coordinate
+- `unsigned short y`: Y coordinate
 
 ## Examples
 

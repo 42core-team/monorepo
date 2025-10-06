@@ -52,32 +52,32 @@ typedef struct s_obj
 
 ## Parameters
 
-- `type`: Type of the obj
-- `data`: Custom data, save whatever you want here, it will persist across ticks.
-- `id`: The unique id of the obj
-- `pos`: The position of the obj
-- `hp`: The current healthpoints of the obj
+- `t_obj_type type`: Type of the obj
+- `void *data`: Custom data, *save whatever you want here*, it will persist across ticks.
+- `unsigned long id`: The unique id of the obj
+- `t_pos pos`: The position of the obj
+- `unsigned long hp`: The current healthpoints of the obj
 
 
 
-- `s_core.team_id`: The id of the team that owns the core.
-- `s_core.gems`: The current gems stored in the core.
-- `s_core.spawn_cooldown`: Countdown to the next tick the core can spawn a unit, defined by core_spawn_cooldown in the config.
+- `unsigned long s_core.team_id`: The id of the team that owns the core.
+- `unsigned long s_core.gems`: The current gems stored in the core.
+- `unsigned long s_core.spawn_cooldown`: Countdown to the next tick the core can spawn a unit, defined by core_spawn_cooldown in the config.
 
 
 
-- `s_unit.unit_type`: Which type of unit this is.
-- `s_unit.team_id`: The id of the team that owns the unit.
-- `s_unit.gems`: The amount of gems the unit is carrying.
-- `s_unit.action_cooldown`: Countdown to the next tick the unit can move, defined by it's action cooldown & how many gems it's carrying.
+- `unsigned long s_unit.unit_type`: Which type of unit this is.
+- `unsigned long s_unit.team_id`: The id of the team that owns the unit.
+- `unsigned long s_unit.gems`: The amount of gems the unit is carrying.
+- `unsigned long s_unit.action_cooldown`: Countdown to the next tick the unit can move, defined by it's action cooldown & how many gems it's carrying.
 
 
 
-- `s_deposit_gems_pile.gems`: The amount of gems the deposit or gem pile contains.
+- `unsigned long s_deposit_gems_pile.gems`: The amount of gems the deposit or gem pile contains.
 
 
 
-- `s_bomb.countdown`: The time until the bomb will explode. **TAKE COVER!**
+- `unsigned long s_bomb.countdown`: The time until the bomb will explode. **TAKE COVER!**
 
 Walls don't have any special properties so they don't need a unionized struct, deposits and gem piles share the same additional properties so they share the same unionized struct (`s_deposit_gems_pile`).
 

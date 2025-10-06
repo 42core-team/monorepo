@@ -18,8 +18,12 @@ void core_action_build(const t_obj *builder, t_pos pos);
 
 ## Parameters
 
-- `builder`: The unit object that has a unit type that is able to build. Must have a `t_build_type`that is not `BUILD_TYPE_NONE` in the config.
-- `pos`: The position to build the object at.
+- `const t_obj *builder`: The unit object that has a unit type that is able to build. Must have a `t_build_type`that is not `BUILD_TYPE_NONE` in the config.
+- `t_pos pos`: The position to build the object at.
+
+## Return
+
+void
 
 ## Examples
 

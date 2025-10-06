@@ -14,8 +14,11 @@ t_unit_config *core_get_unitConfig(t_unit_type type);
 
 ## Parameters
 
-- `type`: The type of unit to get the config for
-- `return`: The unit config or NULL if no such unit type or unit config exists.
+- `t_unit_type type`: The type of unit to get the config for
+
+## Return
+
+- `t_unit_config *`: The unit config or NULL if no such unit type or unit config exists.
 
 ## Examples
 

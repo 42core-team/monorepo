@@ -11,13 +11,16 @@ Units are spawned as close to your core as possible - but if all positions direc
 ## Signature
 
 ```c
-t_obj *core_action_createUnit(t_unit_type unit_type);
+void core_action_createUnit(t_unit_type unit_type);
 ```
 
 ## Parameters
 
-- `unit_type`: The type of unit to create
-- `return`: A newly created, uninitialized unit object or NULL if the unit could not be created.
+- `t_unit_type unit_type`: The type of unit to create
+
+## Return
+
+void
 
 ## Examples
 

@@ -14,7 +14,11 @@ t_obj *core_get_obj_from_id(unsigned long id);
 
 ## Parameters
 
-- `return`: The object or NULL if no such object exists.
+- `unsigned long id`: The id of the object the function should get
+
+## Return
+
+- `t_obj *`: The selected object with a matching id or NULL if the selection didn't match anything.
 
 ## Examples
 

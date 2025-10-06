@@ -1,4 +1,0 @@
-- for all the parameters, add the types
-- remove unnecessary sections
-- link everything everywhere
-- add return all over

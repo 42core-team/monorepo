@@ -16,8 +16,11 @@ t_obj *core_get_obj_filter_first(bool (*condition)(const t_obj *));
 
 ## Parameters
 
-- `condition`: Selection function filtering pointer returning if the inputted object should be selected
-- `return`: The first object that matches the condition or NULL if no such object exists or no condition is provided.
+- `bool (*condition)(const t_obj *)`: Selection function filtering pointer returning if the inputted object should be selected
+
+## Return
+
+- `t_obj *`: The first object that matches the condition or NULL if no such object exists or no condition is provided.
 
 ## Examples
 
