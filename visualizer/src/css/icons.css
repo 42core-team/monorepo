@@ -5,18 +5,18 @@
 
 :root[data-theme="light"] {
 	--team-two-color: #7a17c1;
-	--team-one-color: #cc6d00;
+	--team-one-color: #b66100;
 
 	--svg-icon-fill: hsl(220 20% 18%);
 
-	--hp-color: #d84242; /* Red = hp */
+	--hp-color: #e55252; /* Red = hp */
 	--gems-color: #49c485; /* Green = money */
 	--cooldown-color: #6cb3ff; /* Blue = cooldown */
 
 	--board-tint-strength: 25%;
 }
 :root[data-theme="dark"] {
-	--team-two-color: #9500ff;
+	--team-two-color: #bf65ff;
 
 	--svg-icon-fill: hsl(220 15% 85%);
 
