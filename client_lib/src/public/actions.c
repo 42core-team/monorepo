@@ -21,39 +21,12 @@ static inline bool core_static_isFriendlyObj(const t_obj *o)
 	return false;
 }
 
-t_obj *core_action_createUnit(t_unit_type unit_type)
+void core_action_createUnit(t_unit_type unit_type)
 {
-	int unit_count = 0;
-	while (game.config.units != NULL && game.config.units[unit_count] != NULL)
-		unit_count++;
-	if ((int)unit_type < 0 || (int)unit_type >= unit_count) return NULL;
-
 	core_static_ensureCapacity();
 	t_action *action = &actions.list[actions.count++];
 	action->type = ACTION_CREATE;
 	action->data.create.unit_type = unit_type;
-
-	t_obj *newUnit = malloc(sizeof(t_obj));
-	if (!newUnit)
-	{
-		fprintf(stderr, "Failed to allocate memory for new unit.\n");
-		exit(EXIT_FAILURE);
-	}
-	newUnit->s_unit.unit_type = unit_type;
-	newUnit->s_unit.team_id = game.my_team_id;
-	newUnit->type = OBJ_UNIT;
-	newUnit->id = 0;
-	newUnit->state = STATE_UNINITIALIZED;
-	newUnit->data = NULL;
-
-	int objLen = 0;
-	while (game.objects && game.objects[objLen])
-		objLen++;
-	game.objects = realloc(game.objects, sizeof(t_obj *) * (objLen + 2));
-	game.objects[objLen] = newUnit;
-	game.objects[objLen + 1] = NULL;
-
-	return newUnit;
 }
 
 void core_action_move(const t_obj *unit, t_pos pos)
@@ -66,7 +39,7 @@ void core_action_move(const t_obj *unit, t_pos pos)
 }
 void core_action_moveTowards(const t_obj *unit, t_pos pos)
 {
-	if (!unit || unit->type != OBJ_UNIT || unit->state != STATE_ALIVE) return;
+	if (!unit || unit->type != OBJ_UNIT) return;
 	if (unit->pos.x == pos.x && unit->pos.y == pos.y) return;
 	if (unit->s_unit.action_cooldown != 0) return;
 

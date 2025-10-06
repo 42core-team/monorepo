@@ -29,7 +29,6 @@ void ft_on_tick(unsigned long tick)
 	for (int i = 0; units && units[i]; i++)
 	{
 		t_obj *obj = units[i];
-		if (obj->state != STATE_ALIVE) continue;
 
 		switch ((int)obj->s_unit.unit_type)
 		{
@@ -42,7 +41,7 @@ void ft_on_tick(unsigned long tick)
 			break;
 
 		case UNIT_MINER:
-			t_obj *nearest_deposit = ft_get_deposit_nearest(obj->pos);
+			t_obj *nearest_deposit = ft_get_deposit_gems_nearest(obj->pos);
 			if (nearest_deposit && obj->s_unit.gems <= 0)
 				core_action_moveTowards(obj, nearest_deposit->pos);
 			else

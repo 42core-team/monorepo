@@ -23,15 +23,6 @@ typedef enum e_obj_type
 	OBJ_BOMB
 } t_obj_type;
 
-/// @brief Object state.
-/// @details Uninitialized objects should only have their type, state, data, team_id & unit_type read from.
-typedef enum e_obj_state
-{
-	STATE_UNINITIALIZED = 1,
-	STATE_ALIVE = 2,
-	STATE_DEAD = 3
-} t_obj_state;
-
 /// @brief Position structure for 2D coordinates. 0 indexed. Valid coordinates are 0,1,2,...gridSize-3,gridSize-2,gridSize-1.
 typedef struct s_pos
 {
@@ -46,8 +37,6 @@ typedef struct s_obj
 {
 	/// @brief Type of the obj
 	t_obj_type type;
-	/// @brief State of the obj
-	t_obj_state state;
 	/// @brief Custom data, save whatever you want here.
 	void *data;
 	/// @brief The unique id of the obj
@@ -214,10 +203,8 @@ int core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 // ACTION FUNCTIONS are used to perform actions in the game, like creating units, moving them, attacking, etc. Their changes are applied between ticks.
 
 /// @brief Create a new unit of specified type.
-/// @details The unit will be uninitialized, meaning you can read & write only read its type, state, data, team_id & unit_type.
 /// @param unit_type The type of unit to create.
-/// @return A newly created, uninitialized unit object or NULL if the unit could not be created.
-t_obj *core_action_createUnit(t_unit_type unit_type);
+void core_action_createUnit(t_unit_type unit_type);
 
 /// @brief Moves a unit to a specific position.
 /// @details Units can only move one tile up, down, left or right; and only if their action_cooldown is 0.
