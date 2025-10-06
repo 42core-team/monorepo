@@ -4,10 +4,10 @@
 	"idleIncome": 2,
 	"idleIncomeTimeOut": 1000,
 	"depositHp": 50,
-	"depositIncome": 300,
-	"gemPileIncome": 75,
+	"depositIncome": 150,
+	"gemPileIncome": 35,
 	"coreHp": 200,
-	"coreSpawnCooldown": 15,
+	"coreSpawnCooldown": 22,
 	"initialBalance": 200,
 	"wallHp": 50,
 	"wallBuildCost": 20,
@@ -69,7 +69,7 @@
 			"damageCore": 0,
 			"damageUnit": 0,
 			"damageDeposit": 0,
-			"damageWall": 3,
+			"damageWall": 2,
 			"damageBomb": 5,
 			"buildType": "none"
 		}
