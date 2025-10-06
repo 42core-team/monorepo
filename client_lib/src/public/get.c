@@ -14,9 +14,7 @@ t_obj *core_get_obj_from_pos(t_pos pos)
 	if (!core_internal_isPosValid(pos)) return NULL;
 	if (game.objects && game.objects[0] != NULL)
 		for (int i = 0; game.objects[i] != NULL; i++)
-			if (game.objects[i]->pos.x == pos.x && game.objects[i]->pos.y == pos.y &&
-				game.objects[i]->state == STATE_ALIVE)
-				return (game.objects[i]);
+			if (game.objects[i]->pos.x == pos.x && game.objects[i]->pos.y == pos.y) return (game.objects[i]);
 	return (NULL);
 }
 

@@ -21,39 +21,12 @@ static inline bool core_static_isFriendlyObj(const t_obj *o)
 	return false;
 }
 
-t_obj *core_action_createUnit(t_unit_type unit_type)
+void core_action_createUnit(t_unit_type unit_type)
 {
-	int unit_count = 0;
-	while (game.config.units != NULL && game.config.units[unit_count] != NULL)
-		unit_count++;
-	if ((int)unit_type < 0 || (int)unit_type >= unit_count) return NULL;
-
 	core_static_ensureCapacity();
 	t_action *action = &actions.list[actions.count++];
 	action->type = ACTION_CREATE;
 	action->data.create.unit_type = unit_type;
-
-	t_obj *newUnit = malloc(sizeof(t_obj));
-	if (!newUnit)
-	{
-		fprintf(stderr, "Failed to allocate memory for new unit.\n");
-		exit(EXIT_FAILURE);
-	}
-	newUnit->s_unit.unit_type = unit_type;
-	newUnit->s_unit.team_id = game.my_team_id;
-	newUnit->type = OBJ_UNIT;
-	newUnit->id = 0;
-	newUnit->state = STATE_UNINITIALIZED;
-	newUnit->data = NULL;
-
-	int objLen = 0;
-	while (game.objects && game.objects[objLen])
-		objLen++;
-	game.objects = realloc(game.objects, sizeof(t_obj *) * (objLen + 2));
-	game.objects[objLen] = newUnit;
-	game.objects[objLen + 1] = NULL;
-
-	return newUnit;
 }
 
 void core_action_move(const t_obj *unit, t_pos pos)
@@ -64,9 +37,10 @@ void core_action_move(const t_obj *unit, t_pos pos)
 	action->data.move.id = unit->id;
 	action->data.move.pos = pos;
 }
-void core_action_moveTowards(const t_obj *unit, t_pos pos)
+
+void core_action_pathfind(const t_obj *unit, t_pos pos)
 {
-	if (!unit || unit->type != OBJ_UNIT || unit->state != STATE_ALIVE) return;
+	if (!unit || unit->type != OBJ_UNIT) return;
 	if (unit->pos.x == pos.x && unit->pos.y == pos.y) return;
 	if (unit->s_unit.action_cooldown != 0) return;
 
@@ -106,7 +80,7 @@ void core_action_moveTowards(const t_obj *unit, t_pos pos)
 	if (posOptionXPriority < 250 && posOptionXPriority < posOptionYPriority)
 	{
 		if (posOptionXObj && !core_static_isFriendlyObj(posOptionXObj))
-			core_action_attack_obj(unit, posOptionXObj);
+			core_action_attack(unit, posOptionXObj);
 		else if (!posOptionXObj)
 			core_action_move(unit, posOptionX);
 		return;
@@ -114,26 +88,21 @@ void core_action_moveTowards(const t_obj *unit, t_pos pos)
 	if (posOptionYPriority < 250)
 	{
 		if (posOptionYObj && !core_static_isFriendlyObj(posOptionYObj))
-			core_action_attack_obj(unit, posOptionYObj);
+			core_action_attack(unit, posOptionYObj);
 		else if (!posOptionYObj)
 			core_action_move(unit, posOptionY);
 		return;
 	}
 }
 
-void core_action_attack(const t_obj *attacker, t_pos target_pos)
+void core_action_attack(const t_obj *attacker, const t_obj *target)
 {
-	if (!attacker) return;
+	if (!attacker || !target) return;
 	core_static_ensureCapacity();
 	t_action *action = &actions.list[actions.count++];
 	action->type = ACTION_ATTACK;
 	action->data.attack.id = attacker->id;
-	action->data.attack.pos = target_pos;
-}
-void core_action_attack_obj(const t_obj *attacker, const t_obj *target)
-{
-	if (!target) return;
-	core_action_attack(attacker, target->pos);
+	action->data.attack.target_id = target->id;
 }
 
 void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned long amount)
@@ -145,11 +114,6 @@ void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned lo
 	action->data.transfer.source_id = source->id;
 	action->data.transfer.target_pos = target_pos;
 	action->data.transfer.amount = amount;
-}
-void core_action_transferGems_toObj(const t_obj *source, t_obj *target, unsigned long amount)
-{
-	if (!target) return;
-	core_action_transferGems(source, target->pos, amount);
 }
 
 void core_action_build(const t_obj *builder, t_pos pos)

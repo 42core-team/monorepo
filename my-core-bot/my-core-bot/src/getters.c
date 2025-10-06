@@ -2,7 +2,7 @@
 
 static bool is_core(const t_obj *obj)
 {
-	return (obj->type == OBJ_CORE && obj->state == STATE_ALIVE);
+	return (obj->type == OBJ_CORE);
 }
 static bool is_core_own(const t_obj *obj)
 {
@@ -15,12 +15,12 @@ static bool is_core_opponent(const t_obj *obj)
 
 static bool is_deposit(const t_obj *obj)
 {
-	return (obj->type == OBJ_DEPOSIT && obj->state == STATE_ALIVE);
+	return (obj->type == OBJ_DEPOSIT);
 }
 
 static bool is_unit(const t_obj *obj)
 {
-	return (obj->type == OBJ_UNIT && obj->state == STATE_ALIVE);
+	return (obj->type == OBJ_UNIT);
 }
 static bool is_unit_own(const t_obj *obj)
 {

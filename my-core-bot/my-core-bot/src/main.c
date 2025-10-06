@@ -13,7 +13,6 @@ static bool ft_is_own_team_warrior(const t_obj *obj)
 	if (obj->type != OBJ_UNIT) return false;
 	if (obj->s_unit.unit_type != UNIT_WARRIOR) return false;
 	if (obj->s_unit.team_id != game.my_team_id) return false;
-	if (obj->state != STATE_ALIVE) return false;
 	return true;
 }
 
@@ -26,7 +25,7 @@ void ft_on_tick(unsigned long tick)
 	t_obj **own_team_warriors = core_get_objs_filter(ft_is_own_team_warrior);
 	for (int i = 0; own_team_warriors && own_team_warriors[i]; i++)
 	{
-		core_action_moveTowards(own_team_warriors[i], ft_get_core_opponent()->pos);
+		core_action_pathfind(own_team_warriors[i], ft_get_core_opponent()->pos);
 	}
 	free(own_team_warriors);
 }
