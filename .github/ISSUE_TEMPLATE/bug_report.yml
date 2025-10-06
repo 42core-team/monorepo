@@ -1,0 +1,39 @@
+name: 🪲 Bug Report
+description: Report unexpected or unintended behaviour
+type: Bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this issue!
+        Please fill out the details below as clearly as possible.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: What did you do, what did you expect to happen, and what happened instead?
+      placeholder: Describe the issue in detail...
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment / Context
+      description: Which version, branch, or event did this occur on? Link to your bot repository if applicable.
+      placeholder: ex. main branch, v1.2.3, event: summer_2025, repo: github.com/...
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional Information
+      description: Anything else that may be helpful to understand or reproduce the issue?
+      placeholder: Logs, URLs, notes, etc.
+
+  - type: markdown
+    attributes:
+      value: |
+        Please try to give the issue an appropriate label based on the components of Core Game it likely affects.
