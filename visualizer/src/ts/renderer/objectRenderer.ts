@@ -94,15 +94,13 @@ export function initializeTeamMapping(): void {
 	const leftCore = cores[0];
 	const rightCore = cores[1];
 
-	const flip = Math.random() < 0.5;
-	const teamForLight = flip ? leftCore.teamId : rightCore.teamId;
-	const teamForDark = flip ? rightCore.teamId : leftCore.teamId;
-
-	if (teamForLight !== undefined) teamIdMapping.set(teamForLight, 1);
-	if (teamForDark !== undefined) teamIdMapping.set(teamForDark, 0);
+	if (leftCore !== undefined && leftCore.teamId !== undefined)
+		teamIdMapping.set(leftCore.teamId, 1);
+	if (rightCore !== undefined && rightCore.teamId !== undefined)
+		teamIdMapping.set(rightCore.teamId, 0);
 }
 
-function getTeamIndex(teamId: number | undefined): AssetTeam {
+export function getTeamIndex(teamId: number | undefined): AssetTeam {
 	if (teamId === undefined) {
 		return 0;
 	}
@@ -177,11 +175,6 @@ function drawObject(
 		fg.setAttribute("height", String(bar.bottomBorder - bar.topBorder));
 		fg.setAttribute("fill", color);
 		fg.setAttribute("fill-opacity", String(1 * scaleFactor));
-		fg.setAttribute(
-			"stroke",
-			"color-mix(in srgb, var(--panel-outline) 70%, transparent)",
-		);
-		fg.setAttribute("stroke-width", "0.02");
 		svgCanvas.appendChild(fg);
 	}
 

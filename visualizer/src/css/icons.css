@@ -1,23 +1,30 @@
 :root {
-	--team-one-color: #0072b2;
-	--team-two-color: #d55e00;
-
-	--board-tint-strength: 50%;
+	--team-two-color: #6a0dad; /* purple */
+	--team-one-color: #ff9f1c; /* orange */
 }
 
 :root[data-theme="light"] {
-	--svg-icon-fill: hsl(220 15% 25%);
+	--team-two-color: #7a17c1;
+	--team-one-color: #cc6d00;
 
-	--hp-color: #cc79a7;
-	--gems-color: #f0e442;
-	--cooldown-color: #009e73;
+	--svg-icon-fill: hsl(220 20% 18%);
+
+	--hp-color: #d84242; /* Red = hp */
+	--gems-color: #49c485; /* Green = money */
+	--cooldown-color: #6cb3ff; /* Blue = cooldown */
+
+	--board-tint-strength: 25%;
 }
 :root[data-theme="dark"] {
+	--team-two-color: #9500ff;
+
 	--svg-icon-fill: hsl(220 15% 85%);
 
-	--hp-color: #e18ac1;
-	--gems-color: #f3e96b;
-	--cooldown-color: #22b488;
+	--hp-color: #b60000; /* Red = hp */
+	--gems-color: #2a9a60; /* Green = money */
+	--cooldown-color: #1560bc; /* Blue = cooldown */
+
+	--board-tint-strength: 10%;
 }
 
 :root {
@@ -36,8 +43,7 @@
 	--field-gradient: linear-gradient(
 		to bottom right,
 		var(--field-stop-tl) 0%,
-		var(--field-stop-mid) 25%,
-		var(--field-stop-mid) 75%,
+		var(--field-stop-mid) 50%,
 		var(--field-stop-br) 100%
 	);
 }

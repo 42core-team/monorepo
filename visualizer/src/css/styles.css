@@ -16,7 +16,7 @@
 
 :root[data-theme="light"] {
 	--panel-bg: color-mix(in srgb, var(--theme-color) 7%, white);
-	--panel-outline: color-mix(in srgb, var(--theme-color) 50%, white);
+	--panel-outline: color-mix(in srgb, var(--theme-color) 55%, white);
 	--panel-track: color-mix(in srgb, white, black 45%);
 	--panel-thumb: var(--theme-color);
 

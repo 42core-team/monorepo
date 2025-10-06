@@ -1,5 +1,6 @@
 import { resetTimeManager } from "../input_manager/timeManager";
 import { ensureIcons } from "../renderer/iconManager";
+import { getTeamIndex } from "../renderer/objectRenderer";
 import { setupRenderer } from "../renderer/renderer";
 import type { TickAction } from "./action";
 import type { GameConfig } from "./config";
@@ -136,16 +137,6 @@ class ReplayLoader {
 			);
 		}
 		totalReplayTicks = this.replayData.full_tick_amount;
-
-		winnerNameElement.textContent =
-			this.replayData.misc.team_results.find((team) => team.place === 0)
-				?.name || "Unknown";
-		winReasonElement.textContent = "";
-		for (const team of this.replayData.misc.team_results) {
-			if (team.place === 0) continue;
-			const teamName = team.name || `Team ${team.id}`;
-			winReasonElement.textContent += `Place ${team.place + 1}: ${teamName} (Death Reason: ${deathReasons[team.death_reason]})\n`;
-		}
 
 		const fullState: State = {};
 		const tick0 = this.replayData.ticks["0"];
@@ -289,6 +280,7 @@ async function resetReplay(reason: string = "reset"): Promise<void> {
 	resetTimeManager();
 	setupRenderer();
 	ensureIcons();
+	updateWinDisplayEmojis();
 	console.debug(
 		`Replay reset (${reason}). override=${Boolean(replayDataOverride)} etag=${lastEtag}`,
 	);
@@ -509,3 +501,22 @@ window.addEventListener("drop", (e) => {
 window.addEventListener("dragover", (e) => {
 	e.preventDefault();
 });
+
+function updateWinDisplayEmojis(): void {
+	const results = getGameMisc()?.team_results ?? [];
+	if (!results.length) return;
+
+	const winner = results.find((t) => t.place === 0);
+	if (winner) {
+		const emoji = getTeamIndex(winner.id) === 0 ? "🟣" : "🟠";
+		winnerNameElement.textContent = `${emoji} ${winner.name || "Unknown"}`;
+	}
+
+	winReasonElement.textContent = "";
+	for (const team of results) {
+		if (team.place === 0) continue;
+		const emoji = getTeamIndex(team.id) === 0 ? "🟣" : "🟠";
+		const name = team.name || `Team ${team.id}`;
+		winReasonElement.textContent += `Place ${team.place + 1}: ${emoji} ${name} (Death Reason: ${deathReasons[team.death_reason]})\n`;
+	}
+}
