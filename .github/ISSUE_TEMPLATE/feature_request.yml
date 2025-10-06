@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for suggesting a feature!
+        ⭐️ Thanks for taking the time to suggest a feature!
         Please provide as much context as possible so we can evaluate it effectively.
 
   - type: textarea
@@ -44,5 +44,10 @@ body:
   - type: markdown
     attributes:
       value: |
-        If this is an vague idea rather than a specific feature request, please change the issue type to "Idea".
-        If the issue must be further discussed by the full Core Game team before it can be worked on, please change the issue type to "Refinement".
+        💡 If this is an vague idea rather than a specific feature request, please change the issue type to "Idea".
+        🔄 If the issue must be further discussed by the full Core Game team before it can be worked on, please change the issue type to "Refinement".
+
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping us improve Core Game! 💙

@@ -1,6 +1,12 @@
 name: 📋 Blank Issue
 description: Create a new blank issue
 body:
+  - type: markdown
+    attributes:
+      value: |
+        ⭐️ Thanks for taking the time to create an issue!
+        Please provide as much context as possible so we can evaluate it effectively.
+
   - type: textarea
     id: description
     attributes:
@@ -18,3 +24,8 @@ body:
     attributes:
       value: |
         Please try to give the issue an appropriate label based on the components of Core Game it likely affects.
+
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping us improve Core Game! 💙
