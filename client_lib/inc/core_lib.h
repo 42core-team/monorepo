@@ -211,24 +211,23 @@ void core_action_createUnit(t_unit_type unit_type);
 /// @param unit The unit that should move.
 /// @param pos The position where the unit should move to. Must be next to the unit object.
 void core_action_move(const t_obj *unit, t_pos pos);
+
 /// @brief takes a position anywhere and moves a step towards it with a simple algorithm
-void core_action_moveTowards(const t_obj *unit, t_pos pos);
+/// @param unit the unit that should move
+/// @param pos the position where the unit should pathfind to - can be anywhere on the map
+void core_action_pathfind(const t_obj *unit, t_pos pos);
 
 /// @brief Attacks a target position with a unit.
 /// @details Units can only attack one tile up, down, left or right; and only if their action_cooldown is 0.
 /// @param attacker The unit that should attack.
-/// @param pos The position where the unit should attack.
-void core_action_attack(const t_obj *attacker, t_pos pos);
-/// @brief attack an object directly, functionally the same as attacking an objects position
-void core_action_attack_obj(const t_obj *attacker, const t_obj *target);
+/// @param target The object that the unit should attack.
+void core_action_attack(const t_obj *attacker, const t_obj *target);
 
 /// @brief Gives gems to another object or drops it on the floor.
 /// @param source The object that the gems should be transferred from.
 /// @param target_pos The position of the object to transfer the gems to, or the non-occupied position where the gems should be dropped.
 /// @param amount The amount of gems to transfer or drop.
 void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned long amount);
-/// @brief transfer gems to an object directly, functionally the same as transferring gems to an objects position
-void core_action_transferGems_toObj(const t_obj *source, t_obj *target, unsigned long amount);
 
 /// @brief Builds a new object.
 /// @details Units can only build one tile up, down, left or right. Not all units can build, and they may build different things. Please consult config for details.

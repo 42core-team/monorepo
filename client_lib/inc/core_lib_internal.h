@@ -58,7 +58,7 @@ typedef struct s_action
 		struct
 		{
 			unsigned long id;
-			t_pos pos;
+			unsigned long target_id;
 		} attack;
 		struct
 		{

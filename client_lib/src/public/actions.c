@@ -37,7 +37,8 @@ void core_action_move(const t_obj *unit, t_pos pos)
 	action->data.move.id = unit->id;
 	action->data.move.pos = pos;
 }
-void core_action_moveTowards(const t_obj *unit, t_pos pos)
+
+void core_action_pathfind(const t_obj *unit, t_pos pos)
 {
 	if (!unit || unit->type != OBJ_UNIT) return;
 	if (unit->pos.x == pos.x && unit->pos.y == pos.y) return;
@@ -79,7 +80,7 @@ void core_action_moveTowards(const t_obj *unit, t_pos pos)
 	if (posOptionXPriority < 250 && posOptionXPriority < posOptionYPriority)
 	{
 		if (posOptionXObj && !core_static_isFriendlyObj(posOptionXObj))
-			core_action_attack_obj(unit, posOptionXObj);
+			core_action_attack(unit, posOptionXObj);
 		else if (!posOptionXObj)
 			core_action_move(unit, posOptionX);
 		return;
@@ -87,26 +88,21 @@ void core_action_moveTowards(const t_obj *unit, t_pos pos)
 	if (posOptionYPriority < 250)
 	{
 		if (posOptionYObj && !core_static_isFriendlyObj(posOptionYObj))
-			core_action_attack_obj(unit, posOptionYObj);
+			core_action_attack(unit, posOptionYObj);
 		else if (!posOptionYObj)
 			core_action_move(unit, posOptionY);
 		return;
 	}
 }
 
-void core_action_attack(const t_obj *attacker, t_pos target_pos)
+void core_action_attack(const t_obj *attacker, const t_obj *target)
 {
-	if (!attacker) return;
+	if (!attacker || !target) return;
 	core_static_ensureCapacity();
 	t_action *action = &actions.list[actions.count++];
 	action->type = ACTION_ATTACK;
 	action->data.attack.id = attacker->id;
-	action->data.attack.pos = target_pos;
-}
-void core_action_attack_obj(const t_obj *attacker, const t_obj *target)
-{
-	if (!target) return;
-	core_action_attack(attacker, target->pos);
+	action->data.attack.target_id = target->id;
 }
 
 void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned long amount)
@@ -118,11 +114,6 @@ void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned lo
 	action->data.transfer.source_id = source->id;
 	action->data.transfer.target_pos = target_pos;
 	action->data.transfer.amount = amount;
-}
-void core_action_transferGems_toObj(const t_obj *source, t_obj *target, unsigned long amount)
-{
-	if (!target) return;
-	core_action_transferGems(source, target->pos, amount);
 }
 
 void core_action_build(const t_obj *builder, t_pos pos)
