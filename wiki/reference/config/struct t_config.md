@@ -53,4 +53,13 @@ typedef struct s_config
 
 ## Examples
 
+```c
+void ft_on_tick(unsigned long tick)
+{
+	if (tick < game.config.idle_income_timeout)
+	{
+		// focus less on miner & carrier spawning
+		// ...
+```
+
 ## Related

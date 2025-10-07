@@ -2,8 +2,6 @@ This page is focused around making sure your bot can properly run on the website
 
 > Generally, you don't need to worry about going through this page, just test that your bot runs on the website once and you'll be fine. As long as you keep the folder name `my-core-bot` and not modify the `my-core-bot/Makefile`, your bot will run fine on the website. If your bot doesn't run on the website though, this is the page for you.
 
-> For more details read this. Website runs are stricter than local.
-
 # What the Website Expects
 
 - **Repository layout**: Your bot source must live at `my-core-bot/` at the repo root.

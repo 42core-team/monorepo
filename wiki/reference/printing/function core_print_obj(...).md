@@ -22,4 +22,15 @@ void
 
 ## Examples
 
+```c
+// move units
+t_obj **units = ft_get_units_own();
+for (int i = 0; units && units[i]; i++)
+{
+	t_obj *obj = units[i];
+
+	printf("Moving the next object!\n");
+	core_print_obj(obj);
+```
+
 ## Related

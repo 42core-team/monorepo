@@ -22,3 +22,17 @@ e.g.:
 ## Core Spawn Cooldown
 
 The core spawn cooldown is more straightforward, after a new unit was spawned, it is simply reset to a static config-defined value.
+
+## Examples
+
+```c
+int ft_util_actionCooldown(t_obj *unit)
+{
+	t_unit_config *uconf = core_get_unitConfig(unit->s_unit.unit_type);
+	unsigned int gems = max(unit->s_unit.gems, 1);
+	unsigned int ac = uconf->baseActionCooldown + gems / uconf->balancePerCooldownStep;
+	if (ac > uconf->maxActionCooldown) ac = uconf->maxActionCooldown;
+	if (ac < 1) ac = 1;
+	return (ac);
+}
+```

@@ -31,4 +31,19 @@ typedef enum e_obj_type
 
 ## Examples
 
+```c
+static bool is_deposit(const t_obj *obj)
+{
+	return (obj->type == OBJ_DEPOSIT);
+}
+static bool is_gems(const t_obj *obj)
+{
+	return (obj->type == OBJ_GEM_PILE);
+}
+static bool is_deposit_gems(const t_obj *obj)
+{
+	return (is_deposit(obj) || is_gems(obj));
+}
+```
+
 ## Related

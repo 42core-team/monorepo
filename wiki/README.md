@@ -1,12 +1,4 @@
-# 🏠 The Art of CORE
-
-## 🤗 Welcome to the Official CORE Documentation 📚
-
-Read it carefully, there are many helpful tidbits hidden in here.
-
-Especially the [tips & tricks section](tips_and_tricks) down below and the tip boxes in the [Core Library Pages](core_library/README) can be incredibly helpful.
-
-Reading the documentation sucks, but it was handwritten to be as helpful as possible and is worth a skim. If there was a question that the documentation didn't answer, please let us know so we can tell you and improve the documentation.
+> 🤗 Welcome to the Official CORE Wiki, Documentation & Reference 📚
 
 # 👾 What is CORE?
 
@@ -20,10 +12,6 @@ You can receive gems by having your units attack the gem deposits on the map or 
 
 # 🚀 Getting Started with Your Own CORE Bot
 
-To start building your own CORE bot, ensure you've completed the following prerequisites:
-
-### Prerequisites
-
 1. **Be a Registered CORE Participant/Team** ✨
 	- Visit our website, [COREGAME.de](https://coregame.de/), sign up, join the right event, and add your team members.
 
@@ -33,25 +21,17 @@ To start building your own CORE bot, ensure you've completed the following prere
 3. **Follow the README in the repository** 📧
 	- Basically, run `make devcontainer`, and then you can get started! Compile using `make`, visualizer to view the games is under `localhost:4000`, everything in `src/` will be compiled into your bot.
 
+4. **Push some code!** 🔝
+	- The code you pushed will be used to execute games in the queue and in the final tournament. So make sure to push your code & test it against other players regularly!
+
 🎉 **You are now ready to start coding!** 😎
 
-4. **Push some code!** 🔝
-	- The code you pushed will be used to execute games in the queue and in the final tournament. So make sure to push your code regularly and use to queue to test your bot against other participants!
+# 🏆 The Five Sacred Laws of Core Game Victory 👑
 
-### 🔎 Get into Core Game!
+1. **Simplicity is Strength** - A simple, balanced bot will crush an overcomplicated mess. Build, test, refine — step by step, one small feature at a time.
+2. **Battle is the Best Teacher** - No plan survives first contact. Face off against others as often as possible; every loss is data, every win is progress.
+3. **Knowledge is power** - Master the documentation, understand every function you wield. A wise coder outplays a reckless but fast one every single time.
+4. **Unity is Might** - Team up if you can. Two brains debug faster than one, and strategy thrives on collaboration.
+5. **Have fun!** - Don't take things too seriously & be nice to each other. Embrace the good vibes in a friendly competition! ⚡️
 
-Look at all the different [Core Game Library Info Pages](core_library/README) in the sidebar to get sense of how things work! This wiki is your key to the trophy. 🏆
-
-### Play and test against other Teams 🎮
-
-Once the default test bot is too boring and you always win, feel free to share your compiled bot with other teams and play against them. You can do this via the queue feature on the website or locally. Of course, you can't force them but it might benefit both of you to see your bots in _real_ action.
-
-# 🏆 To win the event
-
-> Don't overcomplicate things! Simple but well-balanced bots may often reign over overcomplicated but ineffective bots.
-
-> Play against other players as often as possible!
-
-> Have fun! Don't take things too seriously & be nice to each other. Embrace the good vibes in a friendly competition! ⚡️
-
-Good luck from the CORE team! 🚀🎸🔥💥🗿
+***Good luck*** **from the CORE team!** 🚀🎸🔥💥🗿

@@ -83,4 +83,25 @@ Walls don't have any special properties so they don't need a unionized struct, d
 
 ## Examples
 
+```c
+// move units
+t_obj **units = ft_get_units_own();
+for (int i = 0; units && units[i]; i++)
+{
+	t_obj *obj = units[i];
+
+	switch ((int)obj->s_unit.unit_type)
+	{
+	case UNIT_WARRIOR:
+		// ...
+		break;
+
+	case UNIT_MINER:
+		// ...
+		break;
+	}
+}
+free(units);
+```
+
 ## Related

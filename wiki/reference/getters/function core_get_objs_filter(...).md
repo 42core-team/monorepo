@@ -24,4 +24,13 @@ t_obj **core_get_objs_filter(bool (*condition)(const t_obj *));
 
 ## Examples
 
+```c
+t_obj **warriors = core_get_objs_filter(ft_is_warrior);
+for (int i = 0; warriors && warriors[i]; i++)
+{
+	// warrior move & attack logic
+}
+free(warriors);
+```
+
 ## Related

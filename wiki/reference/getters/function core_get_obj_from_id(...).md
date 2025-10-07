@@ -22,4 +22,15 @@ t_obj *core_get_obj_from_id(unsigned long id);
 
 ## Examples
 
+```c
+// we only need one carrier for now
+int carrier_id = -1;
+
+void ft_on_tick(unsigned long tick)
+{
+	if (carrier_id >= 0)
+	{
+		t_obj *carrier = core_get_obj_by_id(carrier_id);
+```
+
 ## Related

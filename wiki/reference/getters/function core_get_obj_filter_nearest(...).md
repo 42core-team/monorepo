@@ -23,4 +23,17 @@ t_obj *core_get_obj_filter_nearest(t_pos pos, bool (*condition)(const t_obj *));
 
 ## Examples
 
+```c
+static bool is_deposit(const t_obj *obj)
+{
+	return (obj->type == OBJ_DEPOSIT);
+}
+t_obj *ft_get_deposit_nearest(t_pos pos)
+{
+	return core_get_obj_filter_nearest(pos, is_deposit);
+}
+// ...
+t_obj *nearest_deposit = ft_get_deposit_nearest(miner->pos);
+```
+
 ## Related

@@ -22,4 +22,12 @@ t_unit_config *core_get_unitConfig(t_unit_type type);
 
 ## Examples
 
+```c
+t_unit_config *uconf = core_get_unitConfig(UNIT_MINER);
+if (ft_get_core_own()->s_core.gems >= uconf->cost)
+{
+	core_action_createUnit(UNIT_MINER);
+}
+```
+
 ## Related

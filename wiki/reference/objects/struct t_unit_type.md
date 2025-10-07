@@ -36,4 +36,18 @@ Note this info may be inaccurate, please check your config.
 
 ## Examples
 
+```c
+t_obj *obj = units[i];
+switch ((int)obj->s_unit.unit_type)
+{
+	case UNIT_WARRIOR:
+		// ...
+		break;
+
+	case UNIT_MINER:
+		// ...
+		break;
+}
+```
+
 ## Related

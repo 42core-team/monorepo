@@ -45,4 +45,12 @@ typedef struct s_unit_config
 
 ## Examples
 
+```c
+t_unit_config *uconf = core_get_unitConfig(UNIT_MINER);
+if (ft_get_core_own()->s_core.gems >= uconf->cost)
+{
+	core_action_createUnit(UNIT_MINER);
+}
+```
+
 ## Related

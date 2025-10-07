@@ -22,4 +22,13 @@ void
 
 ## Examples
 
+```c
+printf("Warrior Config: \n");
+core_print_config_unit(UNIT_WARRIOR);
+printf("Miner Config: \n");
+core_print_config_unit(UNIT_MINER);
+printf("Carrier Config: \n");
+core_print_config_unit(UNIT_CARRIER);
+```
+
 ## Related

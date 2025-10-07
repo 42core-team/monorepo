@@ -27,4 +27,10 @@ typedef enum e_build_type
 
 ## Examples
 
+```c
+// building logic
+if (core_get_unitConfig(obj->s_unit.unit_type)->build_type == BUILD_TYPE_NONE)
+	continue;
+```
+
 ## Related

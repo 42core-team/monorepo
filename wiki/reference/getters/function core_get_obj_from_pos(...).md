@@ -22,4 +22,11 @@ t_obj *core_get_obj_from_pos(t_pos pos);
 
 ## Examples
 
+```c
+bool ft_is_pos_empty(t_pos pos)
+{
+	return core_get_obj_from_pos(pos) == NULL;
+}
+```
+
 ## Related

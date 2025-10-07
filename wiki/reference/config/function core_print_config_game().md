@@ -22,4 +22,14 @@ void
 
 ## Examples
 
+```c
+void ft_on_tick(unsigned long tick)
+{
+	if (tick == 0)
+	{
+		core_print_config_game();
+	}
+// ...
+```
+
 ## Related
