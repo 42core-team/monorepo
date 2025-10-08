@@ -6,7 +6,7 @@ SIDEBAR_HEADING="⚙️ get_objs_filter()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L40
+https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L38
 
 ## Description
 

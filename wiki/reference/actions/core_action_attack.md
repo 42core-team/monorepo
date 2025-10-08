@@ -6,7 +6,7 @@ SIDEBAR_HEADING="⚙️ action_attack()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#L133
+https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#98
 
 ## Description
 

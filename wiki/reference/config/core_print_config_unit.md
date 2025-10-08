@@ -6,7 +6,7 @@ SIDEBAR_HEADING="⚙️ print_config_unit()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/printing.c#L70
+https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/printing.c#L66
 
 ## Description
 

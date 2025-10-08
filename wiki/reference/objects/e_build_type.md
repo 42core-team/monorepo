@@ -6,7 +6,7 @@ SIDEBAR_HEADING="🔢 e_build_type"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L97
+https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L86
 
 ## Description
 

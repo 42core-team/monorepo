@@ -6,7 +6,7 @@ SIDEBAR_HEADING="⚙️ action_pathfind()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#L67
+https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#41
 
 ## Description
 

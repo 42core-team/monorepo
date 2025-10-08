@@ -6,7 +6,7 @@ SIDEBAR_HEADING="🧩 s_pos"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L36
+https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L27
 
 ## Description
 

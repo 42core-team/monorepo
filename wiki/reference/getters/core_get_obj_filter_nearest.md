@@ -6,7 +6,7 @@ SIDEBAR_HEADING="⚙️ get_obj_filter_nearest()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L72
+https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L70
 
 ## Description
 

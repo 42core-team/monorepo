@@ -6,7 +6,7 @@ SIDEBAR_HEADING="⚙️ print_objs()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/printing.c#L53
+https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/printing.c#L49
 
 ## Description
 

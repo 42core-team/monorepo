@@ -6,7 +6,7 @@ SIDEBAR_HEADING="⚙️ get_unitConfig()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L25
+https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L23
 
 ## Description
 

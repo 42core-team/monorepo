@@ -6,7 +6,7 @@ SIDEBAR_HEADING="⚙️ print_config_game()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/printing.c#L98
+https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/printing.c#L94
 
 ## Description
 

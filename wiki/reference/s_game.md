@@ -6,7 +6,7 @@ SIDEBAR_HEADING="🧩 s_game"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L177
+https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L166
 
 ## Description
 

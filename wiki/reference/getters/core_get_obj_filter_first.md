@@ -6,7 +6,7 @@ SIDEBAR_HEADING="⚙️ get_obj_filter_first()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L63
+https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L61
 
 ## Description
 
