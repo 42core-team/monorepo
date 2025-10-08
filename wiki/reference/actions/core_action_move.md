@@ -1,3 +1,9 @@
+=====
+HEADING="⚙️ function core_action_move(...)"
+PERMALINK="core_action_move"
+SIDEBAR_HEADING="⚙️ core_action_move()"
+=====
+
 ## URL
 
 https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#L59

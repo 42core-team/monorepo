@@ -1,3 +1,9 @@
+=====
+HEADING="⚙️ function core_print_obj(...)"
+PERMALINK="print_obj"
+SIDEBAR_HEADING="⚙️ core_print_obj()"
+=====
+
 ## URL
 
 https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/printing.c#L5

@@ -1,3 +1,9 @@
+=====
+HEADING="⚙️ function core_get_obj_filter_nearest(...)"
+PERMALINK="core_get_obj_filter_nearest"
+SIDEBAR_HEADING="⚙️ core_get_obj_filter_nearest()"
+=====
+
 ## URL
 
 https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L72

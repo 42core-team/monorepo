@@ -1,3 +1,9 @@
+=====
+HEADING="⚙️ function core_action_build(...)"
+PERMALINK="core_action_build"
+SIDEBAR_HEADING="⚙️ core_action_build()"
+=====
+
 ## URL
 
 https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#L155

@@ -1,3 +1,9 @@
+=====
+HEADING="🔢 enum e_obj_type"
+PERMALINK="e_obj_type"
+SIDEBAR_HEADING="🔢 e_obj_type"
+=====
+
 ## URL
 
 https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L16

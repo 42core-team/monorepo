@@ -1,3 +1,9 @@
+=====
+HEADING="⚙️ function core_get_obj_filter_first(...)"
+PERMALINK="core_get_obj_filter_first"
+SIDEBAR_HEADING="⚙️ core_get_obj_filter_first()"
+=====
+
 ## URL
 
 https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L63

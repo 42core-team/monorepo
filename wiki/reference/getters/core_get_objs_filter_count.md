@@ -1,3 +1,9 @@
+=====
+HEADING="⚙️ function core_get_objs_filter_count(...)"
+PERMALINK="core_get_objs_filter_count"
+SIDEBAR_HEADING="⚙️ core_get_objs_filter_count()"
+=====
+
 ## URL
 
 https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L92

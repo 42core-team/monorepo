@@ -1,3 +1,9 @@
+=====
+HEADING="🔢 enum e_unit_type"
+PERMALINK="e_unit_type"
+SIDEBAR_HEADING="🔢 e_unit_type"
+=====
+
 ## URL
 
 https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/units.h#L5

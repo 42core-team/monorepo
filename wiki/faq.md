@@ -1,3 +1,9 @@
+=====
+HEADING="⁉️ Frequently asked questions"
+PERMALINK="faq"
+SIDEBAR_HEADING="FaQ"
+=====
+
 ### 💃 Do I need to adhere to 42 Norminette?
 > No! *Dobby is free!*
 

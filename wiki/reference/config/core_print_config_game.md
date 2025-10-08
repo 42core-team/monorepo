@@ -1,3 +1,9 @@
+=====
+HEADING="⚙️ function core_print_config_game(...)"
+PERMALINK="core_print_config_game"
+SIDEBAR_HEADING="⚙️ core_print_config_game()"
+=====
+
 ## URL
 
 https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/printing.c#L98

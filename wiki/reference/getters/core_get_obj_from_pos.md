@@ -1,3 +1,9 @@
+=====
+HEADING="⚙️ function core_get_obj_from_pos(...)"
+PERMALINK="core_get_obj_from_pos"
+SIDEBAR_HEADING="⚙️ core_get_obj_from_pos()"
+=====
+
 ## URL
 
 https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L12

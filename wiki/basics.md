@@ -12,12 +12,12 @@ Each tick, all game data you can see locally will be updated with the newest sta
 
 > Both you and your opponent have all of the available information about the game to make exact decisions about, they know the same as you about the current game state.
 
-To do anything, you should use action functions.
+To actually do something, you should use action functions.
 
 > ACTION FUNCTIONS are used to perform actions in the game, like creating units, moving them, attacking, etc. Their changes are applied between ticks.
 
 Only action functions have an impact on the current game.\
-The actual gamestate is saved in the server, and you can't modify it locally. Of course you can change a units position struct to be right next to the enemy core locally, but this won't be reflected in the results. **You should be careful about this.**
+The actual gamestate is saved in the server, and you can't modify it locally. Of course you can locally change a units position struct to be right next to the enemy core on the client, but this won't be reflected in the results. **You should be careful about this.**. Almost everything you see is just for reading, except for the action functions.
 
 Each tick, use various functions to make an informed decision what to do. Perform an action using one of the action functions. The next tick, you will be able to see the effects of these changes.
 

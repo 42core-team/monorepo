@@ -1,3 +1,9 @@
+=====
+HEADING="⚙️ function core_action_attack(...)"
+PERMALINK="core_action_attack"
+SIDEBAR_HEADING="⚙️ core_action_attack()"
+=====
+
 ## URL
 
 https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#L133

@@ -1,3 +1,9 @@
+=====
+HEADING="🧩 struct s_config"
+PERMALINK="s_config"
+SIDEBAR_HEADING="🧩 s_config"
+=====
+
 ## URL
 
 https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L134

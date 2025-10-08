@@ -1,3 +1,9 @@
+=====
+HEADING="⚙️ function core_get_unitConfig(...)"
+PERMALINK="core_get_unitConfig"
+SIDEBAR_HEADING="⚙️ core_get_unitConfig()"
+=====
+
 ## URL
 
 https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L25

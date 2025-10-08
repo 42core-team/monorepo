@@ -1,3 +1,9 @@
+=====
+HEADING="🔢 enum e_build_type"
+PERMALINK="e_build_type"
+SIDEBAR_HEADING="🔢 e_build_type"
+=====
+
 ## URL
 
 https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L97

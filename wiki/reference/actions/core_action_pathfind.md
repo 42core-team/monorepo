@@ -1,3 +1,9 @@
+=====
+HEADING="⚙️ function core_action_pathfind(...)"
+PERMALINK="core_action_pathfind"
+SIDEBAR_HEADING="⚙️ core_action_pathfind()"
+=====
+
 ## URL
 
 https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#L67

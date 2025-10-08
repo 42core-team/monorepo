@@ -1,3 +1,9 @@
+=====
+HEADING="⚙️ function core_get_objs_filter(...)"
+PERMALINK="core_get_objs_filter"
+SIDEBAR_HEADING="⚙️ core_get_objs_filter()"
+=====
+
 ## URL
 
 https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L40

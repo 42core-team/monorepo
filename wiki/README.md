@@ -1,3 +1,9 @@
+=====
+HEADING="⭐️ The Art of CORE ⭐️"
+PERMALINK="readme"
+SIDEBAR_HEADING="README"
+=====
+
 > 🤗 Welcome to the Official CORE Wiki, Documentation & Reference 📚
 
 # 👾 What is CORE?

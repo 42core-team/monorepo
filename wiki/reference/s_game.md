@@ -1,3 +1,9 @@
+=====
+HEADING="🧩 struct s_game"
+PERMALINK="s_game"
+SIDEBAR_HEADING="🧩 s_game"
+=====
+
 ## URL
 
 https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L177
