@@ -1,7 +1,7 @@
 =====
 HEADING="⚙️ function core_action_transferGems(...)"
 PERMALINK="core_action_transferGems"
-SIDEBAR_HEADING="⚙️ core_action_transferGems()"
+SIDEBAR_HEADING="⚙️ action_transferGems()"
 =====
 
 ## URL

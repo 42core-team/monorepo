@@ -1,7 +1,7 @@
 =====
 HEADING="⚙️ function core_action_pathfind(...)"
 PERMALINK="core_action_pathfind"
-SIDEBAR_HEADING="⚙️ core_action_pathfind()"
+SIDEBAR_HEADING="⚙️ action_pathfind()"
 =====
 
 ## URL

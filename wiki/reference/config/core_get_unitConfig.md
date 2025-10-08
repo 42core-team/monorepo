@@ -1,7 +1,7 @@
 =====
 HEADING="⚙️ function core_get_unitConfig(...)"
 PERMALINK="core_get_unitConfig"
-SIDEBAR_HEADING="⚙️ core_get_unitConfig()"
+SIDEBAR_HEADING="⚙️ get_unitConfig()"
 =====
 
 ## URL

@@ -1,7 +1,7 @@
 =====
 HEADING="⚙️ function core_get_objs_filter_count(...)"
 PERMALINK="core_get_objs_filter_count"
-SIDEBAR_HEADING="⚙️ core_get_objs_filter_count()"
+SIDEBAR_HEADING="⚙️ get_objs_filter_count()"
 =====
 
 ## URL

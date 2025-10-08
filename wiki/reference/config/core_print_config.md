@@ -1,7 +1,7 @@
 =====
 HEADING="⚙️ function core_print_config(...)"
 PERMALINK="core_print_config"
-SIDEBAR_HEADING="⚙️ core_print_config()"
+SIDEBAR_HEADING="⚙️ print_config()"
 =====
 
 ## URL

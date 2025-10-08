@@ -1,7 +1,7 @@
 =====
 HEADING="⚙️ function core_startGame(...)"
 PERMALINK="startGame"
-SIDEBAR_HEADING="⚙️ core_startGame()"
+SIDEBAR_HEADING="⚙️ startGame()"
 =====
 
 ## URL

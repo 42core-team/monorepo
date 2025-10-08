@@ -1,7 +1,7 @@
 =====
 HEADING="⚙️ function core_print_objs(...)"
 PERMALINK="print_objs"
-SIDEBAR_HEADING="⚙️ core_print_objs()"
+SIDEBAR_HEADING="⚙️ print_objs()"
 =====
 
 ## URL

@@ -1,4 +1,4 @@
-## Playing against others locally
+## Locally
 
 Have the person you want to play against send them their executable. In their cloned git repo, it will be created under `my-core-bot/bot`.
 
@@ -10,7 +10,7 @@ Have the person you want to play against send them their executable. In their cl
 
 Running the following code will start a game of the player 1 executable against the player 2 executable.
 
-## Playing against others online
+## Online
 
 Once you have pushed some code, you can compete on the website in the queue or tournament.
 

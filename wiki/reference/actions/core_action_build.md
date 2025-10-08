@@ -1,7 +1,7 @@
 =====
 HEADING="⚙️ function core_action_build(...)"
 PERMALINK="core_action_build"
-SIDEBAR_HEADING="⚙️ core_action_build()"
+SIDEBAR_HEADING="⚙️ action_build()"
 =====
 
 ## URL

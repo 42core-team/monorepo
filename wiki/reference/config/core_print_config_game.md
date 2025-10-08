@@ -1,7 +1,7 @@
 =====
 HEADING="⚙️ function core_print_config_game(...)"
 PERMALINK="core_print_config_game"
-SIDEBAR_HEADING="⚙️ core_print_config_game()"
+SIDEBAR_HEADING="⚙️ print_config_game()"
 =====
 
 ## URL
