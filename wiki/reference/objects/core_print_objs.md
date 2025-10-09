@@ -60,4 +60,4 @@ This example will get an array of all deposits using the getter system, print it
 
 ## Related
 
-- [🧩 struct s_obj](../objects/s_obj)
+- [🧩 struct s_obj](reference/objects/s_obj)

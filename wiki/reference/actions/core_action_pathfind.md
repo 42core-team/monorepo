@@ -43,5 +43,5 @@ for (int i = 0; own_team_warriors && own_team_warriors[i]; i++)
 
 ## Related
 
-- [🧩 struct s_obj](../objects/s_obj)
-- [🧩 struct s_pos](../objects/s_pos)
+- [🧩 struct s_obj](reference/objects/s_obj)
+- [🧩 struct s_pos](reference/objects/s_pos)

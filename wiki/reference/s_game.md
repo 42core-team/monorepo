@@ -45,5 +45,5 @@ for (int i = 0; game.objects && game.objects[i]; i++)
 
 ## Related
 
-- [🧩 struct s_config](./config/s_config)
-- [🧩 struct s_obj](../objects/s_obj)
+- [🧩 struct s_config](reference/config/s_config)
+- [🧩 struct s_obj](reference/objects/s_obj)

@@ -54,4 +54,4 @@ for (int i = 0; units && units[i]; i++)
 
 ## Related
 
-- [🧩 struct s_obj](../objects/s_obj)
+- [🧩 struct s_obj](reference/objects/s_obj)

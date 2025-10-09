@@ -39,4 +39,4 @@ if (core_get_objs_filter_count(ft_is_own_team_warrior) < 3)
 
 ## Related
 
-- [🔢 enum e_unit_type](../objects/e_unit_type)
+- [🔢 enum e_unit_type](reference/objects/e_unit_type)

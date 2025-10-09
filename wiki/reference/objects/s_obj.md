@@ -115,6 +115,6 @@ free(units);
 
 ## Related
 
-- [🔢 enum e_obj_type](../objects/e_obj_type)
-- [🧩 struct s_pos](../objects/s_pos)
-- [🔢 enum e_unit_type](../objects/e_unit_type)
+- [🔢 enum e_obj_type](reference/objects/e_obj_type)
+- [🧩 struct s_pos](reference/objects/s_pos)
+- [🔢 enum e_unit_type](reference/objects/e_unit_type)

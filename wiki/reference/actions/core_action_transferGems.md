@@ -16,8 +16,8 @@ If the position points to an object that can hold gems (Cores / Units / Gem Pile
 
 > **TIP**: Unlike other action parameters, the server won't stop executing the transfer gems action if the gems amount parameter is set higher than the possible amount. That means you can pass `99999`, even if the source object is only holding `42` gems, to transfer the maximum possible amount of gems anyways.
 
-- Units can only transfer gems if their action cooldown is 0, for more see [Cooldowns](../../documentation/cooldowns).
-- Units can only transfer gems one tile up, down, left or right; for more see [Action Position Limits](../../documentation/action_position_limits). The only exception to this is outlined in the tip box below.
+- Units can only transfer gems if their action cooldown is 0, for more see [Cooldowns](documentation/cooldowns).
+- Units can only transfer gems one tile up, down, left or right; for more see [Action Position Limits](documentation/action_position_limits). The only exception to this is outlined in the tip box below.
 
 > **TIP**: But what if my core is surrounded by units? How will I get gems to and from it? -> The transferGems action will work back and forth between a unit and its core provided the unit is at *the closest possible unoccupied position* to its core in [Manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry). If the core is surrounded, the unit must simply get as close as possible for this action to work then, as determined by a floodfill algorithm and the [manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry).
 
@@ -52,4 +52,4 @@ else
 
 ## Related
 
-- [🧩 struct s_obj](../objects/s_obj)
+- [🧩 struct s_obj](reference/objects/s_obj)

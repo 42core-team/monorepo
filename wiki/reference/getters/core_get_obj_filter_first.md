@@ -10,7 +10,7 @@ https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L61
 
 ## Description
 
-Get the first object matching a [custom filtering condition](../../documentation/getter_filtering).
+Get the first object matching a [custom filtering condition](documentation/getter_filtering).
 
 Which one it is is not defined and unpredictable, but most likely the object matching the condition with the smallest id.
 
@@ -45,5 +45,5 @@ t_obj *ft_get_core_own(void)
 
 ## Related
 
-- [🧩 struct s_obj](../objects/s_obj)
-- [Getter filtering Documentation](../../documentation/getter_filtering)
+- [🧩 struct s_obj](reference/objects/s_obj)
+- [Getter filtering Documentation](documentation/getter_filtering)

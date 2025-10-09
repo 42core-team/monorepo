@@ -12,7 +12,7 @@ https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L123
 
 Immutable info on how certain aspects of the game are set up.
 
-[More Info on configs](../../documentation/configs)
+[More Info on configs](documentation/configs)
 
 ## Signature
 
@@ -72,5 +72,5 @@ void ft_on_tick(unsigned long tick)
 
 ## Related
 
-- [🧩 struct s_unit_config](../config/s_unit_config)
-- [Configs Documentation](../../documentation/configs)
+- [🧩 struct s_unit_config](reference/config/s_unit_config)
+- [Configs Documentation](documentation/configs)

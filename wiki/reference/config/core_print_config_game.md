@@ -12,7 +12,7 @@ https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/printing.
 
 Prints the game config.
 
-[More Info on configs](../../documentation/configs)
+[More Info on configs](documentation/configs)
 
 ## Signature
 
@@ -65,4 +65,4 @@ void ft_on_tick(unsigned long tick)
 
 ## Related
 
-- [Configs Documentation](../../documentation/configs)
+- [Configs Documentation](documentation/configs)

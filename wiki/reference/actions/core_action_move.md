@@ -12,8 +12,8 @@ https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c
 
 Moves a unit to a specific position.
 
-- Units can only move one tile up, down, left or right; for more see [Action Position Limits](../../documentation/action_position_limits).
-- Units can only move if their action cooldown is 0, for more see [Cooldowns](../../documentation/cooldowns).
+- Units can only move one tile up, down, left or right; for more see [Action Position Limits](documentation/action_position_limits).
+- Units can only move if their action cooldown is 0, for more see [Cooldowns](documentation/cooldowns).
 
 ## Signature
 
@@ -49,5 +49,5 @@ if (moving_unit->pos.y < target->pos.y)
 
 ## Related
 
-- [🧩 struct s_obj](../objects/s_obj)
-- [🧩 struct s_pos](../objects/s_pos)
+- [🧩 struct s_obj](reference/objects/s_obj)
+- [🧩 struct s_pos](reference/objects/s_pos)

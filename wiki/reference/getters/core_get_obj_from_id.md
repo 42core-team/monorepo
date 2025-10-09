@@ -41,4 +41,4 @@ void ft_on_tick(unsigned long tick)
 
 ## Related
 
-- [🧩 struct s_obj](../objects/s_obj)
+- [🧩 struct s_obj](reference/objects/s_obj)

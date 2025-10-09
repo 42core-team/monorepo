@@ -16,8 +16,8 @@ This action not only used to damage any object, but it's also good for destroyin
 
 > **TIP**: There is friendly fire - you can damage your own units and core. So **BE CAREFUL!**
 
-- Units can only attack one tile up, down, left or right; for more see [Action Position Limits](../../documentation/action_position_limits).
-- Units can only attack if their action cooldown is 0, for more see [Cooldowns](../../documentation/cooldowns).
+- Units can only attack one tile up, down, left or right; for more see [Action Position Limits](documentation/action_position_limits).
+- Units can only attack if their action cooldown is 0, for more see [Cooldowns](documentation/cooldowns).
 
 ## Signature
 
@@ -48,4 +48,4 @@ if (manhattan_distance(unit->pos, target->pos) <= 1 && target->s_unit.team_id !=
 
 ## Related
 
-- [🧩 struct s_obj](../objects/s_obj)
+- [🧩 struct s_obj](reference/objects/s_obj)

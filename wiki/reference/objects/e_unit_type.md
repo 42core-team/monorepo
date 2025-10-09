@@ -58,5 +58,5 @@ switch ((int)obj->s_unit.unit_type)
 
 ## Related
 
-- [🧩 struct s_obj](../objects/s_obj)
-- [🧩 struct s_unit_config](../config/s_unit_config)
+- [🧩 struct s_obj](reference/objects/s_obj)
+- [🧩 struct s_unit_config](reference/config/s_unit_config)

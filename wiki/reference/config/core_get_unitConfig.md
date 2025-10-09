@@ -12,7 +12,7 @@ https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L23
 
 Get the unit config for a specific unit type.
 
-[More Info on configs](../../documentation/configs)
+[More Info on configs](documentation/configs)
 
 ## Signature
 
@@ -40,6 +40,6 @@ if (ft_get_core_own()->s_core.gems >= uconf->cost)
 
 ## Related
 
-- [🧩 struct s_unit_config](../config/s_unit_config)
-- [🔢 enum e_unit_type](../objects/e_unit_type)
-- [Configs Documentation](../../documentation/configs)
+- [🧩 struct s_unit_config](reference/config/s_unit_config)
+- [🔢 enum e_unit_type](reference/objects/e_unit_type)
+- [Configs Documentation](documentation/configs)

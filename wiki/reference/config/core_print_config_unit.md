@@ -12,7 +12,7 @@ https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/printing.
 
 Prints a selected unit config.
 
-[More Info on configs](../../documentation/configs)
+[More Info on configs](documentation/configs)
 
 ## Signature
 
@@ -60,5 +60,5 @@ core_print_config_unit(UNIT_CARRIER);
 
 ## Related
 
-- [🔢 enum e_unit_type](../objects/e_unit_type)
-- [Configs Documentation](../../documentation/configs)
+- [🔢 enum e_unit_type](reference/objects/e_unit_type)
+- [Configs Documentation](documentation/configs)

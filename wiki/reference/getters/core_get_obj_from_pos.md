@@ -37,5 +37,5 @@ bool ft_is_pos_empty(t_pos pos)
 
 ## Related
 
-- [🧩 struct s_obj](../objects/s_obj)
-- [🧩 struct s_pos](../objects/s_pos)
+- [🧩 struct s_obj](reference/objects/s_obj)
+- [🧩 struct s_pos](reference/objects/s_pos)
