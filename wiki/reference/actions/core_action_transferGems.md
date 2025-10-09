@@ -46,7 +46,7 @@ if (nearest_deposit && obj->s_unit.gems <= 0)
 else
 {
 	core_action_pathfind(obj, ft_get_core_own()->pos);
-	core_action_transferGems(obj, ft_get_core_own()->pos, -1);
+	core_action_transferGems(obj, ft_get_core_own()->pos, 99999);
 }
 ```
 

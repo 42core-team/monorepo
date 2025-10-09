@@ -12,6 +12,8 @@ Before we get started writing code, please run `make` once, and then have a look
 - Can you figure out why some units move faster than others? When do units move?
 - Watch the game run through entirely once & enjoy seeing your team be killed by the noob default opponent. 😂
 
+The program we will be writing will not avoid action failures. You'll have to figure out how to avoid those yourself.
+
 ---
 
 ## The default program
@@ -57,7 +59,7 @@ void ft_on_tick(unsigned long tick)
 }
 ```
 
-The [createUnit action](../reference/actions/core_action_createUnit) takes the [type of unit](../reference/objects/e_unit_type) you wish to create as an input. It then asks to server to create the unit. If all is right, then there will be a new unit spawned the next tick / the next time the `ft_on_tick` function gets executed.
+The [createUnit action](../reference/actions/core_action_createUnit) takes the [type of unit](../reference/objects/e_unit_type) you wish to create as an input. It then asks the server to create the unit. If all is right, then there will be a new unit spawned the next tick / the next time the `ft_on_tick` function gets executed.
 
 If your core (your central base) does not have enough gems however, no unit will be created. Later, we will collect more gems to be able to spawn more units. For now, this warrior is enough.
 
@@ -82,7 +84,7 @@ bool ft_is_own_unit(const t_obj *obj)
 
 This is a getter filtering function - it exactly matches the function signature required to be used with the Core libraries getter filtering functionality. For more info on that see [the getter filtering documentation](getter_filtering).
 
-With it, we can now do the following to easily have an array of all out warriors created for us:
+With it, we can now do the following to easily have an array of all our warriors created for us:
 
 ```c
 void ft_on_tick(unsigned long tick)
@@ -128,9 +130,9 @@ if (unit->s_unit.unit_type == UNIT_WARRIOR)
 
 `ft_get_core_opponent()` returns the core of the opponent. It is not a part of the Core Library, it is a utility function that is already a part of your bot in the `getters.c` file right next to the file we're in right now. It contains a few helpful getters that all utilize [getter filtering](getter_filtering). It may be useful to you.
 
-[`core_action_pathfind`](../reference/actions/core_action_pathfind) is another action similar to [`core_action_createUnit`](../reference/actions/core_action_createUnit), which tries to move a certain object to a certain position. It makes one move each time it's called, so since multiple moves accross multiple ticks are needed to move an object to another location, keep calling the pathfind function until it's reached its target, as we do here.\
-If there is an object in the way (that isn't one of your teams units or your core), it will attack that object to get to its target. So if we target an object thats not our unit our core, it will actually also attack it, making the function perfect for both moving and attacking.\
-Note that this function is only a temporary util - you'll probably want a custom function that's better at navigating the game field at some point. Once you do, you can use [`core_action_move`](../reference/actions/core_action_move) and [`core_action_attack`](../reference/actions/core_action_attack.md) to move and attack units manually.
+[`core_action_pathfind`](../reference/actions/core_action_pathfind) is another action similar to [`core_action_createUnit`](../reference/actions/core_action_createUnit), which tries to move a certain object to a certain position. It makes one move each time it's called, so since multiple moves across multiple ticks are needed to move an object to another location, keep calling the pathfind function until it's reached its target, as we do here.\
+If there is an object in the way (that isn't one of your teams units or your core), it will attack that object to get to its target. So if we target an object that's not our unit our core, it will actually also attack it, making the function perfect for both moving and attacking.\
+Note that this function is only a temporary util - you'll probably want a custom function that's better at navigating the game field at some point. Once you do, you can use [`core_action_move`](../reference/actions/core_action_move) and [`core_action_attack`](../reference/actions/core_action_attack) to move and attack units manually.
 
 If you run the game again now, you should see your bot spawn a warrior and then see that warrior walk towards the opponent core.
 The problem is that the gridmaster opponent does the exact same - so it's entirely random which one of you wins. So let's improve our logic and gain a leg up on our opponent!
@@ -243,7 +245,7 @@ void ft_on_tick(unsigned long tick)
 // ...
 ```
 
-This will guarantee that there is always at least 2 miners, and start spawning warriors afterwards. [`core_get_objs_filter_count`](../reference/getters/core_get_objs_filter_count.md) is similar to previous getter functions, but it simply returns an integer - the amount of units in the game that match the custom filtering condition.
+This will guarantee that there is always at least 2 miners, and start spawning warriors afterwards. [`core_get_objs_filter_count`](../reference/getters/core_get_objs_filter_count) is similar to previous getter functions, but it simply returns an integer - the amount of units in the game that match the custom filtering condition.
 
 Secondly, we need a new getter filtering util:
 
@@ -300,7 +302,7 @@ else if (unit->s_unit.unit_type == UNIT_MINER)
 
 Great! Now the gems are being mined & picked up correctly. Trouble is that they are being picked up by the miner unit, not the core. We just need to bring them to our core now, so the core can can use them to spawn more units!
 
-To do this, we can use yet another action, [`core_action_transferGems`](../reference/actions/core_action_transferGems.md).
+To do this, we can use yet another action, [`core_action_transferGems`](../reference/actions/core_action_transferGems).
 
 The logic itself isn't too tricky - we can just check whether the unit is holding any gems. If so, we should walk back to our core and transfer the gems to the core, and if not, we should go get some more by mining deposits.
 
@@ -323,6 +325,8 @@ else if (unit->s_unit.unit_type == UNIT_MINER)
 ```
 
 Awesome! It works!
+
+I hope you enjoyed this tutorial.
 
 ---
 
@@ -411,3 +415,11 @@ void ft_on_tick(unsigned long tick)
 	free(my_units);
 }
 ```
+
+---
+
+## What next?
+
+- We fully missed out on the most powerful unit: The carrier. And there may be even more units in your config depending on the event you are in! Check them out to not miss out on powerful strategic possibilities.
+- How should we handle opponents that try to attack our units? Maybe we can figure out a way to set up a fleeing logic.
+- What if an opponent warrior has reached our core, but all our warriors are near their core - can we keep a few warriors always close to our core as a defensive measure?

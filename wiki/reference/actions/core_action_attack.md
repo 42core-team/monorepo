@@ -40,7 +40,7 @@ void
 t_obj *target = ft_get_target();
 t_obj *unit = ft_get_attacker_unit();
 
-if (manhattan_distance(unit->pos, target->pos) <= 1)
+if (manhattan_distance(unit->pos, target->pos) <= 1 && target->s_unit.team_id != game.my_team_id)
 {
 	core_action_attack(unit, target);
 }

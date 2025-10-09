@@ -24,6 +24,9 @@ SIDEBAR_HEADING="FaQ"
 >
 > For more info: [Running on the Website](website_setup)
 
+### 🔢 Are there limits to how many units or objects I can spawn / can be in the game at the same time?
+> No.
+
 ### 🪻 Are there limits to how many gems units or cores can hold?
 > No. Go nuts.
 

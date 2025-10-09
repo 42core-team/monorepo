@@ -30,7 +30,7 @@ void
 
 ### stdout
 
-This may be an old config with values that do not apply to your current event:
+This code block may be an old config with values that do not apply to your current event - if you execute the function they will be correct.
 
 ```
 Unit Warrior (0) Config:

@@ -31,7 +31,7 @@ You can receive gems by having your units attack the gem deposits on the map or 
 	- The code you pushed will be used to execute games in the queue and in the final tournament. So make sure to push your code & test it against other players regularly!
 
 4. **Get informed!** 🧠
-	- It's recommended you at least read through [the basics](basics), skim through the [FaQ](faq) and [Tips & Tricks](tips_and_tricks), and read the [My first Core bot](./documentation/my_first_core_bot.md) tutorial to get started.
+	- It's recommended you at least read through [the basics](basics), skim through the [FaQ](faq) and [Tips & Tricks](tips_and_tricks), and read the [My first Core bot](./documentation/my_first_core_bot) tutorial to get started.
 
 🎉 **You are now ready to start coding!** 😎
 
