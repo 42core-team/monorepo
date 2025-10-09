@@ -6,7 +6,7 @@ SIDEBAR_HEADING="⚙️ action_transferGems()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#108
+https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#L108
 
 ## Description
 

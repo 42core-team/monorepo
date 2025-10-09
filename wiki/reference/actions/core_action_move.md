@@ -6,7 +6,7 @@ SIDEBAR_HEADING="⚙️ action_move()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#32
+https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c#L32
 
 ## Description
 
