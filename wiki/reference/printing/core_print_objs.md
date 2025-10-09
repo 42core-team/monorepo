@@ -35,3 +35,5 @@ free(core_print_objs(core_get_objs_filter(ft_is_deposit)));
 This example will get an array of all deposits using the getter system, print it, then free it, all in the same line. *Awesome!*
 
 ## Related
+
+- [🧩 struct s_obj](../objects/s_obj)

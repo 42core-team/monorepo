@@ -10,7 +10,9 @@ https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/printing.
 
 ## Description
 
-Prints the entire game config and all unit configs
+Prints the entire game config and all unit configs.
+
+[More Info on configs](../../documentation/configs)
 
 ## Signature
 
@@ -38,5 +40,6 @@ void ft_on_tick(unsigned long tick)
 // ...
 ```
 
-
 ## Related
+
+- [Configs Documentation](../../documentation/configs)

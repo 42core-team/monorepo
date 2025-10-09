@@ -12,9 +12,12 @@ https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c
 
 Builds a new object.
 
-The `t_build_type` of the builder unit in the config will determine what gets built (e.g. bomb or wall).
+The `e_build_type` of the builder unit in the config will determine what gets built (e.g. bomb or wall). ([More info on bombs](../../documentation/bombs))
 
 Objects can only be built one tile up, down, left or right from the builder; and only if their builders action_cooldown is 0.
+
+- Objects can only be built one tile up, down, left or right from the builder; for more see [Action Position Limits](../../documentation/action_position_limits).
+- Builders objects can only build if their action cooldown is 0, for more see [Cooldowns](../../documentation/cooldowns).
 
 ## Signature
 
@@ -42,3 +45,7 @@ if (unit && unit->s_unit.gems >= game.config.wall_build_cost)
 ```
 
 ## Related
+
+- [🧩 struct s_obj](../objects/s_obj)
+- [🔢 enum e_build_type](../objects/e_build_type)
+- [🧩 struct s_pos](../objects/s_pos)

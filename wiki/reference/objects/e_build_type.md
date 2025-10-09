@@ -40,3 +40,6 @@ if (core_get_unitConfig(obj->s_unit.unit_type)->build_type == BUILD_TYPE_NONE)
 ```
 
 ## Related
+
+- [🧩 struct s_unit_config](../config/s_unit_config)
+- [⚙️ function core_action_build(...)](../actions/core_action_build)

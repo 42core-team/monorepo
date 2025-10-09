@@ -44,3 +44,6 @@ for (int i = 0; game.objects && game.objects[i]; i++)
 ```
 
 ## Related
+
+- [🧩 struct s_config](./config/s_config.md)
+- [🧩 struct s_obj](../objects/s_obj)

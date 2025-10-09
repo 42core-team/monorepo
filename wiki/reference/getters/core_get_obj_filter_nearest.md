@@ -10,7 +10,9 @@ https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L70
 
 ## Description
 
-Get the nearest object to a given position matching a custom filtering condition. Manhattan distance is used to determine distance. If two objects or more have the same distance, either could be picked.
+Get the nearest object to a given position matching a [custom filtering condition](../../documentation/getter_filtering).
+
+[Manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry) is used to determine distance. If two objects or more have the same distance, either could be picked.
 
 ## Signature
 
@@ -43,3 +45,7 @@ t_obj *nearest_deposit = ft_get_deposit_nearest(miner->pos);
 ```
 
 ## Related
+
+- [🧩 struct s_obj](../objects/s_obj)
+- [🧩 struct s_pos](../objects/s_pos)
+- [Getter filtering Documentation](../../documentation/getter_filtering)

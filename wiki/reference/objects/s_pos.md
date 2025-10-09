@@ -47,3 +47,5 @@ int manhattan_distance(t_pos pos1, t_pos pos2)
 ```
 
 ## Related
+
+- [Manhattan Distance Wikipedia](https://en.wikipedia.org/wiki/Taxicab_geometry)

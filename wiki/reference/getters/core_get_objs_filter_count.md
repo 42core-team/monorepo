@@ -10,7 +10,7 @@ https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L90
 
 ## Description
 
-Get the count of objects that match a certain custom filtering condition.
+Get the count of objects that match a [custom filtering condition](../../documentation/getter_filtering).
 
 ## Signature
 
@@ -54,3 +54,6 @@ int get_unit_count(int unitType, int teamId)
 ```
 
 ## Related
+
+- [🧩 struct s_obj](../objects/s_obj)
+- [Getter filtering Documentation](../../documentation/getter_filtering)

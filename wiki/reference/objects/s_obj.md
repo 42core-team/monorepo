@@ -12,9 +12,12 @@ https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L36
 
 Game object structure representing all the things that can be present on the game field.
 
-Each object can be uniquely identified by its id. There are never more than one object at a given grid position.
+- There are never two objects with the same id.
+- There are never more than one object at a given [grid position](s_pos).
 
-There is no limit to how many gems units or cores can hold.
+> **WARNING**: The memory location of objects may change between ticks. To store references to objects between ticks, it's recommended to use their id.
+
+There is no limit to how many gems units, cores or gem piles can hold.
 
 > **TIP**: The `void *data` field is **especially powerful & useful**. The library will never touch this field, it's yours to mess with for whatever you want.\
 It can already safely be set when a unit is still uninitialized, so immediately after unit creation, in the same tick. It's generally used to store specific jobs, tasks or targets of the unit in the easiest way possible.
@@ -111,3 +114,7 @@ free(units);
 ```
 
 ## Related
+
+- [🔢 enum e_obj_type](../objects/e_obj_type)
+- [🧩 struct s_pos](../objects/s_pos)
+- [🔢 enum e_unit_type](../objects/e_unit_type)

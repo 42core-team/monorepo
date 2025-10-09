@@ -12,6 +12,8 @@ https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L93
 
 Immutable info on what each type of unit is able to do.
 
+[More Info on configs](../../documentation/configs)
+
 ## Signature
 
 ```c
@@ -60,3 +62,6 @@ if (ft_get_core_own()->s_core.gems >= uconf->cost)
 ```
 
 ## Related
+
+- [🔢 enum e_build_type](../objects/e_build_type)
+- [Configs Documentation](../../documentation/configs)

@@ -1,7 +1,7 @@
 =====
 HEADING="📜 Let's expLORE the CORE LORE"
 PERMALINK="lore"
-SIDEBAR_HEADING="Lore"
+SIDEBAR_HEADING="💥 Lore"
 =====
 
 > This is required reading and you will immediately lose Core Game if you don't *memorize* the following text.

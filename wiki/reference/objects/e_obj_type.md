@@ -53,3 +53,5 @@ static bool is_deposit_gems(const t_obj *obj)
 ```
 
 ## Related
+
+- [🧩 struct s_obj](../objects/s_obj)

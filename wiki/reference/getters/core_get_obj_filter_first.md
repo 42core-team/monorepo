@@ -10,7 +10,9 @@ https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L61
 
 ## Description
 
-Get the first object matching a custom filtering condition. Which one it is is not defined and unpredictable, but most likely the object matching the condition with the smallest id.
+Get the first object matching a [custom filtering condition](../../documentation/getter_filtering).
+
+Which one it is is not defined and unpredictable, but most likely the object matching the condition with the smallest id.
 
 > **TIP**: Why is this useful? - Because you won't need an array if you want any instance of an object, regardless of which one specifically. Like when getting your own core or another one-of-a-kind object.
 
@@ -43,3 +45,6 @@ t_obj *ft_get_core_own(void)
 ```
 
 ## Related
+
+- [🧩 struct s_obj](../objects/s_obj)
+- [Getter filtering Documentation](../../documentation/getter_filtering)

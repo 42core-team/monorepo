@@ -14,9 +14,10 @@ Attacks a target with a unit.
 
 This action not only used to damage any object, but it's also good for destroying deposits, picking up gem piles & lighting a bomb's fuse.
 
-Units can only attack one tile up, down, left or right; and only if their action_cooldown is 0.
-
 > **TIP**: There is friendly fire - you can damage your own units and core. So **BE CAREFUL!**
+
+- Units can only attack one tile up, down, left or right; for more see [Action Position Limits](../../documentation/action_position_limits).
+- Units can only attack if their action cooldown is 0, for more see [Cooldowns](../../documentation/cooldowns).
 
 ## Signature
 
@@ -46,3 +47,5 @@ if (manhattan_distance(unit->pos, target->pos) <= 1)
 ```
 
 ## Related
+
+- [🧩 struct s_obj](../objects/s_obj)

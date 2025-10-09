@@ -5,8 +5,6 @@ If you are in an event, **look at the config**! They contain invaluable info.
 - The Game Config contains all gameplay-related settings: Units and their damage values, deposit gem counts, and bomb countdowns.
 - The Server Config contains settings about how the game runs, e.g. timeouts.
 
-> **WARNING**: The configs shown here are unlikely to be the actual configs used in your project. Use one of the methods below to figure out what exact config you're working with.
-
 # Where do I find the Config
 
 Once you've cloned your bot, find the configs in the configs/ folder.

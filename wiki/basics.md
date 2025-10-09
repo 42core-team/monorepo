@@ -1,7 +1,8 @@
 The game is set on a square grid filled with objects.
 - There can only ever be one object at one position, no more.
 - Each object has a unique, unchanging id.
-- The memory location of objects may change between ticks.
+
+> **TIP**: The memory location of objects may change between ticks. To store references to objects between ticks, it's recommended to use their id.
 
 There is a central server that stores the game state. Each bot sends packets back and forth with the server.\
 Once per tick each clients local game state is updated.
