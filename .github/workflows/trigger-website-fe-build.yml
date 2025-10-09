@@ -1,4 +1,4 @@
-name: Trigger website relaunch frontend
+name: Trigger website frontend build
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 env:
   TARGET_OWNER: 42core-team
-  TARGET_REPO: website_relaunch
+  TARGET_REPO: website
   TARGET_WORKFLOW_FILE: frontend-build.yml
   TARGET_REF: dev
 
@@ -20,7 +20,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
     runs-on: ubuntu-24.04
     steps:
-      - name: Call workflow_dispatch in website_relaunch (dev)
+      - name: Call workflow_dispatch in website (dev)
         uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.WSR_PAT }}
@@ -38,7 +38,7 @@ jobs:
     if: github.event_name == 'release' && github.event.action == 'published'
     runs-on: ubuntu-24.04
     steps:
-      - name: Call workflow_dispatch in website_relaunch (prod)
+      - name: Call workflow_dispatch in website (prod)
         uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.WSR_PAT }}
