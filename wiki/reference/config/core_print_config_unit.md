@@ -28,6 +28,25 @@ void core_print_config_unit(t_unit_type unit_type);
 
 void
 
+### stdout
+
+This may be an old config with values that do not apply to your current event:
+
+```
+Unit Warrior (0) Config:
+	- Cost: 150
+	- HP: 35
+	- Damage to Core: 12
+	- Damage to Unit: 6
+	- Damage to Deposit: 4
+	- Damage to Wall: 5
+	- Damage to Bombs: 5
+	- Build Type: None
+	- Base Action Cooldown: 5
+	- Max Action Cooldown: 12
+	- Balance per Cooldown Step: 12
+```
+
 ## Examples
 
 ```c

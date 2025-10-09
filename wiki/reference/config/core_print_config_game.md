@@ -28,6 +28,29 @@ void
 
 void
 
+### stdout
+
+This may be an old config with values that do not apply to your current event:
+
+```
+Game Config:
+	- Map Grid Size: 20
+	- Idle Income: 2
+	- Idle Income Timeout: 1000
+	- Deposit HP: 50
+	- Deposit Income: 150
+	- Core HP: 200
+	- Initial gems: 200
+	- Wall HP: 50
+	- Wall Build Cost: 20
+	- Bomb Countdown: 10
+	- Bomb Throw Cost: 50
+	- Bomb Reach: 3
+	- Bomb Damage to Cores: 50
+	- Bomb Damage to Units: 30
+	- Bomb Damage to Deposits: 40
+```
+
 ## Examples
 
 ```c

@@ -26,6 +26,19 @@ void core_print_obj(t_obj *obj);
 
 void
 
+### stdout
+
+```
+---ID: 188
+Type: Unit
+Position: (1, 2)
+HP: 23
+Unit Type: 0
+Team ID: 43
+gems: 0
+Action Cooldown: 3
+```
+
 ## Examples
 
 ```c

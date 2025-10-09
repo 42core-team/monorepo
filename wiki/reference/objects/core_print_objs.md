@@ -26,6 +26,30 @@ t_obj **core_print_objs(t_obj **objs);
 
 - `t_obj **`: Returns the inputted objects array, so you can easily free in the same line as you print. (see example)
 
+### stdout
+
+```
+---ID: 160
+Type: Unit
+Position: (8, 7)
+HP: 5
+Unit Type: 0
+Team ID: 43
+gems: 0
+Action Cooldown: 0
+---
+---ID: 168
+Type: Unit
+Position: (1, 2)
+HP: 35
+Unit Type: 0
+Team ID: 43
+gems: 0
+Action Cooldown: 4
+---
+...
+```
+
 ## Examples
 
 ```c
