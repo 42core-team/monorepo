@@ -12,9 +12,9 @@ https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/actions.c
 
 Builds a new object.
 
-The `e_build_type` of the builder unit in the config will determine what gets built (e.g. bomb or wall). ([More info on bombs](documentation/bombs))
+The `e_build_type` of the builder unit in the config will determine what gets built (e.g. bomb or wall). ([More info on bombs](documentation/bombs)).
 
-Objects can only be built one tile up, down, left or right from the builder; and only if their builders action_cooldown is 0.
+The builder must hold enough money to be able to afford the object it is building as defined by the [config](documentation/configs).
 
 - Objects can only be built one tile up, down, left or right from the builder; for more see [Action Position Limits](documentation/action_position_limits).
 - Builders objects can only build if their action cooldown is 0, for more see [Cooldowns](documentation/cooldowns).

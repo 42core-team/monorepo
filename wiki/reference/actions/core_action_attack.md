@@ -14,7 +14,8 @@ Attacks a target with a unit.
 
 This action not only used to damage any object, but it's also good for destroying deposits, picking up gem piles & lighting a bomb's fuse.
 
-> **TIP**: There is friendly fire - you can damage your own units and core. So **BE CAREFUL!**
+> [!WARNING]
+> There is friendly fire - you can damage your own units and core. So **BE *CAREFUL!***
 
 - Units can only attack one tile up, down, left or right; for more see [Action Position Limits](documentation/action_position_limits).
 - Units can only attack if their action cooldown is 0, for more see [Cooldowns](documentation/cooldowns).

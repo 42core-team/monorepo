@@ -14,7 +14,8 @@ Get the first object matching a [custom filtering condition](documentation/gette
 
 Which one it is is not defined and unpredictable, but most likely the object matching the condition with the smallest id.
 
-> **TIP**: Why is this useful? - Because you won't need an array if you want any instance of an object, regardless of which one specifically. Like when getting your own core or another one-of-a-kind object.
+> [!TIP]
+> Why is this useful? - Because you won't need an array if you want any instance of an object, regardless of which one specifically. Like when getting your own core or another one-of-a-kind object.
 
 ## Signature
 

@@ -82,7 +82,7 @@ bool ft_is_own_unit(const t_obj *obj)
 }
 ```
 
-This is a getter filtering function - it exactly matches the function signature required to be used with the Core libraries getter filtering functionality. For more info on that see [the getter filtering documentation](documentation/getter_filtering).
+This is a getter filtering function - it exactly matches the function signature required to be used with the Core libraries getter filtering functionality. For more info on that see the [getter filtering documentation](documentation/getter_filtering).
 
 With it, we can now do the following to easily have an array of all our warriors created for us:
 
@@ -215,7 +215,7 @@ AWESOME! (You should have just won.)
 
 Finally, let's go a step further!
 
-To defeat more advanced opponents, we will need more money that the idle income we get simply by waiting over time - we need to actually pick up the gems you have probably seen lying around ourselves.
+To defeat more advanced opponents, we will need more money than the idle income we get simply by waiting over time - we need to actually pick up the gems you have probably seen lying around yourself.
 
 You may have noticed there are these deposit objects around. They are gems encased in stone, and they are the secret to earning tons of gems and overrunning your opponent with units.
 
@@ -245,9 +245,9 @@ void ft_on_tick(unsigned long tick)
 // ...
 ```
 
-This will guarantee that there is always at least 2 miners, and start spawning warriors afterwards. [`core_get_objs_filter_count`](reference/getters/core_get_objs_filter_count) is similar to previous getter functions, but it simply returns an integer - the amount of units in the game that match the custom filtering condition.
+This will guarantee that there is always at least 2 miners, and we will start spawning warriors afterwards. [`core_get_objs_filter_count`](reference/getters/core_get_objs_filter_count) is similar to previous getter functions, but it simply returns an integer - the amount of units in the game that match the custom filtering condition.
 
-Secondly, we need a new getter filtering util:
+Secondly, we need yet another new getter filtering util:
 
 ```c
 bool ft_is_deposit(const t_obj *obj)

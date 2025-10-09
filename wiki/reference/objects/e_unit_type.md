@@ -14,7 +14,8 @@ Type of unit. Which are available differs from event to event.
 
 There is an overview of all the unit types and their properties and settings in the config.
 
-> **TIP**: Type `UNIT_` and autocomplete will show you all the available units.
+> [!TIP]
+> Type `UNIT_` and autocomplete will show you all the available units.
 
 ## Signature
 

@@ -15,11 +15,13 @@ Game object structure representing all the things that can be present on the gam
 - There are never two objects with the same id.
 - There are never more than one object at a given [grid position](reference/objects/s_pos).
 
-> **WARNING**: The memory location of objects may change between ticks. To store references to objects between ticks, it's recommended to use their id.
+> [!WARNING]
+> The memory location of objects may change between ticks. To store references to objects between ticks, it's recommended to use their id.
 
 There is no limit to how many gems units, cores or gem piles can hold.
 
-> **TIP**: The `void *data` field is **especially powerful & useful**. The library will never touch this field, it's yours to mess with for whatever you want.\
+> [!TIP]
+> The `void *data` field is **especially powerful & useful**. The library will never touch this field, it's yours to mess with for whatever you want.\
 It can already safely be set when a unit is still uninitialized, so immediately after unit creation, in the same tick. It's generally used to store specific jobs, tasks or targets of the unit in the easiest way possible.
 
 ## Signature

@@ -12,7 +12,8 @@ https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L38
 
 Get all objects matching a [custom filtering condition](documentation/getter_filtering).
 
-> **WARNING**: You are responsibility to **free the array** returned by this function, but not the objects in it themselves, they are the same object instances as in the `game.objects` array.
+> [!WARNING]
+> You are responsibility to **free the array** returned by this function, but not the objects in it themselves, they are the same object instances as in the `game.objects` array.
 
 ## Signature
 
