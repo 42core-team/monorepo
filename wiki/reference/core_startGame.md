@@ -12,7 +12,7 @@ https://github.com/42core-team/monorepo/blob/dev/client_lib/src/con_lib.c#L44
 
 Starts the Core lib up, initializes the game, connects to the server & starts the game.
 
-You only need to call this function once in your code to start up the connection lib, and this line is already present in your code when you clone the repository. No need for you to anything. 💆‍♀️🧘‍♀️😎
+You only need to call this function once in your code to start up the Core library, and this line is already present in your code when you clone the repository. No need for you to anything. 💆‍♀️🧘‍♀️😎
 
 ## Signature
 

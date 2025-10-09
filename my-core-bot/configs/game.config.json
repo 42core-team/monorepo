@@ -7,7 +7,7 @@
 	"depositIncome": 150,
 	"gemPileIncome": 35,
 	"coreHp": 200,
-	"coreSpawnCooldown": 22,
+	"coreSpawnCooldown": 20,
 	"initialBalance": 200,
 	"wallHp": 50,
 	"wallBuildCost": 20,
@@ -49,8 +49,8 @@
 			"cost": 100,
 			"hp": 20,
 			"baseActionCooldown": 4,
-			"maxActionCooldown": 9,
-			"balancePerCooldownStep": 75,
+			"maxActionCooldown": 7,
+			"balancePerCooldownStep": 42,
 			"damageCore": 5,
 			"damageUnit": 2,
 			"damageDeposit": 10,
@@ -70,7 +70,7 @@
 			"damageUnit": 0,
 			"damageDeposit": 0,
 			"damageWall": 2,
-			"damageBomb": 5,
+			"damageBomb": 2,
 			"buildType": "none"
 		}
 	],

@@ -36,7 +36,7 @@ Basic units that are in almost every config / event are:
 
 - **Warrior**: Offensive melee unit, good at attacking other units and cores.
 - **Miner**: Pickaxe-wielding worker, good at destroying gem deposits & walls.
-- **Carrier**: Light-footed transporter, fast & does not get slowed down when carrying lots of money as quickly as other units.
+- **Carrier**: Light-footed transporter, fast & does not get slowed down when carrying lots of gems as quickly as other units.
 
 Note this info may be inaccurate, please check your config.
 

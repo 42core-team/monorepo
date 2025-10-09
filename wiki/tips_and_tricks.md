@@ -10,4 +10,4 @@ SIDEBAR_HEADING="Tips and Tricks"
 
 - 📖 Take some time to read the wiki! It contains a lot of valuable information, such as the many practical code examples.
 
-- 👀 Looking at the [taxicab / manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry) might be useful. It's what the entire project uses. Who like Pythagoras and euclidian geometry anyways? Diamonds for the win!
+- 👀 Looking at [what a tick is](https://www.reddit.com/r/explainlikeimfive/comments/4mn531/eli5_what_is_atick_in_gaming_development/) and the [taxicab / manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry) might be useful. It's what the entire project uses. Who like Pythagoras and euclidian geometry anyways? Diamonds for the win!
