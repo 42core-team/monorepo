@@ -19,4 +19,4 @@ The tournament will at the end determine the winner of your event.
 
 Using the queue often is a great idea to see how good your bot is in what aspects of Core Game.
 
-If your code runs locally but not on the website, you may want to have a look at the [website setup guide](website_setup).
+If your code runs locally but not on the website, you may want to have a look at the [website setup guide](documentation/website_setup).

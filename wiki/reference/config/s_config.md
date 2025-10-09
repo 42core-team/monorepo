@@ -55,7 +55,7 @@ typedef struct s_config
 - `unsigned long bomb_hp`: How many healthpoints a bomb has.
 - `unsigned long bomb_countdown`: How many ticks a bomb takes to explode after being thrown.
 - `unsigned long bomb_throw_cost`: How much it costs to throw a bomb.
-- `unsigned long bomb_reach`: How big the explosion of a bomb is. See the [objects](./2_objects) page for more info on the bomb explosion pattern.
+- `unsigned long bomb_reach`: How big the explosion of a bomb is. See the [bombs documentation](documentation/bombs) page for more info on the bomb explosion pattern.
 - `unsigned long bomb_damage`: How much damage a bomb does to objects hit by its explosion.
 - `t_unit_config **units`: List of all unit types that are available in the game. NULL-terminated.
 

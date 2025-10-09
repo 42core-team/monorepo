@@ -22,7 +22,7 @@ SIDEBAR_HEADING="FaQ"
 ### 📚 Are there any limitations to what I can add to the bot?
 > Your bot will be run in a separate Docker container from the server and other bots, and this container won't have an internet connection.
 >
-> For more info: [Running on the Website](website_setup)
+> For more info: [Running on the Website](documentation/website_setup)
 
 ### 🔢 Are there limits to how many units or objects I can spawn / can be in the game at the same time?
 > No.

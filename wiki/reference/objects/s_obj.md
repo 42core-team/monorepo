@@ -13,7 +13,7 @@ https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L36
 Game object structure representing all the things that can be present on the game field.
 
 - There are never two objects with the same id.
-- There are never more than one object at a given [grid position](s_pos).
+- There are never more than one object at a given [grid position](reference/objects/s_pos).
 
 > **WARNING**: The memory location of objects may change between ticks. To store references to objects between ticks, it's recommended to use their id.
 

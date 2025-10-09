@@ -14,7 +14,7 @@ Very simple pathfinding logic implementation. It won't help you win, but it can 
 
 When you call it, it will determine the next move to make and then immediately either move there or attack objects in its way, provided the objects in its way aren't your units or core.
 
-It is encouraged that you write your own pathfinder eventually for a good bot using [`core_action_move`](core_action_move) and [`core_action_attack`](core_action_attack), this function is just a util for you to easily get started.
+It is encouraged that you write your own pathfinder eventually for a good bot using [`core_action_move`](reference/actions/core_action_move) and [`core_action_attack`](reference/actions/core_action_attack), this function is just a util for you to easily get started.
 
 ## Signature
 
