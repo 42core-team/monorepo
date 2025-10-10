@@ -1,0 +1,53 @@
+name: 💡 Feature Request
+description: Suggest a new feature or improvement
+type: Feature
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ⭐️ Thanks for taking the time to suggest a feature!
+        Please provide as much context as possible so we can evaluate it effectively.
+
+  - type: textarea
+    id: explanation
+    attributes:
+      label: Feature Summary
+      placeholder: Short explanation of the feature or improvement.
+    validations:
+      required: true
+
+  - type: textarea
+    id: usefulness
+    attributes:
+      label: Why is this needed / beneficial?
+      placeholder: Describe how it improves the experience or solves a problem.
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: How could it work?
+      placeholder: How do you imagine this feature being implemented or functioning in-game?
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References / Examples
+      placeholder: Optional links, examples, screenshots, or notes.
+
+  - type: markdown
+    attributes:
+      value: |
+        Please try to give the issue an appropriate label based on the components of Core Game it likely affects.
+
+  - type: markdown
+    attributes:
+      value: |
+        💡 If this is an vague idea rather than a specific feature request, please change the issue type to "Idea".
+        🔄 If the issue must be further discussed by the full Core Game team before it can be worked on, please change the issue type to "Refinement".
+
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping us improve Core Game! 💙

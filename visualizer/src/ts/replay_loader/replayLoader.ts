@@ -123,8 +123,9 @@ class ReplayLoader {
 			);
 		}
 		if (this.replayData.misc.version !== expectedReplayVersion) {
-			const suppress = localStorage.getItem("suppressVersionWarning");
-			if (!suppress || suppress !== "true") {
+			const urlParams = new URLSearchParams(window.location.search);
+			const suppressNow = urlParams.get("suppress_version_warning") === "true";
+			if (!suppressNow) {
 				alert(
 					`Unsupported replay version. (Expected ${expectedReplayVersion}, but got: ${this.replayData.misc.version}) Things might stop working unexpectedly.`,
 				);

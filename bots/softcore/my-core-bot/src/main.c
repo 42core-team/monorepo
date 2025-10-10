@@ -13,7 +13,6 @@ static bool ft_is_own_team_miner(const t_obj *obj)
 	if (obj->type != OBJ_UNIT) return false;
 	if (obj->s_unit.unit_type != UNIT_MINER) return false;
 	if (obj->s_unit.team_id != game.my_team_id) return false;
-	if (obj->state != STATE_ALIVE) return false;
 	return true;
 }
 
@@ -28,14 +27,14 @@ void ft_on_tick(unsigned long tick)
 	{
 		if (own_team_miners[i]->s_unit.gems > 0)
 		{
-			core_action_moveTowards(own_team_miners[i], ft_get_core_own()->pos);
-			core_action_transferGems_toObj(own_team_miners[i], ft_get_core_own(), own_team_miners[i]->s_unit.gems);
+			core_action_pathfind(own_team_miners[i], ft_get_core_own()->pos);
+			core_action_transferGems(own_team_miners[i], ft_get_core_own()->pos, own_team_miners[i]->s_unit.gems);
 		}
 		else
 		{
 			t_obj *nearest_gems = ft_get_deposit_gems_nearest(own_team_miners[i]->pos);
-			core_action_moveTowards(own_team_miners[i], nearest_gems->pos);
-			core_action_attack_object(own_team_miners[i], nearest_gems); // Attack is used to mine gems
+			core_action_pathfind(own_team_miners[i], nearest_gems->pos);
+			core_action_attack(own_team_miners[i], nearest_gems); // Attack is used to mine gems
 		}
 	}
 	free(own_team_miners);

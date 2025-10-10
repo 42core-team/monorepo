@@ -17,12 +17,8 @@ void core_print_obj(t_obj *obj)
 						 : obj->type == OBJ_DEPOSIT	 ? "Deposit"
 						 : obj->type == OBJ_WALL	 ? "Wall"
 						 : obj->type == OBJ_GEM_PILE ? "Gem Pile"
+						 : obj->type == OBJ_BOMB	 ? "Bomb"
 													 : "Unknown");
-	// obj->type == OBJ_BOMB ? "Bomb" : "Unknown");
-	printf("State: %s\n", obj->state == STATE_UNINITIALIZED ? "Uninitialized"
-						  : obj->state == STATE_ALIVE		? "Alive"
-						  : obj->state == STATE_DEAD		? "Dead"
-															: "Unknown");
 	printf("Position: (%hu, %hu)\n", obj->pos.x, obj->pos.y);
 	printf("HP: %lu\n", obj->hp);
 

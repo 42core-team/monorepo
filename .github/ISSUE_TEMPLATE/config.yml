@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💻 Website-related topic
+    url: https://github.com/42core-team/website/issues/new
+    about: Open an issue in website repository

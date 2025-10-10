@@ -1,4 +1,4 @@
-name: Trigger website relaunch frontend
+name: Trigger website frontend build
 
 on:
   push:
@@ -7,46 +7,68 @@ on:
       - 'wiki/**'
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      stage:
+        description: "Target stage to dispatch"
+        required: true
+        type: choice
+        options:
+          - dev
+          - prod
+        default: dev
+      force_rebuild:
+        description: "Force full rebuild in target workflow"
+        required: false
+        type: boolean
+        default: false
 
 env:
   TARGET_OWNER: 42core-team
-  TARGET_REPO: website_relaunch
+  TARGET_REPO: website
   TARGET_WORKFLOW_FILE: frontend-build.yml
-  TARGET_REF: dev
 
 jobs:
   dispatch-dev:
     name: Dispatch DEV deploy
-    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/dev') ||
+      (github.event_name == 'workflow_dispatch' && inputs.stage == 'dev')
     runs-on: ubuntu-24.04
     steps:
-      - name: Call workflow_dispatch in website_relaunch (dev)
+      - name: Call workflow_dispatch in website (dev)
         uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.WSR_PAT }}
           script: |
+            const isManual = context.eventName === 'workflow_dispatch';
+            const forceRebuild = isManual ? (context.payload.inputs.force_rebuild === true ? 'true' : 'false') : 'true'; // inputs as strings
             await github.rest.actions.createWorkflowDispatch({
               owner: process.env.TARGET_OWNER,
               repo: process.env.TARGET_REPO,
               workflow_id: process.env.TARGET_WORKFLOW_FILE,
               ref: 'dev',
-              inputs: { environment: 'dev', force_rebuild: true }
+              inputs: { environment: 'dev', force_rebuild: forceRebuild }
             });
 
   dispatch-prod:
     name: Dispatch PROD deploy
-    if: github.event_name == 'release' && github.event.action == 'published'
+    if: |
+      (github.event_name == 'release' && github.event.action == 'published') ||
+      (github.event_name == 'workflow_dispatch' && inputs.stage == 'prod')
     runs-on: ubuntu-24.04
     steps:
-      - name: Call workflow_dispatch in website_relaunch (prod)
+      - name: Call workflow_dispatch in website (prod)
         uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.WSR_PAT }}
           script: |
+            const isManual = context.eventName === 'workflow_dispatch';
+            const forceRebuild = isManual ? (context.payload.inputs.force_rebuild === true ? 'true' : 'false') : 'true'; // inputs as strings
             await github.rest.actions.createWorkflowDispatch({
               owner: process.env.TARGET_OWNER,
               repo: process.env.TARGET_REPO,
               workflow_id: process.env.TARGET_WORKFLOW_FILE,
               ref: 'main',
-              inputs: { environment: 'prod', force_rebuild: true }
+              inputs: { environment: 'prod', force_rebuild: forceRebuild }
             });

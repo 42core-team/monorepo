@@ -55,14 +55,10 @@ char *core_internal_encode_action(void)
 				uid->key = strdup("unit_id");
 				uid->number = a->data.attack.id;
 				obj->array[idx++] = uid;
-				json_node *x = create_node(JSON_TYPE_NUMBER);
-				x->key = strdup("x");
-				x->number = a->data.attack.pos.x;
-				obj->array[idx++] = x;
-				json_node *y = create_node(JSON_TYPE_NUMBER);
-				y->key = strdup("y");
-				y->number = a->data.attack.pos.y;
-				obj->array[idx++] = y;
+				json_node *target_id = create_node(JSON_TYPE_NUMBER);
+				target_id->key = strdup("target_id");
+				target_id->number = a->data.attack.target_id;
+				obj->array[idx++] = target_id;
 			}
 			break;
 		case ACTION_TRANSFER:

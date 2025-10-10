@@ -17,6 +17,30 @@ static bool positionHasNeighbours(const Position &pos, int N)
 			if (Board::instance().getObjectAtPos(Position(nx, ny))) return true;
 		}
 	}
+
+	const Position mirroredPos{N - 1 - pos.x, N - 1 - pos.y};
+
+	// Would be adjacent to its own mirrored object
+	if (std::max(std::abs(pos.x - mirroredPos.x), std::abs(pos.y - mirroredPos.y)) <= 1) return true;
+
+	// Would be adjacent to another mirrored object
+	for (int dx = -1; dx <= 1; ++dx)
+	{
+		for (int dy = -1; dy <= 1; ++dy)
+		{
+			if (dx == 0 && dy == 0) continue;
+			int nx = mirroredPos.x + dx;
+			int ny = mirroredPos.y + dy;
+			if (nx < 0 || nx >= N || ny < 0 || ny >= N) continue;
+
+			// Mirror pre-image of (nx, ny)
+			const Position pre{N - 1 - nx, N - 1 - ny};
+			if (pre.x < 0 || pre.x >= N || pre.y < 0 || pre.y >= N) continue;
+
+			if (Board::instance().getObjectAtPos(pre)) return true;
+		}
+	}
+
 	return false;
 }
 

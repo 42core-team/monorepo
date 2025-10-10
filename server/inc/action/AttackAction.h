@@ -21,7 +21,7 @@ class AttackAction : public Action
   public:
 	AttackAction(json msg);
 	unsigned int getUnitId() const { return unit_id_; }
-	Position getTargetPos() const { return target_pos_; }
+	unsigned int getTargetId() const { return target_id_; }
 
 	std::string execute(Core *core);
 	void decodeJSON(json msg);
@@ -29,7 +29,7 @@ class AttackAction : public Action
 
   private:
 	unsigned int unit_id_;
-	Position target_pos_;
+	unsigned int target_id_;
 };
 
 #endif // ATTACK_ACTION_H
