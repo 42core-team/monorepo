@@ -4,7 +4,7 @@ void ft_on_tick(unsigned long tick);
 
 int main(int argc, char **argv)
 {
-	return core_startGame("{{TEAM_NAME}}", argc, argv, ft_on_tick, false);
+	return core_startGame("YOUR TEAM NAME HERE", argc, argv, ft_on_tick, false);
 }
 
 static bool ft_is_own_team_warrior(const t_obj *obj)
