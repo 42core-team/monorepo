@@ -58,15 +58,6 @@ t_obj **core_get_objs_filter(bool (*condition)(const t_obj *))
 	return result;
 }
 
-t_obj *core_get_obj_filter_first(bool (*condition)(const t_obj *))
-{
-	t_obj **objects = core_get_objs_filter(condition);
-	if (!objects || !objects[0]) return NULL;
-	t_obj *first = objects[0];
-	free(objects);
-	return first;
-}
-
 t_obj *core_get_obj_filter_nearest(t_pos pos, bool (*condition)(const t_obj *))
 {
 	t_obj **objects = core_get_objs_filter(condition);
