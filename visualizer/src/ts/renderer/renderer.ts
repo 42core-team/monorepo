@@ -60,10 +60,10 @@ function drawFrame(timestamp: number): void {
 		return;
 	}
 
-	const nonPersistentElements = svgCanvas.querySelectorAll(":not(.persistent)");
-
-	for (const element of nonPersistentElements) {
-		element.classList.add("not-touched");
+	for (const element of svgCanvas.querySelectorAll("*")) {
+		if (!(element as Element).closest(".persistent")) {
+			element.classList.add("not-touched");
+		}
 	}
 
 	for (const currObj of replayData.objects) {
@@ -89,7 +89,9 @@ function drawFrame(timestamp: number): void {
 	}
 
 	for (const element of svgCanvas.querySelectorAll(".not-touched")) {
-		element.remove();
+		if (!(element as Element).closest(".persistent")) {
+			element.remove();
+		}
 	}
 
 	scheduleNextFrame();
@@ -158,9 +160,9 @@ export async function setupRenderer(): Promise<void> {
 			for (const obj of getStateAt(0)?.objects ?? []) {
 				if (obj.type === 0 && obj.teamId === team.id) {
 					if (obj.x === 0)
-						teamOneElement.textContent = `${team.name} (${team.id})`;
+						teamOneElement.textContent = `🟠 ${team.name} (${team.id})`;
 					else if (obj.x === gameConfig.gridSize - 1)
-						teamTwoElement.textContent = `${team.name} (${team.id})`;
+						teamTwoElement.textContent = `🟣 ${team.name} (${team.id})`;
 				}
 			}
 		}

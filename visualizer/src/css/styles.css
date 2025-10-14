@@ -15,12 +15,8 @@
 }
 
 :root[data-theme="light"] {
-	--hp-color: #c70202ff;
-	--gems-color: #008600ff;
-	--cooldown-color: #0066ffff;
-
 	--panel-bg: color-mix(in srgb, var(--theme-color) 7%, white);
-	--panel-outline: color-mix(in srgb, var(--theme-color) 50%, white);
+	--panel-outline: color-mix(in srgb, var(--theme-color) 55%, white);
 	--panel-track: color-mix(in srgb, white, black 45%);
 	--panel-thumb: var(--theme-color);
 
@@ -30,18 +26,14 @@
 	--app-bg: color-mix(in srgb, var(--theme-color) 25%, white);
 	--grid-bg: var(--panel-bg);
 
-	--corner-buttons-color: var(--theme-color);
+	--gridline-color: rgba(0, 0, 0, 0.12);
 
-	--svg-icon-fill: #000000;
+	--corner-buttons-color: var(--theme-color);
 
 	--fireworks-darkening-layer: rgba(0, 0, 0, 0.75);
 }
 
 :root[data-theme="dark"] {
-	--hp-color: rgb(242, 12, 12);
-	--gems-color: rgb(0, 215, 0);
-	--cooldown-color: #0066ffff;
-
 	--panel-bg: color-mix(
 		in srgb,
 		color-mix(in srgb, var(--theme-color) 25%, white),
@@ -54,27 +46,14 @@
 	--text: #e8e8ea;
 	--tooltip-shadow-contrast: #000000;
 
+	--gridline-color: rgba(0, 0, 0, 0.28);
+
 	--app-bg: color-mix(in srgb, var(--theme-color) 40%, black);
 	--grid-bg: color-mix(in srgb, var(--panel-bg) 50%, black);
 
 	--corner-buttons-color: color-mix(in srgb, var(--theme-color) 35%, white);
 
-	--svg-icon-fill: #ffffff;
-
 	--fireworks-darkening-layer: rgba(0, 0, 0, 0.5);
-}
-
-:root[data-theme="dark"] .game-object {
-	filter: invert(100%) sepia(96%) saturate(17%) hue-rotate(214deg)
-		brightness(104%) contrast(100);
-}
-
-:root[data-theme="light"] .game-object.team-1 {
-	opacity: 0.5;
-}
-
-:root[data-theme="dark"] .game-object.team-1 {
-	opacity: 0.7;
 }
 
 :root[data-theme="light"] ::selection {
@@ -135,26 +114,33 @@ a {
 	background-color: var(--grid-bg);
 	border-radius: 10px;
 	margin: 10px 0 10px 0;
-	color: var(--svg-icon-fill);
 
 	background-position:
 		0 0,
+		0 0,
 		0 0;
-	background-repeat: repeat, repeat;
+	background-repeat: repeat, repeat, no-repeat;
+	background-size:
+		auto,
+		auto,
+		100% 100%;
 }
 
 :root[data-gridlines="on"] #svg-canvas {
 	--cell: calc(var(--svg-canvas-scale) / var(--grid-size));
 	background-image:
 		linear-gradient(to right, var(--gridline-color) 1px, transparent 1px),
-		linear-gradient(to bottom, var(--gridline-color) 1px, transparent 1px);
+		linear-gradient(to bottom, var(--gridline-color) 1px, transparent 1px),
+		var(--field-gradient);
 	background-size:
 		var(--cell) 100%,
-		100% var(--cell);
+		100% var(--cell),
+		100% 100%;
+	background-blend-mode: multiply, multiply, normal;
 }
 
 :root[data-gridlines="off"] #svg-canvas {
-	background-image: none;
+	background-image: var(--field-gradient);
 }
 
 #tooltip {
@@ -175,10 +161,6 @@ a {
 	text-shadow:
 		0 0 2px var(--tooltip-shadow-contrast),
 		0 0 4px var(--tooltip-shadow-contrast);
-}
-
-svg path {
-	fill: var(--svg-icon-fill);
 }
 
 /* Structure */
