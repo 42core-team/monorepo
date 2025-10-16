@@ -11,6 +11,7 @@
 #include <csignal>
 #include <cstring>
 #include <iostream>
+#include <json-schema.hpp>
 #include <memory>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -18,6 +19,7 @@
 #include <unistd.h>
 #include <unordered_map>
 #include <vector>
+using nlohmann::json_schema::json_validator;
 
 using json = nlohmann::ordered_json;
 
@@ -42,25 +44,16 @@ static std::string sanitizeTeamName(const std::string &teamName, const std::stri
 	return sanitized;
 }
 
-// Build final team name for a given teamId
-// based on client-provided name or website-provided env var if set
-static std::string resolveTeamName(unsigned int teamId, const std::string &clientName)
+// Try to find website-provided team name from environment variable
+static std::string getWebsiteProvidedTeamName(unsigned int teamId)
 {
 	const std::string envKey = "PLAYER_" + std::to_string(teamId) + "_NAME";
 	const char *rawEnv = std::getenv(envKey.c_str());
-	const std::string fallback = "Team" + std::to_string(teamId);
-
 	if (rawEnv && *rawEnv)
 	{
-		std::string fromEnv = sanitizeTeamName(rawEnv, fallback);
-		if (!clientName.empty())
-		{
-			Logger::Log("Using website-provided team name for team " + std::to_string(teamId) + ": '" + fromEnv + "'");
-		}
-		return fromEnv;
+		return sanitizeTeamName(rawEnv);
 	}
-
-	return sanitizeTeamName(clientName, fallback);
+	return {};
 }
 
 
@@ -101,8 +94,16 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	// register expected teams & set names based on env if available, otherwise fallback
+	// so if a team never connects they still show up correctly in the replay
 	for (unsigned int teamId : expectedTeamIds)
+	{
 		ReplayEncoder::instance().registerExpectedTeam(teamId);
+
+		std::string teamName = getWebsiteProvidedTeamName(teamId);
+		if (teamName.empty()) teamName = "Team" + std::to_string(teamId);
+		ReplayEncoder::instance().setTeamName(teamId, teamName);
+	}
 
 	std::string teamIdsStr = "Expected team IDs: ";
 	for (unsigned int teamId : expectedTeamIds)
@@ -129,23 +130,38 @@ int main(int argc, char *argv[])
 		std::unique_ptr<Bridge> bridge = std::make_unique<Bridge>(client_fd, expectedTeamIds[bridges.size()]);
 		bridge->start();
 
+		// handle login message
 		json loginMessage;
 		if (!bridge->receiveMessage(loginMessage))
 		{
 			Logger::Log(LogLevel::WARNING, "Did not receive a login message from the client.");
 			continue;
 		}
-		if (!loginMessage.contains("password") ||
-			loginMessage["password"] != "42") // very important and secure authentication
+		try
 		{
-			Logger::Log(LogLevel::WARNING, "Incorrect password.");
+			json_validator v;
+			v.set_root_schema(Config::load_json_schema("login-message.schema.json"));
+			v.validate(loginMessage);
+		}
+		catch (const std::exception &e)
+		{
+			Logger::Log(LogLevel::WARNING, std::string("Login message validation error: ") + e.what() + " (\"" +
+												   loginMessage.dump() + "\")");
 			continue;
 		}
 		unsigned int teamId = loginMessage["id"];
-		std::string teamName = resolveTeamName(teamId, static_cast<std::string>(loginMessage["name"]));
 		bridge->setTeamId(teamId);
-		bridge->setTeamName(teamName);
-		ReplayEncoder::instance().setTeamName(teamId, teamName);
+
+		// set team name
+		std::string clientName =
+				sanitizeTeamName(static_cast<std::string>(loginMessage["name"]), "Team" + std::to_string(teamId));
+		// allow client to override only if current name is the fallback
+		const std::string current = ReplayEncoder::instance().getTeamNameFromTeamId(teamId);
+		const std::string fallback = "Team" + std::to_string(teamId);
+		if (current == fallback)
+		{
+			ReplayEncoder::instance().setTeamName(teamId, clientName);
+		}
 
 		if (std::find(expectedTeamIds.begin(), expectedTeamIds.end(), teamId) == expectedTeamIds.end())
 		{
@@ -186,7 +202,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	Logger::Log("All expected teams have connected. Preparing to start the game...");
+	Logger::Log("Preparing to start the game with " + std::to_string(connectedTeamIds.size()) + " / " +
+				std::to_string(expectedTeamIds.size()) + " teams connected.");
 
 	Game game(connectedTeamIds);
 

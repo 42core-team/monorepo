@@ -16,16 +16,21 @@ std::string Config::dataFolderPath = "";
 #include "Utils.h"
 #include "xxhash.h"
 
-static void validate_or_die(const json &instance, const std::string &schema_name)
+json Config::load_json_schema(const std::string &schema_name)
 {
-	std::string fullName = Config::getDataFolderPath() + "/config-schemas/" + schema_name;
+	std::string fullName = Config::getDataFolderPath() + "/json-schemas/" + schema_name;
 	std::ifstream s(fullName);
 	if (!s)
 	{
 		Logger::LogErr("Could not open schema: " + fullName);
 		exit(EXIT_FAILURE);
 	}
-	json schema = json::parse(s);
+	return json::parse(s);
+}
+
+static void validate_or_die(const json &instance, const std::string &schema_name)
+{
+	json schema = Config::load_json_schema(schema_name);
 	try
 	{
 		json_validator v;

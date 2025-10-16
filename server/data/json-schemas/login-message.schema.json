@@ -1,0 +1,36 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "Server Login Message",
+	"type": "object",
+	"additionalProperties": false,
+	"required": [
+		"id",
+		"password",
+		"name"
+	],
+	"properties": {
+		"id": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 4294967295,
+			"description": "Unsigned team identifier"
+		},
+		"password": {
+			"type": "string",
+			"const": "42",
+			"description": "Shared secret for authentication"
+		},
+		"name": {
+			"type": "string",
+			"minLength": 1,
+			"description": "Team name (No regex, will be sanitized if necessary)"
+		}
+	},
+	"examples": [
+		{
+			"id": 3,
+			"password": "42",
+			"name": "Team-Alpha"
+		}
+	]
+}

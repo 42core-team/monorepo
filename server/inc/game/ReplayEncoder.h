@@ -49,6 +49,7 @@ class ReplayEncoder
 
 	void registerExpectedTeam(unsigned int teamId);
 	void setTeamName(unsigned int teamId, const std::string &teamName);
+	std::string getTeamNameFromTeamId(unsigned int teamId);
 	void markConnectedInitially(unsigned int teamId, bool connected);
 	void setDeathReason(unsigned int teamId, death_reason_t reason);
 	void setPlace(unsigned int teamId, unsigned int place);

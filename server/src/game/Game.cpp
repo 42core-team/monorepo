@@ -105,13 +105,8 @@ void Game::run()
 		if (obj.getType() == ObjectType::Core && obj.getHP() > 0)
 		{
 			unsigned int tid = static_cast<const Core &>(obj).getTeamId();
-			std::string name = "Team" + std::to_string(tid);
-			for (const auto &b : bridges_)
-				if (b->getTeamId() == tid)
-				{
-					name = b->getTeamName();
-					break;
-				}
+			std::string name = ReplayEncoder::instance().getTeamNameFromTeamId(tid);
+			if (name.empty()) name = "Team" + std::to_string(tid);
 			ReplayEncoder::instance().setDeathReason(tid, death_reason_t::NONE_SURVIVED);
 			ReplayEncoder::instance().setPlace(tid, 0);
 			Logger::Log("Team " + std::to_string(tid) + " (" + name + ") won the game!");

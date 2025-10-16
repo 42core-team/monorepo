@@ -109,6 +109,9 @@ class Config
 	}
 	static std::string getDataFolderPath() { return dataFolderPath; }
 
+	// misc utils
+	static json load_json_schema(const std::string &schema_name);
+
   private:
 	static std::string serverConfigFilePath;
 	static std::string gameConfigFilePath;

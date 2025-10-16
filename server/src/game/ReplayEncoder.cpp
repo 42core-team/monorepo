@@ -32,6 +32,11 @@ void ReplayEncoder::setTeamName(unsigned int teamId, const std::string &teamName
 	registerExpectedTeam(teamId);
 	teamData_[teamId].teamName = teamName;
 }
+std::string ReplayEncoder::getTeamNameFromTeamId(unsigned int teamId)
+{
+	if (!teamData_.count(teamId)) return "";
+	return ReplayEncoder::instance().teamData_[teamId].teamName;
+}
 void ReplayEncoder::markConnectedInitially(unsigned int teamId, bool connected)
 {
 	registerExpectedTeam(teamId);
