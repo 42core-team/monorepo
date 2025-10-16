@@ -27,9 +27,7 @@ export interface CreateAction extends BaseAction {
 export interface AttackAction extends BaseAction {
 	type: "attack";
 	unit_id: number;
-	x: number;
-	y: number;
-	dmg: number;
+	target_id: number;
 }
 export type TickAction =
 	| MoveAction

@@ -290,13 +290,23 @@ export function calcAndDrawObject(
 	if (currObj.type === 1) {
 		const actions = actionsByExec[currObj.id] || [];
 		for (const action of actions) {
-			if (
-				action.type === "attack" ||
-				action.type === "build" ||
-				action.type === "transfer_gems"
-			) {
-				const deltaX = action.x - currObj.x;
-				const deltaY = action.y - currObj.y;
+			let baseX: number | undefined;
+			let baseY: number | undefined;
+			if (action.type === "build" || action.type === "transfer_gems") {
+				baseX = action.x;
+				baseY = action.y;
+			} else if (action.type === "attack") {
+				const targetObj = getStateAt(currentTickData.tick)?.objects.find(
+					(o) => o.id === action.target_id,
+				);
+				if (targetObj) {
+					baseX = targetObj.x;
+					baseY = targetObj.y;
+				}
+			}
+			if (typeof baseX === "number" && typeof baseY === "number") {
+				const deltaX = baseX - currObj.x;
+				const deltaY = baseY - currObj.y;
 
 				const halfActionTickProgress =
 					easeInOutProgress > 0.5 ? 1 - easeInOutProgress : easeInOutProgress;
