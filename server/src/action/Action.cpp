@@ -19,7 +19,7 @@ static inline const char *schema_for_type(const std::string &t)
 	return nullptr;
 }
 
-std::vector<std::unique_ptr<Action>> Action::parseActions(json msg)
+std::vector<std::unique_ptr<Action>> Action::parseActions(json msg, std::vector<std::string> *errorsOut)
 {
 	if (!msg.contains("actions")) return std::vector<std::unique_ptr<Action>>();
 
@@ -44,6 +44,8 @@ std::vector<std::unique_ptr<Action>> Action::parseActions(json msg)
 				{
 					Logger::Log(LogLevel::WARNING, std::string("Action schema validation failed for type '") + t +
 														   "': " + e.what() + " (\"" + actionJson.dump() + "\")");
+					if (errorsOut)
+						errorsOut->emplace_back(std::string("Action Failure: Parsing Problem: ") + t + ": " + e.what());
 					continue;
 				}
 
@@ -62,6 +64,11 @@ std::vector<std::unique_ptr<Action>> Action::parseActions(json msg)
 			{
 				Logger::Log(LogLevel::WARNING, std::string("Unknown action type '") + t + "' – discarding. (\"" +
 													   actionJson.dump() + "\")");
+				if (errorsOut)
+				{
+					errorsOut->emplace_back(std::string("Action Failure: Parsing Problem: unknown type '") + t + "' (" +
+											actionJson.dump() + ")");
+				}
 			}
 		}
 

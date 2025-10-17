@@ -44,6 +44,8 @@ void Game::run()
 			gotMsg[b.get()] = false;
 
 		std::vector<std::pair<std::unique_ptr<Action>, Core *>> actions;
+		std::vector<std::pair<int, std::string>> preFailures;
+
 		while (std::chrono::steady_clock::now() - waitStart < std::chrono::milliseconds(maxWait))
 		{
 			bool all = true;
@@ -73,8 +75,13 @@ void Game::run()
 
 						// parse actions
 						Core *core = Board::instance().getCoreByTeamId(b->getTeamId());
-						for (auto &a : Action::parseActions(msg))
+						std::vector<std::string> schemaErrors;
+						for (auto &a : Action::parseActions(msg, &schemaErrors))
 							actions.emplace_back(std::move(a), core);
+						const int tid = core ? core->getTeamId() : b->getTeamId();
+						for (const auto &err : schemaErrors)
+							preFailures.emplace_back(tid, err);
+
 						gotMsg[b.get()] = true;
 					}
 					else
@@ -115,7 +122,7 @@ void Game::run()
 			}
 		}
 
-		tick(tickCount, actions, serverStartTime);
+		tick(tickCount, actions, serverStartTime, preFailures);
 
 		tickCount++;
 	}
@@ -139,9 +146,13 @@ void Game::run()
 }
 
 void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions,
-				std::chrono::steady_clock::time_point serverStartTime)
+				std::chrono::steady_clock::time_point serverStartTime,
+				const std::vector<std::pair<int, std::string>> &preFailures)
 {
-	std::vector<std::pair<int, std::string>> failures; // errors for clients
+	std::vector<std::pair<int, std::string>> failures;
+	failures.reserve(preFailures.size());
+	for (const auto &pf : preFailures)
+		failures.emplace_back(pf.first, "Tick " + std::to_string(tick - 1) + ": " + pf.second);
 
 	// 1. EXECUTE ACTIONS
 

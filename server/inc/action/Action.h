@@ -33,7 +33,7 @@ class Action
 
 	ActionType getActionType() const { return type_; }
 
-	static std::vector<std::unique_ptr<Action>> parseActions(json msg);
+	static std::vector<std::unique_ptr<Action>> parseActions(json msg, std::vector<std::string> *errorsOut = nullptr);
 	static std::string getActionName(ActionType type);
 
 	virtual std::string execute(Core *core) = 0;

@@ -34,7 +34,8 @@ class Game
 
   private:
 	void tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions,
-			  std::chrono::steady_clock::time_point serverStartTime);
+			  std::chrono::steady_clock::time_point serverStartTime,
+			  const std::vector<std::pair<int, std::string>> &preFailures);
 
 	void killWorstPlayerOnTimeout();
 
