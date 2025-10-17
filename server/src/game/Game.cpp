@@ -1,5 +1,8 @@
 #include "Game.h"
 
+#include <json-schema.hpp>
+using nlohmann::json_schema::json_validator;
+
 #include <memory>
 
 Game::Game(std::vector<unsigned int> team_ids)
@@ -51,6 +54,24 @@ void Game::run()
 					json msg;
 					if (b->tryReceiveMessage(msg))
 					{
+						// Validate packet structure
+						// does not yet mean the contained actions are valid
+						try
+						{
+							json_validator v;
+							v.set_root_schema(Config::load_json_schema("packets/client-packet.schema.json"));
+							v.validate(msg);
+						}
+						catch (const std::exception &e)
+						{
+							Logger::Log(LogLevel::WARNING, "Invalid client message schema from team " +
+																   std::to_string(b->getTeamId()) + ": " + e.what() +
+																   " (\"" + msg.dump() + "\")");
+							gotMsg[b.get()] = true;
+							continue;
+						}
+
+						// parse actions
 						Core *core = Board::instance().getCoreByTeamId(b->getTeamId());
 						for (auto &a : Action::parseActions(msg))
 							actions.emplace_back(std::move(a), core);

@@ -31,7 +31,6 @@ class Action
 	Action(ActionType type);
 	virtual ~Action() {}
 
-	bool isValid() const { return is_valid_; }
 	ActionType getActionType() const { return type_; }
 
 	static std::vector<std::unique_ptr<Action>> parseActions(json msg);
@@ -42,8 +41,6 @@ class Action
 	virtual json encodeJSON() = 0;
 
   protected:
-	bool is_valid_;
-
 	ActionType type_;
 };
 

@@ -7,16 +7,8 @@ BuildAction::BuildAction(json msg) : Action(ActionType::BUILD)
 
 void BuildAction::decodeJSON(json msg)
 {
-	if (!msg.contains("unit_id") || !msg.contains("x") || !msg.contains("y"))
-	{
-		is_valid_ = false;
-		return;
-	}
-
 	builder_id_ = msg["unit_id"];
 	position_ = Position(msg["x"], msg["y"]);
-
-	if (!position_.isValid(Config::game().gridSize)) is_valid_ = false;
 }
 json BuildAction::encodeJSON()
 {
@@ -32,9 +24,6 @@ json BuildAction::encodeJSON()
 
 std::string BuildAction::execute(Core *core)
 {
-	(void)core;
-	if (!is_valid_) return "invalid input";
-
 	Object *builderObj = Board::instance().getObjectById(builder_id_);
 	if (builderObj == nullptr || builderObj->getType() != ObjectType::Unit) return "invalid or non-existing unit";
 
@@ -46,6 +35,7 @@ std::string BuildAction::execute(Core *core)
 	BuildType buildType = Config::game().units[builder->getUnitType()].buildType;
 	if (buildType == BuildType::NONE) return "unit unable to build";
 
+	if (!position_.isValid(Config::game().gridSize)) return "target position out of bounds";
 	if (Board::instance().getObjectAtPos(position_) != nullptr) return "position occupied";
 
 	if (position_.distance(Board::instance().getObjectPositionById(builder->getId())) > 1)

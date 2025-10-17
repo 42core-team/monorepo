@@ -1,0 +1,32 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "Attack Action",
+	"type": "object",
+	"additionalProperties": false,
+	"required": [
+		"type",
+		"unit_id",
+		"target_id"
+	],
+	"properties": {
+		"type": {
+			"type": "string",
+			"const": "attack"
+		},
+		"unit_id": {
+			"type": "integer",
+			"minimum": 0
+		},
+		"target_id": {
+			"type": "integer",
+			"minimum": 0
+		}
+	},
+	"examples": [
+		{
+			"type": "attack",
+			"unit_id": 7,
+			"target_id": 13
+		}
+	]
+}

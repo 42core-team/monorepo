@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
 		try
 		{
 			json_validator v;
-			v.set_root_schema(Config::load_json_schema("login-message.schema.json"));
+			v.set_root_schema(Config::load_json_schema("packets/login-message.schema.json"));
 			v.validate(loginMessage);
 		}
 		catch (const std::exception &e)

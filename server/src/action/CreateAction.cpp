@@ -7,12 +7,6 @@ CreateAction::CreateAction(json msg) : Action(ActionType::CREATE)
 
 void CreateAction::decodeJSON(json msg)
 {
-	if (!msg.contains("unit_type"))
-	{
-		is_valid_ = false;
-		return;
-	}
-
 	unit_type_ = msg["unit_type"];
 }
 json CreateAction::encodeJSON()
@@ -27,8 +21,6 @@ json CreateAction::encodeJSON()
 
 std::string CreateAction::execute(Core *core)
 {
-	if (!is_valid_) return "invalid input";
-
 	if (core->getSpawnCooldown() > 0)
 		return "core spawn cooldown not done - wait " + std::to_string(core->getSpawnCooldown()) + " ticks";
 

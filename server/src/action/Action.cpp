@@ -1,7 +1,22 @@
 #include "Action.h"
 
-Action::Action(ActionType type) : is_valid_(true), type_(type)
+#include "Logger.h"
+
+#include <json-schema.hpp>
+using nlohmann::json_schema::json_validator;
+
+Action::Action(ActionType type) : type_(type)
 {
+}
+
+static inline const char *schema_for_type(const std::string &t)
+{
+	if (t == "move") return "packets/actions/action-move.schema.json";
+	if (t == "create") return "packets/actions/action-create.schema.json";
+	if (t == "transfer_gems") return "packets/actions/action-transfer-gems.schema.json";
+	if (t == "build") return "packets/actions/action-build.schema.json";
+	if (t == "attack") return "packets/actions/action-attack.schema.json";
+	return nullptr;
 }
 
 std::vector<std::unique_ptr<Action>> Action::parseActions(json msg)
@@ -13,19 +28,41 @@ std::vector<std::unique_ptr<Action>> Action::parseActions(json msg)
 	for (auto &actionJson : msg["actions"])
 	{
 		std::unique_ptr<Action> newAction;
-		if (actionJson.contains("type"))
+		if (actionJson.contains("type") && actionJson["type"].is_string())
 		{
-			if (actionJson["type"] == "move")
-				newAction = std::make_unique<MoveAction>(actionJson);
-			else if (actionJson["type"] == "create")
-				newAction = std::make_unique<CreateAction>(actionJson);
-			else if (actionJson["type"] == "transfer_gems")
-				newAction = std::make_unique<TransferGemsAction>(actionJson);
-			else if (actionJson["type"] == "build")
-				newAction = std::make_unique<BuildAction>(actionJson);
-			else if (actionJson["type"] == "attack")
-				newAction = std::make_unique<AttackAction>(actionJson);
-			if (newAction && !newAction->is_valid_) newAction = nullptr;
+			const std::string t = actionJson["type"];
+			if (const char *schemaName = schema_for_type(t))
+			{
+				// Validate action schema
+				try
+				{
+					json_validator v;
+					v.set_root_schema(Config::load_json_schema(schemaName));
+					v.validate(actionJson);
+				}
+				catch (const std::exception &e)
+				{
+					Logger::Log(LogLevel::WARNING, std::string("Action schema validation failed for type '") + t +
+														   "': " + e.what() + " (\"" + actionJson.dump() + "\")");
+					continue;
+				}
+
+				if (t == "move")
+					newAction = std::make_unique<MoveAction>(actionJson);
+				else if (t == "create")
+					newAction = std::make_unique<CreateAction>(actionJson);
+				else if (t == "transfer_gems")
+					newAction = std::make_unique<TransferGemsAction>(actionJson);
+				else if (t == "build")
+					newAction = std::make_unique<BuildAction>(actionJson);
+				else if (t == "attack")
+					newAction = std::make_unique<AttackAction>(actionJson);
+			}
+			else
+			{
+				Logger::Log(LogLevel::WARNING, std::string("Unknown action type '") + t + "' – discarding. (\"" +
+													   actionJson.dump() + "\")");
+			}
 		}
 
 		if (newAction != nullptr) actions.emplace_back(std::move(newAction));

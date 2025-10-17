@@ -155,7 +155,7 @@ static ServerConfig parseServerConfig()
 	}
 
 	json j = json::parse(cleaned);
-	validate_or_die(j, "server-config.schema.json");
+	validate_or_die(j, "configs/server-config.schema.json");
 
 	if (j.contains("replayFolderPaths") && j["replayFolderPaths"].is_array())
 	{
@@ -194,7 +194,7 @@ static GameConfig parseGameConfig()
 	}
 
 	json j = json::parse(cleaned);
-	validate_or_die(j, "game-config.schema.json");
+	validate_or_die(j, "configs/game-config.schema.json");
 
 	config.gridSize = j.value("gridSize", 25);
 

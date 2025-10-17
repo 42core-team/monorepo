@@ -9,12 +9,6 @@ AttackAction::AttackAction(json msg) : Action(ActionType::ATTACK)
 
 void AttackAction::decodeJSON(json msg)
 {
-	if (!msg.contains("unit_id") || !msg.contains("target_id"))
-	{
-		is_valid_ = false;
-		return;
-	}
-
 	unit_id_ = msg["unit_id"];
 	target_id_ = msg["target_id"];
 }
@@ -31,8 +25,6 @@ json AttackAction::encodeJSON()
 
 std::string AttackAction::execute(Core *core)
 {
-	if (!is_valid_) return "invalid input";
-
 	Object *unitObj = Board::instance().getObjectById(getUnitId());
 	if (!unitObj || unitObj->getType() != ObjectType::Unit) return "invalid or non-existing unit";
 	Unit *unit = (Unit *)unitObj;

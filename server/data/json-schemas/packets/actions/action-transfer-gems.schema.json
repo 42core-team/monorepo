@@ -1,0 +1,44 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "Transfer Gems Action",
+	"type": "object",
+	"additionalProperties": false,
+	"required": [
+		"type",
+		"source_id",
+		"x",
+		"y",
+		"amount"
+	],
+	"properties": {
+		"type": {
+			"type": "string",
+			"const": "transfer_gems"
+		},
+		"source_id": {
+			"type": "integer",
+			"minimum": 0
+		},
+		"x": {
+			"type": "integer",
+			"minimum": 0
+		},
+		"y": {
+			"type": "integer",
+			"minimum": 0
+		},
+		"amount": {
+			"type": "integer",
+			"minimum": 1
+		}
+	},
+	"examples": [
+		{
+			"type": "transfer_gems",
+			"source_id": 10,
+			"x": 3,
+			"y": 4,
+			"amount": 5
+		}
+	]
+}
