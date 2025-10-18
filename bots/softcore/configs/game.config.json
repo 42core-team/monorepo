@@ -1,3 +1,9 @@
+/*
+	For this event, there are 3 different unit types available:
+	1. Warrior: A melee combat unit that excels in attacking enemy cores and units.
+	2. Miner: A unit specialized in breaking hard objects such as gem deposits and walls.
+	3. Carrier: A non-combat unit that is very quick, even when carrying many gems.
+*/
 {
 	"gridSize": 20,
 	"seed": "",

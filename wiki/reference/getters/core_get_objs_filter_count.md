@@ -43,7 +43,7 @@ int unitToCheck = 0;
 long unsigned int teamToCheck = 0;
 bool ft_get_count_of_unitToCheck(const t_obj *obj)
 {
-	return (obj->type == OBJ_UNIT && obj->state == STATE_ALIVE && (int)obj->s_unit.unit_type == unitToCheck && obj->s_unit.team_id == teamToCheck);
+	return (obj->type == OBJ_UNIT && (int)obj->s_unit.unit_type == unitToCheck && obj->s_unit.team_id == teamToCheck);
 }
 int get_unit_count(int unitType, int teamId)
 {

@@ -1,91 +1,119 @@
-# Players
-PLAYER1_ID := 42
-PLAYER2_ID := 43
-PLAYER_1_FOLDER := my-core-bot/my-core-bot
-PLAYER_2_FOLDER := my-core-bot/gridmaster
-PLAYER_1_EXECUTABLE := bot
-PLAYER_2_EXECUTABLE := gridmaster
+PLAYER1_ID := 41
+PLAYER2_ID := 68
 
 # Server
 SERVER_FOLDER := server
 SERVER_EXECUTABLE := server
-
-# Configs
-CONFIG_FOLDER := my-core-bot/configs
-CONFIG_SERVER_FILE := $(CONFIG_FOLDER)/server.config.json
-CONFIG_GAME_FILE := $(CONFIG_FOLDER)/game.config.json
-
 DATA_FOLDER_PATH := server/data
 
-# Git info
-CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
+# Client lib
+CONNECTIONDIR := /workspaces/monorepo/client_lib
+
+# Settings (defaults if unspecified, my be overridden)
+VARIANT ?= hardcore
+MODE    ?= dev
+
+BOT_ROOT           := bots/$(VARIANT)
+PLAYER_1_FOLDER    := $(BOT_ROOT)/my-core-bot
+PLAYER_2_FOLDER    := $(BOT_ROOT)/gridmaster
+CONFIG_FOLDER      := $(BOT_ROOT)/configs
+CONFIG_SERVER_FILE := $(CONFIG_FOLDER)/server.config.json
+CONFIG_GAME_FILE   := $(CONFIG_FOLDER)/game.config.json
+
+# -------------------- Internal switches --------------------
+ifeq ($(MODE),dev)
+  SERVER_BUILD_TARGET := server_build_dev
+else ifeq ($(MODE),prod)
+  SERVER_BUILD_TARGET := server_build_prod
+else
+  $(error MODE must be 'dev' or 'prod' (got '$(MODE)'))
+endif
 
 # -------------------- Run targets --------------------
 all: build_clients
 re: fclean all
 
+dev: MODE:=dev
+dev: run_current
+
+prod: MODE:=prod
+prod: run_current
+
+# sd = soft dev, sp = soft prod, hd = hard dev, hp = hard prod
+sd: ; $(MAKE) VARIANT=softcore MODE=dev run_current
+sp: ; $(MAKE) VARIANT=softcore MODE=prod run_current
+hd: ; $(MAKE) VARIANT=hardcore MODE=dev run_current
+hp: ; $(MAKE) VARIANT=hardcore MODE=prod run_current
+
+soft: ; $(MAKE) VARIANT=softcore MODE=dev run_current
+hard: ; $(MAKE) VARIANT=hardcore MODE=dev run_current
+
 run: prod
 start: prod
 
-dev: stop build_clients server_build_dev
-	$(PLAYER_2_FOLDER)/$(PLAYER_2_EXECUTABLE) $(PLAYER1_ID) &
-	$(PLAYER_1_FOLDER)/$(PLAYER_1_EXECUTABLE) $(PLAYER2_ID) &
-	./$(SERVER_FOLDER)/$(SERVER_EXECUTABLE) $(CONFIG_SERVER_FILE) $(CONFIG_GAME_FILE) $(DATA_FOLDER_PATH) $(PLAYER1_ID) $(PLAYER2_ID)
-redev: fclean dev
+run_current: stop build_clients $(SERVER_BUILD_TARGET)
+	$(PLAYER_2_FOLDER)/gridmaster $(PLAYER1_ID) &
+	$(PLAYER_1_FOLDER)/bot        $(PLAYER2_ID) &
+	./$(SERVER_FOLDER)/$(SERVER_EXECUTABLE) \
+		$(CONFIG_SERVER_FILE) $(CONFIG_GAME_FILE) \
+		$(DATA_FOLDER_PATH) $(PLAYER1_ID) $(PLAYER2_ID)
 
-prod: stop build_clients server_build_prod
-	$(PLAYER_2_FOLDER)/$(PLAYER_2_EXECUTABLE) $(PLAYER1_ID) &
-	$(PLAYER_1_FOLDER)/$(PLAYER_1_EXECUTABLE) $(PLAYER2_ID) &
-	./$(SERVER_FOLDER)/$(SERVER_EXECUTABLE) $(CONFIG_SERVER_FILE) $(CONFIG_GAME_FILE) $(DATA_FOLDER_PATH) $(PLAYER1_ID) $(PLAYER2_ID)
+redev:  fclean dev
 reprod: fclean prod
 
 stop:
-	@pkill $(SERVER_EXECUTABLE) > /dev/null || true &
-	@pkill $(PLAYER_1_EXECUTABLE) > /dev/null || true &
-	@pkill $(PLAYER_2_EXECUTABLE) > /dev/null || true
+	@pkill $(SERVER_EXECUTABLE)   > /dev/null || true &
+	@pkill bot                    > /dev/null || true &
+	@pkill gridmaster            > /dev/null || true
 
 # -------------------- Build targets --------------------
 server_build_dev:
-	make -C $(SERVER_FOLDER) dev
+	$(MAKE) -C $(SERVER_FOLDER) dev
 
 server_build_prod:
-	make -C $(SERVER_FOLDER) prod
+	$(MAKE) -C $(SERVER_FOLDER) prod
 
 build_clients: player_1_build player_2_build setup-hooks
 
 player_1_build:
-	make -C client_lib
-	make -C $(PLAYER_1_FOLDER) CONNECTIONDIR=/workspaces/monorepo/client_lib
+	$(MAKE) -C client_lib
+	$(MAKE) -C $(PLAYER_1_FOLDER) CONNECTIONDIR=$(CONNECTIONDIR)
 
 player_2_build:
-	make -C client_lib
-	make -C $(PLAYER_2_FOLDER) CONNECTIONDIR=/workspaces/monorepo/client_lib
+	$(MAKE) -C client_lib
+	$(MAKE) -C $(PLAYER_2_FOLDER) CONNECTIONDIR=$(CONNECTIONDIR)
 
 visualizer_build:
 	cd visualizer && npm i && npm run build
 
-
 # -------------------- Clean targets --------------------
 clean: stop
-	make -C $(PLAYER_1_FOLDER) clean
-	make -C $(PLAYER_2_FOLDER) clean
-	make -C $(SERVER_FOLDER) clean
-	make -C client_lib clean
+	-$(MAKE) -C bots/hardcore/my-core-bot clean
+	-$(MAKE) -C bots/hardcore/gridmaster clean
+	-$(MAKE) -C bots/softcore/my-core-bot clean
+	-$(MAKE) -C bots/softcore/gridmaster clean
+	-$(MAKE) -C $(SERVER_FOLDER) clean
+	-$(MAKE) -C client_lib clean
 
 fclean: clean
-	make -C $(PLAYER_1_FOLDER) fclean
-	make -C $(PLAYER_2_FOLDER) fclean
-	make -C $(SERVER_FOLDER) fclean
-	make -C client_lib fclean
+	-$(MAKE) -C bots/hardcore/my-core-bot fclean
+	-$(MAKE) -C bots/hardcore/gridmaster fclean
+	-$(MAKE) -C bots/softcore/my-core-bot fclean
+	-$(MAKE) -C bots/softcore/gridmaster fclean
+	-$(MAKE) -C $(SERVER_FOLDER) fclean
+	-$(MAKE) -C client_lib fclean
 
 # -------------------- Meta / Monorepo Targets --------------------
 setup-hooks:
-	chmod +x .githooks/*
+	chmod +x .githooks/* || true
 	git config core.hooksPath .githooks
 
 vis:
-	make visualizer
+	$(MAKE) visualizer
 visualizer:
 	cd visualizer && npm i && npm run dev
 
-.PHONY: all re run start dev redev prod reprod stop server_build_dev server_build_prod build_clients player_1_build player_2_build visualizer_build clean fclean vis visualizer
+.PHONY: all re run start dev redeve prod reprod stop \
+        server_build_dev server_build_prod build_clients \
+        player_1_build player_2_build visualizer_build clean fclean \
+        vis visualizer sd sp hd hp soft hard run_current
