@@ -156,7 +156,7 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 
 	// 1. EXECUTE ACTIONS
 
-	shuffle_vector(actions); // shuffle action execution order to ensure fairness
+	shuffle_actions_vector(actions);
 
 	for (auto &ele : actions)
 	{
