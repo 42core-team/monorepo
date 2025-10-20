@@ -99,7 +99,9 @@ void core_print_config_game(void)
 	printf("	- Idle Income Timeout: %lu\n", game.config.idle_income_timeout);
 	printf("	- Deposit HP: %lu\n", game.config.deposit_hp);
 	printf("	- Deposit Income: %lu\n", game.config.deposit_income);
+	printf("	- Gem Pile Income: %lu\n", game.config.gem_pile_income);
 	printf("	- Core HP: %lu\n", game.config.core_hp);
+	printf("	- Core Spawn Cooldown: %lu\n", game.config.core_spawn_cooldown);
 	printf("	- Initial gems: %lu\n", game.config.initial_balance);
 	printf("	- Wall HP: %lu\n", game.config.wall_hp);
 	printf("	- Wall Build Cost: %lu\n", game.config.wall_build_cost);
