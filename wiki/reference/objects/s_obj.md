@@ -44,7 +44,7 @@ typedef struct s_obj
 		} s_core;
 		struct
 		{
-			unsigned long unit_type;
+			t_unit_type unit_type;
 			unsigned long team_id;
 			unsigned long gems;
 			unsigned long action_cooldown;
@@ -77,7 +77,7 @@ typedef struct s_obj
 
 
 
-- `unsigned long s_unit.unit_type`: Which type of unit this is.
+- `t_unit_type s_unit.unit_type`: Which type of unit this is.
 - `unsigned long s_unit.team_id`: The id of the team that owns the unit.
 - `unsigned long s_unit.gems`: The amount of gems the unit is carrying.
 - `unsigned long s_unit.action_cooldown`: Countdown to the next tick the unit can move, defined by it's action cooldown & how many gems it's carrying.

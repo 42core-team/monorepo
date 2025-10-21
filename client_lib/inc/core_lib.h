@@ -59,7 +59,7 @@ typedef struct s_obj
 		struct
 		{
 			/// @brief Which type of unit this is.
-			unsigned long unit_type;
+			t_unit_type unit_type;
 			/// @brief The id of the team that owns the unit.
 			unsigned long team_id;
 			/// @brief The amount of gems the unit is carrying.
