@@ -1,8 +1,8 @@
-=====
-HEADING="⚙️ function core_print_objs(...)"
-PERMALINK="print_objs"
-SIDEBAR_HEADING="⚙️ print_objs()"
-=====
+---
+title: "⚙️ function core_print_objs(...)"
+permalink: "print_objs"
+sidebarTitle: "⚙️ print_objs()"
+---
 
 ## URL
 
@@ -56,7 +56,7 @@ Action Cooldown: 4
 free(core_print_objs(core_get_objs_filter(ft_is_deposit)));
 ```
 
-This example will get an array of all deposits using the getter system, print it, then free it, all in the same line. *Awesome!*
+This example will get an array of all deposits using the getter system, print it, then free it, all in the same line. _Awesome!_
 
 ## Related
 

@@ -1,8 +1,8 @@
-=====
-HEADING="⚙️ function core_get_objs_filter(...)"
-PERMALINK="core_get_objs_filter"
-SIDEBAR_HEADING="⚙️ get_objs_filter()"
-=====
+---
+title: "⚙️ function core_get_objs_filter(...)"
+permalink: "core_get_objs_filter"
+sidebarTitle: "⚙️ get_objs_filter()"
+---
 
 ## URL
 

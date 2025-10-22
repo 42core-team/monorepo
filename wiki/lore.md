@@ -1,10 +1,10 @@
-=====
-HEADING="📜 Let's expLORE the CORE LORE"
-PERMALINK="lore"
-SIDEBAR_HEADING="Lore"
-=====
+---
+title: "📜 Let's expLORE the CORE LORE"
+permalink: "lore"
+sidebarTitle: "Lore"
+---
 
-> This is required reading and you will immediately lose Core Game if you don't *memorize* the following text.
+> This is required reading and you will immediately lose Core Game if you don't _memorize_ the following text.
 
 In the year 2542, as the burned remains of World War III ushered in
 a fragile new beginning, Earth rose once more from the ashes of a

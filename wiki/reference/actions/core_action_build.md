@@ -1,8 +1,8 @@
-=====
-HEADING="⚙️ function core_action_build(...)"
-PERMALINK="core_action_build"
-SIDEBAR_HEADING="⚙️ action_build()"
-=====
+---
+title: "⚙️ function core_action_build(...)"
+permalink: "core_action_build"
+sidebarTitle: "⚙️ action_build()"
+---
 
 ## URL
 

@@ -1,8 +1,8 @@
-=====
-HEADING="⚙️ function core_startGame(...)"
-PERMALINK="startGame"
-SIDEBAR_HEADING="⚙️ startGame()"
-=====
+---
+title: "⚙️ function core_startGame(...)"
+permalink: "startGame"
+sidebarTitle: "⚙️ startGame()"
+---
 
 ## URL
 
