@@ -1,8 +1,8 @@
-=====
-HEADING="⚙️ function core_get_unitConfig(...)"
-PERMALINK="core_get_unitConfig"
-SIDEBAR_HEADING="⚙️ get_unitConfig()"
-=====
+---
+title: "⚙️ function core_get_unitConfig(...)"
+permalink: "core_get_unitConfig"
+sidebarTitle: "⚙️ get_unitConfig()"
+---
 
 ## URL
 

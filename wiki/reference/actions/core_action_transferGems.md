@@ -1,8 +1,8 @@
-=====
-HEADING="⚙️ function core_action_transferGems(...)"
-PERMALINK="core_action_transferGems"
-SIDEBAR_HEADING="⚙️ action_transferGems()"
-=====
+---
+title: "⚙️ function core_action_transferGems(...)"
+permalink: "core_action_transferGems"
+sidebarTitle: "⚙️ action_transferGems()"
+---
 
 ## URL
 
@@ -25,7 +25,7 @@ The transferring object must be a Core or Unit of your team, and the target obje
 > Unlike other action parameters, the server won't stop executing the transfer gems action if the gems amount parameter is set higher than the possible amount. That means you can pass `99999`, even if the source object is only holding `42` gems, to transfer the maximum possible amount of gems anyways.
 
 > [!TIP]
-> But what if my core is surrounded by units? How will I get gems to and from it? -> The transferGems action will work back and forth between a unit and its core provided the unit is at *the closest possible unoccupied position* to its core in [Manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry). If the core is surrounded, the unit must simply get as close as possible for this action to work then, as determined by a floodfill algorithm and the [manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry). This does not apply to dropping money on the floor.
+> But what if my core is surrounded by units? How will I get gems to and from it? -> The transferGems action will work back and forth between a unit and its core provided the unit is at _the closest possible unoccupied position_ to its core in [Manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry). If the core is surrounded, the unit must simply get as close as possible for this action to work then, as determined by a floodfill algorithm and the [manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry). This does not apply to dropping money on the floor.
 
 ## Signature
 

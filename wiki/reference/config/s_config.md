@@ -1,8 +1,8 @@
-=====
-HEADING="🧩 struct s_config"
-PERMALINK="s_config"
-SIDEBAR_HEADING="🧩 s_config"
-=====
+---
+title: "🧩 struct s_config"
+permalink: "s_config"
+sidebarTitle: "🧩 s_config"
+---
 
 ## URL
 

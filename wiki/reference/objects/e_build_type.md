@@ -1,8 +1,8 @@
-=====
-HEADING="🔢 enum e_build_type"
-PERMALINK="e_build_type"
-SIDEBAR_HEADING="🔢 e_build_type"
-=====
+---
+title: "🔢 enum e_build_type"
+permalink: "e_build_type"
+sidebarTitle: "🔢 e_build_type"
+---
 
 ## URL
 

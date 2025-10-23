@@ -1,8 +1,8 @@
-=====
-HEADING="⭐️ The Art of CORE ⭐️"
-PERMALINK="readme"
-SIDEBAR_HEADING="README"
-=====
+---
+title: "⭐️ The Art of CORE ⭐️"
+permalink: "readme"
+sidebarTitle: "README"
+---
 
 > 🤗 Welcome to the Official CORE Wiki, Documentation & Reference 📚
 
@@ -19,19 +19,23 @@ You can receive gems by having your units attack the gem deposits on the map or 
 # 🚀 Getting Started with Your Own CORE Bot
 
 1. **Be a Registered CORE Participant/Team** ✨
-	- Visit our website, [COREGAME.de](https://coregame.de/), sign up, join the right event, and add your team members.
+
+   - Visit our website, [COREGAME.de](https://coregame.de/), sign up, join the right event, and add your team members.
 
 2. **Clone Your CORE Repository** 📧
-	- You will find an invite link to your dedicated CORE repository on GitHub on your teams page.
+
+   - You will find an invite link to your dedicated CORE repository on GitHub on your teams page.
 
 3. **Follow the README in the repository** 📧
-	- Basically, run `make devcontainer`, and then you can get started! Compile using `make`, visualizer to view the games is under `localhost:4000`, everything in `src/` will be compiled into your bot.
+
+   - Basically, run `make devcontainer`, and then you can get started! Compile using `make`, visualizer to view the games is under `localhost:4000`, everything in `src/` will be compiled into your bot.
 
 4. **Push some code!** 🔝
-	- The code you pushed will be used to execute games in the queue and in the final tournament. So make sure to push your code & test it against other players regularly!
 
-4. **Get informed!** 🧠
-	- It's recommended you at least read through [the basics](basics), skim through the [FaQ](faq) and [Tips & Tricks](tips_and_tricks), and read the [My first Core bot](my_first_core_bot) tutorial to get started.
+   - The code you pushed will be used to execute games in the queue and in the final tournament. So make sure to push your code & test it against other players regularly!
+
+5. **Get informed!** 🧠
+   - It's recommended you at least read through [the basics](basics), skim through the [FaQ](faq) and [Tips & Tricks](tips_and_tricks), and read the [My first Core bot](my_first_core_bot) tutorial to get started.
 
 🎉 **You are now ready to start coding!** 😎
 
@@ -43,4 +47,4 @@ You can receive gems by having your units attack the gem deposits on the map or 
 4. **Unity is Might** - Team up if you can. Two brains debug faster than one, and strategy thrives on collaboration.
 5. **Have fun!** - Don't take things too seriously & be nice to each other. Embrace the good vibes in a friendly competition! ⚡️
 
-***Good luck*** **from the CORE team!** 🚀🎸🔥💥🗿
+**_Good luck_** **from the CORE team!** 🚀🎸🔥💥🗿

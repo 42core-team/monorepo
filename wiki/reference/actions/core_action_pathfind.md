@@ -1,8 +1,8 @@
-=====
-HEADING="⚙️ function core_action_pathfind(...)"
-PERMALINK="core_action_pathfind"
-SIDEBAR_HEADING="⚙️ action_pathfind()"
-=====
+---
+title: "⚙️ function core_action_pathfind(...)"
+permalink: "core_action_pathfind"
+sidebarTitle: "⚙️ action_pathfind()"
+---
 
 ## URL
 

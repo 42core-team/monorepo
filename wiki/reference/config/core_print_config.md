@@ -1,8 +1,8 @@
-=====
-HEADING="⚙️ function core_print_config(...)"
-PERMALINK="core_print_config"
-SIDEBAR_HEADING="⚙️ print_config()"
-=====
+---
+title: "⚙️ function core_print_config(...)"
+permalink: "core_print_config"
+sidebarTitle: "⚙️ print_config()"
+---
 
 ## URL
 

@@ -1,8 +1,8 @@
-=====
-HEADING="⚙️ function core_get_obj_filter_nearest(...)"
-PERMALINK="core_get_obj_filter_nearest"
-SIDEBAR_HEADING="⚙️ get_obj_filter_nearest()"
-=====
+---
+title: "⚙️ function core_get_obj_filter_nearest(...)"
+permalink: "core_get_obj_filter_nearest"
+sidebarTitle: "⚙️ get_obj_filter_nearest()"
+---
 
 ## URL
 

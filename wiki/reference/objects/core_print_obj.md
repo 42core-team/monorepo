@@ -1,8 +1,8 @@
-=====
-HEADING="⚙️ function core_print_obj(...)"
-PERMALINK="print_obj"
-SIDEBAR_HEADING="⚙️ print_obj()"
-=====
+---
+title: "⚙️ function core_print_obj(...)"
+permalink: "print_obj"
+sidebarTitle: "⚙️ print_obj()"
+---
 
 ## URL
 

@@ -1,8 +1,8 @@
-=====
-HEADING="⚙️ function core_get_obj_from_pos(...)"
-PERMALINK="core_get_obj_from_pos"
-SIDEBAR_HEADING="⚙️ get_obj_from_pos()"
-=====
+---
+title: "⚙️ function core_get_obj_from_pos(...)"
+permalink: "core_get_obj_from_pos"
+sidebarTitle: "⚙️ get_obj_from_pos()"
+---
 
 ## URL
 

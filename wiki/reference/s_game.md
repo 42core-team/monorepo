@@ -1,8 +1,8 @@
-=====
-HEADING="🧩 struct s_game"
-PERMALINK="s_game"
-SIDEBAR_HEADING="🧩 s_game"
-=====
+---
+title: "🧩 struct s_game"
+permalink: "s_game"
+sidebarTitle: "🧩 s_game"
+---
 
 ## URL
 

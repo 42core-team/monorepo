@@ -1,8 +1,8 @@
-=====
-HEADING="⚙️ function core_action_attack(...)"
-PERMALINK="core_action_attack"
-SIDEBAR_HEADING="⚙️ action_attack()"
-=====
+---
+title: "⚙️ function core_action_attack(...)"
+permalink: "core_action_attack"
+sidebarTitle: "⚙️ action_attack()"
+---
 
 ## URL
 
@@ -15,7 +15,7 @@ Attacks a target with a unit.
 This action not only used to damage any object, but it's also good for destroying deposits, picking up gem piles & lighting a bomb's fuse.
 
 > [!WARNING]
-> There is friendly fire - you can damage your own units and core. So **BE *CAREFUL!***
+> There is friendly fire - you can damage your own units and core. So **BE _CAREFUL!_**
 
 - Units can only attack one tile up, down, left or right; for more see [Action Position Limits](documentation/action_position_limits).
 - Units can only attack if their action cooldown is 0, for more see [Cooldowns](documentation/cooldowns).

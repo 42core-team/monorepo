@@ -1,8 +1,8 @@
-=====
-HEADING="🔢 enum e_obj_type"
-PERMALINK="e_obj_type"
-SIDEBAR_HEADING="🔢 e_obj_type"
-=====
+---
+title: "🔢 enum e_obj_type"
+permalink: "e_obj_type"
+sidebarTitle: "🔢 e_obj_type"
+---
 
 ## URL
 
