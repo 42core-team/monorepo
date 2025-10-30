@@ -58,6 +58,9 @@ void SparseWorldGenerator::generateWorld(uint64_t seed)
 	int wallCount = Config::game().worldGeneratorConfig.value("wallCount", 10);
 	int coreBuffer = Config::game().worldGeneratorConfig.value("coreBuffer", 3);
 
+	if (gemPileBalanceVariation > gemPileIncome) gemPileBalanceVariation = gemPileIncome; // avoid underflowed balances
+	if (depositBalanceVariation > depositIncome) depositBalanceVariation = depositIncome; // avoid underflowed balances
+
 	auto withinCoreBuffer = [&](const Position &p)
 	{
 		for (const auto &c : Config::game().corePositions)
