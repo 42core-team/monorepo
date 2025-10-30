@@ -23,7 +23,7 @@
 		"depositCount": 20,
 		"depositBalanceVariation": 100,
 		"gemPileCount": 10,
-		"gemPileBalanceVariation": 34,
+		"gemPileBalanceVariation": 50,
 		"wallCount": 30,
 		"coreBuffer": 3
 	},
