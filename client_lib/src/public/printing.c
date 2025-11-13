@@ -29,7 +29,7 @@ void core_print_obj(t_obj *obj)
 		printf("gems: %lu\n", obj->s_core.gems);
 		break;
 	case OBJ_UNIT:
-		printf("Unit Type: %lu\n", obj->s_unit.unit_type);
+		printf("Unit Type: %u\n", obj->s_unit.unit_type);
 		printf("Team ID: %lu\n", obj->s_unit.team_id);
 		printf("gems: %lu\n", obj->s_unit.gems);
 		printf("Action Cooldown: %lu\n", obj->s_unit.action_cooldown);

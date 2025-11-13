@@ -1,5 +1,12 @@
 #include "core_lib_internal.h"
 
+// Clamp ulongs within range that won't result in scientific notation when encoded in JSON
+static unsigned long clamp_ulong_for_json(unsigned long value)
+{
+	const unsigned long JSON_SAFE_MAX = 999999UL;
+	return (value > JSON_SAFE_MAX) ? JSON_SAFE_MAX : value;
+}
+
 char *core_internal_encode_action(void)
 {
 	json_node *arr = create_node(JSON_TYPE_ARRAY);
@@ -23,7 +30,7 @@ char *core_internal_encode_action(void)
 			{
 				json_node *u = create_node(JSON_TYPE_NUMBER);
 				u->key = strdup("unit_type");
-				u->number = a->data.create.unit_type;
+				u->number = clamp_ulong_for_json(a->data.create.unit_type);
 				obj->array[idx++] = u;
 			}
 			break;
@@ -34,15 +41,15 @@ char *core_internal_encode_action(void)
 			{
 				json_node *uid = create_node(JSON_TYPE_NUMBER);
 				uid->key = strdup("unit_id");
-				uid->number = a->data.move.id;
+				uid->number = clamp_ulong_for_json(a->data.move.id);
 				obj->array[idx++] = uid;
 				json_node *x = create_node(JSON_TYPE_NUMBER);
 				x->key = strdup("x");
-				x->number = a->data.move.pos.x;
+				x->number = clamp_ulong_for_json(a->data.move.pos.x);
 				obj->array[idx++] = x;
 				json_node *y = create_node(JSON_TYPE_NUMBER);
 				y->key = strdup("y");
-				y->number = a->data.move.pos.y;
+				y->number = clamp_ulong_for_json(a->data.move.pos.y);
 				obj->array[idx++] = y;
 			}
 			break;
@@ -53,11 +60,11 @@ char *core_internal_encode_action(void)
 			{
 				json_node *uid = create_node(JSON_TYPE_NUMBER);
 				uid->key = strdup("unit_id");
-				uid->number = a->data.attack.id;
+				uid->number = clamp_ulong_for_json(a->data.attack.id);
 				obj->array[idx++] = uid;
 				json_node *target_id = create_node(JSON_TYPE_NUMBER);
 				target_id->key = strdup("target_id");
-				target_id->number = a->data.attack.target_id;
+				target_id->number = clamp_ulong_for_json(a->data.attack.target_id);
 				obj->array[idx++] = target_id;
 			}
 			break;
@@ -67,19 +74,19 @@ char *core_internal_encode_action(void)
 			{
 				json_node *src = create_node(JSON_TYPE_NUMBER);
 				src->key = strdup("source_id");
-				src->number = a->data.transfer.source_id;
+				src->number = clamp_ulong_for_json(a->data.transfer.source_id);
 				obj->array[idx++] = src;
 				json_node *amt = create_node(JSON_TYPE_NUMBER);
 				amt->key = strdup("amount");
-				amt->number = a->data.transfer.amount;
+				amt->number = clamp_ulong_for_json(a->data.transfer.amount);
 				obj->array[idx++] = amt;
 				json_node *x = create_node(JSON_TYPE_NUMBER);
 				x->key = strdup("x");
-				x->number = a->data.transfer.target_pos.x;
+				x->number = clamp_ulong_for_json(a->data.transfer.target_pos.x);
 				obj->array[idx++] = x;
 				json_node *y = create_node(JSON_TYPE_NUMBER);
 				y->key = strdup("y");
-				y->number = a->data.transfer.target_pos.y;
+				y->number = clamp_ulong_for_json(a->data.transfer.target_pos.y);
 				obj->array[idx++] = y;
 			}
 			break;
@@ -89,15 +96,15 @@ char *core_internal_encode_action(void)
 			{
 				json_node *bid = create_node(JSON_TYPE_NUMBER);
 				bid->key = strdup("unit_id");
-				bid->number = a->data.build.builder_id;
+				bid->number = clamp_ulong_for_json(a->data.build.builder_id);
 				obj->array[idx++] = bid;
 				json_node *x = create_node(JSON_TYPE_NUMBER);
 				x->key = strdup("x");
-				x->number = a->data.build.pos.x;
+				x->number = clamp_ulong_for_json(a->data.build.pos.x);
 				obj->array[idx++] = x;
 				json_node *y = create_node(JSON_TYPE_NUMBER);
 				y->key = strdup("y");
-				y->number = a->data.build.pos.y;
+				y->number = clamp_ulong_for_json(a->data.build.pos.y);
 				obj->array[idx++] = y;
 			}
 			break;
