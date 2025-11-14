@@ -40,6 +40,10 @@ class Object
 
 	void setHP(int hp) { hp_ = hp; };
 
+	void setDebugInfo(const std::string &info) { debugInfo_ = info; }
+	const std::string &getDebugInfo() const { return debugInfo_; }
+	bool hasDebugInfo() const { return !debugInfo_.empty(); }
+
   protected:
 	unsigned int id_;
 	int hp_;
@@ -47,6 +51,8 @@ class Object
 	static unsigned int nextObjectId_;
 
 	ObjectType type_;
+
+	std::string debugInfo_;
 };
 
 inline unsigned int Object::nextObjectId_ = 1;

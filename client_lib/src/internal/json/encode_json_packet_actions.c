@@ -1,16 +1,11 @@
 #include "core_lib_internal.h"
 
-// Clamp ulongs within range that won't result in scientific notation when encoded in JSON
-static unsigned long clamp_ulong_for_json(unsigned long value)
+json_node *core_internal_encode_packet_actions(void)
 {
-	const unsigned long JSON_SAFE_MAX = 999999UL;
-	return (value > JSON_SAFE_MAX) ? JSON_SAFE_MAX : value;
-}
-
-char *core_internal_encode_action(void)
-{
-	json_node *arr = create_node(JSON_TYPE_ARRAY);
-	arr->array = malloc(sizeof(json_node *) * (actions.count + 1));
+	// Build actions array
+	json_node *actions_arr = create_node(JSON_TYPE_ARRAY);
+	actions_arr->array = malloc(sizeof(json_node *) * (actions.count + 1));
+	
 	for (unsigned i = 0; i < actions.count; i++)
 	{
 		t_action *a = &actions.list[i];
@@ -22,6 +17,7 @@ char *core_internal_encode_action(void)
 
 		json_node *t = create_node(JSON_TYPE_STRING);
 		t->key = strdup("type");
+		
 		switch (a->type)
 		{
 		case ACTION_CREATE:
@@ -110,26 +106,9 @@ char *core_internal_encode_action(void)
 			break;
 		}
 		obj->array[idx] = NULL;
-		arr->array[i] = obj;
+		actions_arr->array[i] = obj;
 	}
-	arr->array[actions.count] = NULL;
+	actions_arr->array[actions.count] = NULL;
 
-	json_node *root = create_node(JSON_TYPE_OBJECT);
-	root->array = malloc(sizeof(json_node *) * 2);
-	json_node *ka = create_node(JSON_TYPE_ARRAY);
-	ka->key = strdup("actions");
-	ka->array = arr->array;
-	root->array[0] = ka;
-	root->array[1] = NULL;
-
-	char *out = json_to_string(root);
-	free_json(root);
-	free(arr);
-
-	// append newline
-	size_t L = strlen(out);
-	out = realloc(out, L + 2);
-	out[L] = '\n';
-	out[L + 1] = '\0';
-	return out;
+	return actions_arr;
 }

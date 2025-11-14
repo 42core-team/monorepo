@@ -12,6 +12,24 @@
 			"items": {
 				"type": "object"
 			}
+		},
+		"debug_data": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"required": [
+					"object_id",
+					"object_info"
+				],
+				"properties": {
+					"object_id": {
+						"type": "number"
+					},
+					"object_info": {
+						"type": "string"
+					}
+				}
+			}
 		}
 	},
 	"examples": [
@@ -22,6 +40,12 @@
 					"unit_id": 1,
 					"x": 2,
 					"y": 3
+				}
+			],
+			"debug_data": [
+				{
+					"object_id": 1,
+					"object_info": "Moving to target deposit"
 				}
 			]
 		}

@@ -89,8 +89,9 @@ int core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 		first_tick = false;
 
 		// send user-selected actions
-		char *tick_actions = core_internal_encode_action();
-		core_internal_resetActions();
+		char *tick_actions = core_internal_encode_packet();
+		core_internal_reset_actions();
+		core_internal_reset_debugData();
 		if (debug) printf("Actions: %s\n", tick_actions);
 		core_internal_socket_send(socket_fd, tick_actions);
 		free(tick_actions);
@@ -128,7 +129,7 @@ int core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 	// clean up
 	close(socket_fd);
 	core_internal_freeGame();
-	core_internal_resetActions();
+	core_internal_reset_actions();
 
 	return 0;
 }

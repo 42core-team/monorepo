@@ -268,6 +268,14 @@ unsigned int core_get_objs_filter_count(bool (*condition)(const t_obj *));
 /// @return The unit config or NULL if no such unit type or unit config exists.
 t_unit_config *core_get_unitConfig(t_unit_type type);
 
+// ----- DEBUG FUNCTIONS -----
+
+/// @brief Add debug information to an object for visualization
+/// @details This function accumulates debug strings for objects. Multiple calls per tick will append the strings (with newlines).
+/// @param obj The object to attach debug info to
+/// @param info The debug string to add
+void core_debug_addObjectInfo(const t_obj *obj, const char *info);
+
 // ----- PRINT FUNCTIONS -----
 
 // PRINT FUNCTIONS are used to print information about the game state to the console.

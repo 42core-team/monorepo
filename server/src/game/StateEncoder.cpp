@@ -54,6 +54,11 @@ json StateEncoder::encodeFullState()
 			o["explosionTiles"] = tiles;
 		}
 
+		if (obj.hasDebugInfo())
+		{
+			o["debug_info"] = obj.getDebugInfo();
+		}
+
 		state.push_back(o);
 	}
 

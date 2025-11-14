@@ -7,6 +7,7 @@ export interface BaseObject {
 	y: number;
 	hp: number;
 	state?: string;
+	debug_info?: string;
 }
 export interface CoreObject extends BaseObject {
 	type: 0; // Core
@@ -53,6 +54,16 @@ const objectTypeNames = {
 	4: "Gem Pile",
 	5: "Bomb",
 };
+
+function escapeHtml(unsafe: string): string {
+	return unsafe
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#039;")
+		.replace(/\//g, "&#x2F;");
+}
 
 export function formatObjectData(obj: TickObject): string {
 	const num = (v: unknown) =>
@@ -150,7 +161,14 @@ export function formatObjectData(obj: TickObject): string {
 		prevPriority = priority;
 	}
 
-	return result.join("<br>");
+	let objectData = result.join("<br>");
+
+	if (obj.debug_info) {
+		objectData += `<br>🐞 Debug Info: ⤵<br><br>`;
+		objectData += escapeHtml(obj.debug_info);
+	}
+
+	return objectData;
 }
 
 export function getBarMetrics(

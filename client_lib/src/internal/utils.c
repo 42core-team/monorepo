@@ -18,12 +18,27 @@ bool core_internal_isPosValid(t_pos pos)
 	return (pos.y < game.config.gridSize && pos.x < game.config.gridSize);
 }
 
-void core_internal_resetActions(void)
+void core_internal_reset_actions(void)
 {
 	free(actions.list);
 	actions.list = NULL;
 	actions.count = 0;
 	actions.capacity = 0;
+}
+void core_internal_reset_debugData(void)
+{
+	if (debug_data.entries)
+	{
+		for (unsigned int i = 0; i < debug_data.count; i++)
+		{
+			free(debug_data.entries[i].info);
+		}
+		free(debug_data.entries);
+	}
+
+	debug_data.entries = NULL;
+	debug_data.count = 0;
+	debug_data.capacity = 0;
 }
 
 void core_internal_freeGame(void)
@@ -52,7 +67,7 @@ void core_internal_freeGame(void)
 
 void core_internal_freeAndExit(const char *msg, int count, ...)
 {
-	core_internal_resetActions();
+	core_internal_reset_actions();
 	core_internal_freeGame();
 
 	va_list ap;

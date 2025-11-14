@@ -83,20 +83,30 @@ typedef struct s_actions
 
 extern t_actions actions;
 
-void core_internal_resetActions(void);
+void core_internal_reset_actions(void);
 
-// ----- JSON parsing and encoding
+// ----- Debug Data
 
-void core_internal_parse_state(char *json);
-void core_internal_parse_config(char *json);
-char *core_internal_encode_action();
-char *core_internal_encode_login(const char *team_name, int argc, char **argv);
+typedef struct s_debug_entry
+{
+	unsigned long object_id;
+	char *info; // Accumulated info string for this object
+} t_debug_entry;
+
+typedef struct s_debug_data
+{
+	t_debug_entry *entries;
+	unsigned int count;
+	unsigned int capacity;
+} t_debug_data;
+
+extern t_debug_data debug_data;
+
+void core_internal_reset_debugData(void);
 
 // ----- JSON LIB
 
 #include <ctype.h>
-
-// --- Basic Structs
 
 typedef enum e_json_type
 {
@@ -121,8 +131,6 @@ typedef struct s_json_node
 	};
 } json_node;
 
-// --- Functions
-
 json_node *string_to_json(char *string);					// Convert a JSON string into a JSON tree
 char *json_to_string(json_node *json);						// Convert a JSON tree to a JSON string
 char *json_to_formatted_string(json_node *json);			// Convert a JSON tree to a formatted JSON string
@@ -130,5 +138,18 @@ json_node *json_find(json_node *json, char *key);			// Find a node in the JSON t
 json_node *json_find_recursive(json_node *json, char *key); // Find a node in the JSON tree by key (recursive)
 void free_json(json_node *json);							// Free all memory allocated for the JSON tree
 json_node *create_node(json_type type);						// Create a new, empty-initialized node
+
+// ----- JSON parsing and encoding
+
+unsigned long clamp_ulong_for_json(unsigned long value);
+
+void core_internal_parse_state(char *json);
+void core_internal_parse_config(char *json);
+
+char *core_internal_encode_login(const char *team_name, int argc, char **argv);
+
+json_node *core_internal_encode_packet_actions(void);
+json_node *core_internal_encode_packet_debugData(void);
+char *core_internal_encode_packet(void);
 
 #endif // CORE_LIB_INTERNAL_H

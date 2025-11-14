@@ -45,6 +45,7 @@ void Game::run()
 
 		std::vector<std::pair<std::unique_ptr<Action>, Core *>> actions;
 		std::vector<std::pair<int, std::string>> preFailures;
+		std::vector<json> debugDataPackets;
 
 		while (std::chrono::steady_clock::now() - waitStart < std::chrono::milliseconds(maxWait))
 		{
@@ -71,6 +72,12 @@ void Game::run()
 																   " (\"" + msg.dump() + "\")");
 							gotMsg[b.get()] = true;
 							continue;
+						}
+
+						// parse debug data
+						if (msg.contains("debug_data") && msg["debug_data"].is_array())
+						{
+							debugDataPackets.push_back(msg);
 						}
 
 						// parse actions
@@ -122,7 +129,7 @@ void Game::run()
 			}
 		}
 
-		tick(tickCount, actions, serverStartTime, preFailures);
+		tick(tickCount, actions, serverStartTime, preFailures, debugDataPackets);
 
 		tickCount++;
 	}
@@ -147,12 +154,28 @@ void Game::run()
 
 void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions,
 				std::chrono::steady_clock::time_point serverStartTime,
-				const std::vector<std::pair<int, std::string>> &preFailures)
+				const std::vector<std::pair<int, std::string>> &preFailures, const std::vector<json> &debugDataPackets)
 {
 	std::vector<std::pair<int, std::string>> failures;
 	failures.reserve(preFailures.size());
 	for (const auto &pf : preFailures)
 		failures.emplace_back(pf.first, "Tick " + std::to_string(tick - 1) + ": " + pf.second);
+
+	// 0. HANDLE DEBUG INFO
+	for (const auto &debugPacket : debugDataPackets)
+	{
+		for (const auto &debugEntry : debugPacket["debug_data"])
+		{
+			unsigned int objectId = debugEntry["object_id"];
+			std::string info = debugEntry["object_info"];
+
+			Object *obj = Board::instance().getObjectById(objectId);
+			if (obj)
+			{
+				obj->setDebugInfo(info);
+			}
+		}
+	}
 
 	// 1. EXECUTE ACTIONS
 
