@@ -113,4 +113,11 @@ window.addEventListener("DOMContentLoaded", async () => {
 			`#${themeColorParam}`,
 		);
 	}
+	const bgColorParam = urlParams.get("bgColor");
+	if (typeof bgColorParam === "string") {
+		document.documentElement.style.setProperty(
+			"--app-bg",
+			`#${bgColorParam}`,
+		);
+	}
 });
