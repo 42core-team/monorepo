@@ -40,9 +40,15 @@ class Object
 
 	void setHP(int hp) { hp_ = hp; };
 
+	void resetDebugInfo() { debugInfo_.clear(); }
 	void setDebugInfo(const std::string &info) { debugInfo_ = info; }
 	const std::string &getDebugInfo() const { return debugInfo_; }
 	bool hasDebugInfo() const { return !debugInfo_.empty(); }
+
+	void resetDebugPath() { debugPath_.clear(); }
+	void addDebugPathPoint(int x, int y) { debugPath_.emplace_back(Position(x, y)); }
+	const std::vector<Position> &getDebugPath() const { return debugPath_; }
+	bool hasDebugPath() const { return !debugPath_.empty(); }
 
   protected:
 	unsigned int id_;
@@ -53,6 +59,7 @@ class Object
 	ObjectType type_;
 
 	std::string debugInfo_;
+	std::vector<Position> debugPath_;
 };
 
 inline unsigned int Object::nextObjectId_ = 1;

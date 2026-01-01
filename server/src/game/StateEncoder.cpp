@@ -58,6 +58,18 @@ json StateEncoder::encodeFullState()
 		{
 			o["debug_info"] = obj.getDebugInfo();
 		}
+		if (obj.hasDebugPath())
+		{
+			json path = json::array();
+			for (const auto &point : obj.getDebugPath())
+			{
+				json p;
+				p["x"] = point.x;
+				p["y"] = point.y;
+				path.push_back(p);
+			}
+			o["debug_path"] = path;
+		}
 
 		state.push_back(o);
 	}

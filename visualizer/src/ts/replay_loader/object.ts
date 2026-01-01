@@ -21,6 +21,7 @@ export interface UnitObject extends BaseObject {
 	teamId: number;
 	gems: number;
 	ActionCooldown: number;
+	debug_path?: { x: number; y: number }[];
 }
 export interface DepositObject extends BaseObject {
 	type: 2; // Deposit

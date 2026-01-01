@@ -19,7 +19,8 @@
 				"type": "object",
 				"required": [
 					"object_id",
-					"object_info"
+					"object_info",
+					"object_path"
 				],
 				"properties": {
 					"object_id": {
@@ -27,6 +28,24 @@
 					},
 					"object_info": {
 						"type": "string"
+					},
+					"object_path": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"required": [
+								"x",
+								"y"
+							],
+							"properties": {
+								"x": {
+									"type": "number"
+								},
+								"y": {
+									"type": "number"
+								}
+							}
+						}
 					}
 				}
 			}
@@ -45,7 +64,13 @@
 			"debug_data": [
 				{
 					"object_id": 1,
-					"object_info": "Moving to target deposit"
+					"object_info": "Moving to target deposit",
+					"object_path": [
+						{
+							"x": 23,
+							"y": 17
+						}
+					]
 				}
 			]
 		}

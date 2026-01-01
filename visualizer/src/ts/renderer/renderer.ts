@@ -1,6 +1,10 @@
 import { getCurrentTickData, isDirty } from "../input_manager/timeManager";
 import type { GameConfig } from "../replay_loader/config";
-import { formatObjectData, type TickObject } from "../replay_loader/object";
+import {
+	formatObjectData,
+	type TickObject,
+	type UnitObject,
+} from "../replay_loader/object";
 import {
 	getGameConfig,
 	getGameMisc,
@@ -43,6 +47,79 @@ function scheduleNextFrame(): void {
 	}
 }
 let isInitialRender = true;
+
+let hoveredDebugPath: { x: number; y: number }[] | null = null;
+
+function drawHoveredDebugPathOverlay(): void {
+	if (!hoveredDebugPath || hoveredDebugPath.length === 0) return;
+
+	const pointsAttr = hoveredDebugPath
+		.map(({ x, y }) => `${x + 0.5},${y + 0.5}`)
+		.join(" ");
+	const polyKey = "dbg-path-poly";
+	let poly = svgCanvas.querySelector(
+		`polyline[data-dbg-path="${polyKey}"]`,
+	) as SVGPolylineElement | null;
+	if (!poly) {
+		poly = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+		poly.setAttribute("data-dbg-path", polyKey);
+		poly.setAttribute("fill", "none");
+		poly.setAttribute("pointer-events", "none");
+	}
+	poly.classList.remove("not-touched");
+	poly.setAttribute("points", pointsAttr);
+	poly.setAttribute("stroke", "var(--theme-color)");
+	poly.setAttribute("stroke-opacity", "0.9");
+	poly.setAttribute("stroke-width", "0.07");
+	if (poly.parentNode !== svgCanvas) svgCanvas.appendChild(poly);
+
+	for (let i = 0; i < hoveredDebugPath.length; i++) {
+		const { x, y } = hoveredDebugPath[i];
+		const rectKey = `dbg-path-rect-${x},${y},${i}`;
+		let rect = svgCanvas.querySelector(
+			`rect[data-dbg-path="${rectKey}"]`,
+		) as SVGRectElement | null;
+		if (!rect) {
+			rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+			rect.setAttribute("data-dbg-path", rectKey);
+			rect.setAttribute("width", "1");
+			rect.setAttribute("height", "1");
+			rect.setAttribute("rx", "0.15");
+			rect.setAttribute("ry", "0.15");
+			rect.setAttribute("pointer-events", "none");
+		}
+		rect.classList.remove("not-touched");
+		rect.setAttribute("x", String(x));
+		rect.setAttribute("y", String(y));
+		rect.setAttribute("fill", "var(--theme-color)");
+		rect.setAttribute("fill-opacity", i === 0 ? "0.25" : "0.15");
+		rect.setAttribute("stroke", "var(--theme-color)");
+		rect.setAttribute("stroke-opacity", i === 0 ? "1" : "0.7");
+		rect.setAttribute("stroke-width", i === 0 ? "0.12" : "0.08");
+		if (rect.parentNode !== svgCanvas) svgCanvas.appendChild(rect);
+
+		const textKey = `dbg-path-text-${x},${y},${i}`;
+		let txt = svgCanvas.querySelector(
+			`text[data-dbg-path="${textKey}"]`,
+		) as SVGTextElement | null;
+		if (!txt) {
+			txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+			txt.setAttribute("data-dbg-path", textKey);
+			txt.setAttribute("text-anchor", "middle");
+			txt.setAttribute("dominant-baseline", "central");
+			txt.setAttribute("pointer-events", "none");
+		}
+		txt.classList.remove("not-touched");
+		txt.setAttribute("x", String(x + 0.5));
+		txt.setAttribute("y", String(y + 0.5));
+		txt.setAttribute("font-size", "0.35");
+		txt.setAttribute("fill", "#000");
+		txt.setAttribute("fill-opacity", "0.9");
+		txt.textContent = String(i);
+		if (txt.parentNode !== svgCanvas) svgCanvas.appendChild(txt);
+	}
+}
+
 function drawFrame(timestamp: number): void {
 	lastRenderTime = timestamp;
 
@@ -87,6 +164,8 @@ function drawFrame(timestamp: number): void {
 	if (tooltipElement.style.display === "block" && lastSVGPoint) {
 		refreshTooltipFromSVGPoint(lastSVGPoint, lastClientX, lastClientY);
 	}
+
+	drawHoveredDebugPathOverlay();
 
 	for (const element of svgCanvas.querySelectorAll(".not-touched")) {
 		if (!(element as Element).closest(".persistent")) {
@@ -137,8 +216,15 @@ function refreshTooltipFromSVGPoint(
 	tooltipElement.style.display = "block";
 	if (obj) {
 		tooltipElement.innerHTML = formatObjectData(obj);
+
+		if (obj.type !== 1) return;
+		const dbg = (obj as UnitObject).debug_path;
+		if (Array.isArray(dbg) && dbg.length > 0) {
+			hoveredDebugPath = dbg;
+		}
 	} else {
 		tooltipElement.innerHTML = `📍 Position: [x: ${tx}, y: ${ty}]`;
+		hoveredDebugPath = null;
 	}
 }
 export async function setupRenderer(): Promise<void> {

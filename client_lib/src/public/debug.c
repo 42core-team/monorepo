@@ -42,6 +42,7 @@ static t_debug_entry *core_static_findOrCreateEntry(unsigned long object_id)
 	t_debug_entry *entry = &debug_data.entries[debug_data.count++];
 	entry->object_id = object_id;
 	entry->info = NULL;
+	entry->path = NULL;
 
 	return entry;
 }
@@ -66,5 +67,32 @@ void core_debug_addObjectInfo(const t_obj *obj, const char *info)
 		size_t new_len = strlen(info);
 		entry->info = realloc(entry->info, old_len + new_len + 1);
 		strcat(entry->info, info);
+	}
+}
+
+void core_debug_addObjectPathStep(const t_obj *unit, t_pos pos)
+{
+	if (!unit) return;
+
+	t_debug_entry *entry = core_static_findOrCreateEntry(unit->id);
+
+	// Create new path node
+	t_debug_path_node *new_node = malloc(sizeof(t_debug_path_node));
+	new_node->pos = pos;
+	new_node->next = NULL;
+
+	// Append to path
+	if (entry->path == NULL)
+	{
+		entry->path = new_node;
+	}
+	else
+	{
+		t_debug_path_node *current = entry->path;
+		while (current->next)
+		{
+			current = current->next;
+		}
+		current->next = new_node;
 	}
 }
