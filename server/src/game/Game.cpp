@@ -223,10 +223,27 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 		std::string err = action->execute(core);
 		if (!err.empty())
 		{
+			json actionJson = action->encodeJSON();
+
 			// makes more sense to put the ticks where the actions were executed into the tick message
 			std::string fullErr = "Tick " + std::to_string(tick - 1) +
 								  ": Action Failure: " + Action::getActionName(action->getActionType()) + ": " + err +
-								  " (" + action->encodeJSON().dump() + ")";
+								  " (" + actionJson.dump() + ")";
+
+			unsigned int actingUnitInError = 0;
+			if (actionJson.contains("unit_id"))
+				actingUnitInError = actionJson["unit_id"];
+			else if (actionJson.contains("builder_id"))
+				actingUnitInError = actionJson["builder_id"];
+			if (actingUnitInError != 0)
+			{
+				Object *obj = Board::instance().getObjectById(actingUnitInError);
+				if (obj->getDebugInfo().find("---") != std::string::npos)
+					obj->setDebugInfo(obj->getDebugInfo() + fullErr + "\n");
+				else
+					obj->setDebugInfo("\n---\n" + obj->getDebugInfo() + fullErr + "\n");
+			}
+
 			failures.emplace_back(core->getTeamId(), fullErr);
 			action = nullptr;
 		}
