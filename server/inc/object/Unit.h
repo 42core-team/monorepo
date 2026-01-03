@@ -26,6 +26,8 @@ class Unit : public Object
 	unsigned int getBalance() const { return balance_; }
 	unsigned int getActionCooldown() const { return action_cooldown_; }
 
+	bool isOwnedByTeam(unsigned int teamId) const override { return teamId == team_id_; }
+
 	void addBalance(unsigned int amount) { balance_ += amount; }
 	void setBalance(unsigned int amount) { balance_ = amount; }
 	void resetActionCooldown() { action_cooldown_ = calcActionCooldown(); }

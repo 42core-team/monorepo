@@ -9,7 +9,10 @@ class Core : public Object
 {
   public:
 	Core(unsigned int teamId);
-	Core(const Core &other) : Object(other), balance_(other.balance_), team_id_(other.team_id_), spawn_cooldown_(other.spawn_cooldown_) {}
+	Core(const Core &other)
+		: Object(other), balance_(other.balance_), team_id_(other.team_id_), spawn_cooldown_(other.spawn_cooldown_)
+	{
+	}
 	Core &operator=(const Core &other)
 	{
 		if (this == &other) return *this;
@@ -28,6 +31,8 @@ class Core : public Object
 	unsigned int getBalance() const { return balance_; }
 	void setBalance(unsigned int gems) { balance_ = gems; }
 	unsigned int getTeamId() const { return team_id_; }
+
+	bool isOwnedByTeam(unsigned int teamId) const override { return teamId == team_id_; }
 
 	unsigned int getSpawnCooldown() const { return spawn_cooldown_; }
 	void setSpawnCooldown(unsigned int cooldown) { spawn_cooldown_ = cooldown; }

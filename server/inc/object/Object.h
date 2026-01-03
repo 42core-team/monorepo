@@ -38,6 +38,8 @@ class Object
 	int getHP() const { return hp_; };
 	ObjectType getType() const { return type_; };
 
+	virtual bool isOwnedByTeam(unsigned int teamId) const { return false; }
+
 	void setHP(int hp) { hp_ = hp; };
 
 	void resetDebugInfo() { debugInfo_.clear(); }
