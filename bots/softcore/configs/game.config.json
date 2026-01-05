@@ -1,8 +1,9 @@
 /*
-	For this event, there are 3 different unit types available:
+	For this event, there are 4 different unit types available:
 	1. Warrior: A melee combat unit that excels in attacking enemy cores and units.
 	2. Miner: A unit specialized in breaking hard objects such as gem deposits and walls.
 	3. Carrier: A non-combat unit that is very quick, even when carrying many gems.
+	4. Tank: A heavily armored and slow unit that packs a huge punch.
 */
 {
 	"gridSize": 20,
@@ -77,6 +78,21 @@
 			"damageDeposit": 0,
 			"damageWall": 2,
 			"damageBomb": 2,
+			"buildType": "none"
+		},
+		{
+			"name": "Tank",
+			"visualizer_asset_path": "tank",
+			"cost": 500,
+			"hp": 75,
+			"baseActionCooldown": 12,
+			"maxActionCooldown": 16,
+			"balancePerCooldownStep": 10,
+			"damageCore": 50,
+			"damageUnit": 50,
+			"damageDeposit": 6,
+			"damageWall": 25,
+			"damageBomb": 25,
 			"buildType": "none"
 		}
 	],
