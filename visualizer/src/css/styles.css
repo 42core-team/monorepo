@@ -146,14 +146,19 @@ a {
 #tooltip {
 	position: fixed;
 	display: none;
+
 	padding: 10px;
 	max-width: 30vw;
+
 	background: var(--panel-bg);
 	border: 1px solid var(--panel-outline);
 	border-radius: 0 10px 10px 10px;
 	box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.3);
 	color: var(--text);
+
 	pointer-events: none;
+
+	overflow-wrap: anywhere;
 }
 
 #tooltip span[style*="var(--hp-color)"],
