@@ -238,10 +238,10 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 			if (actingUnitInError != 0)
 			{
 				Object *obj = Board::instance().getObjectById(actingUnitInError);
-				if (obj->getDebugInfo().find("---") != std::string::npos)
+				if (obj->getDebugInfo().find("[begin_errs]") != std::string::npos)
 					obj->setDebugInfo(obj->getDebugInfo() + fullErr + "\n");
 				else
-					obj->setDebugInfo("\n---\n" + obj->getDebugInfo() + fullErr + "\n");
+					obj->setDebugInfo(obj->getDebugInfo() + "\n[begin_errs]\n" + fullErr + "\n");
 			}
 
 			failures.emplace_back(core->getTeamId(), fullErr);

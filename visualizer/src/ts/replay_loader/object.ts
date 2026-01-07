@@ -73,63 +73,64 @@ export function formatObjectData(obj: TickObject): string {
 	const lines: { line: string; priority: number; color: string }[] = [];
 
 	lines.push({
-		line: `❤️ HP: ${num(obj.hp)}`,
+		line: `#️⃣ ID: ${num(obj.id)}`,
 		priority: 0,
-		color: "var(--hp-color)",
-	});
-	lines.push({
-		line: `❓ Object Type: ${objectTypeNames[obj.type] || "Unknown"}`,
-		priority: 4,
 		color: "var(--text)",
 	});
 	lines.push({
-		line: `#️⃣ ID: ${num(obj.id)}`,
-		priority: 7,
+		line: `❓ Object Type: ${objectTypeNames[obj.type] || "Unknown"}`,
+		priority: 1,
 		color: "var(--text)",
 	});
 	lines.push({
 		line: `📍 Position: [x: ${num(obj.x)}, y: ${num(obj.y)}]`,
-		priority: 8,
+		priority: 2,
 		color: "var(--text)",
+	});
+
+	lines.push({
+		line: `❤️ HP: ${num(obj.hp)}`,
+		priority: 3,
+		color: "var(--hp-color)",
 	});
 
 	switch (obj.type) {
 		case 0:
 			lines.push({
 				line: `🏁 Team ID: ${num(obj.teamId)} (${getGameMisc()?.team_results.find((team) => team.id === obj.teamId)?.name || "Unknown Name"})`,
-				priority: 6,
+				priority: 0.5,
 				color: "var(--text)",
 			});
 			lines.push({
 				line: `💎 Gems: ${num(obj.gems)}`,
-				priority: 1,
+				priority: 4,
 				color: "var(--gems-color)",
 			});
 			lines.push({
 				line: `🔢 Spawn Cooldown: ${num(obj.SpawnCooldown)}`,
-				priority: 2,
+				priority: 5,
 				color: "var(--cooldown-color)",
 			});
 			break;
 		case 1:
 			lines.push({
 				line: `⚔️ Unit Type: ${getGameConfig()?.units?.[obj.unit_type]?.name || num(obj.unit_type)}`,
-				priority: 5,
+				priority: 1.5,
 				color: "var(--text)",
 			});
 			lines.push({
 				line: `🏁 Team ID: ${num(obj.teamId)} (${getGameMisc()?.team_results.find((team) => team.id === obj.teamId)?.name || "Unknown Name"})`,
-				priority: 6,
+				priority: 0.5,
 				color: "var(--text)",
 			});
 			lines.push({
 				line: `💎 Gems: ${num(obj.gems)}`,
-				priority: 1,
+				priority: 4,
 				color: "var(--gems-color)",
 			});
 			lines.push({
 				line: `🔢 Action Cooldown: ${num(obj.ActionCooldown)}`,
-				priority: 2,
+				priority: 5,
 				color: "var(--cooldown-color)",
 			});
 			break;
@@ -137,7 +138,7 @@ export function formatObjectData(obj: TickObject): string {
 		case 2:
 			lines.push({
 				line: `💎 Gems: ${num(obj.gems)}`,
-				priority: 1,
+				priority: 4,
 				color: "var(--gems-color)",
 			});
 			break;
@@ -155,9 +156,8 @@ export function formatObjectData(obj: TickObject): string {
 	const result: string[] = [];
 	let prevPriority = -Infinity;
 	for (const { line, priority, color } of lines) {
-		if (prevPriority <= 2 && priority >= 3) {
-			result.push(""); // add visual separator
-		}
+		if ([-1, 3].includes(priority)) result.push(""); // add visual separator
+
 		result.push(`<span style="color: ${color}">${line}</span>`);
 		prevPriority = priority;
 	}
@@ -165,8 +165,23 @@ export function formatObjectData(obj: TickObject): string {
 	let objectData = result.join("<br>");
 
 	if (obj.debug_info) {
-		objectData += `<br>🐞 Debug Info: ⤵<br><br>`;
-		objectData += escapeHtml(obj.debug_info);
+		// split dbug info string by "[begin_errs]"
+		const debugInfo = obj.debug_info.split("[begin_errs]");
+
+		if (debugInfo[0].trim() !== "") {
+			objectData += `<br><br>🐞 Debug Info: ⤵<br>`;
+			objectData += escapeHtml(debugInfo[0].trim()).replace(
+				/\r\n|\r|\n/g,
+				"<br>",
+			);
+		}
+		if (debugInfo.length > 1 && debugInfo[1].trim() !== "") {
+			objectData += `<br><br>⚠️ Errors: ⤵<br>`;
+			objectData += escapeHtml(debugInfo[1].trim()).replace(
+				/\r\n|\r|\n/g,
+				"<br>",
+			);
+		}
 	}
 
 	return objectData;
