@@ -19,32 +19,48 @@ function step(timestamp: number) {
 }
 
 export function setupRainbowMode(): void {
-	const down = new Set<string>();
-	const secret = new Set(["c", "o", "r", "e"]);
+	const sequence = ["KeyC", "KeyO", "KeyR", "KeyE"];
+	let nextKeyToBeTyped = 0;
+	let lastKeyHitTimestamp = 0;
 
-	function checkCombo() {
-		for (const k of secret) if (!down.has(k)) return false;
-		return true;
+	const TIMEOUT_MS = 800; // reset if pause too long between keys
+
+	function reset() {
+		nextKeyToBeTyped = 0;
+		lastKeyHitTimestamp = 0;
 	}
 
 	window.addEventListener("keydown", (e) => {
-		const k = e.key?.toLowerCase();
-		down.add(k);
-		if (checkCombo()) {
-			if (active) {
-				disableRainbowIfActive();
-			} else {
-				active = true;
-				startTs = 0;
-				rafId = requestAnimationFrame(step);
+		if (e.repeat) return;
+		if (!e.code) return;
+
+		const now = performance.now();
+		if (nextKeyToBeTyped > 0 && now - lastKeyHitTimestamp > TIMEOUT_MS) reset();
+		lastKeyHitTimestamp = now;
+
+		if (e.code === sequence[nextKeyToBeTyped]) {
+			nextKeyToBeTyped += 1;
+			if (nextKeyToBeTyped === sequence.length) {
+				reset();
+
+				if (active) {
+					disableRainbowIfActive();
+				} else {
+					active = true;
+					startTs = 0;
+					rafId = requestAnimationFrame(step);
+				}
 			}
+			return;
 		}
-	});
-	window.addEventListener("keyup", (e) => {
-		down.delete(e.key?.toLowerCase());
+
+		reset();
 	});
 
-	window.addEventListener("blur", () => down.clear());
+	window.addEventListener("blur", reset);
+	document.addEventListener("visibilitychange", () => {
+		if (document.visibilityState !== "visible") reset();
+	});
 }
 
 export function disableRainbowIfActive(): void {
