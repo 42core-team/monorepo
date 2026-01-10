@@ -149,6 +149,7 @@ a {
 
 	padding: 10px;
 	max-width: 30vw;
+	max-height: 50vh;
 
 	background: var(--panel-bg);
 	border: 1px solid var(--panel-outline);
@@ -159,6 +160,9 @@ a {
 	pointer-events: none;
 
 	overflow-wrap: anywhere;
+	overflow-y: auto;
+	overflow-x: hidden;
+	scrollbar-gutter: stable both-edges;
 }
 
 #tooltip span[style*="var(--hp-color)"],

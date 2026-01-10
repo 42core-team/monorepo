@@ -306,5 +306,19 @@ export async function setupRenderer(): Promise<void> {
 		svgCanvas.dataset.listenersBound = "1";
 	}
 
+	// translate scrolling on objects to their tooltip
+	svgCanvas.addEventListener(
+		"wheel",
+		(e) => {
+			if (tooltipElement.style.display !== "block") return;
+
+			tooltipElement.scrollTop += e.deltaY;
+			tooltipElement.scrollLeft += e.deltaX;
+
+			e.preventDefault();
+		},
+		{ passive: false },
+	);
+
 	isInitialRender = true;
 }
