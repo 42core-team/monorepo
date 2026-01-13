@@ -179,7 +179,10 @@ function refreshTooltipFromSVGPoint(
 	if (obj) {
 		tooltipElement.innerHTML = formatObjectData(obj);
 
-		if (obj.type !== 1) return;
+		if (obj.type !== 1) {
+			hoveredDebugPath = null;
+			return;
+		}
 		const dbg = (obj as UnitObject).debug_path;
 		if (Array.isArray(dbg) && dbg.length > 0) {
 			// Ensure the drawn path starts at the unit’s current tile
