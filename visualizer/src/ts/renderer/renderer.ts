@@ -49,6 +49,7 @@ function scheduleNextFrame(): void {
 let isInitialRender = true;
 
 let hoveredDebugPath: { x: number; y: number }[] | null = null;
+let hoveredDebugPathStroke: string | null = null;
 
 function drawHoveredDebugPathOverlay(): void {
 	if (!hoveredDebugPath || hoveredDebugPath.length === 0) return;
@@ -72,7 +73,7 @@ function drawHoveredDebugPathOverlay(): void {
 
 	poly.classList.remove("not-touched");
 	poly.setAttribute("points", pointsAttr);
-	poly.setAttribute("stroke", "var(--theme-color)");
+	poly.setAttribute("stroke", hoveredDebugPathStroke ?? "var(--theme-color)");
 	poly.setAttribute("stroke-opacity", "0.9");
 	poly.setAttribute("stroke-width", "0.07");
 	poly.setAttribute("stroke-linecap", "round");
@@ -180,18 +181,27 @@ function refreshTooltipFromSVGPoint(
 
 		if (obj.type !== 1) return;
 		const dbg = (obj as UnitObject).debug_path;
-
 		if (Array.isArray(dbg) && dbg.length > 0) {
 			// Ensure the drawn path starts at the unit’s current tile
 			const start = { x: obj.x, y: obj.y };
 			const first = dbg[0];
-			const withStart =
+			hoveredDebugPath =
 				first && first.x === start.x && first.y === start.y
 					? dbg
 					: [start, ...dbg];
-			hoveredDebugPath = withStart;
+			// get the units color, draw path with that
+			const useEl = svgCanvas.querySelector(
+				`use[data-obj-id="${obj.id}"]`,
+			) as SVGUseElement | null;
+			if (useEl) {
+				const fill = getComputedStyle(useEl).fill;
+				hoveredDebugPathStroke = fill && fill !== "none" ? fill : null;
+			} else {
+				hoveredDebugPathStroke = null;
+			}
 		} else {
 			hoveredDebugPath = null;
+			hoveredDebugPathStroke = null;
 		}
 	} else {
 		tooltipElement.innerHTML = `📍 Position: [x: ${tx}, y: ${ty}]`;
