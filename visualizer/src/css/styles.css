@@ -146,6 +146,7 @@ a {
 #tooltip {
 	position: fixed;
 	display: none;
+	z-index: 5001;
 
 	padding: 10px;
 	max-width: 30vw;
