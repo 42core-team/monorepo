@@ -492,6 +492,7 @@ void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &ac
 		const int teamId = bridge->getTeamId();
 		for (const auto &failure : failures)
 			if (failure.first == teamId) teamState["errors"].push_back(failure.second);
+		stateEncoder_.scrubDebugForTeam(teamState, static_cast<unsigned int>(teamId));
 		bridge->sendMessage(teamState);
 	}
 }

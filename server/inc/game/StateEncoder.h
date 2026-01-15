@@ -16,6 +16,8 @@ class StateEncoder
 
 	json generateObjectDiff();
 
+	void scrubDebugForTeam(json &stateOrDiff, unsigned int teamId) const;
+
   private:
 	json encodeFullState();
 	json diffObject(const json &currentObj, const json &previousObj);

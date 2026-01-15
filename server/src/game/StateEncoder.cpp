@@ -158,3 +158,30 @@ json StateEncoder::generateObjectDiff()
 
 	return returnJson;
 }
+
+void StateEncoder::scrubDebugForTeam(json &stateOrDiff, unsigned int teamId) const
+{
+	if (!stateOrDiff.contains("objects") || !stateOrDiff["objects"].is_array()) return;
+
+	for (auto &o : stateOrDiff["objects"])
+	{
+		const bool hasDbgInfo = o.contains("debug_info");
+		const bool hasDbgPath = o.contains("debug_path");
+		if (!hasDbgInfo && !hasDbgPath) continue;
+
+		bool allowed = false;
+
+		if (o.contains("id") && o["id"].is_number_unsigned())
+		{
+			const unsigned int objId = o["id"].get<unsigned int>();
+			Object *obj = Board::instance().getObjectById(objId);
+			if (obj && obj->isOwnedByTeam(teamId)) allowed = true;
+		}
+
+		if (!allowed)
+		{
+			if (hasDbgInfo) o.erase("debug_info");
+			if (hasDbgPath) o.erase("debug_path");
+		}
+	}
+}
