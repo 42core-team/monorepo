@@ -485,6 +485,16 @@ void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &ac
 
 	state["tick"] = tick;
 
+	// remove debug fields
+	if (state.contains("objects") && state["objects"].is_array())
+	{
+		for (auto &o : state["objects"])
+		{
+			o.erase("debug_info");
+			o.erase("debug_path");
+		}
+	}
+
 	for (auto &bridge : bridges_)
 	{
 		json teamState = state;
@@ -492,7 +502,7 @@ void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &ac
 		const int teamId = bridge->getTeamId();
 		for (const auto &failure : failures)
 			if (failure.first == teamId) teamState["errors"].push_back(failure.second);
-		stateEncoder_.scrubDebugForTeam(teamState, static_cast<unsigned int>(teamId));
+
 		bridge->sendMessage(teamState);
 	}
 }
