@@ -420,7 +420,7 @@ void ft_on_tick(unsigned long tick)
 
 ## What next?
 
-- We fully missed out on the most powerful unit: The carrier. And there may be even more units in your config depending on the event you are in! Check them out to not miss out on powerful strategic possibilities.
+- We fully missed out on the most powerful unit: The carrier. And there may be even more units in your config depending on the event you are in! Check them out to not miss out on powerful strategic possibilities. If you're not sure why you should use them, check out the [configs](documentation/configs) where you can read all the hard facts.
 - How should we handle opponents that try to attack our units? Maybe we can figure out a way to set up a fleeing logic.
 - What if an opponent warrior has reached our core, but all our warriors are near their core - can we keep a few warriors always close to our core as a defensive measure?
 
