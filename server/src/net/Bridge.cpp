@@ -133,12 +133,6 @@ void Bridge::readLoop()
 				Logger::LogWarn("Incoming message too large from team " + std::to_string(team_id_) + " (>" +
 								std::to_string(MAX_MESSAGE_BYTES) + " bytes). Disconnecting.");
 
-				json err = json::object();
-				err["errors"] = json::array();
-				err["errors"].push_back("Incoming message too large (max " + std::to_string(MAX_MESSAGE_BYTES) +
-										" bytes). Disconnecting.");
-				sendMessage(err);
-
 				const unsigned int place = Board::instance().getCoreCount() - 1;
 				ReplayEncoder::instance().setDeathReason(team_id_, death_reason_t::SPAMMED);
 				ReplayEncoder::instance().setPlace(team_id_, place);
