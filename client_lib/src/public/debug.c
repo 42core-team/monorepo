@@ -3,22 +3,6 @@
 
 t_debug_data debug_data = {0};
 
-// Helper to ensure newline at end of string
-static void core_static_ensureNewline(char **str)
-{
-	if (!str || !*str) return;
-
-	size_t len = strlen(*str);
-	if (len == 0) return;
-
-	if ((*str)[len - 1] != '\n')
-	{
-		*str = realloc(*str, len + 2);
-		(*str)[len] = '\n';
-		(*str)[len + 1] = '\0';
-	}
-}
-
 static t_debug_entry *core_static_findOrCreateEntry(unsigned long object_id)
 {
 	for (unsigned int i = 0; i < debug_data.count; i++)
@@ -60,9 +44,6 @@ void core_debug_addObjectInfo(const t_obj *obj, const char *info)
 	}
 	else
 	{
-		// Append to existing info
-		core_static_ensureNewline(&entry->info);
-
 		size_t old_len = strlen(entry->info);
 		size_t new_len = strlen(info);
 		entry->info = realloc(entry->info, old_len + new_len + 1);
