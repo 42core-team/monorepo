@@ -5,25 +5,25 @@
 	3. Carrier: A non-combat unit that is very quick, even when carrying many gems.
 */
 {
-	"gridSize": 20,
-	"seed": "",
-	"idleIncome": 2,
-	"idleIncomeTimeOut": 1000,
-	"depositHp": 50,
-	"depositIncome": 150,
-	"gemPileIncome": 35,
-	"coreHp": 200,
-	"coreSpawnCooldown": 20,
-	"initialBalance": 200,
-	"wallHp": 50,
-	"wallBuildCost": 20,
-	"bombHp": 25,
-	"bombCountdown": 10,
-	"bombThrowCost": 50,
-	"bombReach": 3,
-	"bombDamageCore": 50,
-	"bombDamageUnit": 30,
-	"bombDamageDeposit": 40,
+	"gridSize": 20, // tile count in each x and y directions of map, map will always be square
+	"seed": "", // if server is run twice with same seed, exact same world is generated. specify any string of any length, leave empty for a random seed
+	"idleIncome": 2, // amount of gems automatically deposited into each core each tick before the timeout
+	"idleIncomeTimeOut": 1000, // how many ticks the idleIncome last before no more gems are deposited
+	"depositHp": 50, // default HP when a deposit object is spawned
+	"depositIncome": 150, // default amount of gems a deposit is spawned with, might be modified depending on world generator
+	"gemPileIncome": 35, // default amount of gems a gem pile is spawned with, might be modified depending on world generator
+	"coreHp": 200, // health points of a core when its spawned
+	"coreSpawnCooldown": 20, // cooldown in in ticks a core must wait after spawning a unit before it can spawn another unit
+	"initialBalance": 200, // default amount of gems a core is spawned with, might be modified depending on world generator
+	"wallHp": 50, // health points of a wall when its spawned
+	"wallBuildCost": 20, // amount of gems a wall builder unit must pay to build a wall
+	"bombHp": 25, // health points of a bomb when its spawned
+	"bombCountdown": 10, // countdown in ticks from when a bomb is first attacked to when it explodes
+	"bombThrowCost": 50, // amount of gems a bomb builder unit must pay to build a wall
+	"bombReach": 3, // bomb explosion range
+	"bombDamageCore": 50, // damage a bomb does to a core
+	"bombDamageUnit": 30, // damage a bomb does to a unit
+	"bombDamageDeposit": 40, // damage a bomb does to a deposit
 	"worldGenerator": "sparse",
 	"worldGeneratorConfig": {
 		"depositCount": 20,
@@ -35,19 +35,19 @@
 	},
 	"units": [
 		{
-			"name": "Warrior",
-			"visualizer_asset_path": "warrior",
-			"cost": 150,
-			"hp": 35,
-			"baseActionCooldown": 5,
-			"maxActionCooldown": 12,
-			"balancePerCooldownStep": 12,
-			"damageCore": 12,
-			"damageUnit": 6,
-			"damageDeposit": 4,
-			"damageWall": 5,
-			"damageBomb": 5,
-			"buildType": "none"
+			"name": "Warrior", // name, for aesthetic / display purposes only
+			"visualizer_asset_path": "warrior", // folder that the units visuals are picked from by visualizer
+			"cost": 150, // amount of gems needed to spawn the unit
+			"hp": 35, // amount of healthpoints the unit spawns with
+			"baseActionCooldown": 5, // base delay between action executions
+			"maxActionCooldown": 12, // max delay between action executions if unit is holding a lot of gems
+			"balancePerCooldownStep": 12, // defines increase of delay between action executions, see wiki for details
+			"damageCore": 12, // damage the unit does to a core
+			"damageUnit": 6, // damage the unit does to a unit
+			"damageDeposit": 4, // damage the unit does to a deposit
+			"damageWall": 5, // damage the unit does to a wall
+			"damageBomb": 5, // damage the unit does to a bomb
+			"buildType": "none" // whether & what the unit can build
 		},
 		{
 			"name": "Miner",

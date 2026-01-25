@@ -42,7 +42,7 @@
 	"units": [
 		{
 			"name": "Warrior", // name, for aesthetic / display purposes only
-			"visualizer_asset_path": "warrior", // folder that the units visuals are picked from
+			"visualizer_asset_path": "warrior", // folder that the units visuals are picked from by visualizer
 			"cost": 150, // amount of gems needed to spawn the unit
 			"hp": 22, // amount of healthpoints the unit spawns with
 			"baseActionCooldown": 3, // base delay between action executions
