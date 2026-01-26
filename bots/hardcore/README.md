@@ -4,7 +4,7 @@
 
 # 🌟 CORE REPO
 
-## 🎉 Good Luck, Have Fun, and [RTFM](https://coregame.de/wiki/)!1!!1 🚀
+## 🎉 Good Luck, Have Fun, and [RTFM](https://coregame.sh/wiki/)!1!!1 🚀
 
 Welcome to the **CORE** project repository! We’re excited to have you on board for this coding adventure.
 
@@ -19,7 +19,7 @@ Welcome to the **CORE** project repository! We’re excited to have you on board
 4. Keep going writing your bot! Get started under `my-core-bot/src/main.c`!
 
 ### 📚 Useful Links
-- **Official CORE Wiki**: [coregame.de/wiki](https://coregame.de/wiki)
+- **Official CORE Wiki**: [coregame.sh/wiki](https://coregame.sh/wiki)
 
 ### 🛠️ Spin Up Your Dev Container
 

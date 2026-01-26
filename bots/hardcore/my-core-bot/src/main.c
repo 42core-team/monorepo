@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 }
 
 // NOT SURE HOW TO GET STARTED?
-// --> Check out the wiki coregame.de/wiki/ with a helpful "My first Core bot" beginners guide!
+// --> Check out the wiki coregame.sh/wiki/ with a helpful "My first Core bot" beginners guide!
 
 static bool ft_is_own_team_warrior(const t_obj *obj)
 {
