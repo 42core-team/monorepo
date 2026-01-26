@@ -15,5 +15,5 @@ ingress:
   tls:
     - hosts:
         - visualizer.coregame.sh
-      secretName: visualizer-coregame-de-tls
+      secretName: visualizer-coregame-sh-tls
 
