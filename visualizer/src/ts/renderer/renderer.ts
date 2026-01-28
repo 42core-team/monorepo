@@ -288,21 +288,21 @@ export async function setupRenderer(): Promise<void> {
 			tooltipElement.style.display = "none";
 		});
 		svgCanvas.dataset.listenersBound = "1";
+
+		// translate scrolling on objects to their tooltip
+		svgCanvas.addEventListener(
+			"wheel",
+			(e) => {
+				if (tooltipElement.style.display !== "block") return;
+
+				tooltipElement.scrollTop += e.deltaY;
+				tooltipElement.scrollLeft += e.deltaX;
+
+				e.preventDefault();
+			},
+			{ passive: false },
+		);
 	}
-
-	// translate scrolling on objects to their tooltip
-	svgCanvas.addEventListener(
-		"wheel",
-		(e) => {
-			if (tooltipElement.style.display !== "block") return;
-
-			tooltipElement.scrollTop += e.deltaY;
-			tooltipElement.scrollLeft += e.deltaX;
-
-			e.preventDefault();
-		},
-		{ passive: false },
-	);
 
 	isInitialRender = true;
 }
