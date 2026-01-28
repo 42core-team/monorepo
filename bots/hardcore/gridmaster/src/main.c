@@ -9,7 +9,7 @@ int main(int argc, char **argv)
 
 static bool is_core_opponent(const t_obj *obj)
 {
-	return (obj->type == OBJ_CORE && obj->s_core.team_id == game.my_team_id);
+	return (obj->type == OBJ_CORE && obj->s_core.team_id != game.my_team_id);
 }
 
 void ft_on_tick(unsigned long tick)
