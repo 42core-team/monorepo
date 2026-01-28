@@ -279,15 +279,15 @@ jobs:
           BRANCH="${{ github.ref_name }}"
           if [[ "$GITHUB_REF" == refs/tags/* ]]; then
             NAMESPACE="production"
-            ENVIRONMENT_URL="https://visualizer.coregame.de"
+            ENVIRONMENT_URL="https://visualizer.coregame.sh"
             DEPLOYMENT_NAME="debug-visualizer"
           elif [ "$BRANCH" = "main" ]; then
             NAMESPACE="production"
-            ENVIRONMENT_URL="https://visualizer.coregame.de"
+            ENVIRONMENT_URL="https://visualizer.coregame.sh"
             DEPLOYMENT_NAME="debug-visualizer"
           else
             NAMESPACE="development"
-            ENVIRONMENT_URL="https://dev.visualizer.coregame.de"
+            ENVIRONMENT_URL="https://dev.visualizer.coregame.sh"
             DEPLOYMENT_NAME="debug-visualizer-dev"
           fi
 

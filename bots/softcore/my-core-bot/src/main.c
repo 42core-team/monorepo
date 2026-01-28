@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 }
 
 // NOT SURE HOW TO GET STARTED?
-// --> Check out the wiki coregame.de/wiki/ with a helpful "My first Core bot" beginners guide!
+// --> Check out the wiki coregame.sh/wiki/ with a helpful "My first Core bot" beginners guide!
 
 void ft_on_tick(unsigned long tick)
 {

@@ -20,7 +20,7 @@ You can receive gems by having your units attack the gem deposits on the map or 
 
 1. **Be a Registered CORE Participant/Team** ✨
 
-   - Visit our website, [COREGAME.de](https://coregame.de/), sign up, join the right event, and add your team members.
+   - Visit our website, [coregame.sh](https://coregame.sh/), sign up, join the right event, and add your team members.
 
 2. **Clone Your CORE Repository** 📧
 

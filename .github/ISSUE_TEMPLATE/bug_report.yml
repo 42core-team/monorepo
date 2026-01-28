@@ -25,7 +25,7 @@ body:
     attributes:
       label: Environment / Context
       description: Which version, branch, event, bot repository, or visualizer replay URL did this occur on?
-      placeholder: "e.g. main branch, v1.2.3, event: summer_2025, repo: github.com/..., replay: coregame.de/... at tick 42"
+      placeholder: "e.g. main branch, v1.2.3, event: summer_2025, repo: github.com/..., replay: coregame.sh/... at tick 42"
     validations:
       required: false
 

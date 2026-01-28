@@ -1,4 +1,4 @@
-[![visualizer.coregame.de](https://status.coregame.de/badge/web/status?labelColor=&color=&style=for-the-badge&label=visualizer.coregame.de)](https://visualizer.coregame.de)
+[![visualizer.coregame.sh](https://status.coregame.sh/badge/web/status?labelColor=&color=&style=for-the-badge&label=visualizer.coregame.sh)](https://visualizer.coregame.sh)
 
 # Debug Visualizer
 

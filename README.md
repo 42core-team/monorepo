@@ -18,7 +18,7 @@
 - server/ -> previously even_COREnier, the gameplay server, single source of truth connection players during matches, cpp
 - visualizer/ -> previously debug_visualizerm displays replay files generated from the server with vanilla html ts css
 - bots/ -> bot coding environment for Core players. Put files or folders into the .coreignore to not have them show up in the generated player repositories.
-- wiki/ -> previously it's own repo, handles all the documentation. Deployed under wiki.coregame.de; Please make sure to also update the wiki when something wiki-relevant changes.
+- wiki/ -> previously it's own repo, handles all the documentation. Deployed under wiki.coregame.sh; Please make sure to also update the wiki when something wiki-relevant changes.
 
 ---
 

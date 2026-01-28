@@ -14,7 +14,7 @@ ingress:
   className: "nginx"
   annotations: {}
   hosts:
-    - host: visualizer.coregame.de
+    - host: visualizer.coregame.sh
       paths:
         - path: /
           pathType: Prefix
