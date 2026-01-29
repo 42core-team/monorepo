@@ -17,11 +17,12 @@ const deathReasons: Record<number, string> = {
 	0: "Survived",
 	1: "Core destruction",
 	2: "Unexpectedly Disconnected",
-	3: "Did not connect to gameserver",
-	4: "Timeout while sending data",
-	5: "Game timed out - Decision via Core HP",
-	6: "Game timed out - Decision via Unit HP",
-	7: "Game timed out - Random Decision",
+	3: "Kicked for spamming actions / debug data",
+	4: "Did not connect to gameserver",
+	5: "Timeout while sending data",
+	6: "Game timed out - Decision via Core HP",
+	7: "Game timed out - Decision via Unit HP",
+	8: "Game timed out - Random Decision",
 };
 
 export interface ReplayTick {

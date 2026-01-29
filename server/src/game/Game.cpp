@@ -45,7 +45,7 @@ void Game::run()
 
 		std::vector<std::pair<std::unique_ptr<Action>, Core *>> actions;
 		std::vector<std::pair<int, std::string>> preFailures;
-		std::vector<json> debugDataPackets;
+		std::vector<std::pair<int, json>> debugDataPackets;
 
 		while (std::chrono::steady_clock::now() - waitStart < std::chrono::milliseconds(maxWait))
 		{
@@ -77,7 +77,7 @@ void Game::run()
 						// parse debug data
 						if (msg.contains("debug_data") && msg["debug_data"].is_array())
 						{
-							debugDataPackets.push_back(msg);
+							debugDataPackets.emplace_back(b->getTeamId(), msg);
 						}
 
 						// parse actions
@@ -154,7 +154,8 @@ void Game::run()
 
 void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions,
 				std::chrono::steady_clock::time_point serverStartTime,
-				const std::vector<std::pair<int, std::string>> &preFailures, const std::vector<json> &debugDataPackets)
+				const std::vector<std::pair<int, std::string>> &preFailures,
+				const std::vector<std::pair<int, json>> &debugDataPackets)
 {
 	std::vector<std::pair<int, std::string>> failures;
 	failures.reserve(preFailures.size());
@@ -164,15 +165,43 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 	// 0. HANDLE DEBUG INFO
 	for (const auto &debugPacket : debugDataPackets)
 	{
-		for (const auto &debugEntry : debugPacket["debug_data"])
+		int teamId = debugPacket.first;
+		for (const auto &debugEntry : debugPacket.second["debug_data"])
 		{
 			unsigned int objectId = debugEntry["object_id"];
-			std::string info = debugEntry["object_info"];
-
 			Object *obj = Board::instance().getObjectById(objectId);
-			if (obj)
+			if (!obj) continue;
+			if (obj->getType() == ObjectType::Core)
+				if (static_cast<Core *>(obj)->getTeamId() != (unsigned int)teamId) continue;
+			if (obj->getType() == ObjectType::Unit)
+				if (static_cast<Unit *>(obj)->getTeamId() != (unsigned int)teamId) continue;
+
+			if (debugEntry.contains("object_info") && debugEntry["object_info"].is_string() &&
+				!debugEntry["object_info"].get<std::string>().empty())
 			{
-				obj->setDebugInfo(info);
+				obj->setDebugInfo(debugEntry["object_info"].get<std::string>());
+			}
+
+			if (debugEntry.contains("object_path") && debugEntry["object_path"].is_array())
+			{
+				if (obj->getType() != ObjectType::Unit)
+				{
+					failures.emplace_back(teamId, "Tick " + std::to_string(tick - 1) +
+														  ": Debug Error: Only units can have debug paths. Object ID " +
+														  std::to_string(objectId) + " is not a unit.");
+					continue;
+				}
+
+				for (const auto &point : debugEntry["object_path"])
+				{
+					if (point.contains("x") && point.contains("y") && point["x"].is_number_integer() &&
+						point["y"].is_number_integer())
+					{
+						int x = point["x"];
+						int y = point["y"];
+						obj->addDebugPathPoint(x, y);
+					}
+				}
 			}
 		}
 	}
@@ -194,10 +223,30 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 		std::string err = action->execute(core);
 		if (!err.empty())
 		{
+			json actionJson = action->encodeJSON();
+
 			// makes more sense to put the ticks where the actions were executed into the tick message
 			std::string fullErr = "Tick " + std::to_string(tick - 1) +
 								  ": Action Failure: " + Action::getActionName(action->getActionType()) + ": " + err +
-								  " (" + action->encodeJSON().dump() + ")";
+								  " (" + actionJson.dump() + ")";
+
+			unsigned int actingUnitInError = 0;
+			if (actionJson.contains("unit_id"))
+				actingUnitInError = actionJson["unit_id"];
+			else if (actionJson.contains("builder_id"))
+				actingUnitInError = actionJson["builder_id"];
+			if (actingUnitInError != 0)
+			{
+				Object *obj = Board::instance().getObjectById(actingUnitInError);
+				if (obj != NULL)
+				{
+					if (obj->getDebugInfo().find("[begin_errs]") != std::string::npos)
+						obj->setDebugInfo(obj->getDebugInfo() + fullErr + "\n");
+					else
+						obj->setDebugInfo(obj->getDebugInfo() + "\n[begin_errs]\n" + fullErr + "\n");
+				}
+			}
+
 			failures.emplace_back(core->getTeamId(), fullErr);
 			action = nullptr;
 		}
@@ -322,6 +371,13 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 		else if (obj.getType() == ObjectType::Core)
 			static_cast<Core &>(obj).tickSpawnCooldown();
 	}
+
+	// 9. Clean up debug info / paths
+	for (auto &obj : Board::instance())
+	{
+		if (obj.hasDebugInfo()) obj.resetDebugInfo();
+		if (obj.hasDebugPath()) obj.resetDebugPath();
+	}
 }
 
 void Game::killWorstPlayerOnTimeout()
@@ -432,6 +488,16 @@ void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &ac
 
 	state["tick"] = tick;
 
+	// remove debug fields
+	if (state.contains("objects") && state["objects"].is_array())
+	{
+		for (auto &o : state["objects"])
+		{
+			o.erase("debug_info");
+			o.erase("debug_path");
+		}
+	}
+
 	for (auto &bridge : bridges_)
 	{
 		json teamState = state;
@@ -439,6 +505,7 @@ void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &ac
 		const int teamId = bridge->getTeamId();
 		for (const auto &failure : failures)
 			if (failure.first == teamId) teamState["errors"].push_back(failure.second);
+
 		bridge->sendMessage(teamState);
 	}
 }

@@ -1,6 +1,10 @@
 import { getCurrentTickData, isDirty } from "../input_manager/timeManager";
 import type { GameConfig } from "../replay_loader/config";
-import { formatObjectData, type TickObject } from "../replay_loader/object";
+import {
+	formatObjectData,
+	type TickObject,
+	type UnitObject,
+} from "../replay_loader/object";
 import {
 	getGameConfig,
 	getGameMisc,
@@ -43,6 +47,41 @@ function scheduleNextFrame(): void {
 	}
 }
 let isInitialRender = true;
+
+let hoveredDebugPath: { x: number; y: number }[] | null = null;
+let hoveredDebugPathStroke: string | null = null;
+
+function drawHoveredDebugPathOverlay(): void {
+	if (!hoveredDebugPath || hoveredDebugPath.length === 0) return;
+
+	// Draw a single polyline through the centers of tiles
+	const pointsAttr = hoveredDebugPath
+		.map(({ x, y }) => `${x + 0.5},${y + 0.5}`)
+		.join(" ");
+
+	const polyKey = "dbg-path-poly";
+	let poly = svgCanvas.querySelector(
+		`polyline[data-dbg-path="${polyKey}"]`,
+	) as SVGPolylineElement | null;
+
+	if (!poly) {
+		poly = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+		poly.setAttribute("data-dbg-path", polyKey);
+		poly.setAttribute("fill", "none");
+		poly.setAttribute("pointer-events", "none");
+	}
+
+	poly.classList.remove("not-touched");
+	poly.setAttribute("points", pointsAttr);
+	poly.setAttribute("stroke", hoveredDebugPathStroke ?? "var(--theme-color)");
+	poly.setAttribute("stroke-opacity", "0.9");
+	poly.setAttribute("stroke-width", "0.07");
+	poly.setAttribute("stroke-linecap", "round");
+	poly.setAttribute("stroke-linejoin", "round");
+
+	if (poly.parentNode !== svgCanvas) svgCanvas.appendChild(poly);
+}
+
 function drawFrame(timestamp: number): void {
 	lastRenderTime = timestamp;
 
@@ -87,6 +126,8 @@ function drawFrame(timestamp: number): void {
 	if (tooltipElement.style.display === "block" && lastSVGPoint) {
 		refreshTooltipFromSVGPoint(lastSVGPoint, lastClientX, lastClientY);
 	}
+
+	drawHoveredDebugPathOverlay();
 
 	for (const element of svgCanvas.querySelectorAll(".not-touched")) {
 		if (!(element as Element).closest(".persistent")) {
@@ -137,8 +178,37 @@ function refreshTooltipFromSVGPoint(
 	tooltipElement.style.display = "block";
 	if (obj) {
 		tooltipElement.innerHTML = formatObjectData(obj);
+
+		if (obj.type !== 1) {
+			hoveredDebugPath = null;
+			return;
+		}
+		const dbg = (obj as UnitObject).debug_path;
+		if (Array.isArray(dbg) && dbg.length > 0) {
+			// Ensure the drawn path starts at the unit’s current tile
+			const start = { x: obj.x, y: obj.y };
+			const first = dbg[0];
+			hoveredDebugPath =
+				first && first.x === start.x && first.y === start.y
+					? dbg
+					: [start, ...dbg];
+			// get the units color, draw path with that
+			const useEl = svgCanvas.querySelector(
+				`use[data-obj-id="${obj.id}"]`,
+			) as SVGUseElement | null;
+			if (useEl) {
+				const fill = getComputedStyle(useEl).fill;
+				hoveredDebugPathStroke = fill && fill !== "none" ? fill : null;
+			} else {
+				hoveredDebugPathStroke = null;
+			}
+		} else {
+			hoveredDebugPath = null;
+			hoveredDebugPathStroke = null;
+		}
 	} else {
 		tooltipElement.innerHTML = `📍 Position: [x: ${tx}, y: ${ty}]`;
+		hoveredDebugPath = null;
 	}
 }
 export async function setupRenderer(): Promise<void> {
@@ -218,6 +288,20 @@ export async function setupRenderer(): Promise<void> {
 			tooltipElement.style.display = "none";
 		});
 		svgCanvas.dataset.listenersBound = "1";
+
+		// translate scrolling on objects to their tooltip
+		svgCanvas.addEventListener(
+			"wheel",
+			(e) => {
+				if (tooltipElement.style.display !== "block") return;
+
+				tooltipElement.scrollTop += e.deltaY;
+				tooltipElement.scrollLeft += e.deltaX;
+
+				e.preventDefault();
+			},
+			{ passive: false },
+		);
 	}
 
 	isInitialRender = true;

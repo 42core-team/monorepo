@@ -276,6 +276,11 @@ t_unit_config *core_get_unitConfig(t_unit_type type);
 /// @param info The debug string to add
 void core_debug_addObjectInfo(const t_obj *obj, const char *info);
 
+/// @brief Add a step to the end of the debug path of an object for visualization
+/// @param unit The unit to attach the debug path step to
+/// @param pos The position to add as a step to the debug path
+void core_debug_addObjectPathStep(const t_obj *unit, t_pos pos);
+
 // ----- PRINT FUNCTIONS -----
 
 // PRINT FUNCTIONS are used to print information about the game state to the console.

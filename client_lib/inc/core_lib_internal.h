@@ -87,10 +87,17 @@ void core_internal_reset_actions(void);
 
 // ----- Debug Data
 
+typedef struct s_debug_path_node
+{
+	t_pos pos;
+	struct s_debug_path_node *next;
+} t_debug_path_node;
+
 typedef struct s_debug_entry
 {
 	unsigned long object_id;
 	char *info; // Accumulated info string for this object
+	t_debug_path_node *path;
 } t_debug_entry;
 
 typedef struct s_debug_data

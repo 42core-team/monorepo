@@ -1,6 +1,6 @@
 #include "bot.h"
 
-// pathfinding is super basic, but you can start using this if you want to
+// pathfinding is a basic dijkstra, but you can start using this if you want to
 
 #include <limits.h>
 #include <stdbool.h>
@@ -31,7 +31,6 @@ static unsigned long movement_cost_at(t_pos pos)
 	}
 }
 
-// ---------- HELPERS ----------
 static inline size_t pos_to_index(t_pos p, unsigned long grid_size)
 {
 	return (size_t)p.y * (size_t)grid_size + (size_t)p.x;
@@ -55,18 +54,47 @@ static inline bool pos_in_bounds(t_pos p, unsigned long grid)
 	return p.x < grid && p.y < grid;
 }
 
-// ---------- MAIN: DIJKSTRA NEXT STEP ----------
-// Returns the next step towards target, or start if no path found / invalid input.
-t_pos pathfind_next_step_dijkstra(t_pos start, t_pos target)
+static t_path reconstruct_full_path(size_t *parent, size_t start_idx, size_t goal_idx, unsigned long grid)
 {
+	t_path result = {.steps = NULL, .length = 0};
+
+	// Count path length
+	size_t count = 0;
+	size_t cur = goal_idx;
+	while (cur != start_idx && parent[cur] != (size_t)(-1))
+	{
+		count++;
+		cur = parent[cur];
+	}
+
+	if (count == 0) return result; // was already at target position
+
+	result.steps = malloc(count * sizeof(t_pos));
+	if (!result.steps) return result;
+	result.length = count;
+
+	cur = goal_idx;
+	for (size_t i = count; i > 0; i--)
+	{
+		result.steps[i - 1] = index_to_pos(cur, grid);
+		cur = parent[cur];
+	}
+
+	return result;
+}
+
+// Returns the next step towards target, or start if no path found / invalid input.
+t_path pathfind_full_path_dijkstra(t_pos start, t_pos target)
+{
+	t_path empty_path = {.steps = NULL, .length = 0};
 	const unsigned long grid = game.config.gridSize;
 	const size_t total = (size_t)grid * (size_t)grid;
 
-	if (grid == 0 || !pos_in_bounds(start, grid) || !pos_in_bounds(target, grid)) return start;
+	if (grid == 0 || !pos_in_bounds(start, grid) || !pos_in_bounds(target, grid)) return empty_path;
 
-	if (start.x == target.x && start.y == target.y) return start;
+	if (start.x == target.x && start.y == target.y) return empty_path;
 
-	// Setup
+	// setup arrays
 	unsigned long *distance = malloc(total * sizeof(unsigned long));
 	bool *visited = malloc(total * sizeof(bool));
 	size_t *parent = malloc(total * sizeof(size_t));
@@ -75,9 +103,8 @@ t_pos pathfind_next_step_dijkstra(t_pos start, t_pos target)
 		free(distance);
 		free(visited);
 		free(parent);
-		return start;
+		return empty_path;
 	}
-
 	for (size_t i = 0; i < total; ++i)
 	{
 		distance[i] = ULONG_MAX;
@@ -87,10 +114,9 @@ t_pos pathfind_next_step_dijkstra(t_pos start, t_pos target)
 
 	const size_t start_idx = pos_to_index(start, grid);
 	const size_t target_idx = pos_to_index(target, grid);
-
 	distance[start_idx] = 0;
 
-	// Dijkstra (naive scan for smallest distance)
+	// Dijkstra algorithm
 	while (true)
 	{
 		size_t current = (size_t)(-1);
@@ -130,8 +156,7 @@ t_pos pathfind_next_step_dijkstra(t_pos start, t_pos target)
 		}
 	}
 
-	// Decide which goal to reconstruct to:
-	// Prefer the real target; if unreachable, choose the best adjacent tile to the target.
+	// Determine goal (prefer target, fallback to adjacent if unreachable)
 	size_t goal_idx = target_idx;
 
 	if (distance[target_idx] == ULONG_MAX)
@@ -151,7 +176,6 @@ t_pos pathfind_next_step_dijkstra(t_pos start, t_pos target)
 			t_pos adj = {.x = (unsigned short)nx, .y = (unsigned short)ny};
 			size_t adj_idx = pos_to_index(adj, grid);
 
-			// Only consider reachable tiles (distance != inf)
 			if (distance[adj_idx] != ULONG_MAX && distance[adj_idx] < best)
 			{
 				best = distance[adj_idx];
@@ -159,27 +183,14 @@ t_pos pathfind_next_step_dijkstra(t_pos start, t_pos target)
 			}
 		}
 
-		if (best_idx != (size_t)(-1)) goal_idx = best_idx; // walk next to target
+		if (best_idx != (size_t)(-1)) goal_idx = best_idx;
 	}
 
-	// Reconstruct ONE step from start -> goal_idx
-	t_pos next_step = start;
-	if (distance[goal_idx] != ULONG_MAX)
-	{
-		size_t cur = goal_idx;
-		size_t prev = (size_t)(-1);
-
-		while (cur != start_idx && parent[cur] != (size_t)(-1))
-		{
-			prev = cur;
-			cur = parent[cur];
-		}
-
-		if (cur == start_idx && prev != (size_t)(-1)) next_step = index_to_pos(prev, grid);
-	}
+	// Reconstruct full path
+	t_path result = reconstruct_full_path(parent, start_idx, goal_idx, grid);
 
 	free(distance);
 	free(visited);
 	free(parent);
-	return next_step;
+	return result;
 }

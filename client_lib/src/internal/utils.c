@@ -31,7 +31,18 @@ void core_internal_reset_debugData(void)
 	{
 		for (unsigned int i = 0; i < debug_data.count; i++)
 		{
-			free(debug_data.entries[i].info);
+			if (debug_data.entries[i].path)
+			{
+				t_debug_path_node *current = debug_data.entries[i].path;
+				while (current)
+				{
+					t_debug_path_node *to_free = current;
+					current = current->next;
+					free(to_free);
+				}
+			}
+
+			if (debug_data.entries[i].info) free(debug_data.entries[i].info);
 		}
 		free(debug_data.entries);
 	}

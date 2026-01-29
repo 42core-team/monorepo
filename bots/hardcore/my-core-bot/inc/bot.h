@@ -3,6 +3,12 @@
 
 #include "core_lib.h"
 
+typedef struct s_path
+{
+	t_pos *steps;
+	size_t length;
+} t_path;
+
 t_obj *ft_get_core_own(void);
 t_obj *ft_get_core_opponent(void);
 t_obj *ft_get_deposit_nearest(t_pos pos);
@@ -12,6 +18,6 @@ t_obj *ft_get_units_opponent_nearest(t_pos pos);
 t_obj **ft_get_units_own(void);
 t_obj **ft_get_units_opponent(void);
 
-t_pos pathfind_next_step_dijkstra(t_pos start, t_pos target);
+t_path pathfind_full_path_dijkstra(t_pos start, t_pos target);
 
 #endif /* BOT_H */

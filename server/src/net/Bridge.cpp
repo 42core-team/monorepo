@@ -1,6 +1,7 @@
 #include "Bridge.h"
 
 #include "Board.h"
+#include "ReplayEncoder.h"
 
 #include <cstring> // For strerror()
 #include <errno.h>
@@ -95,6 +96,7 @@ void Bridge::readLoop()
 	try
 	{
 		constexpr size_t buffer_size = 1024;
+		constexpr size_t MAX_MESSAGE_BYTES = 16 * 1024; // 16kb message cap
 		char buffer[buffer_size];
 		std::string data;
 		while (!disconnected_)
@@ -107,22 +109,39 @@ void Bridge::readLoop()
 					std::this_thread::sleep_for(std::chrono::milliseconds(1));
 					continue;
 				}
-				else
-				{
-					Logger::Log(LogLevel::WARNING, "Read error: " + std::string(strerror(errno)) + ". Disconnecting " +
-														   std::to_string(team_id_) + ".");
-					disconnected_ = true;
-					break;
-				}
+				Logger::Log(LogLevel::WARNING, "Read error: " + std::string(strerror(errno)) + ". Disconnecting " +
+													   std::to_string(team_id_) + ".");
+				disconnected_ = true;
+				readCv_.notify_all();
+				writeCv_.notify_all();
+				break;
 			}
 			else if (n == 0)
 			{
 				Logger::Log(LogLevel::WARNING,
 							"Connection closed by peer. Disconnecting " + std::to_string(team_id_) + ".");
 				disconnected_ = true;
+				readCv_.notify_all();
+				writeCv_.notify_all();
 				break;
 			}
 			data.append(buffer, n);
+
+			// message size limit
+			if (data.find('\n') == std::string::npos && data.size() > MAX_MESSAGE_BYTES)
+			{
+				Logger::LogWarn("Incoming message too large from team " + std::to_string(team_id_) + " (>" +
+								std::to_string(MAX_MESSAGE_BYTES) + " bytes). Disconnecting.");
+
+				const unsigned int place = Board::instance().getCoreCount() - 1;
+				ReplayEncoder::instance().setDeathReason(team_id_, death_reason_t::SPAMMED);
+				ReplayEncoder::instance().setPlace(team_id_, place);
+
+				disconnected_ = true;
+				readCv_.notify_all();
+				writeCv_.notify_all();
+				break;
+			}
 
 			size_t pos;
 			while ((pos = data.find('\n')) != std::string::npos)
@@ -155,6 +174,8 @@ void Bridge::readLoop()
 		Logger::Log(LogLevel::WARNING,
 					"Exception: " + std::string(e.what()) + ". Disconnecting " + std::to_string(team_id_) + ".");
 		disconnected_ = true;
+		readCv_.notify_all();
+		writeCv_.notify_all();
 	}
 }
 
