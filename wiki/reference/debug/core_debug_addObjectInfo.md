@@ -6,7 +6,7 @@ sidebarTitle: "⚙️ debug_addObjectInfo()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/debug.c#L50
+https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/debug.c#L34
 
 ## Description
 
