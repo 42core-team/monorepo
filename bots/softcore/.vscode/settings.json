@@ -13,5 +13,6 @@
     "my-core-bot/Makefile": true,
     "configs/soft-config.json": true,
     "devpod": true,
+	"scripts": true
   }
 }
