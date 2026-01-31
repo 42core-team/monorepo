@@ -6,11 +6,14 @@ PLAYER2_ID := 43
 
 run: stop check_update_configs build build-gridmaster
 	@echo ""
-	@echo "$(COLOR_INFO)🎮 Visualizer is running at: localhost:4000 $(COLOR_RESET)"
+	@echo "$(COLOR_INFO)🎮 Game Visualizer is running at: localhost:4000 $(COLOR_RESET)"
 	@echo ""
 	$(CORE_DIR)/server /workspace/configs/server.config.json /workspace/configs/game.config.json $(CORE_DIR)/data $(PLAYER1_ID) $(PLAYER2_ID) > /dev/null &
 	./gridmaster/gridmaster $(PLAYER1_ID) > /dev/null &
 	./$(TARGET) $(PLAYER2_ID)
+	@echo ""
+	@echo "$(COLOR_INFO)🎮 Game Visualizer is running at: localhost:4000 $(COLOR_RESET)"
+	@echo ""
 
 check_update_configs:
 	chmod +x scripts/check_update_configs.sh
