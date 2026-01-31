@@ -9,7 +9,9 @@ The configs also contain comments detailing what each field in the config means.
 
 # Where do I find the Config
 
-Once you've cloned your bot, find the configs in the configs/ folder.
+It is visible on the website when selecting the event you are currently participating in, with some fancy visualizations.
+
+Once you've cloned your bot, you can also find the configs in the configs/ folder.
 
 If it's easier, you can also print the config using the provided core library functions.
 
