@@ -14,7 +14,7 @@ run: stop check_update_configs build build-gridmaster
 
 check_update_configs:
 	chmod +x scripts/check_update_configs.sh
-	-./check_update_configs.sh
+	-./scripts/check_update_configs.sh
 
 build:
 	make -C my-core-bot
