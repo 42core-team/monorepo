@@ -214,7 +214,7 @@ AWESOME! (You should have just won.)
 
 Finally, let's go a step further!
 
-To defeat more advanced opponents, we will need more gems than the idle income we get simply by waiting over time - we need to actually pick up the gems you have probably seen lying around in the form of gem piles yourself.
+To defeat more advanced opponents, we will need more gems than the idle income we get simply by waiting over time - we need to actually pick up the gems you have probably seen lying around in the form of gem piles yourself. Like modern life, core game is about capitalism - if you have more gems, you're likely to crush your opponent.
 
 You may also have noticed there are deposit objects around. They are huge amounts of gems encased in stone, and they are the secret to earning tons of gems and overrunning your opponent with units.
 
@@ -383,7 +383,7 @@ void ft_on_tick(unsigned long tick)
 
 ## What next?
 
-- We fully missed out on the most powerful unit: The carrier. You may have noticed already that the miners walk a little slower when they are holding gems - that is because gems are quite heavy, so they struggle to carry them. But don't worry, the carrier is well-equipped to help you will all of your quick-carrying needs!
+- We fully missed out on the most powerful unit: The carrier. You may have noticed already that the miners walk a little slower when they are holding gems - that is because gems are quite heavy, so they struggle to carry them. But don't worry, the carrier is well-equipped to help you will all of your speed-carrying needs! The transfer money action even works between two units, so carriers can take all the heavy gems off the miners hands!
 - There may be even more units in your config depending on the event you are in! Check them out to not miss out on powerful strategic possibilities. If you're not sure why you should use them, check out the [configs](documentation/configs) where you can read all the hard facts.
 - The code currently has plenty of action failures, almost all of which are easily avoidable. Adding some code to get rid of some of the nasty red error lines will teach you a lot.
 - How should we handle opponents that try to attack our units? Maybe we can figure out a way to set up a fleeing logic.
