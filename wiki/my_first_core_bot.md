@@ -7,7 +7,7 @@ In this guide (30-minute-ish, please take your time), we'll go through your firs
 If you haven't created a team & cloned your repo yet, look at & follow the [Getting Started Guide](README) first.
 
 Before we get started writing code, please run `make` once to run the game, and then have a look at the game that was played in the visualizer. For more details on how to do those things, look at your bots README.
-- Watch the game run through entirely once & enjoy seeing your team be killed by the noob default opponent. 😂
+- Watch the game from start to finish & enjoy seeing your team be killed by the noob default opponent. 😂
 - Have a look at all the different objects in the game and how they differ. Hover with your mouse and look at the tooltip to see what kind of data is associated with each object.
 - Can you see the differently colored bars behind the objects? Do you understand what they mean?
 - Can you figure out why some units move faster than others? When do units move?
@@ -93,7 +93,7 @@ Let's move the unit to the opponent core and perform an attack action!
 
 To do this, we'll first need a reference to our warrior. The game needs to know which specific unit should perform a certain action, not just that a unit that is a warrior should do a certain thing.
 
-All objects are represented in the library as the `t_obj` struct. A `t_obj` could therefore represent your own or your opponents units, but also your core, a wall, a deposit or even a bomb. By using cmd+click in VSCode, you should be able to navigate to the `bot.h` file and from there to the `core_lib.h` file. Here you can see every struct and function provided to you by the core library, where you should also be able to find the `t_obj` struct. You don't every have to allocate a `t_obj` yourself, as the library already created every object currently in the game for you, you just need to look for it.
+All objects are represented in the library as the `t_obj` struct. A `t_obj` could therefore represent your own or your opponents units, but also your core, a wall, a deposit or even a bomb. By using cmd+click in VSCode, you should be able to navigate to the `bot.h` file and from there to the `core_lib.h` file. Here you can see every struct and function provided to you by the core library, where you should also be able to find the `t_obj` struct. You don't ever have to allocate a `t_obj` yourself, as the library already created every object currently in the game for you, you just need to look for it.
 
 To get the `t_obj` struct of the warrior we created, let's have the Core library make us an array of all of our units that we can then loop over. Let's add this new utility function:
 
