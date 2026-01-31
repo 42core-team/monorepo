@@ -4,7 +4,7 @@ set -euo pipefail
 check_config() {
 	local config_name="$1"
 	local local_path="configs/${config_name}.config.json"
-	local url="https://api.coregame.sh/event/[[event_uuid]]/${config_name}-config.json"
+	local url="[[event_url]]/${config_name}-config"
 
 	local remote_content
 	remote_content=$(curl -sf --connect-timeout 10 "$url") || {
