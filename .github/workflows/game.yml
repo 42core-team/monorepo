@@ -239,6 +239,7 @@ jobs:
             type=ref,event=branch
             type=ref,event=tag
             type=raw,value=${{ github.ref_name }}-${{ github.sha }}
+            type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
 
       - name: Generate additional version tags (server)
         id: version-tags-server
@@ -325,6 +326,7 @@ jobs:
             type=ref,event=branch
             type=ref,event=tag
             type=raw,value=${{ github.ref_name }}-${{ github.sha }}
+            type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
 
       - name: Generate additional version tags (my-core-bot)
         id: version-tags-bot
