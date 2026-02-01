@@ -183,19 +183,32 @@ a {
 	height: 100vh;
 }
 
-.game-area {
-	display: grid;
-	grid-template-columns: 1fr max-content 1fr;
-	grid-template-rows: 1fr max-content 1fr;
-	place-items: center;
+@media screen and (max-width: 680px) {
+	.teamName {
+		display: none !important;
+	}
+
+	.game-area {
+		display: flex;
+		justify-content: center;
+	}
 }
 
-#team-one-name {
-	place-self: start end;
-}
+@media screen and (min-width: 680px) {
+	.game-area {
+		display: grid;
+		grid-template-columns: 1fr max-content 1fr;
+		grid-template-rows: 1fr max-content 1fr;
+		place-items: center;
+	}
 
-#team-two-name {
-	place-self: end start;
+	#team-one-name {
+		place-self: start end;
+	}
+
+	#team-two-name {
+		place-self: end start;
+	}
 }
 
 .teamName {
