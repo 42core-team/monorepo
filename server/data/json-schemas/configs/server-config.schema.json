@@ -9,6 +9,7 @@
 		"timeoutMs",
 		"clientWaitTimeoutMs",
 		"clientConnectTimeoutMs",
+		"clientPacketsMaxSizeKb",
 		"enableTerminalVisualizer"
 	],
 	"properties": {
@@ -39,6 +40,11 @@
 			"type": "integer",
 			"minimum": 1,
 			"maximum": 600000
+		},
+		"clientPacketsMaxSizeKb": {
+			"type": "integer",
+			"minimum": 1,
+			"maximum": 1000
 		},
 		"enableTerminalVisualizer": {
 			"type": "boolean"

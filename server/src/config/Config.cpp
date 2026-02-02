@@ -178,6 +178,7 @@ static ServerConfig parseServerConfig()
 	config.timeoutMs = j.value("timeoutMs", 3000);
 	config.clientWaitTimeoutMs = j.value("clientWaitTimeoutMs", 500);
 	config.clientConnectTimeoutMs = j.value("clientConnectTimeoutMs", 30000);
+	config.clientPacketsMaxSizeKb = j.value("clientPacketsMaxSizeKb", 16);
 	config.enableTerminalVisualizer = j.value("enableTerminalVisualizer", false);
 
 	return config;

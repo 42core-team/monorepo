@@ -84,6 +84,7 @@ struct ServerConfig
 	unsigned int timeoutMs;
 	unsigned int clientWaitTimeoutMs;
 	unsigned int clientConnectTimeoutMs;
+	unsigned int clientPacketsMaxSizeKb;
 	bool enableTerminalVisualizer;
 };
 

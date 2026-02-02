@@ -96,7 +96,7 @@ void Bridge::readLoop()
 	try
 	{
 		constexpr size_t buffer_size = 1024;
-		constexpr size_t MAX_MESSAGE_BYTES = 16 * 1024; // 16kb message cap
+		const size_t MAX_MESSAGE_BYTES = Config::server().clientPacketsMaxSizeKb * 1024;
 		char buffer[buffer_size];
 		std::string data;
 		while (!disconnected_)
