@@ -62,7 +62,7 @@ jobs:
         with:
           context: ${{ github.workspace }}
           file: .github/workflows/server-Dockerfile
-          builder: ${{ steps.builder.outputs.name }}
+
           platforms: linux/amd64
           tags: local/server:pr-${{ github.event.pull_request.head.sha }}
           load: true
@@ -74,7 +74,7 @@ jobs:
         with:
           context: ${{ github.workspace }}
           file: .github/workflows/my-core-bot-Dockerfile
-          builder: ${{ steps.builder.outputs.name }}
+
           platforms: linux/amd64
           build-args: |
             SERVER_IMAGE=local/server
