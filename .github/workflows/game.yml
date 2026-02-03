@@ -27,8 +27,8 @@ permissions:
 env:
   SERVER_IMAGE: ghcr.io/${{ github.repository_owner }}/server
   BOT_IMAGE: ghcr.io/${{ github.repository_owner }}/my-core-bot
-  RUNNER_AMD64: &RUNNER_AMD64 ubuntu-24.04 # set this to ubuntu-24.04 for github hosted runners and X64 for self-hosted runners
-  RUNNER_ARM64: &RUNNER_ARM64 ubuntu-24.04-arm # set this to ubuntu-24.04-arm for github hosted runners and ARM64 for self-hosted runners
+  RUNNER_AMD64: &RUNNER_AMD64 blacksmith-4vcpu-ubuntu-2404 # set this to ubuntu-24.04 for github hosted runners and X64 for self-hosted runners
+  RUNNER_ARM64: &RUNNER_ARM64 blacksmith-4vcpu-ubuntu-2404-arm # set this to ubuntu-24.04-arm for github hosted runners and ARM64 for self-hosted runners
 
 concurrency:
   group: "${{ github.workflow }} @ ${{ github.ref_name }}"
