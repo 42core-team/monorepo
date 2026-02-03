@@ -33,7 +33,7 @@ jobs:
             runner: ubuntu-24.04
             platform: linux/amd64
           - architecture: arm64
-            runner: ubuntu-24.04-arm
+            runner: blacksmith-4vcpu-ubuntu-2404-arm
             platform: linux/arm64
     outputs:
       images: ${{ steps.meta.outputs.tags }}
@@ -42,8 +42,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Setup Blacksmith Builder
+        uses: useblacksmith/setup-docker-builder@v1
 
       - name: Login to container registry
         if: github.event_name != 'pull_request'
@@ -104,7 +104,7 @@ jobs:
       - name: Build and push multi-arch image
         if: github.event_name != 'pull_request'
         id: build
-        uses: docker/build-push-action@v6
+        uses: useblacksmith/build-push-action@v2
         with:
           context: ./visualizer
           file: ./visualizer/Dockerfile
@@ -112,23 +112,16 @@ jobs:
           push: true
           tags: ${{ steps.arch-tags.outputs.arch-tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: |
-            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache-${{ github.ref_name }}-${{ matrix.architecture }}
-            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache-main-${{ matrix.architecture }}
-          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache-${{ github.ref_name }}-${{ matrix.architecture }},mode=max
 
       - name: Build Docker image (PR test)
         if: github.event_name == 'pull_request'
-        uses: docker/build-push-action@v6
+        uses: useblacksmith/build-push-action@v2
         with:
           context: ./visualizer
           file: ./visualizer/Dockerfile
           platforms: ${{ matrix.platform }}
           push: false
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test-${{ matrix.architecture }}
-          cache-from: |
-            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache-${{ github.ref_name }}-${{ matrix.architecture }}
-            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache-main-${{ matrix.architecture }}
 
       - name: Show build information
         run: |
@@ -143,11 +136,11 @@ jobs:
 
   merge:
     needs: build
-    runs-on: ubuntu-24.04
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     if: github.event_name != 'pull_request'
     steps:
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Setup Blacksmith Builder
+        uses: useblacksmith/setup-docker-builder@v1
 
       - name: Login to container registry
         uses: docker/login-action@v3
@@ -262,7 +255,7 @@ jobs:
 
   deploy:
     needs: merge
-    runs-on: ubuntu-24.04
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     if: (github.event_name == 'push' && github.ref == 'refs/heads/dev') || (startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, '-'))
     environment: ${{ ((github.ref_name == 'main') || (startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, '-'))) && 'prod' || 'dev' }}
     permissions:
