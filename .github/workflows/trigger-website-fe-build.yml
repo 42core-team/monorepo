@@ -34,7 +34,7 @@ jobs:
     if: |
       (github.event_name == 'push' && github.ref == 'refs/heads/dev') ||
       (github.event_name == 'workflow_dispatch' && inputs.stage == 'dev')
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: blacksmith-2vcpu-ubuntu-2404
     steps:
       - name: Call workflow_dispatch in website (dev)
         uses: actions/github-script@v8
@@ -56,7 +56,7 @@ jobs:
     if: |
       (github.event_name == 'release' && github.event.action == 'published') ||
       (github.event_name == 'workflow_dispatch' && inputs.stage == 'prod')
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: blacksmith-2vcpu-ubuntu-2404
     steps:
       - name: Call workflow_dispatch in website (prod)
         uses: actions/github-script@v8
