@@ -47,9 +47,13 @@ jobs:
           fetch-depth: 1
 
       # Use docker driver so bot build can see local server image
-      - name: Setup Blacksmith Builder
+      - name: Set up Docker Buildx (driver=docker)
         id: builder
-        uses: useblacksmith/setup-docker-builder@v1
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker
+          install: true
+          use: true
 
       - name: Docker meta (server)
         id: meta-server
@@ -58,11 +62,11 @@ jobs:
           images: ${{ env.SERVER_IMAGE }}
 
       - name: Build server (PR, local only)
-        uses: useblacksmith/build-push-action@v2
+        uses: docker/build-push-action@v6
         with:
           context: ${{ github.workspace }}
           file: .github/workflows/server-Dockerfile
-
+          builder: ${{ steps.builder.outputs.name }}
           platforms: linux/amd64
           tags: local/server:pr-${{ github.event.pull_request.head.sha }}
           load: true
@@ -70,11 +74,11 @@ jobs:
           provenance: false
 
       - name: Build my-core-bot (PR, local only)
-        uses: useblacksmith/build-push-action@v2
+        uses: docker/build-push-action@v6
         with:
           context: ${{ github.workspace }}
           file: .github/workflows/my-core-bot-Dockerfile
-
+          builder: ${{ steps.builder.outputs.name }}
           platforms: linux/amd64
           build-args: |
             SERVER_IMAGE=local/server
