@@ -27,8 +27,8 @@ permissions:
 env:
   SERVER_IMAGE: ghcr.io/${{ github.repository_owner }}/server
   BOT_IMAGE: ghcr.io/${{ github.repository_owner }}/my-core-bot
-  RUNNER_AMD64: &RUNNER_AMD64 ubuntu-24.04 # set this to ubuntu-24.04 for github hosted runners and X64 for self-hosted runners
-  RUNNER_ARM64: &RUNNER_ARM64 ubuntu-24.04-arm # set this to ubuntu-24.04-arm for github hosted runners and ARM64 for self-hosted runners
+  RUNNER_AMD64: &RUNNER_AMD64 blacksmith-4vcpu-ubuntu-2404 # set this to ubuntu-24.04 for github hosted runners and X64 for self-hosted runners
+  RUNNER_ARM64: &RUNNER_ARM64 blacksmith-4vcpu-ubuntu-2404-arm # set this to ubuntu-24.04-arm for github hosted runners and ARM64 for self-hosted runners
 
 concurrency:
   group: "${{ github.workflow }} @ ${{ github.ref_name }}"
@@ -115,8 +115,8 @@ jobs:
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
           echo "TEMP_TAG=${{ github.ref_name }}-ci-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}" >> $GITHUB_ENV
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Setup Blacksmith Builder
+        uses: useblacksmith/setup-docker-builder@v1
 
       - name: Docker meta (server)
         id: meta-server
@@ -140,7 +140,7 @@ jobs:
       # Build server, push by digest; also create a temp per-arch tag for bot to consume immediately
       - name: Build and push by digest (server)
         id: build-server
-        uses: docker/build-push-action@v6
+        uses: useblacksmith/build-push-action@v2
         with:
           context: ${{ github.workspace }}
           file: .github/workflows/server-Dockerfile
@@ -149,10 +149,6 @@ jobs:
           tags: ${{ env.SERVER_IMAGE }}
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
           provenance: false
-          cache-from: |
-            type=registry,ref=${{ env.SERVER_IMAGE }}:buildcache-${{ github.ref_name }}-${{ matrix.arch }}
-            type=registry,ref=${{ env.SERVER_IMAGE }}:buildcache-main-${{ matrix.arch }}
-          cache-to: type=registry,ref=${{ env.SERVER_IMAGE }}:buildcache-${{ github.ref_name }}-${{ matrix.arch }},mode=max
 
       - name: Tag server image with temp per-arch tag
         run: |
@@ -176,7 +172,7 @@ jobs:
       # Build bot on same runner arch, consuming the temp-tagged server image
       - name: Build and push by digest (my-core-bot)
         id: build-bot
-        uses: docker/build-push-action@v6
+        uses: useblacksmith/build-push-action@v2
         with:
           context: ${{ github.workspace }}
           file: .github/workflows/my-core-bot-Dockerfile
@@ -188,10 +184,6 @@ jobs:
           tags: ${{ env.BOT_IMAGE }}
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
           provenance: false
-          cache-from: |
-            type=registry,ref=${{ env.BOT_IMAGE }}:buildcache-${{ github.ref_name }}-${{ matrix.arch }}
-            type=registry,ref=${{ env.BOT_IMAGE }}:buildcache-main-${{ matrix.arch }}
-          cache-to: type=registry,ref=${{ env.BOT_IMAGE }}:buildcache-${{ github.ref_name }}-${{ matrix.arch }},mode=max
 
       - name: Export digest (my-core-bot)
         run: |
@@ -227,8 +219,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Setup Blacksmith Builder
+        uses: useblacksmith/setup-docker-builder@v1
 
       - name: Docker meta (server)
         id: meta-server
@@ -314,8 +306,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Setup Blacksmith Builder
+        uses: useblacksmith/setup-docker-builder@v1
 
       - name: Docker meta (my-core-bot)
         id: meta-bot
