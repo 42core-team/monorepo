@@ -47,8 +47,8 @@ jobs:
           fetch-depth: 1
 
       # Use docker driver so bot build can see local server image
-        id: builder
       - name: Setup Blacksmith Builder
+        id: builder
         uses: useblacksmith/setup-docker-builder@v1
 
       - name: Docker meta (server)
