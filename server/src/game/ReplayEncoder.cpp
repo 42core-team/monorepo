@@ -45,7 +45,8 @@ void ReplayEncoder::markConnectedInitially(unsigned int teamId, bool connected)
 void ReplayEncoder::setDeathReason(unsigned int teamId, death_reason_t reason)
 {
 	registerExpectedTeam(teamId);
-	if (static_cast<int>(teamData_[teamId].deathReason) < 4) // dont overwrite timeout death reasons
+	if (static_cast<int>(teamData_[teamId].deathReason) <
+		static_cast<int>(death_reason_t::TIMEOUT_SENDING_DATA)) // dont overwrite timeout death reasons
 		teamData_[teamId].deathReason = reason;
 }
 void ReplayEncoder::setPlace(unsigned int teamId, unsigned int place)
