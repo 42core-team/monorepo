@@ -189,6 +189,10 @@ a {
 	grid-template-rows: 1fr max-content 1fr;
 	place-items: center;
 }
+:root[data-ui="off"] .game-area {
+	grid-template-columns: 1fr;
+	grid-template-rows: 1fr;
+}
 
 #team-one-name {
 	place-self: start end;

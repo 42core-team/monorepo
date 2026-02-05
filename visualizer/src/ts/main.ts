@@ -90,6 +90,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 	// disable ui if specified
 	if (urlParams.get("ui") === "false") {
+		document.documentElement.setAttribute("data-ui", "off");
 		document.querySelectorAll<HTMLElement>(".ui").forEach((el) => {
 			el.style.display = "none";
 		});
