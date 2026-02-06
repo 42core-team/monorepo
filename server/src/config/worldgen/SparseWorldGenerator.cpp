@@ -58,9 +58,6 @@ void SparseWorldGenerator::generateWorld(uint64_t seed)
 	int wallCount = Config::game().worldGeneratorConfig.value("wallCount", 10);
 	int coreBuffer = Config::game().worldGeneratorConfig.value("coreBuffer", 3);
 
-	if (gemPileBalanceVariation > gemPileIncome) gemPileBalanceVariation = gemPileIncome; // avoid underflowed balances
-	if (depositBalanceVariation > depositIncome) depositBalanceVariation = depositIncome; // avoid underflowed balances
-
 	auto withinCoreBuffer = [&](const Position &p)
 	{
 		for (const auto &c : Config::game().corePositions)
@@ -79,11 +76,11 @@ void SparseWorldGenerator::generateWorld(uint64_t seed)
 		if (withinCoreBuffer(p)) return false;
 		if (p.x + p.y >= N - 1) return false; // only place in upper left triangle, rest will be mirrored later
 		unsigned int randomDepositBalance =
-				depositIncome +
-				std::uniform_int_distribution<>(-depositBalanceVariation, depositBalanceVariation)(eng_);
+				std::max(1, depositIncome + std::uniform_int_distribution<>(-depositBalanceVariation,
+																			depositBalanceVariation)(eng_));
 		unsigned int randomGemPileBalance =
-				gemPileIncome +
-				std::uniform_int_distribution<>(-gemPileBalanceVariation, gemPileBalanceVariation)(eng_);
+				std::max(1, gemPileIncome + std::uniform_int_distribution<>(-gemPileBalanceVariation,
+																			gemPileBalanceVariation)(eng_));
 		switch (t)
 		{
 		case ObjectType::Deposit:
