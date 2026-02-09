@@ -1,4 +1,4 @@
-## Locally
+## Locally with executables
 
 Have the person you want to play against send them their executable. In their cloned git repo, it will be created under `my-core-bot/bot`.
 
@@ -9,6 +9,20 @@ Have the person you want to play against send them their executable. In their cl
 ```
 
 Running the following code will start a game of the player 1 executable against the player 2 executable.
+
+### Locally with source files
+
+Inside the devcontainer`/workspace` you can run your bot against gridmaster with `make`.
+Ore you can run other bots with specifying `PLAYER1_BOT` and/or `PLAYER2_BOT`.
+To test some different strategies just copy the complete folder.
+Be aware at the end the bot in my-core-bot gets used in the public fights.
+
+```bash
+make PLAYER1_BOT=my-core-bot/bot PLAYER2_BOT=gridmaster/gridmaster
+```
+
+Running the following code will call both Makefiles, build both bots and starts the game.
+
 
 ## Online
 
