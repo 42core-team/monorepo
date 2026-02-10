@@ -7,7 +7,7 @@ check_config() {
 	local url="[[event_url]]/${config_name}-config"
 
 	local remote_content
-	remote_content=$(curl -sf --connect-timeout 10 "$url") || {
+	remote_content=$(curl -sf --max-time 1 "$url") || {
 		echo "Failed to fetch: $url - this might mean you are playing with an out of date config. You should address this." >&2
 		return 1
 	}
