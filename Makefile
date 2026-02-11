@@ -7,13 +7,13 @@ SERVER_EXECUTABLE := server
 DATA_FOLDER_PATH := server/data
 
 # Client lib
-CONNECTIONDIR := /workspaces/monorepo/client_lib
+CONNECTIONDIR := bots/c/client_lib
 
 # Settings (defaults if unspecified, my be overridden)
 VARIANT ?= hardcore
 MODE    ?= dev
 
-BOT_ROOT           := bots/$(VARIANT)
+BOT_ROOT           := bots/c/$(VARIANT)
 PLAYER_1_FOLDER    := $(BOT_ROOT)/my-core-bot
 PLAYER_2_FOLDER    := $(BOT_ROOT)/gridmaster
 CONFIG_FOLDER      := $(BOT_ROOT)/configs
@@ -76,11 +76,11 @@ server_build_prod:
 build_clients: player_1_build player_2_build setup-hooks
 
 player_1_build:
-	$(MAKE) -C client_lib
+	$(MAKE) -C $(CONNECTIONDIR)
 	$(MAKE) -C $(PLAYER_1_FOLDER) CONNECTIONDIR=$(CONNECTIONDIR)
 
 player_2_build:
-	$(MAKE) -C client_lib
+	$(MAKE) -C $(CONNECTIONDIR)
 	$(MAKE) -C $(PLAYER_2_FOLDER) CONNECTIONDIR=$(CONNECTIONDIR)
 
 visualizer_build:
@@ -88,20 +88,20 @@ visualizer_build:
 
 # -------------------- Clean targets --------------------
 clean: stop
-	-$(MAKE) -C bots/hardcore/my-core-bot clean
-	-$(MAKE) -C bots/hardcore/gridmaster clean
-	-$(MAKE) -C bots/softcore/my-core-bot clean
-	-$(MAKE) -C bots/softcore/gridmaster clean
+	-$(MAKE) -C bots/c/hardcore/my-core-bot clean
+	-$(MAKE) -C bots/c/hardcore/gridmaster clean
+	-$(MAKE) -C bots/c/softcore/my-core-bot clean
+	-$(MAKE) -C bots/c/softcore/gridmaster clean
 	-$(MAKE) -C $(SERVER_FOLDER) clean
-	-$(MAKE) -C client_lib clean
+	-$(MAKE) -C $(CONNECTIONDIR) clean
 
 fclean: clean
-	-$(MAKE) -C bots/hardcore/my-core-bot fclean
-	-$(MAKE) -C bots/hardcore/gridmaster fclean
-	-$(MAKE) -C bots/softcore/my-core-bot fclean
-	-$(MAKE) -C bots/softcore/gridmaster fclean
+	-$(MAKE) -C bots/c/hardcore/my-core-bot fclean
+	-$(MAKE) -C bots/c/hardcore/gridmaster fclean
+	-$(MAKE) -C bots/c/softcore/my-core-bot fclean
+	-$(MAKE) -C bots/c/softcore/gridmaster fclean
 	-$(MAKE) -C $(SERVER_FOLDER) fclean
-	-$(MAKE) -C client_lib fclean
+	-$(MAKE) -C $(CONNECTIONDIR) fclean
 
 # -------------------- Meta / Monorepo Targets --------------------
 setup-hooks:

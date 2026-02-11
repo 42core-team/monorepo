@@ -6,7 +6,7 @@ sidebarTitle: "🧩 s_game"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L166
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h#L166
 
 ## Description
 

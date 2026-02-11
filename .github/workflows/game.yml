@@ -8,16 +8,14 @@ on:
       - dev
     paths:
       - ".github/workflows/**"
-      - "client_lib/**"
-      - "my-core-bot-c/**"
+      - "bots/**"
       - "server/**"
     tags:
       - "v*"
   pull_request:
     paths:
       - ".github/workflows/**"
-      - "client_lib/**"
-      - "my-core-bot-c/**"
+      - "bots/**"
       - "server/**"
 
 permissions:
