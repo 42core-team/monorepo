@@ -53,7 +53,7 @@ stop:
 update: stop-devcontainer remove-devcontainer
 	@docker compose --project-directory=./.devcontainer pull
 
-.PHONY: run debug battle clean fclean re stop update $(PLAYER1_BOT) $(PLAYER2_BOT)
+.PHONY: run clean fclean re stop update $(PLAYER1_BOT) $(PLAYER2_BOT)
 
 
 # Devpod CLI executable
