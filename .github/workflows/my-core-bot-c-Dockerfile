@@ -5,7 +5,7 @@ FROM ubuntu:noble AS ubuntu-gcc
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt update && \
-    apt install -y git build-essential libcurl4 && \
+    apt install -y git build-essential libcurl4 yq && \
     rm -rf /var/lib/apt/lists/*
 
 FROM ${SERVER_IMAGE}:${TAG_NAME} AS game
