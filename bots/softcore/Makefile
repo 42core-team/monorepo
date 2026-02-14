@@ -24,9 +24,11 @@ run: stop check_update_configs $(PLAYER1_BOT) $(PLAYER2_BOT)
 	@echo "$(COLOR_INFO)🎮 Game Visualizer is running at: localhost:4000 $(COLOR_RESET)"
 	@echo ""
 
-check_update_configs:
-	chmod +x scripts/check_update_configs.sh
+check_updates:
+	@chmod +x ./scripts/check_update_configs.sh
 	-./scripts/check_update_configs.sh
+	@chmod +x ./scripts/check_image_updates.sh
+	./scripts/check_image_updates.sh
 
 $(PLAYER1_BOT):
 	make -C $(PLAYER1_DIR)
