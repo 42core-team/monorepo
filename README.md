@@ -14,7 +14,7 @@
 
 ## Folders & Project Structure
 
-- client_lib/ -> previously connection, the C helper lib used by participants
+- bots/?/client_lib/ -> previously connection, the helper lib used by participants
 - server/ -> previously even_COREnier, the gameplay server, single source of truth connection players during matches, cpp
 - visualizer/ -> previously debug_visualizerm displays replay files generated from the server with vanilla html ts css
 - bots/ -> bot coding environment for Core players. Put files or folders into the .coreignore to not have them show up in the generated player repositories.
@@ -24,10 +24,10 @@
 
 ## How to write a bot
 
-- configs are at bots/*/configs
-- to write a test bot, write it in bots/*/your_bot
+- configs are at bots/?/?/configs
+- to write a test bot, write it in bots/?/?/your_bot
 - you can also add a new folder for your bot if and add the folder to the coreignore, this will stop it from being added to the user repos
-- please be careful about keeping powerful bots public and making the events uninteresting
+- please be careful about not keeping powerful bots public and making the events uninteresting
 
 ---
 
