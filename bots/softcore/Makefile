@@ -31,19 +31,25 @@ check_updates:
 	./scripts/check_image_updates.sh
 
 $(PLAYER1_BOT):
-	make -C $(PLAYER1_DIR)
+	ifeq ($(PLAYER1_DIR),.)
+		$(error PLAYER1_BOT must include a directory, e.g. my-core-bot/bot)
+	endif
+	$(MAKE) -C $(PLAYER1_DIR)
 
 $(PLAYER2_BOT):
-	make -C $(PLAYER2_DIR)
+	ifeq ($(PLAYER2_DIR),.)
+		$(error PLAYER2_BOT must include a directory, e.g. gridmaster/gridmaster)
+	endif
+	$(MAKE) -C $(PLAYER2_DIR)
 
 
 clean: stop
-	make -C $(PLAYER2_DIR) clean
-	make -C $(PLAYER1_DIR) clean
+	$(MAKE) -C $(PLAYER2_DIR) clean
+	$(MAKE) -C $(PLAYER1_DIR) clean
 
 fclean: clean
-	make -C $(PLAYER2_DIR) fclean
-	make -C $(PLAYER1_DIR) fclean
+	$(MAKE) -C $(PLAYER2_DIR) fclean
+	$(MAKE) -C $(PLAYER1_DIR) fclean
 
 re: fclean run
 
@@ -55,7 +61,7 @@ stop:
 update: stop-devcontainer remove-devcontainer
 	@docker compose --project-directory=./.devcontainer pull
 
-.PHONY: run debug battle clean fclean re stop update $(PLAYER1_BOT) $(PLAYER2_BOT)
+.PHONY: run clean fclean re stop update $(PLAYER1_BOT) $(PLAYER2_BOT)
 
 
 # Devpod CLI executable

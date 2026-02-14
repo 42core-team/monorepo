@@ -29,19 +29,25 @@ check_update_configs:
 	-./scripts/check_update_configs.sh
 
 $(PLAYER1_BOT):
-	make -C $(PLAYER1_DIR)
+	ifeq ($(PLAYER1_DIR),.)
+		$(error PLAYER1_BOT must include a directory, e.g. my-core-bot/bot)
+	endif
+	$(MAKE) -C $(PLAYER1_DIR)
 
 $(PLAYER2_BOT):
-	make -C $(PLAYER2_DIR)
+	ifeq ($(PLAYER2_DIR),.)
+		$(error PLAYER2_BOT must include a directory, e.g. gridmaster/gridmaster)
+	endif
+	$(MAKE) -C $(PLAYER2_DIR)
 
 
 clean: stop
-	make -C $(PLAYER2_DIR) clean
-	make -C $(PLAYER1_DIR) clean
+	$(MAKE) -C $(PLAYER2_DIR) clean
+	$(MAKE) -C $(PLAYER1_DIR) clean
 
 fclean: clean
-	make -C $(PLAYER2_DIR) fclean
-	make -C $(PLAYER1_DIR) fclean
+	$(MAKE) -C $(PLAYER2_DIR) fclean
+	$(MAKE) -C $(PLAYER1_DIR) fclean
 
 re: fclean run
 
