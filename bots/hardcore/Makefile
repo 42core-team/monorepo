@@ -1,16 +1,25 @@
 CORE_DIR = /core
-TARGET = my-core-bot/bot
 
 PLAYER1_ID := 42
 PLAYER2_ID := 43
 
-run: stop check_update_configs build build-gridmaster
+PLAYER1_BOT := my-core-bot/bot
+PLAYER2_BOT := gridmaster/gridmaster
+
+PLAYER1_DIR = $(patsubst %/,%,$(dir $(PLAYER1_BOT)))
+PLAYER2_DIR = $(patsubst %/,%,$(dir $(PLAYER2_BOT)))
+
+PLAYER1_BOT_NAME = $(notdir $(PLAYER1_BOT))
+PLAYER2_BOT_NAME = $(notdir $(PLAYER2_BOT))
+
+
+run: stop check_update_configs $(PLAYER1_BOT) $(PLAYER2_BOT)
 	@echo ""
 	@echo "$(COLOR_INFO)🎮 Game Visualizer is running at: localhost:4000 $(COLOR_RESET)"
 	@echo ""
 	$(CORE_DIR)/server /workspace/configs/server.config.json /workspace/configs/game.config.json $(CORE_DIR)/data $(PLAYER1_ID) $(PLAYER2_ID) > /dev/null &
-	./gridmaster/gridmaster $(PLAYER1_ID) > /dev/null &
-	./$(TARGET) $(PLAYER2_ID)
+	./$(PLAYER1_BOT) $(PLAYER1_ID) > /dev/null &
+	./$(PLAYER2_BOT) $(PLAYER2_ID)
 	@echo ""
 	@echo "$(COLOR_INFO)🎮 Game Visualizer is running at: localhost:4000 $(COLOR_RESET)"
 	@echo ""
@@ -19,31 +28,32 @@ check_update_configs:
 	chmod +x scripts/check_update_configs.sh
 	-./scripts/check_update_configs.sh
 
-build:
-	make -C my-core-bot
+$(PLAYER1_BOT):
+	make -C $(PLAYER1_DIR)
 
-build-gridmaster:
-	make -C gridmaster
+$(PLAYER2_BOT):
+	make -C $(PLAYER2_DIR)
+
 
 clean: stop
-	make -C gridmaster clean
-	make -C my-core-bot clean
+	make -C $(PLAYER2_DIR) clean
+	make -C $(PLAYER1_DIR) clean
 
 fclean: clean
-	make -C gridmaster fclean
-	make -C my-core-bot fclean
+	make -C $(PLAYER2_DIR) fclean
+	make -C $(PLAYER1_DIR) fclean
 
 re: fclean run
 
 stop:
 	@pkill server > /dev/null || true &
-	@pkill bot > /dev/null || true &
-	@pkill gridmaster > /dev/null || true
+	@pkill $(PLAYER1_BOT_NAME) > /dev/null || true &
+	@pkill $(PLAYER2_BOT_NAME) > /dev/null || true
 
 update: stop-devcontainer remove-devcontainer
 	@docker compose --project-directory=./.devcontainer pull
 
-.PHONY: run debug battle $(TARGET) clean fclean re stop update build-gridmaster build
+.PHONY: run clean fclean re stop update $(PLAYER1_BOT) $(PLAYER2_BOT)
 
 
 # Devpod CLI executable
