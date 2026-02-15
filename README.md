@@ -4,11 +4,7 @@
 
 1. Clone this via SSH
 2. Open this via [Microsoft devcontainer extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) in VSCode
-3. Run `make` to build, `make vis` to start the visualizer.
-	- `make hp` -> Run the game with the hardcore config on prod stage;
-	- `make sp` -> Run the game with the softcore config on prod stage;
-	- `make hd` -> Run the game with the hardcore config on dev stage;
-	- `make sd` -> Run the game with the softcore config on dev stage;
+3. Run `make` to build, Makefile will give further instructions.
 
 ---
 
