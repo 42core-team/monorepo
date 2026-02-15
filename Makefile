@@ -6,6 +6,7 @@ require-vars:
 	@test -n "$(LANGUAGE)" || (echo "LANGUAGE is required (e.g. LANGUAGE=c)" && exit 2)
 	@test -n "$(STAGE)" || (echo "STAGE is required (dev|prod)" && exit 2)
 	@test -n "$(DIFFICULTY)" || (echo "DIFFICULTY is required (hardcore|softcore)" && exit 2)
+	@echo "$(LANGUAGE)" | grep -Eq '^(c)$$' || (echo "LANGUAGE must be c (got $(LANGUAGE))" && exit 2)
 	@echo "$(STAGE)" | grep -Eq '^(dev|prod)$$' || (echo "STAGE must be dev or prod (got $(STAGE))" && exit 2)
 	@echo "$(DIFFICULTY)" | grep -Eq '^(hardcore|softcore)$$' || (echo "DIFFICULTY must be hardcore or softcore (got $(DIFFICULTY))" && exit 2)
 
@@ -18,7 +19,7 @@ SERVER_FOLDER		:= server
 SERVER_EXECUTABLE	:= server
 DATA_FOLDER_PATH	:= server/data
 
-CLIENT_LIB_DIR := /workspaces/monorepo/bots/$(LANGUAGE)/client_lib
+CLIENT_LIB_DIR := bots/$(LANGUAGE)/client_lib
 
 BOT_ROOT			:= bots/$(LANGUAGE)/$(DIFFICULTY)
 PLAYER_1_FOLDER		:= $(BOT_ROOT)/my-core-bot
@@ -44,8 +45,8 @@ all: setup-hooks require-vars stop
 	$(MAKE) -C $(SERVER_FOLDER) $(STAGE)
 
 	# run clients and server
-	$(PLAYER_2_FOLDER)/gridmaster	$(PLAYER1_ID) &
-	$(PLAYER_1_FOLDER)/bot			$(PLAYER2_ID) &
+	$(PLAYER_2_FOLDER)/gridmaster	$(PLAYER2_ID) &
+	$(PLAYER_1_FOLDER)/bot			$(PLAYER1_ID) &
 	./$(SERVER_FOLDER)/$(SERVER_EXECUTABLE) \
 		$(CONFIG_SERVER_FILE) $(CONFIG_GAME_FILE) \
 		$(DATA_FOLDER_PATH) $(PLAYER1_ID) $(PLAYER2_ID)
