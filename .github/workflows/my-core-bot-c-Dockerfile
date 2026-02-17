@@ -13,7 +13,7 @@ FROM ${SERVER_IMAGE}:${TAG_NAME} AS game
 # Build connection library from monorepo sources
 FROM ubuntu-gcc AS connection
 WORKDIR /connection
-COPY client_lib/ ./
+COPY bots/c/client_lib/ ./
 RUN make re
 
 FROM ubuntu-gcc AS release

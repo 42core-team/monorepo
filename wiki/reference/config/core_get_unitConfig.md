@@ -6,7 +6,7 @@ sidebarTitle: "⚙️ get_unitConfig()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L23
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/src/public/get.c#L23
 
 ## Description
 

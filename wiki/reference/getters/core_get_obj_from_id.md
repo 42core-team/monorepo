@@ -6,7 +6,7 @@ sidebarTitle: "⚙️ get_obj_from_id()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L4
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/src/public/get.c#L4
 
 ## Description
 

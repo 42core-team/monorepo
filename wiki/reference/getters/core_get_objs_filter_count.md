@@ -6,7 +6,7 @@ sidebarTitle: "⚙️ get_objs_filter_count()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L90
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/src/public/get.c#L90
 
 ## Description
 

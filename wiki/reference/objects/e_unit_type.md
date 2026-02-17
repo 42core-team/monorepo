@@ -6,7 +6,7 @@ sidebarTitle: "🔢 e_unit_type"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/units.h#L5
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/units.h#L5
 
 ## Description
 
