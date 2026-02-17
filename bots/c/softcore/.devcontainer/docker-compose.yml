@@ -1,6 +1,6 @@
 services:
   my-core-bot:
-    image: ghcr.io/42core-team/my-core-bot:dev
+    image: ghcr.io/42core-team/my-core-bot-c:dev
     platform: linux/amd64
     volumes:
       - ..:/workspace

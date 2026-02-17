@@ -6,7 +6,7 @@ sidebarTitle: "⚙️ startGame()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/src/con_lib.c#L44
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/src/con_lib.c#L44
 
 ## Description
 

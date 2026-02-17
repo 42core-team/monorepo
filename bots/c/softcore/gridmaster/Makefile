@@ -5,8 +5,8 @@ OBJS = $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -lm -g -fsanitize=address
-CONNECTIONDIR ?= /core
-INC = -I inc -I $(CONNECTIONDIR)/inc
+CLIENT_LIB_DIR ?= /core
+INC = -I inc -I $(CLIENT_LIB_DIR)/inc
 EXEC = gridmaster
 
 all: ensure_obj_dir $(EXEC)
@@ -14,8 +14,8 @@ all: ensure_obj_dir $(EXEC)
 run: all
 	./$(EXEC)
 
-$(EXEC): $(OBJS) $(CONNECTIONDIR)/core_lib.a
-	$(CC) $(CFLAGS) $(OBJS) $(CONNECTIONDIR)/core_lib.a -o $@
+$(EXEC): $(OBJS) $(CLIENT_LIB_DIR)/core_lib.a
+	$(CC) $(CFLAGS) $(OBJS) $(CLIENT_LIB_DIR)/core_lib.a -o $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@ $(INC)
