@@ -13,7 +13,6 @@ RUN apt-get update && apt-get install -y \
 	libcurl4-openssl-dev \
 	zsh \
 	cmake \
-	yq \
 	&& apt remove -y nodejs npm libnode-dev \
 	&& curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
 	&& apt install -y nodejs \
