@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
 	&& apt remove -y nodejs npm libnode-dev \
 	&& curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
 	&& apt install -y nodejs \
+	&& (curl -L https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /usr/local/bin/yq && chmod +x /usr/local/bin/yq) \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Set default shell to zsh

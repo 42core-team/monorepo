@@ -5,7 +5,9 @@ FROM ubuntu:noble AS ubuntu-gcc
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt update && \
-    apt install -y git build-essential libcurl4 yq && \
+    apt install -y git build-essential libcurl4 curl && \
+    curl -L https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /usr/local/bin/yq && \
+    chmod +x /usr/local/bin/yq && \
     rm -rf /var/lib/apt/lists/*
 
 FROM ${SERVER_IMAGE}:${TAG_NAME} AS game
