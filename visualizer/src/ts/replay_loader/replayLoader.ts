@@ -1,4 +1,7 @@
-import { resetTimeManager } from "../input_manager/timeManager";
+import {
+	resetTimeManager,
+	setPlaybackSpeed,
+} from "../input_manager/timeManager";
 import { ensureIcons } from "../renderer/iconManager";
 import { getTeamIndex } from "../renderer/objectRenderer";
 import { setupRenderer } from "../renderer/renderer";
@@ -81,6 +84,29 @@ function forceHttps(url: string): string {
 		u.protocol = "https:";
 	}
 	return u.toString();
+}
+
+function isDynamicSpeedEnabled(): boolean {
+	const p = new URLSearchParams(window.location.search);
+	return (
+		(p.get("dynamicSpeed") || "off").toLowerCase() === "on" && !p.has("speed")
+	);
+}
+function computeDynamicSpeed(ticks: number): number {
+	// Calculate linear interp. graph: at 500 ticks => 20s, at 2000 ticks => 60s
+	const t0 = 500;
+	const s0 = 20;
+	const t1 = 2000;
+	const s1 = 60;
+	const slope = (s1 - s0) / (t1 - t0);
+
+	const desiredSeconds = s0 + Math.abs(ticks - t0) * slope;
+
+	let speed = ticks / desiredSeconds;
+
+	speed = Math.max(5, Math.min(25, speed));
+
+	return Math.round(speed / 0.5) * 0.5;
 }
 
 class ReplayLoader {
@@ -282,6 +308,9 @@ async function resetReplay(reason: string = "reset"): Promise<void> {
 	setupRenderer();
 	ensureIcons();
 	updateWinDisplayEmojis();
+	if (isDynamicSpeedEnabled()) {
+		setPlaybackSpeed(computeDynamicSpeed(totalReplayTicks));
+	}
 	console.debug(
 		`Replay reset (${reason}). override=${Boolean(replayDataOverride)} etag=${lastEtag}`,
 	);

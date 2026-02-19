@@ -14,6 +14,7 @@ You can control the visualizer via query parameters. Multiple values are support
 |---|---|---:|---|
 | `replays` | string array (path/URL) | `/replays/replay_latest.json` | List of replay files to load. |
 | `speed` | number (`0.5` … `50`, step `0.5`) | none | Sets initial ticks/sec (also persisted to `tm.speed`). |
+| `dynamicSpeed` | `"on"` or `"off"` | `"off"` | Sets initial ticks/sec so the replay takes roughly 30s-60s to wrap up. |
 | `autoplay` | `"off"`, `"start"` or `"full"` | `"off"` | `"start"` automatically starts playback when a replay loaded, `"full"` additionally moves on to next replay file after one finished, `"off"` does neither. |
 | `ui` | `"false"` or `"true"` | _shown_ | When `false`, hides all elements with class `.ui`. |
 | `theme` | `"light"` or `"dark"` | system/light | Sets theme, persisted to `localStorage["ui.theme"]`. |
