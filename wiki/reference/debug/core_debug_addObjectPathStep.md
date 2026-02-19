@@ -6,7 +6,7 @@ sidebarTitle: "⚙️ debug_addObjectPathStep()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/debug.c#L54
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/src/public/debug.c#L54
 
 ## Description
 

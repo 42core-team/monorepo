@@ -6,7 +6,7 @@ sidebarTitle: "🧩 s_obj"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h#L36
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h#L36
 
 ## Description
 

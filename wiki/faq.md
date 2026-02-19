@@ -11,7 +11,7 @@ sidebarTitle: "FaQ"
 ### 🔧 Where can I see the implementations of the standard library? Where can I find the core_lib.h file?
 
 > Check out [our GitHub](https://github.com/42core-team) to see all of the CORE source code - it may give you an easy starting point for some functionalities.\
-> The core_lib.h file can be found on our [GitHub](https://github.com/42core-team/monorepo/blob/dev/client_lib/inc/core_lib.h) (careful, the latest version might not match the Core Version you are playing on. Look at the releases.), and in your filesystem will be available under `/core/inc`, which can probably most easily found by cmd+clicking onto the include in the `both.h` header. The easiest way to loop at it though is to not look at it and instead look at the wiki, which contains all the relevant info and more.
+> The core_lib.h file can be found on our [GitHub](https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h) (careful, the latest version might not match the Core Version you are playing on. Look at the releases.), and in your filesystem will be available under `/core/inc`, which can probably most easily found by cmd+clicking onto the include in the `both.h` header. The easiest way to loop at it though is to not look at it and instead look at the wiki, which contains all the relevant info and more.
 
 ### 🐞 What should I do if my bot isn't responding / starting up?
 

@@ -6,7 +6,7 @@ sidebarTitle: "⚙️ get_obj_from_pos()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/client_lib/src/public/get.c#L12
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/src/public/get.c#L12
 
 ## Description
 

@@ -8,16 +8,14 @@ on:
       - dev
     paths:
       - ".github/workflows/**"
-      - "client_lib/**"
-      - "my-core-bot/**"
+      - "bots/**"
       - "server/**"
     tags:
       - "v*"
   pull_request:
     paths:
       - ".github/workflows/**"
-      - "client_lib/**"
-      - "my-core-bot/**"
+      - "bots/**"
       - "server/**"
 
 permissions:
@@ -26,7 +24,7 @@ permissions:
 
 env:
   SERVER_IMAGE: ghcr.io/${{ github.repository_owner }}/server
-  BOT_IMAGE: ghcr.io/${{ github.repository_owner }}/my-core-bot
+  BOT_IMAGE: ghcr.io/${{ github.repository_owner }}/my-core-bot-c
   RUNNER_AMD64: &RUNNER_AMD64 blacksmith-4vcpu-ubuntu-2404 # set this to ubuntu-24.04 for github hosted runners and X64 for self-hosted runners
   RUNNER_ARM64: &RUNNER_ARM64 blacksmith-4vcpu-ubuntu-2404-arm # set this to ubuntu-24.04-arm for github hosted runners and ARM64 for self-hosted runners
 
@@ -73,11 +71,11 @@ jobs:
           push: false
           provenance: false
 
-      - name: Build my-core-bot (PR, local only)
+      - name: Build my-core-bot-c (PR, local only)
         uses: docker/build-push-action@v6
         with:
           context: ${{ github.workspace }}
-          file: .github/workflows/my-core-bot-Dockerfile
+          file: .github/workflows/my-core-bot-c-Dockerfile
           builder: ${{ steps.builder.outputs.name }}
           platforms: linux/amd64
           build-args: |
@@ -124,7 +122,7 @@ jobs:
         with:
           images: ${{ env.SERVER_IMAGE }}
 
-      - name: Docker meta (my-core-bot)
+      - name: Docker meta (my-core-bot-c)
         id: meta-bot
         uses: docker/metadata-action@v5
         with:
@@ -170,12 +168,12 @@ jobs:
           retention-days: 1
 
       # Build bot on same runner arch, consuming the temp-tagged server image
-      - name: Build and push by digest (my-core-bot)
+      - name: Build and push by digest (my-core-bot-c)
         id: build-bot
         uses: useblacksmith/build-push-action@v2
         with:
           context: ${{ github.workspace }}
-          file: .github/workflows/my-core-bot-Dockerfile
+          file: .github/workflows/my-core-bot-c-Dockerfile
           build-args: |
             SERVER_IMAGE=${{ env.SERVER_IMAGE }}
             TAG_NAME=${{ env.TEMP_TAG }}
@@ -185,17 +183,17 @@ jobs:
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
           provenance: false
 
-      - name: Export digest (my-core-bot)
+      - name: Export digest (my-core-bot-c)
         run: |
-          mkdir -p ${{ runner.temp }}/digests-bot
+          mkdir -p ${{ runner.temp }}/digests-bot-c
           digest="${{ steps.build-bot.outputs.digest }}"
-          touch "${{ runner.temp }}/digests-bot/${digest#sha256:}"
+          touch "${{ runner.temp }}/digests-bot-c/${digest#sha256:}"
 
-      - name: Upload digest (my-core-bot)
+      - name: Upload digest (my-core-bot-c)
         uses: actions/upload-artifact@v4
         with:
-          name: bot-digests-${{ matrix.arch }}
-          path: ${{ runner.temp }}/digests-bot/*
+          name: bot-c-digests-${{ matrix.arch }}
+          path: ${{ runner.temp }}/digests-bot-c/*
           if-no-files-found: error
           retention-days: 1
 
@@ -291,12 +289,12 @@ jobs:
     runs-on: *RUNNER_AMD64
     needs: build-per-arch
     steps:
-      - name: Download digests (my-core-bot)
+      - name: Download digests (my-core-bot-c)
         uses: actions/download-artifact@v4
 
         with:
-          path: ${{ runner.temp }}/digests-bot
-          pattern: bot-digests-*
+          path: ${{ runner.temp }}/digests-bot-c
+          pattern: bot-c-digests-*
           merge-multiple: true
 
       - name: Login to GitHub Container Registry
@@ -309,7 +307,7 @@ jobs:
       - name: Setup Blacksmith Builder
         uses: useblacksmith/setup-docker-builder@v1
 
-      - name: Docker meta (my-core-bot)
+      - name: Docker meta (my-core-bot-c)
         id: meta-bot
         uses: docker/metadata-action@v5
         with:
@@ -320,7 +318,7 @@ jobs:
             type=raw,value=${{ github.ref_name }}-${{ github.sha }}
             type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
 
-      - name: Generate additional version tags (my-core-bot)
+      - name: Generate additional version tags (my-core-bot-c)
         id: version-tags-bot
         if: startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, '-')
         run: |
@@ -349,8 +347,8 @@ jobs:
           echo "additional-tags=$ADDITIONAL_TAGS" >> $GITHUB_OUTPUT
           echo "Generated additional tags: $ADDITIONAL_TAGS"
 
-      - name: Create manifest list and push (my-core-bot)
-        working-directory: ${{ runner.temp }}/digests-bot
+      - name: Create manifest list and push (my-core-bot-c)
+        working-directory: ${{ runner.temp }}/digests-bot-c
         run: |
           # Create manifest for base tags from metadata
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
@@ -368,6 +366,6 @@ jobs:
             done
           fi
 
-      - name: Inspect image (my-core-bot)
+      - name: Inspect image (my-core-bot-c)
         run: |
           docker buildx imagetools inspect ${{ env.BOT_IMAGE }}:${{ steps.meta-bot.outputs.version }}
