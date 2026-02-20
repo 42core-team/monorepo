@@ -1,0 +1,18 @@
+services:
+  my-core-bot:
+    image: ghcr.io/42core-team/my-core-bot-go:dev
+    platform: linux/amd64
+    volumes:
+      - ..:/workspace
+      - replays:/workspace/replays
+    stdin_open: true
+
+  visualizer:
+    image: ghcr.io/42core-team/visualizer:dev
+    ports:
+      - 4000:80
+    volumes:
+      - replays:/usr/share/nginx/html/replays
+
+volumes:
+  replays:
