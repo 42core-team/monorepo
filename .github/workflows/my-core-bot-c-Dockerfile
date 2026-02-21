@@ -32,3 +32,5 @@ COPY --from=connection /connection/core_lib.a /core/con_lib.a
 
 # SHELL ["/bin/bash", "-c"]
 # ENV SHELL=/bin/bash
+
+CMD ["tail", "-f", "/dev/null"]
