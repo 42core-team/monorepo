@@ -1,0 +1,237 @@
+syntax = "proto3";
+
+package core_game;
+
+// ---------------------------------------------------------------------------
+// Primitives
+// ---------------------------------------------------------------------------
+
+message Position {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+// Flat game-object representation with optional type-specific fields.
+message GameObject {
+  uint32 id                         = 1;
+  int32  type                       = 2;   // ObjectType enum value
+  Position pos                      = 3;
+  int32  hp                         = 4;
+
+  // Core / Unit
+  optional uint32 team_id           = 5;
+  optional uint32 gems              = 6;
+
+  // Core
+  optional uint32 spawn_cooldown    = 7;
+
+  // Unit
+  optional uint32 unit_type         = 8;
+  optional uint32 action_cooldown   = 9;
+
+  // Bomb
+  optional uint32 countdown         = 10;
+  optional bool   countdown_started = 11;
+  repeated Position explosion_tiles = 12;
+}
+
+// ---------------------------------------------------------------------------
+// Config mirrors  (server/inc/config/Config.h)
+// ---------------------------------------------------------------------------
+
+message UnitConfigProto {
+  string name                       = 1;
+  uint32 cost                       = 2;
+  uint32 hp                         = 3;
+  uint32 base_action_cooldown       = 4;
+  uint32 max_action_cooldown        = 5;
+  uint32 balance_per_cooldown_step  = 6;
+  uint32 damage_core                = 7;
+  uint32 damage_unit                = 8;
+  uint32 damage_deposit             = 9;
+  uint32 damage_wall                = 10;
+  uint32 damage_bomb                = 11;
+  string build_type                 = 12;  // "none", "wall", "bomb"
+}
+
+message GameConfigProto {
+  uint32 grid_size                  = 1;
+  uint32 idle_income                = 2;
+  uint32 idle_income_timeout        = 3;
+  uint32 deposit_hp                 = 4;
+  uint32 deposit_income             = 5;
+  uint32 gem_pile_income            = 6;
+  uint32 core_hp                    = 7;
+  uint32 core_spawn_cooldown        = 8;
+  uint32 initial_balance            = 9;
+  uint32 wall_hp                    = 10;
+  uint32 wall_build_cost            = 11;
+  uint32 bomb_hp                    = 12;
+  uint32 bomb_countdown             = 13;
+  uint32 bomb_throw_cost            = 14;
+  uint32 bomb_reach                 = 15;
+  uint32 bomb_damage_core           = 16;
+  uint32 bomb_damage_unit           = 17;
+  uint32 bomb_damage_deposit        = 18;
+  repeated UnitConfigProto units    = 19;
+  repeated Position core_positions  = 20;
+  string raw_json                   = 21;  // full original JSON for clients that want it
+}
+
+// ---------------------------------------------------------------------------
+// Login
+// ---------------------------------------------------------------------------
+
+message LoginRequest {
+  uint32 team_id  = 1;
+  string password = 2;
+  string name     = 3;
+}
+
+message LoginResponse {
+  bool   success           = 1;
+  string error             = 2;
+  GameConfigProto config   = 3;
+}
+
+// ---------------------------------------------------------------------------
+// Tick lifecycle  (bidirectional stream)
+// ---------------------------------------------------------------------------
+
+message TickSignal {
+  uint64 tick              = 1;
+  repeated string errors   = 2;
+  bool   game_over         = 3;
+  optional uint32 winner_team_id = 4;
+}
+
+message EndTurnRequest {
+  // intentionally empty — just a signal
+}
+
+// ---------------------------------------------------------------------------
+// Action requests
+// ---------------------------------------------------------------------------
+
+message CreateUnitRequest {
+  uint32 unit_type         = 1;
+}
+
+message MoveRequest {
+  uint32   unit_id         = 1;
+  Position target          = 2;
+}
+
+message AttackRequest {
+  uint32 unit_id           = 1;
+  uint32 target_id         = 2;
+}
+
+message TransferGemsRequest {
+  uint32   source_id       = 1;
+  Position target          = 2;
+  uint32   amount          = 3;
+}
+
+message BuildRequest {
+  uint32   unit_id         = 1;
+  Position target          = 2;
+}
+
+message ActionResponse {
+  bool   success           = 1;
+  string error             = 2;
+}
+
+// ---------------------------------------------------------------------------
+// Debug data
+// ---------------------------------------------------------------------------
+
+message DebugDataEntry {
+  uint32   object_id       = 1;
+  optional string object_info = 2;
+  repeated Position object_path = 3;
+}
+
+message DebugDataRequest {
+  repeated DebugDataEntry entries = 1;
+}
+
+message DebugDataResponse {
+  // intentionally empty
+}
+
+// ---------------------------------------------------------------------------
+// Query requests / responses
+// ---------------------------------------------------------------------------
+
+message GetObjectByIdRequest {
+  uint32 id                = 1;
+}
+message GetObjectByIdResponse {
+  optional GameObject object = 1;
+}
+
+message GetObjectAtPosRequest {
+  Position pos             = 1;
+}
+message GetObjectAtPosResponse {
+  optional GameObject object = 1;
+}
+
+message GetMyCoreRequest {
+  // team_id from metadata
+}
+message GetMyCoreResponse {
+  optional GameObject core = 1;
+}
+
+message GetMyUnitsRequest {
+  // team_id from metadata
+}
+message GetMyUnitsResponse {
+  repeated GameObject units = 1;
+}
+
+message GetConfigRequest {
+  // empty
+}
+message GetConfigResponse {
+  GameConfigProto config   = 1;
+}
+
+message GetTickRequest {
+  // empty
+}
+message GetTickResponse {
+  uint64 tick              = 1;
+}
+
+message GetAllObjectsRequest {
+  // empty
+}
+message GetAllObjectsResponse {
+  repeated GameObject objects = 1;
+}
+
+// ---------------------------------------------------------------------------
+// Service
+// ---------------------------------------------------------------------------
+
+service CoreGameService {
+  rpc Login(LoginRequest)                       returns (LoginResponse);
+  rpc TickStream(stream EndTurnRequest)         returns (stream TickSignal);
+  rpc CreateUnit(CreateUnitRequest)             returns (ActionResponse);
+  rpc Move(MoveRequest)                         returns (ActionResponse);
+  rpc Attack(AttackRequest)                     returns (ActionResponse);
+  rpc TransferGems(TransferGemsRequest)         returns (ActionResponse);
+  rpc Build(BuildRequest)                       returns (ActionResponse);
+  rpc SendDebugData(DebugDataRequest)           returns (DebugDataResponse);
+  rpc GetObjectById(GetObjectByIdRequest)       returns (GetObjectByIdResponse);
+  rpc GetObjectAtPos(GetObjectAtPosRequest)     returns (GetObjectAtPosResponse);
+  rpc GetMyCore(GetMyCoreRequest)               returns (GetMyCoreResponse);
+  rpc GetMyUnits(GetMyUnitsRequest)             returns (GetMyUnitsResponse);
+  rpc GetConfig(GetConfigRequest)               returns (GetConfigResponse);
+  rpc GetTick(GetTickRequest)                   returns (GetTickResponse);
+  rpc GetAllObjects(GetAllObjectsRequest)       returns (GetAllObjectsResponse);
+}

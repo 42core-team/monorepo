@@ -16,8 +16,8 @@ class Bomb : public Object
 	Bomb(const Bomb &other) : Object(other), countdown_(other.countdown_), countdownStarted_(other.countdownStarted_) {}
 
 	void explode();
-	void tick(unsigned long long tickCount);
-	void damage(Object *attacker, unsigned int damage);
+	void tick(unsigned long long tickCount) override;
+	void damage(Object *attacker, unsigned int damage) override;
 
 	unsigned int getCountdown() const { return countdown_; }
 	bool isCountdownStarted() const { return countdownStarted_; }

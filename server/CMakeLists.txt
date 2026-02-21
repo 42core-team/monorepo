@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.50)
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5 CACHE STRING "Allow projects requiring CMake < 3.5" FORCE)
 project(server C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -48,6 +49,64 @@ if(NOT EXISTS "${XXHASH_INC}/xxhash.h")
 endif()
 add_library(xxhash INTERFACE)
 
+# ---- gRPC via FetchContent ------------------------------------------------
+set(ABSL_PROPAGATE_CXX_STD ON CACHE BOOL "" FORCE)
+set(ABSL_ENABLE_INSTALL OFF CACHE BOOL "" FORCE)
+set(protobuf_INSTALL OFF CACHE BOOL "" FORCE)
+set(protobuf_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(utf8_range_ENABLE_INSTALL OFF CACHE BOOL "" FORCE)
+set(utf8_range_ENABLE_TESTS OFF CACHE BOOL "" FORCE)
+set(gRPC_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(gRPC_BUILD_CSHARP_EXT OFF CACHE BOOL "" FORCE)
+set(gRPC_BUILD_GRPC_CSHARP_PLUGIN OFF CACHE BOOL "" FORCE)
+set(gRPC_BUILD_GRPC_NODE_PLUGIN OFF CACHE BOOL "" FORCE)
+set(gRPC_BUILD_GRPC_OBJECTIVE_C_PLUGIN OFF CACHE BOOL "" FORCE)
+set(gRPC_BUILD_GRPC_PHP_PLUGIN OFF CACHE BOOL "" FORCE)
+set(gRPC_BUILD_GRPC_PYTHON_PLUGIN OFF CACHE BOOL "" FORCE)
+set(gRPC_BUILD_GRPC_RUBY_PLUGIN OFF CACHE BOOL "" FORCE)
+set(gRPC_INSTALL OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(
+	grpc
+	GIT_REPOSITORY https://github.com/grpc/grpc.git
+	GIT_TAG v1.62.1
+	GIT_SHALLOW TRUE
+	GIT_PROGRESS TRUE
+	UPDATE_DISCONNECTED TRUE
+)
+FetchContent_MakeAvailable(grpc)
+
+# ---- Protobuf code generation ---------------------------------------------
+set(PROTO_SRC "${CMAKE_CURRENT_SOURCE_DIR}/../proto/core_game.proto")
+set(PROTO_GEN_DIR "${CMAKE_BINARY_DIR}/proto_gen")
+file(MAKE_DIRECTORY "${PROTO_GEN_DIR}")
+
+set(PROTO_GEN_CC  "${PROTO_GEN_DIR}/core_game.pb.cc")
+set(PROTO_GEN_H   "${PROTO_GEN_DIR}/core_game.pb.h")
+set(GRPC_GEN_CC   "${PROTO_GEN_DIR}/core_game.grpc.pb.cc")
+set(GRPC_GEN_H    "${PROTO_GEN_DIR}/core_game.grpc.pb.h")
+
+add_custom_command(
+	OUTPUT ${PROTO_GEN_CC} ${PROTO_GEN_H} ${GRPC_GEN_CC} ${GRPC_GEN_H}
+	COMMAND $<TARGET_FILE:protobuf::protoc>
+		--cpp_out=${PROTO_GEN_DIR}
+		--grpc_out=${PROTO_GEN_DIR}
+		--plugin=protoc-gen-grpc=$<TARGET_FILE:grpc_cpp_plugin>
+		-I "${CMAKE_CURRENT_SOURCE_DIR}/../proto"
+		"${PROTO_SRC}"
+	DEPENDS "${PROTO_SRC}" protobuf::protoc grpc_cpp_plugin
+	COMMENT "Generating gRPC/Protobuf C++ sources from core_game.proto"
+)
+
+add_library(core_game_proto STATIC
+	${PROTO_GEN_CC}
+	${GRPC_GEN_CC}
+)
+target_include_directories(core_game_proto PUBLIC "${PROTO_GEN_DIR}")
+target_link_libraries(core_game_proto PUBLIC grpc++ protobuf::libprotobuf)
+# Suppress warnings in generated code
+target_compile_options(core_game_proto PRIVATE -w)
+
+# ---- Build flags -----------------------------------------------------------
 set(CMAKE_CXX_FLAGS_PROD "-O3 -DNDEBUG")
 set(CMAKE_C_FLAGS_PROD   "-O3 -DNDEBUG")
 set(CMAKE_EXE_LINKER_FLAGS_PROD "")
@@ -80,4 +139,4 @@ target_include_directories(server PRIVATE
 
 target_compile_options(server PRIVATE -Wall -Wextra -Werror)
 
-target_link_libraries(server PRIVATE nlohmann_json nlohmann_json_schema_validator xxhash)
+target_link_libraries(server PRIVATE nlohmann_json nlohmann_json_schema_validator xxhash core_game_proto)

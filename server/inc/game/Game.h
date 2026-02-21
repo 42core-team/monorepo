@@ -3,9 +3,10 @@
 
 #include "Action.h"
 #include "Board.h"
-#include "Bridge.h"
 #include "Core.h"
 #include "Deposit.h"
+#include "GameServiceImpl.h"
+#include "PlayerSession.h"
 #include "ReplayEncoder.h"
 #include "StateEncoder.h"
 #include "Unit.h"
@@ -18,6 +19,7 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <unordered_map>
 #include <vector>
 using json = nlohmann::ordered_json;
 
@@ -26,9 +28,8 @@ class Config;
 class Game
 {
   public:
-	Game(std::vector<unsigned int> team_ids);
+	Game(std::vector<unsigned int> team_ids, GameServiceImpl *service);
 	~Game();
-	void addBridge(std::unique_ptr<Bridge> bridge);
 
 	void run();
 
@@ -36,15 +37,17 @@ class Game
 	void tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions,
 			  std::chrono::steady_clock::time_point serverStartTime,
 			  const std::vector<std::pair<int, std::string>> &preFailures,
-			  const std::vector<std::pair<int, json>> &debugDataPackets);
+			  const std::vector<std::pair<int, core_game::DebugDataEntry>> &debugDataEntries);
 
 	void killWorstPlayerOnTimeout();
 
-	void sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, unsigned long long tick,
-				   std::vector<std::pair<int, std::string>> &failures);
-	void sendConfig();
+	void recordReplayState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, unsigned long long tick,
+						   std::vector<std::pair<int, std::string>> &failures);
 
-	std::vector<std::unique_ptr<Bridge>> bridges_;
+	GameServiceImpl *service_;
+
+	// Pending errors per team, accumulated and sent in next tick's TickSignal
+	std::unordered_map<unsigned int, std::vector<std::string>> pendingErrors_;
 
 	std::mt19937 rng_;
 

@@ -12,8 +12,8 @@ class Wall : public Object
 	Wall();
 	Wall(const Wall &other) : Object(other) {}
 
-	void tick(unsigned long long tickCount);
-	void damage(Object *attacker, unsigned int damage);
+	void tick(unsigned long long tickCount) override;
+	void damage(Object *attacker, unsigned int damage) override;
 };
 
 #endif // WALL_H
