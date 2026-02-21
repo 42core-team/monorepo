@@ -1,6 +1,8 @@
 #include "core_lib.h"
 #include "core_lib_internal.h"
 
+#include <string.h>
+
 t_debug_data debug_data = {0};
 
 static t_debug_entry *core_static_findOrCreateEntry(unsigned long object_id)

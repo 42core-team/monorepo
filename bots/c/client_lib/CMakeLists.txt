@@ -10,15 +10,16 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # ── Build type ────────────────────────────────────────────────────────────────
 
 if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE dev CACHE STRING "Choose build type: dev or prod" FORCE)
+	 set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif()
 
-set(CMAKE_CXX_FLAGS_PROD "-O3 -DNDEBUG")
-set(CMAKE_C_FLAGS_PROD   "-O3 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_DEV "-O3 -DNDEBUG")
+set(CMAKE_C_FLAGS_DEV   "-O3 -DNDEBUG")
 
-set(CMAKE_CXX_FLAGS_DEV "${CMAKE_CXX_FLAGS_PROD} -g -fno-omit-frame-pointer -fsanitize=address")
-set(CMAKE_C_FLAGS_DEV   "${CMAKE_C_FLAGS_PROD} -g -fno-omit-frame-pointer -fsanitize=address")
-set(CMAKE_EXE_LINKER_FLAGS_DEV "-fsanitize=address")
+option(CORE_LIB_ASAN "Enable AddressSanitizer on core_lib" OFF)
+if(CMAKE_BUILD_TYPE STREQUAL "dev")
+set(CORE_LIB_ASAN ON)
+endif()
 
 # ── gRPC via FetchContent ─────────────────────────────────────────────────────
 
@@ -106,6 +107,11 @@ target_include_directories(core_lib PRIVATE
 
 target_link_libraries(core_lib PRIVATE core_game_proto)
 target_compile_options(core_lib PRIVATE -Wall -Wextra -Werror)
+
+if(CORE_LIB_ASAN)
+    target_compile_options(core_lib PRIVATE -g -fno-omit-frame-pointer -fsanitize=address)
+    target_link_options(core_lib PUBLIC -fsanitize=address)
+endif()
 
 # ── Output the library to the source tree root for backward compat ────────────
 

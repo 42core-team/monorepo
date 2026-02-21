@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.50)
+cmake_minimum_required(VERSION 3.28)
 set(CMAKE_POLICY_VERSION_MINIMUM 3.5 CACHE STRING "Allow projects requiring CMake < 3.5" FORCE)
 project(server C CXX)
 

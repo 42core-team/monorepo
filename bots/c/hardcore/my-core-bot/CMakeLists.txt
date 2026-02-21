@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.20)
-project(my_core_bot C)
+project(my_core_bot C CXX)
 
 set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Import the client library (builds core_lib + gRPC + protobuf)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../client_lib ${CMAKE_BINARY_DIR}/client_lib)
