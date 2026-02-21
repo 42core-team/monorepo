@@ -1,0 +1,10 @@
+{
+  "name": "@core/client-lib",
+  "version": "1.0.0",
+  "description": "TypeScript client library for Core game",
+  "main": "client_lib.ts",
+  "types": "types.ts",
+  "dependencies": {
+    "@types/node": "^20.11.0"
+  }
+}

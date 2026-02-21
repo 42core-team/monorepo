@@ -1,0 +1,18 @@
+ARG TAG_NAME="dev"
+ARG SERVER_IMAGE="ghcr.io/42core-team/server"
+
+FROM oven/bun:latest AS bun-base
+WORKDIR /app
+
+FROM ${SERVER_IMAGE}:${TAG_NAME} AS game
+
+# Build connection library from monorepo sources
+FROM bun-base AS connection
+WORKDIR /connection
+COPY bots/ts/client_lib/ ./
+
+FROM bun-base AS release
+
+COPY --from=game /core/server /core/server
+COPY --from=game /core/data /core/data
+COPY --from=connection /connection/ /core/ts/client_lib/
