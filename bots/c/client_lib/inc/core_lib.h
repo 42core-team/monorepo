@@ -5,6 +5,7 @@
 
 #include <limits.h>
 #include <math.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -274,7 +275,7 @@ t_unit_config *core_get_unitConfig(t_unit_type type);
 /// @details This function accumulates debug strings for objects. Multiple calls per tick will append the strings (with newlines).
 /// @param obj The object to attach debug info to
 /// @param info The debug string to add
-void core_debug_addObjectInfo(const t_obj *obj, const char *info);
+void core_debug_addObjectInfo(const t_obj *obj, const char *format, ...);
 
 /// @brief Add a step to the end of the debug path of an object for visualization
 /// @param unit The unit to attach the debug path step to

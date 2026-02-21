@@ -42,7 +42,8 @@ void ft_on_tick(unsigned long tick)
 			core_action_move(own_team_warriors[i], path.steps[0]);
 		}
 
-		core_debug_addObjectInfo(own_team_warriors[i], "Moving towards opponent core :D\n");
+		core_debug_addObjectInfo(own_team_warriors[i], "Moving towards opponent core at [%d,%d] :D\n",
+								 ft_get_core_opponent()->pos.x, ft_get_core_opponent()->pos.y);
 		core_action_attack(own_team_warriors[i], ft_get_core_opponent());
 
 		// Clean up
