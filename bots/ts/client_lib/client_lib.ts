@@ -2,9 +2,10 @@ import * as net from 'net';
 import type { GameState, Action, Obj, Pos } from './types';
 import { ActionType, UnitType, ObjType, ObjState } from './types';
 
+export let game: GameState | null = null;
+
 export class ClientLib {
     private socket: net.Socket | null = null;
-    private game: GameState | null = null;
     private actions: Action[] = [];
     private debugData: any[] = [];
     private buffer: string = '';
@@ -22,7 +23,7 @@ export class ClientLib {
 
             this.socket.on('data', (data: Buffer) => {
                 this.handleData(data);
-                if (this.game && resolve) {
+                if (game && resolve) {
                     resolve();
                     (resolve as any) = null;
                 }
@@ -88,7 +89,7 @@ export class ClientLib {
             } else {
                 // Game state update
                 if (parsed.tick !== undefined) {
-                    this.game.elapsed_ticks = parsed.tick;
+                    game.elapsed_ticks = parsed.tick;
                 }
                 
                 if (parsed.objects && Array.isArray(parsed.objects)) {
@@ -105,7 +106,7 @@ export class ClientLib {
                 }
 
                 // Decrement cooldowns manually as C lib does
-                for (const obj of this.game.objects) {
+                for (const obj of game.objects) {
                     if (obj.type === ObjType.UNIT) {
                          if (obj.s_unit.action_cooldown > 0) obj.s_unit.action_cooldown--;
                     } else if (obj.type === ObjType.CORE) {
@@ -115,7 +116,7 @@ export class ClientLib {
                 
                 // After state update, we should have a tick
                 if (this.tickCallback) {
-                    this.tickCallback(this.game);
+                    this.tickCallback(game);
                 }
                 // ALWAYS send actions back to the server to prevent timeouts
                 this.sendActions();
@@ -126,19 +127,19 @@ export class ClientLib {
     }
 
     private applyDiff(diff: any): void {
-        if (!this.game) return;
+        if (!game) return;
 
         const id = diff.id;
         if (id === undefined) return;
 
         if (diff.state === 'dead') {
-            this.game.objects = this.game.objects.filter(o => o.id !== id);
+            game.objects = game.objects.filter(o => o.id !== id);
             return;
         }
 
-        let obj = this.game.objects.find(o => o.id === id);
+        let obj = game.objects.find(o => o.id === id);
         if (!obj) {
-            obj = { 
+            obj = {
                 id,
                 state: ObjState.ALIVE,
                 pos: { x: 0, y: 0 },
@@ -147,7 +148,7 @@ export class ClientLib {
                 s_deposit_gems_pile: { gems: 0 },
                 s_bomb: { countdown: 0 }
             } as Obj;
-            this.game.objects.push(obj);
+            game.objects.push(obj);
         }
 
         if (diff.type !== undefined) obj.type = diff.type;
@@ -264,6 +265,6 @@ export class ClientLib {
     }
 
     public getGame(): GameState | null {
-        return this.game;
+        return game;
     }
 }

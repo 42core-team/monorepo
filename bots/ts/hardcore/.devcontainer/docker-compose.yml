@@ -1,7 +1,9 @@
 services:
   my-core-bot:
-    image: ghcr.io/42core-team/my-core-bot-ts:dev
-    platform: linux/amd64
+    build:
+      context: ../../../..
+      dockerfile: .github/workflows/my-core-bot-ts-Dockerfile
+
     volumes:
       - ..:/workspace
       - replays:/workspace/replays
