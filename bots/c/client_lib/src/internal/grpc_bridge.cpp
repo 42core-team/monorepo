@@ -1,14 +1,16 @@
 #include "grpc_bridge.h"
+
 #include "core_lib_internal.h"
 
+#include <chrono>
 #include <core_game.grpc.pb.h>
 #include <core_game.pb.h>
-#include <grpcpp/grpcpp.h>
-
 #include <cstdlib>
 #include <cstring>
+#include <grpcpp/grpcpp.h>
 #include <memory>
 #include <string>
+#include <unistd.h>
 #include <vector>
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -172,6 +174,27 @@ extern "C" int grpc_bridge_connect(const char *host, int port)
 	std::string target = std::string(host) + ":" + std::to_string(port);
 	g_channel = grpc::CreateChannel(target, grpc::InsecureChannelCredentials());
 	g_stub = core_game::CoreGameService::NewStub(g_channel);
+
+	// Wait for the channel to be ready, retrying like the old TCP socket loop
+	for (;;)
+	{
+		auto state = g_channel->GetState(true); // true = try to connect
+		if (state == GRPC_CHANNEL_READY) break;
+
+
+		// Wait up to 2 seconds for a state change, then retry
+		auto deadline = std::chrono::system_clock::now() + std::chrono::seconds(2);
+		g_channel->WaitForStateChange(state, deadline);
+
+		state = g_channel->GetState(false);
+		if (state == GRPC_CHANNEL_READY) break;
+		if (state == GRPC_CHANNEL_SHUTDOWN)
+		{
+			fprintf(stderr, "\nChannel shut down\n");
+			return -1;
+		}
+	}
+
 	return 0;
 }
 
@@ -339,7 +362,7 @@ extern "C" int grpc_bridge_attack(unsigned long unit_id, unsigned long target_id
 }
 
 extern "C" int grpc_bridge_transfer_gems(unsigned long source_id, unsigned short x, unsigned short y,
-										  unsigned long amount)
+										 unsigned long amount)
 {
 	core_game::TransferGemsRequest req;
 	req.set_source_id((uint32_t)source_id);
