@@ -1,31 +1,25 @@
 JOBS ?= $(shell nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
-MAKEFLAGS += -j$(JOBS)
 
 LIBRARY = core_lib.a
-
-CC = cc
-CFLAGS = -Wall -Wextra -Werror -lm -g -fsanitize=address -MMD -MP
-
-INC = inc
-OBJDIR = obj
-SRCDIR = src
-
-SRCS := $(shell find $(SRCDIR) -name "*.c")
-OBJS := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRCS))
-
--include $(OBJS:.o=.d)
+BUILD_DIR = cmake-build
+BUILD_TYPE ?= dev
 
 all: $(LIBRARY)
 
-$(LIBRARY): $(OBJS)
-	ar rcs $(LIBRARY) $(OBJS)
+$(LIBRARY): $(BUILD_DIR)/Makefile
+	cmake --build $(BUILD_DIR) -j$(JOBS)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c
-	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@ -I $(INC)
+$(BUILD_DIR)/Makefile:
+	cmake -S . -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE)
+
+prod:
+	$(MAKE) BUILD_TYPE=prod all
+
+dev:
+	$(MAKE) BUILD_TYPE=dev all
 
 clean:
-	rm -rf $(OBJDIR)
+	rm -rf $(BUILD_DIR)
 
 fclean: clean
 	rm -rf $(LIBRARY)
@@ -38,4 +32,4 @@ log:
 	find inc -type f -print -exec echo "====> {} <====" \; -exec cat {} \; || true
 	find src -type f -print -exec echo "====> {} <====" \; -exec cat {} \; || true
 
-.PHONY: all clean fclean re log
+.PHONY: all clean fclean re log prod dev

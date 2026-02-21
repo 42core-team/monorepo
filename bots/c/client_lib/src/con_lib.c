@@ -1,5 +1,8 @@
 #include "core_lib_internal.h"
 
+#include <string.h>
+#include <sys/select.h>
+
 t_game game = {0};
 t_actions actions = {0};
 
@@ -31,103 +34,109 @@ static void core_static_awaitEnterPress(void)
 	}
 }
 
-/**
- * @brief Starts the connection to the server. This function should be called before any other function from this
- * library.
- *
- * @param team_name The name of your team.
- * @param argc The argc from the main function.
- * @param argv The argv from the main function.
- * @param tick_callback A function that will be called every game tick.
- * @param debug Whether to enable debug mode or not.
- */
 int core_startGame(const char *team_name, int argc, char **argv, void (*tick_callback)(unsigned long), bool debug)
 {
+	(void)argc;
+
 	if (!tick_callback)
 	{
 		printf("Trust me, you'll want to provide a tick callback function.\n");
 		return 1;
 	}
 
-	// setup socket
+	// Parse team id from args
+	if (!argv[1])
+		return printf("Error: No team id provided.\n"), 1;
+	game.my_team_id = atoi(argv[1]);
+
+	// Resolve server address
 	const char *env_ip = getenv("SERVER_IP");
 	const char *env_port = getenv("SERVER_PORT");
 	const int port = env_port ? atoi(env_port) : 4444;
-	if (argv[1])
-		game.my_team_id = atoi(argv[1]);
-	else
-		return printf("Error: No team id provided.\n"), 1;
-	struct sockaddr_in server_addr = core_internal_socket_initAddr(env_ip ? env_ip : "127.0.0.1", port);
-	int socket_fd = core_internal_socket_init(server_addr);
+	const char *host = env_ip ? env_ip : "127.0.0.1";
 
-	// send login message
-	char *login_msg = core_internal_encode_login(team_name, argc, argv);
-	if (!login_msg)
+	// Connect via gRPC
+	printf("Connecting to server at %s:%d\n", host, port);
+	if (grpc_bridge_connect(host, port) != 0)
 	{
-		printf("Unable to create login message, shutting down.\n");
-		return (1);
-	}
-	core_internal_socket_send(socket_fd, login_msg);
-	free(login_msg);
-
-	// receive config
-	char *conf = core_internal_socket_read_once(socket_fd);
-	if (!conf)
-	{
-		printf("Something went very awry and there was no json received.\n");
+		fprintf(stderr, "Failed to connect to server\n");
 		return 1;
 	}
-	if (debug) printf("Received: %s\n", conf);
-	core_internal_parse_config(conf);
-	free(conf);
 
-	// run game loop
-	bool first_tick = true;
-	t_obj *my_core = NULL;
-	while ((my_core != NULL && my_core->hp > 0) || first_tick)
+	// Login
+	if (grpc_bridge_login(game.my_team_id, "42", team_name ? team_name : "Unnamed") != 0)
 	{
-		first_tick = false;
+		fprintf(stderr, "Login failed\n");
+		return 1;
+	}
+	if (debug) printf("Logged in as team %lu\n", game.my_team_id);
 
-		// send user-selected actions
-		char *tick_actions = core_internal_encode_packet();
-		core_internal_reset_actions();
-		core_internal_reset_debugData();
-		if (debug) printf("Actions: %s\n", tick_actions);
-		core_internal_socket_send(socket_fd, tick_actions);
-		free(tick_actions);
+	// Open bidirectional tick stream
+	if (grpc_bridge_start_tick_stream() != 0)
+	{
+		fprintf(stderr, "Failed to start tick stream\n");
+		return 1;
+	}
 
-		// receive new json state
-		char *msg = core_internal_socket_read(socket_fd);
-		if (!msg)
+	// Game loop
+	bool won = false;
+	while (1)
+	{
+		unsigned long tick = 0;
+		char **errors = NULL;
+		int error_count = 0;
+		bool game_over = false;
+		unsigned long winner_team_id = 0;
+
+		// Clear per-tick cache from previous tick
+		grpc_bridge_cache_clear();
+
+		// Wait for next tick signal from server
+		if (grpc_bridge_wait_tick(&tick, &errors, &error_count, &game_over, &winner_team_id) != 0)
 		{
 			printf("The connection was closed by the server. Bye, bye!\n");
 			break;
 		}
-		if (debug)
-		{
-			json_node *node = string_to_json(msg);
-			char *formatted = json_to_formatted_string(node);
-			printf("Received: %s\n", formatted);
-			free(formatted);
-			free_json(node);
-		}
-		core_internal_parse_state(msg);
-		free(msg);
-		my_core = core_get_obj_filter_nearest((t_pos){0, 0}, core_static_isMyCore);
 
-		// execute user code
+		game.elapsed_ticks = tick;
+
+		// Print errors from last tick
+		for (int i = 0; i < error_count; i++)
+		{
+			printf("\033[31m%s\033[0m\n", errors[i]);
+			free(errors[i]);
+		}
+		free(errors);
+
+		if (game_over)
+		{
+			won = (winner_team_id == game.my_team_id);
+			break;
+		}
+
+		if (debug) printf("Tick %lu\n", tick);
+
+		// Execute user code
 		tick_callback(game.elapsed_ticks);
+
+		// Send accumulated debug data
+		grpc_bridge_send_debug_data();
+		core_internal_reset_debugData();
+
+		// Signal end of turn
+		grpc_bridge_end_turn();
 	}
 
-	// handle game end
+	// Handle game end
 	core_static_awaitEnterPress();
-	if (my_core && my_core->hp > 0)
+	if (won)
 		printf("Game over! You won!\n");
 	else
 		printf("Game over! You lost!\n");
 
-	// clean up
-	close(socket_fd);
+	// Clean up
+	grpc_bridge_cache_clear();
+	grpc_bridge_shutdown();
 	core_internal_freeGame();
 	core_internal_reset_actions();
 

@@ -3,32 +3,17 @@
 
 #include "core_lib.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 // ----- General
 
 int core_internal_distance(t_pos pos1, t_pos pos2);
 bool core_internal_isPosValid(t_pos pos);
 void core_internal_freeGame(void);
 void core_internal_freeAndExit(const char *msg, int count, ...);
-
-// ----- Socket
-
-#include <arpa/inet.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/select.h>
-#include <sys/socket.h>
-#include <unistd.h>
-
-int core_internal_socket_init(struct sockaddr_in addr);
-int core_internal_socket_send(int socket_fd, const char *msg);
-char *core_internal_socket_read(int socket_fd);
-char *core_internal_socket_read_once(int socket_fd);
-struct sockaddr_in core_internal_socket_initAddr(const char *hostname, int port);
 
 // ----- Actions
 
@@ -111,52 +96,12 @@ extern t_debug_data debug_data;
 
 void core_internal_reset_debugData(void);
 
-// ----- JSON LIB
+// ----- gRPC Bridge
 
-#include <ctype.h>
+#include "grpc_bridge.h"
 
-typedef enum e_json_type
-{
-	JSON_TYPE_NULL,
-	JSON_TYPE_BOOL,
-	JSON_TYPE_STRING,
-	JSON_TYPE_NUMBER,
-	JSON_TYPE_OBJECT,
-	JSON_TYPE_ARRAY
-} json_type;
-
-typedef struct s_json_node
-{
-	char *key;
-	json_type type;
-
-	union
-	{
-		char *string;
-		double number;
-		struct s_json_node **array;
-	};
-} json_node;
-
-json_node *string_to_json(char *string);					// Convert a JSON string into a JSON tree
-char *json_to_string(json_node *json);						// Convert a JSON tree to a JSON string
-char *json_to_formatted_string(json_node *json);			// Convert a JSON tree to a formatted JSON string
-json_node *json_find(json_node *json, char *key);			// Find a node in the JSON tree by key (top-level only)
-json_node *json_find_recursive(json_node *json, char *key); // Find a node in the JSON tree by key (recursive)
-void free_json(json_node *json);							// Free all memory allocated for the JSON tree
-json_node *create_node(json_type type);						// Create a new, empty-initialized node
-
-// ----- JSON parsing and encoding
-
-unsigned long clamp_ulong_for_json(unsigned long value);
-
-void core_internal_parse_state(char *json);
-void core_internal_parse_config(char *json);
-
-char *core_internal_encode_login(const char *team_name, int argc, char **argv);
-
-json_node *core_internal_encode_packet_actions(void);
-json_node *core_internal_encode_packet_debugData(void);
-char *core_internal_encode_packet(void);
+#ifdef __cplusplus
+}
+#endif
 
 #endif // CORE_LIB_INTERNAL_H

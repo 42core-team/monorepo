@@ -1,19 +1,6 @@
 #include "core_lib.h"
 #include "core_lib_internal.h"
 
-static inline void core_static_ensureCapacity(void)
-{
-	if (actions.list == NULL)
-	{
-		actions.capacity = 8;
-		actions.list = malloc(sizeof(t_action) * actions.capacity);
-	}
-	else if (actions.count >= actions.capacity)
-	{
-		actions.capacity *= 2;
-		actions.list = realloc(actions.list, sizeof(t_action) * actions.capacity);
-	}
-}
 static inline bool core_static_isFriendlyObj(const t_obj *o)
 {
 	if (o && o->type == OBJ_UNIT) return o->s_unit.team_id == game.my_team_id;
@@ -23,19 +10,13 @@ static inline bool core_static_isFriendlyObj(const t_obj *o)
 
 void core_action_createUnit(t_unit_type unit_type)
 {
-	core_static_ensureCapacity();
-	t_action *action = &actions.list[actions.count++];
-	action->type = ACTION_CREATE;
-	action->data.create.unit_type = unit_type;
+	grpc_bridge_create_unit(unit_type);
 }
 
 void core_action_move(const t_obj *unit, t_pos pos)
 {
-	core_static_ensureCapacity();
-	t_action *action = &actions.list[actions.count++];
-	action->type = ACTION_MOVE;
-	action->data.move.id = unit->id;
-	action->data.move.pos = pos;
+	if (!unit) return;
+	grpc_bridge_move(unit->id, pos.x, pos.y);
 }
 
 void core_action_pathfind(const t_obj *unit, t_pos pos)
@@ -98,31 +79,17 @@ void core_action_pathfind(const t_obj *unit, t_pos pos)
 void core_action_attack(const t_obj *attacker, const t_obj *target)
 {
 	if (!attacker || !target) return;
-	core_static_ensureCapacity();
-	t_action *action = &actions.list[actions.count++];
-	action->type = ACTION_ATTACK;
-	action->data.attack.id = attacker->id;
-	action->data.attack.target_id = target->id;
+	grpc_bridge_attack(attacker->id, target->id);
 }
 
 void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned long amount)
 {
 	if (!source) return;
-	core_static_ensureCapacity();
-	t_action *action = &actions.list[actions.count++];
-	action->type = ACTION_TRANSFER;
-	action->data.transfer.source_id = source->id;
-	action->data.transfer.target_pos = target_pos;
-	action->data.transfer.amount = amount;
+	grpc_bridge_transfer_gems(source->id, target_pos.x, target_pos.y, amount);
 }
 
 void core_action_build(const t_obj *builder, t_pos pos)
 {
 	if (!builder) return;
-
-	core_static_ensureCapacity();
-	t_action *action = &actions.list[actions.count++];
-	action->type = ACTION_BUILD;
-	action->data.build.builder_id = builder->id;
-	action->data.build.pos = pos;
+	grpc_bridge_build(builder->id, pos.x, pos.y);
 }

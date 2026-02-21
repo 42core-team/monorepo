@@ -3,19 +3,13 @@
 
 t_obj *core_get_obj_from_id(unsigned long id)
 {
-	if (game.objects && game.objects[0] != NULL)
-		for (int i = 0; game.objects[i] != NULL; i++)
-			if (game.objects[i]->id == id) return (game.objects[i]);
-	return (NULL);
+	return grpc_bridge_get_object_by_id(id);
 }
 
 t_obj *core_get_obj_from_pos(t_pos pos)
 {
 	if (!core_internal_isPosValid(pos)) return NULL;
-	if (game.objects && game.objects[0] != NULL)
-		for (int i = 0; game.objects[i] != NULL; i++)
-			if (game.objects[i]->pos.x == pos.x && game.objects[i]->pos.y == pos.y) return (game.objects[i]);
-	return (NULL);
+	return grpc_bridge_get_object_at_pos(pos.x, pos.y);
 }
 
 // -
@@ -37,23 +31,39 @@ t_unit_config *core_get_unitConfig(t_unit_type unit_type)
 
 t_obj **core_get_objs_filter(bool (*condition)(const t_obj *))
 {
+	// Fetch all objects from the server
+	t_obj **all = grpc_bridge_get_all_objects();
+	if (!all) return NULL;
+
+	// Count matching
 	int count = 0;
-	for (int i = 0; game.objects && game.objects[i] != NULL; i++)
+	for (int i = 0; all[i] != NULL; i++)
 	{
-		if (!condition || condition(game.objects[i])) count++;
+		if (!condition || condition(all[i])) count++;
 	}
 
-	if (count == 0) return (NULL);
+	if (count == 0)
+	{
+		free(all);
+		return NULL;
+	}
 
 	t_obj **result = malloc(sizeof(t_obj *) * (count + 1));
-	if (!result) return (NULL);
+	if (!result)
+	{
+		free(all);
+		return NULL;
+	}
 
 	int index = 0;
-	for (int i = 0; game.objects && game.objects[i] != NULL; i++)
+	for (int i = 0; all[i] != NULL; i++)
 	{
-		if (!condition || condition(game.objects[i])) result[index++] = game.objects[i];
+		if (!condition || condition(all[i])) result[index++] = all[i];
 	}
 	result[index] = NULL;
+
+	// Free the container array (objects themselves are in the cache)
+	free(all);
 
 	return result;
 }

@@ -1,34 +1,29 @@
-SRCDIR = src
-OBJDIR = build
-SRCS = $(wildcard $(SRCDIR)/*.c)
-OBJS = $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
+JOBS ?= $(shell nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
 
-CC = cc
-CFLAGS = -Wall -Wextra -Werror -lm -g -fsanitize=address
-CLIENT_LIB_DIR ?= /core
-INC = -I inc -I $(CLIENT_LIB_DIR)/inc
+BUILD_DIR = cmake-build
+BUILD_TYPE ?= dev
 EXEC = bot
 
-all: ensure_obj_dir $(EXEC)
+all: $(EXEC)
+
+$(EXEC): $(BUILD_DIR)/Makefile
+	cmake --build $(BUILD_DIR) -j$(JOBS)
+
+$(BUILD_DIR)/Makefile:
+	cmake -S . -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE)
 
 run: all
 	./$(EXEC)
 
-$(EXEC): $(OBJS) $(CLIENT_LIB_DIR)/core_lib.a
-	$(CC) $(CFLAGS) $(OBJS) $(CLIENT_LIB_DIR)/core_lib.a -o $@
-
-$(OBJDIR)/%.o: $(SRCDIR)/%.c
-	$(CC) $(CFLAGS) -c $< -o $@ $(INC)
-
-ensure_obj_dir:
-	mkdir -p $(OBJDIR)
+prod:
+	$(MAKE) BUILD_TYPE=prod all
 
 clean:
-	rm -rf $(OBJDIR)
+	rm -rf $(BUILD_DIR)
 
 fclean: clean
 	rm -rf $(EXEC)
 
 re: fclean all
 
-.PHONY: all run clean fclean re $(EXEC) ensure_obj_dir
+.PHONY: all run clean fclean re prod $(EXEC)

@@ -10,6 +10,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 // ----- OBJECTS -----
 
 /// @brief Type of object
@@ -303,5 +308,9 @@ void core_print_config_game(void);
 
 /// @brief Prints the entire game config and all unit configs
 void core_print_config(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // CORE_LIB_H
