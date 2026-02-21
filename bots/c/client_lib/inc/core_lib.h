@@ -274,7 +274,8 @@ t_unit_config *core_get_unitConfig(t_unit_type type);
 /// @brief Add debug information to an object for visualization
 /// @details This function accumulates debug strings for objects. Multiple calls per tick will append the strings (with newlines).
 /// @param obj The object to attach debug info to
-/// @param info The debug string to add
+/// @param format printf-style format debug string to add
+/// @param ... Format arguments matching the format string
 void core_debug_addObjectInfo(const t_obj *obj, const char *format, ...);
 
 /// @brief Add a step to the end of the debug path of an object for visualization
