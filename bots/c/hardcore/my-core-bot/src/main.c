@@ -19,6 +19,12 @@ static bool ft_is_own_team_warrior(const t_obj *obj)
 	return true;
 }
 
+/**
+ * Perform per-tick bot actions: spawn a warrior, visualize paths, and command own warriors to move toward and attack the opponent core.
+ *
+ * For each own-team warrior this tick, the function computes and visualizes a path to the opponent core, issues a move command toward the first path step (if any), and issues an attack command on the opponent core.
+ *
+ * @param tick Current tick count. */
 void ft_on_tick(unsigned long tick)
 {
 	printf("-----> [⚡️ TICK %ld 🔥]\n", tick);

@@ -3,6 +3,12 @@
 
 t_debug_data debug_data = {0};
 
+/**
+ * Locate the debug entry for the given object ID, creating and initializing one if it does not exist.
+ *
+ * @param object_id Identifier of the object whose debug entry is requested.
+ * @returns Pointer to the persistent `t_debug_entry` for `object_id`. The entry will have `info` and `path` initialized to NULL if newly created. Note: the pointer may be invalidated by future operations that reallocate the entries array. 
+ */
 static t_debug_entry *core_static_findOrCreateEntry(unsigned long object_id)
 {
 	for (unsigned int i = 0; i < debug_data.count; i++)
@@ -31,6 +37,17 @@ static t_debug_entry *core_static_findOrCreateEntry(unsigned long object_id)
 	return entry;
 }
 
+/**
+ * Append formatted informational text to the debug entry for the given object.
+ *
+ * Formats a printf-style string and appends it to the object's debug info, creating
+ * a debug entry if necessary. If `obj` or `format` is NULL, or if formatting/allocation
+ * fails, the function returns without modifying state.
+ *
+ * @param obj Object whose debug entry will receive the appended text; must be non-NULL.
+ * @param format printf-style format string describing the text to append, followed by
+ *        matching variadic arguments.
+ */
 void core_debug_addObjectInfo(const t_obj *obj, const char *format, ...)
 {
 	if (!obj || !format) return;

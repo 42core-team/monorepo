@@ -8,7 +8,12 @@ int main(int argc, char **argv)
 }
 
 // NOT SURE HOW TO GET STARTED?
-// --> Check out the wiki coregame.sh/wiki/ with a helpful "My first Core bot" beginners guide!
+/**
+ * Perform per-tick bot actions: print a tick header, spawn a warrior unit,
+ * command each owned unit to pathfind to the opponent core, and emit debug info.
+ *
+ * @param tick Current tick number provided by the game engine.
+ */
 
 void ft_on_tick(unsigned long tick)
 {
