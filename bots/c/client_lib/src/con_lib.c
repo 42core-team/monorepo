@@ -6,12 +6,6 @@
 t_game game = {0};
 t_actions actions = {0};
 
-static bool core_static_isMyCore(const t_obj *obj)
-{
-	if (!obj || obj->type != OBJ_CORE) return false;
-	return (obj->s_core.team_id == game.my_team_id);
-}
-
 static void core_static_awaitEnterPress(void)
 {
 	if (!isatty(STDIN_FILENO)) return;
@@ -45,8 +39,7 @@ int core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 	}
 
 	// Parse team id from args
-	if (!argv[1])
-		return printf("Error: No team id provided.\n"), 1;
+	if (!argv[1]) return printf("Error: No team id provided.\n"), 1;
 	game.my_team_id = atoi(argv[1]);
 
 	// Resolve server address
