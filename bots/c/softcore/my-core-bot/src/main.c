@@ -18,6 +18,10 @@ void ft_on_tick(unsigned long tick)
 
 	t_obj **units = ft_get_units_own();
 	for (int i = 0; units && units[i]; i++)
+	{
 		core_action_pathfind(units[i], ft_get_core_opponent()->pos);
+		core_debug_addObjectInfo(units[i], "I am a warrior! 🗡️ - I am heading for the opponent core at [%d,%d]! 🏰\n",
+								 ft_get_core_opponent()->pos.x, ft_get_core_opponent()->pos.y);
+	}
 	free(units);
 }

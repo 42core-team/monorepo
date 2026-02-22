@@ -31,23 +31,51 @@ static t_debug_entry *core_static_findOrCreateEntry(unsigned long object_id)
 	return entry;
 }
 
-void core_debug_addObjectInfo(const t_obj *obj, const char *info)
+void core_debug_addObjectInfo(const t_obj *obj, const char *format, ...)
 {
-	if (!obj || !info) return;
+	if (!obj || !format) return;
 
 	t_debug_entry *entry = core_static_findOrCreateEntry(obj->id);
+	if (!entry) return;
 
+	// format the new info string
+	va_list ap;
+	va_start(ap, format);
+
+	va_list ap2;
+	va_copy(ap2, ap);
+
+	int needed = vsnprintf(NULL, 0, format, ap);
+	va_end(ap);
+
+	if (needed < 0)
+	{
+		va_end(ap2);
+		return;
+	}
+
+	char *msg = (char *)malloc((size_t)needed + 1);
+	if (!msg)
+	{
+		va_end(ap2);
+		return;
+	}
+
+	vsnprintf(msg, (size_t)needed + 1, format, ap2);
+	va_end(ap2);
+
+	// append to debug info
 	if (entry->info == NULL)
 	{
-		// First info for this object
-		entry->info = strdup(info);
+		entry->info = msg;
 	}
 	else
 	{
 		size_t old_len = strlen(entry->info);
-		size_t new_len = strlen(info);
+		size_t new_len = strlen(msg);
 		entry->info = realloc(entry->info, old_len + new_len + 1);
-		strcat(entry->info, info);
+		strcat(entry->info, msg);
+		free(msg);
 	}
 }
 
