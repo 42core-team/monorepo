@@ -176,13 +176,11 @@ extern "C" int grpc_bridge_connect(const char *host, int port)
 	g_stub = core_game::CoreGameService::NewStub(g_channel);
 
 	// Wait for the channel to be ready, retrying like the old TCP socket loop
-	write(STDOUT_FILENO, "Waiting for server", 18);
 	for (;;)
 	{
 		auto state = g_channel->GetState(true); // true = try to connect
 		if (state == GRPC_CHANNEL_READY) break;
 
-		write(STDOUT_FILENO, ".", 1);
 
 		// Wait up to 2 seconds for a state change, then retry
 		auto deadline = std::chrono::system_clock::now() + std::chrono::seconds(2);
@@ -196,7 +194,6 @@ extern "C" int grpc_bridge_connect(const char *host, int port)
 			return -1;
 		}
 	}
-	write(STDOUT_FILENO, " Connected!\n", 12);
 
 	return 0;
 }
