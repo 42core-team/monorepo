@@ -1,0 +1,54 @@
+# goConn - Game Server Bot Library
+
+## Overview
+
+goConn is a clean, type-safe Go library for building game server bots. It provides a minimal API surface that abstracts away socket communication and protocol handling, allowing you to focus on bot logic.
+
+## Key Features
+
+- **Clean API**: Only expose necessary functions
+- **Type-Safe**: Strong typing for game objects and actions
+- **Action Queuing**: Built-in action queue system
+- **Real-time Updates**: Automatic game state updates
+- **Easy to Use**: Simple initialization and main loop
+
+## Getting Started
+
+### Installation
+
+```bash
+go get github.com/Reptudn/goConn
+```
+
+### Basic Example
+
+```go
+package main
+
+import (
+    "github.com/Reptudn/goConn/bot"
+    "github.com/Reptudn/goConn/shared"
+)
+
+func tick(game *shared.Game) {
+    // Your bot logic here
+}
+
+func main() {
+    b, _ := bot.NewCoreGameBot("MyBot")
+    b.Run(tick)
+}
+```
+
+## Package Documentation
+
+### bot
+Main package for bot control and game logic.
+
+### shared
+Public types and game objects.
+
+### internal
+Internal implementation (not for public use).
+
+
