@@ -1,24 +1,22 @@
-import { ClientLib } from '../../../core/ts/client_lib/client_lib';
-import { UnitType, ObjType, GameState } from '../../../core/ts/client_lib/types';
+import {UnitType, ObjType} from '@core/client-lib/types';
+import {game, startGame, coreCreateUnit, coreActionMove} from '@core/client-lib/client_lib';
 
-const bot = new ClientLib("TS Core Bot", 1);
-
-bot.startGame((game: GameState) => {
+function onTick() {
     // Create a warrior
-    bot.createUnit(UnitType.WARRIOR);
+    coreCreateUnit(UnitType.WARRIOR);
 
-    // Simple bot logic
-    const opponentCore = game.objects.find(obj => 
-        obj.type === ObjType.CORE && obj.s_core.team_id !== game.my_team_id
+    // Hardcore bot logic
+    const opponentCore = game?.objects?.find(obj =>
+        obj.type === ObjType.CORE && obj.s_core.team_id !== game?.my_team_id
     );
 
     if (opponentCore) {
-        game.objects.forEach(obj => {
-            if (obj.type === ObjType.UNIT && obj.s_unit.team_id === game.my_team_id) {
-                bot.move(obj, opponentCore.pos);
+        game?.objects.forEach(obj => {
+            if (obj.type === ObjType.UNIT && obj.s_unit.team_id === game?.my_team_id) {
+                coreActionMove(obj, opponentCore.pos);
             }
         });
     }
-});
+}
 
-bot.connect();
+startGame("Hardcore TS Core Bot", onTick)

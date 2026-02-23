@@ -12,15 +12,10 @@ RUN bun add -g typescript
 
 FROM ${SERVER_IMAGE}:${TAG_NAME} AS game
 
-# Build connection library from monorepo sources
-FROM bun-base AS connection
-WORKDIR /connection
-COPY bots/ts/client_lib/ ./
-
 FROM bun-base AS release
 
 COPY --from=game /core/server /core/server
 COPY --from=game /core/data /core/data
-COPY --from=connection /connection/ /core/ts/client_lib/
+COPY bots/ts/client_lib/ /core/client_lib/
 
 CMD ["tail", "-f", "/dev/null"]

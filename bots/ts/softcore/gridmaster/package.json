@@ -4,9 +4,10 @@
   "description": "Softcore Gridmaster TS bot",
   "main": "index.ts",
   "scripts": {
-    "start": "bun run index.ts"
+    "start": "bun run index.ts",
+    "build": "bun build index.ts --target=bun --outfile dist/index.js"
   },
   "dependencies": {
-    "@core/client-lib": "file:../../../core/ts/client_lib"
+    "@core/client-lib": "file:/core/client_lib/"
   }
 }
