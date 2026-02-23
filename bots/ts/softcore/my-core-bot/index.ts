@@ -2,10 +2,8 @@ import {UnitType, ObjType} from '@core/client-lib/types';
 import {game, startGame, coreCreateUnit, coreActionMove} from '@core/client-lib/client_lib';
 
 function onTick() {
-    // Create a warrior
     coreCreateUnit(UnitType.WARRIOR);
 
-    // Hardcore bot logic
     const opponentCore = game?.objects?.find(obj =>
         obj.type === ObjType.CORE && obj.s_core.team_id !== game?.my_team_id
     );
@@ -19,4 +17,4 @@ function onTick() {
     }
 }
 
-startGame("Hardcore TS Core Bot", onTick)
+startGame("Softcore TS Core Bot", onTick)
