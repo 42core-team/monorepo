@@ -13,7 +13,7 @@ PLAYER1_BOT_NAME = $(notdir $(PLAYER1_BOT))
 PLAYER2_BOT_NAME = $(notdir $(PLAYER2_BOT))
 
 
-run: stop check_update_configs $(PLAYER1_BOT) $(PLAYER2_BOT)
+run: stop check_updates $(PLAYER1_BOT) $(PLAYER2_BOT)
 	@echo ""
 	@echo "$(COLOR_INFO)🎮 Game Visualizer is running at: localhost:4000 $(COLOR_RESET)"
 	@echo ""
