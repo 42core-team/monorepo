@@ -13,7 +13,7 @@ PLAYER1_BOT_NAME = $(notdir $(PLAYER1_BOT))
 PLAYER2_BOT_NAME = $(notdir $(PLAYER2_BOT))
 
 
-run: stop check_update_configs $(PLAYER1_BOT) $(PLAYER2_BOT)
+run: stop $(PLAYER1_BOT) $(PLAYER2_BOT)
 	@echo ""
 	@echo "$(COLOR_INFO)🎮 Game Visualizer is running at: localhost:4000 $(COLOR_RESET)"
 	@echo ""
@@ -31,15 +31,16 @@ check_updates:
 	./scripts/check_image_updates.sh
 
 $(PLAYER1_BOT):
-	ifeq ($(PLAYER1_DIR),.)
-		$(error PLAYER1_BOT must include a directory, e.g. my-core-bot/bot)
-	endif
+#	ifeq ($(PLAYER1_DIR),.)
+#		$(error PLAYER1_BOT must include a directory, e.g. my-core-bot/bot)
+#	endif
 	$(MAKE) -C $(PLAYER1_DIR)
 
+ifeq ($(PLAYER2_DIR),.)
+$(error PLAYER2_BOT must include a directory, e.g. gridmaster/gridmaster)
+endif
+
 $(PLAYER2_BOT):
-	ifeq ($(PLAYER2_DIR),.)
-		$(error PLAYER2_BOT must include a directory, e.g. gridmaster/gridmaster)
-	endif
 	$(MAKE) -C $(PLAYER2_DIR)
 
 

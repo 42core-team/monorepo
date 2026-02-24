@@ -1,4 +1,4 @@
-package goConn
+package COREGAME
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ import (
 
 // CoreGameBot represents a game bot instance that connects to the game server.
 // It provides a clean API for controlling units and interacting with the game.
-type CoreGameBot struct {
+type Bot struct {
 	conn     *internal.Connection
 	teamName string
 	teamId   uint
@@ -40,7 +40,7 @@ type CoreGameBot struct {
 //	if err != nil {
 //	    panic(err)
 //	}
-func NewCoreGameBot(teamName string) (*CoreGameBot, error) {
+func NewCoreGameBot(teamName string) (*Bot, error) {
 
 	envIp, exists := os.LookupEnv("SERVER_IP")
 	if !exists {
@@ -53,6 +53,8 @@ func NewCoreGameBot(teamName string) (*CoreGameBot, error) {
 		fmt.Println("Environment variable SERVER_PORT not set")
 		envPort = "4444"
 	}
+
+	fmt.Printf("Connecting to server at %s:%s\n", envIp, envPort)
 
 	if len(os.Args) < 2 {
 		return nil, fmt.Errorf("team id not provided as first argument")
@@ -74,20 +76,20 @@ func NewCoreGameBot(teamName string) (*CoreGameBot, error) {
 		return nil, fmt.Errorf("could not create bot: %w", err)
 	}
 
-	return &CoreGameBot{conn: conn, teamName: teamName, teamId: uint(teamId)}, nil
+	return &Bot{conn: conn, teamName: teamName, teamId: uint(teamId)}, nil
 }
 
-func (bot *CoreGameBot) GetGame() *shared.Game {
+func (bot *Bot) GetGame() *shared.Game {
 	return bot.conn.GetGame()
 }
 
-func (bot *CoreGameBot) CreateUnit(unitType shared.UnitType) error {
+func (bot *Bot) CreateUnit(unitType shared.UnitType) error {
 	// TODO: check if spawning is possible
 	bot.conn.GetActionQueue().Add(actions.NewActionCreate(unitType))
 	return nil
 }
 
-func (bot *CoreGameBot) Move(object *shared.Object, pos shared.Position) error {
+func (bot *Bot) Move(object *shared.Object, pos shared.Position) error {
 	if !object.IsReadyForAction() {
 		return fmt.Errorf("unit %d is on cooldown for %d more ticks", object.Id, object.ObjectData.(shared.UnitData).ActionCooldown)
 	}
@@ -95,11 +97,11 @@ func (bot *CoreGameBot) Move(object *shared.Object, pos shared.Position) error {
 	return nil
 }
 
-func (bot *CoreGameBot) SimplePathfind(object *shared.Object, pos shared.Position) {
+func (bot *Bot) SimplePathfind(object *shared.Object, pos shared.Position) {
 	panic("unimplemented")
 }
 
-func (bot *CoreGameBot) Attack(object *shared.Object, target *shared.Object) error {
+func (bot *Bot) Attack(object *shared.Object, target *shared.Object) error {
 	if !object.IsReadyForAction() {
 		return fmt.Errorf("unit %d is on cooldown for %d more ticks", object.Id, object.ObjectData.(shared.UnitData).ActionCooldown)
 	}
@@ -107,7 +109,7 @@ func (bot *CoreGameBot) Attack(object *shared.Object, target *shared.Object) err
 	return nil
 }
 
-func (bot *CoreGameBot) TransferGems(source *shared.Object, targetPos shared.Position, amount uint) error {
+func (bot *Bot) TransferGems(source *shared.Object, targetPos shared.Position, amount uint) error {
 	if !source.IsReadyForAction() {
 		return fmt.Errorf("unit %d is on cooldown for %d more ticks", source.Id, source.ObjectData.(shared.UnitData).ActionCooldown)
 	}
@@ -116,7 +118,7 @@ func (bot *CoreGameBot) TransferGems(source *shared.Object, targetPos shared.Pos
 	return nil
 }
 
-func (bot *CoreGameBot) Build(builder *shared.Object, pos shared.Position) error {
+func (bot *Bot) Build(builder *shared.Object, pos shared.Position) error {
 	if !builder.IsReadyForAction() {
 		return fmt.Errorf("unit %d is on cooldown for %d more ticks", builder.Id, builder.ObjectData.(shared.UnitData).ActionCooldown)
 	}
@@ -124,7 +126,7 @@ func (bot *CoreGameBot) Build(builder *shared.Object, pos shared.Position) error
 	return nil
 }
 
-func (bot *CoreGameBot) Run(callback func(game *shared.Game)) error {
+func (bot *Bot) Run(callback func(game *shared.Game)) error {
 	bot.conn.SetTickCallback(callback)
 	if err := bot.conn.Start(bot.teamId, bot.teamName); err != nil {
 		return err

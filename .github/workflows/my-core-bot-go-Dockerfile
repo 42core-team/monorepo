@@ -12,8 +12,15 @@ RUN apt update && \
 
 COPY --from=game /core/server /core/server
 COPY --from=game /core/data /core/data
+COPY bots/go/client_lib/ /core/client_lib/
+COPY bots/go/template/my-core-bot/src/ /core/my-core-bot/
 
 RUN curl -o /root/.zshrc https://raw.githubusercontent.com/42core-team/.shellrc/refs/heads/main/.zshrc
+
+WORKDIR /core/my-core-bot
+RUN go work init . && \
+    go work use /core/client_lib && \
+    go work edit -replace github.com/42core-team/go-client-lib=/core/client_lib
 
 SHELL ["/bin/zsh", "-c"]
 ENV SHELL=/bin/zsh

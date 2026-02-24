@@ -1,0 +1,6 @@
+go 1.26
+
+use (
+	template/gridmaster/src
+	client_lib
+)

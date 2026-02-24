@@ -9,7 +9,7 @@ import (
 
 const teamName = "GoConnBotExample"
 
-var coreBot *goconn.CoreGameBot
+var coreBot *goconn.Bot
 
 func tick(game *shared.Game) {
 	game.Log("Tick %d", game.ElapsedTicks)

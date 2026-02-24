@@ -2,17 +2,15 @@ SRCDIR = src
 OBJDIR = build
 EXEC = bot
 
-all: $(EXEC)
-
 build:
 	cd $(SRCDIR) && go build -o ../$(EXEC) main.go
 
-run: all
+run: build
 	./$(EXEC)
 
 fclean:
 	rm -rf $(EXEC)
 
-re: fclean all
+re: fclean build
 
 .PHONY: all run fclean re $(EXEC)
