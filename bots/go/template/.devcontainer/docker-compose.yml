@@ -4,6 +4,7 @@ services:
     pull_policy: never
     volumes:
       - ..:/workspace
+      - ../../client_lib:/workspace/client_lib
       - replays:/workspace/replays
     working_dir: /workspace/my-core-bot/src
     entrypoint: /bin/zsh

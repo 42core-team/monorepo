@@ -24,7 +24,7 @@ COPY bots/go/template/my-core-bot/src/ /core/my-core-bot/
 RUN curl -o /root/.zshrc https://raw.githubusercontent.com/42core-team/.shellrc/refs/heads/main/.zshrc
 
 WORKDIR /core/my-core-bot
-RUN printf 'go 1.26.0\n\nuse (\n\t.\n\t/core/client_lib\n)\n' > go.work
+RUN go mod edit -replace github.com/42core-team/go-client-lib=/core/client_lib
 
 SHELL ["/bin/zsh", "-c"]
 ENV SHELL=/bin/zsh

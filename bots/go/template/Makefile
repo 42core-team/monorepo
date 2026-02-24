@@ -14,9 +14,6 @@ PLAYER2_BOT_NAME = $(notdir $(PLAYER2_BOT))
 
 
 run: stop $(PLAYER1_BOT) $(PLAYER2_BOT)
-	@echo ""
-	@echo "$(COLOR_INFO)🎮 Game Visualizer is running at: localhost:4000 $(COLOR_RESET)"
-	@echo ""
 	$(CORE_DIR)/server /workspace/configs/server.config.json /workspace/configs/game.config.json $(CORE_DIR)/data $(PLAYER1_ID) $(PLAYER2_ID) > /dev/null &
 	./$(PLAYER1_BOT) $(PLAYER1_ID) > /dev/null &
 	./$(PLAYER2_BOT) $(PLAYER2_ID)

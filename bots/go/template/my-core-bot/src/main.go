@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/42core-team/go-client-lib"
+	"github.com/42core-team/go-client-lib/COREGAME"
 	"github.com/42core-team/go-client-lib/shared"
 )
 

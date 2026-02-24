@@ -33,7 +33,7 @@
 
 	// Uncomment the next line to run commands after the container is created.
 	// "postCreateCommand": "cat /etc/os-release",
-	"postCreateCommand": "apt-get update && apt-get install -y curl && printf 'go 1.26.0\n\nuse (\n\t.\n\t/core/client_lib\n)\n' > /workspace/my-core-bot/src/go.work",
+	"postCreateCommand": "cd /workspace/my-core-bot/src && go mod edit -replace github.com/42core-team/go-client-lib=/workspace/client_lib",
 
 	// Configure tool-specific properties.
 	"customizations": {
