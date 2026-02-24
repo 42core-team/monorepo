@@ -1,5 +1,7 @@
 package shared
 
+import "fmt"
+
 type Position struct {
 	X uint `json:"x"`
 	Y uint `json:"y"`
@@ -34,10 +36,18 @@ type DepositData struct {
 	Gems uint `json:"gems"`
 }
 
+func (d DepositData) String() string {
+	return fmt.Sprintf("DepositData{Gems: %d}", d.Gems)
+}
+
 func (DepositData) isObjectData() {}
 
 type BombData struct {
 	Countdown uint
+}
+
+func (d BombData) String() string {
+	return fmt.Sprintf("BombData{Countdown: %d}", d.Countdown)
 }
 
 func (BombData) isObjectData() {}

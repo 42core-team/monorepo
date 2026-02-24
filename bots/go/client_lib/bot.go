@@ -54,8 +54,6 @@ func NewCoreGameBot(teamName string) (*Bot, error) {
 		envPort = "4444"
 	}
 
-	fmt.Printf("Connecting to server at %s:%s\n", envIp, envPort)
-
 	if len(os.Args) < 2 {
 		return nil, fmt.Errorf("team id not provided as first argument")
 	}
@@ -71,6 +69,7 @@ func NewCoreGameBot(teamName string) (*Bot, error) {
 
 	serverAddr := fmt.Sprintf("%s:%s", envIp, envPort)
 
+	fmt.Printf("Connecting to server at %s...\n", serverAddr)
 	conn, err := internal.NewConnection(serverAddr, uint(teamId))
 	if err != nil {
 		return nil, fmt.Errorf("could not create bot: %w", err)

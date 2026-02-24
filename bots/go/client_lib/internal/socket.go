@@ -117,9 +117,11 @@ func (connection *Connection) handleReceive(buffer []byte) error {
 	queue := connection.GetActionQueue()
 	plannedActions := queue.GetAll()
 	// send all the actions to the server
-	if err := connection.SendActions(plannedActions); err != nil {
-		return fmt.Errorf("error sending actions to server: %v", err)
-	}
+	go func() {
+		if err := connection.SendActions(plannedActions); err != nil {
+			fmt.Printf("error sending actions to server: %v", err)
+		}
+	}()
 
 	if connection.onTickCallback != nil {
 		connection.onTickCallback(connection.Game)

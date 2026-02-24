@@ -1,11 +1,16 @@
 services:
   my-core-bot:
-    image: ghcr.io/42core-team/my-core-bot-go:dev
-    platform: linux/amd64
+    image: my-core-bot-go:latest
+    pull_policy: never
     volumes:
       - ..:/workspace
       - replays:/workspace/replays
+    working_dir: /workspace/my-core-bot/src
+    entrypoint: /bin/zsh
     stdin_open: true
+    tty: true
+    environment:
+      - GOWORK=/workspace/my-core-bot/src/go.work
 
   visualizer:
     image: ghcr.io/42core-team/visualizer:dev

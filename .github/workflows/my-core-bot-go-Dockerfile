@@ -3,12 +3,18 @@ ARG SERVER_IMAGE="ghcr.io/42core-team/server"
 
 FROM ${SERVER_IMAGE}:${TAG_NAME} AS game
 
-FROM golang:bookworm as release
+FROM ubuntu:noble AS release
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt update && \
-    apt install -y zsh && \
+    apt install -y zsh git build-essential libcurl4 yq curl && \
     rm -rf /var/lib/apt/lists/*
+
+ARG GO_VERSION=1.26.0
+RUN ARCH=$(dpkg --print-architecture) && \
+    curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-${ARCH}.tar.gz" | tar -C /usr/local -xz
+ENV PATH="/usr/local/go/bin:${PATH}"
+ENV GOPATH="/root/go"
 
 COPY --from=game /core/server /core/server
 COPY --from=game /core/data /core/data
@@ -18,9 +24,7 @@ COPY bots/go/template/my-core-bot/src/ /core/my-core-bot/
 RUN curl -o /root/.zshrc https://raw.githubusercontent.com/42core-team/.shellrc/refs/heads/main/.zshrc
 
 WORKDIR /core/my-core-bot
-RUN go work init . && \
-    go work use /core/client_lib && \
-    go work edit -replace github.com/42core-team/go-client-lib=/core/client_lib
+RUN printf 'go 1.26.0\n\nuse (\n\t.\n\t/core/client_lib\n)\n' > go.work
 
 SHELL ["/bin/zsh", "-c"]
 ENV SHELL=/bin/zsh
