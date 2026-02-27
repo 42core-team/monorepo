@@ -10,8 +10,6 @@ services:
     entrypoint: /bin/zsh
     stdin_open: true
     tty: true
-    environment:
-      - GOWORK=/workspace/my-core-bot/src/go.work
 
   visualizer:
     image: ghcr.io/42core-team/visualizer:dev

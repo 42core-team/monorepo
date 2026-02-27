@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 
-	COREGAME "github.com/42core-team/go-client-lib"
+	goconn "github.com/42core-team/go-client-lib"
 	"github.com/42core-team/go-client-lib/shared"
 )
 
-const teamName = "GoBotExample"
+const teamName = "GoConnBotExample"
 
-var coreBot *COREGAME.Bot
+var coreBot *goconn.Bot
 
 func tick(game *shared.Game) {
 	game.Log("Tick %d", game.ElapsedTicks)
@@ -25,7 +25,7 @@ func tick(game *shared.Game) {
 }
 
 func main() {
-	cgb, err := COREGAME.NewCoreGameBot(teamName)
+	cgb, err := goconn.NewCoreGameBot(teamName)
 	if err != nil {
 		fmt.Printf("Error creating bot: %v\n", err)
 		return

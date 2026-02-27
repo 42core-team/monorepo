@@ -39,7 +39,8 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"ms-vscode.cpptools"
+				"ms-vscode.cpptools",
+				"golang.go"
 			],
 			"settings": {
 				"remote.autoForwardPorts": false,

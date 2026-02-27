@@ -18,13 +18,9 @@ ENV GOPATH="/root/go"
 
 COPY --from=game /core/server /core/server
 COPY --from=game /core/data /core/data
-COPY bots/go/client_lib/ /core/client_lib/
-COPY bots/go/template/my-core-bot/src/ /core/my-core-bot/
+COPY bots/go/client_lib/ ./
 
 RUN curl -o /root/.zshrc https://raw.githubusercontent.com/42core-team/.shellrc/refs/heads/main/.zshrc
-
-WORKDIR /core/my-core-bot
-RUN go mod edit -replace github.com/42core-team/go-client-lib=/core/client_lib
 
 SHELL ["/bin/zsh", "-c"]
 ENV SHELL=/bin/zsh
