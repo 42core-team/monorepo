@@ -22,6 +22,7 @@ func tick(game *shared.Game) {
 		game.Log("Unit %d at position (%d, %d)", obj.Id, obj.Pos.X, obj.Pos.Y)
 		_ = coreBot.Move(obj, shared.NewPosition(obj.Pos.X+1, obj.Pos.Y))
 	}
+	coreBot.
 }
 
 func main() {

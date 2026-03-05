@@ -1,0 +1,12 @@
+{
+  "name": "softcore-gridmaster",
+  "version": "1.0.0",
+  "description": "Softcore Gridmaster TS bot",
+  "main": "index.ts",
+  "scripts": {
+    "start": "bun run index.ts"
+  },
+  "dependencies": {
+    "@core/client-lib": "file:../../../core/ts/client_lib"
+  }
+}

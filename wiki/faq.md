@@ -43,4 +43,8 @@ sidebarTitle: "FaQ"
 
 > (Please tell us and open a [GitHub issue](https://github.com/42core-team/monorepo/issues).)
 
-Other questions? Let us know and this section will get longer!
+### 💎 How do I pick up gem piles? How do I mine gem deposits?
+
+> You can do both of those things via the [attack action](reference/actions/core_action_attack). Just stand next to the object with a unit that can attack that object type.
+
+Other questions? There is an "faq" channel in the CORE global discord for all your questions.

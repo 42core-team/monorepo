@@ -3,8 +3,8 @@ CORE_DIR = /core
 PLAYER1_ID := 42
 PLAYER2_ID := 43
 
-PLAYER1_BOT := my-core-bot/bot
-PLAYER2_BOT := gridmaster/gridmaster
+PLAYER1_BOT := my-core-bot/index.ts
+PLAYER2_BOT := gridmaster/index.ts
 
 PLAYER1_DIR = $(patsubst %/,%,$(dir $(PLAYER1_BOT)))
 PLAYER2_DIR = $(patsubst %/,%,$(dir $(PLAYER2_BOT)))
@@ -13,13 +13,13 @@ PLAYER1_BOT_NAME = $(notdir $(PLAYER1_BOT))
 PLAYER2_BOT_NAME = $(notdir $(PLAYER2_BOT))
 
 
-run: stop check_updates $(PLAYER1_BOT) $(PLAYER2_BOT)
+run: stop check_update_configs
 	@echo ""
 	@echo "$(COLOR_INFO)🎮 Game Visualizer is running at: localhost:4000 $(COLOR_RESET)"
 	@echo ""
 	$(CORE_DIR)/server /workspace/configs/server.config.json /workspace/configs/game.config.json $(CORE_DIR)/data $(PLAYER1_ID) $(PLAYER2_ID) > /dev/null &
-	./$(PLAYER1_BOT) $(PLAYER1_ID) > /dev/null &
-	./$(PLAYER2_BOT) $(PLAYER2_ID)
+	bun run $(PLAYER1_BOT) $(PLAYER1_ID) > /dev/null &
+	bun run $(PLAYER2_BOT) $(PLAYER2_ID)
 	@echo ""
 	@echo "$(COLOR_INFO)🎮 Game Visualizer is running at: localhost:4000 $(COLOR_RESET)"
 	@echo ""
@@ -31,32 +31,21 @@ check_updates:
 	./scripts/check_image_updates.sh
 
 $(PLAYER1_BOT):
-	ifeq ($(PLAYER1_DIR),.)
-		$(error PLAYER1_BOT must include a directory, e.g. my-core-bot/bot)
-	endif
-	$(MAKE) -C $(PLAYER1_DIR)
+	@echo "No build needed for TypeScript"
 
 $(PLAYER2_BOT):
-	ifeq ($(PLAYER2_DIR),.)
-		$(error PLAYER2_BOT must include a directory, e.g. gridmaster/gridmaster)
-	endif
-	$(MAKE) -C $(PLAYER2_DIR)
+	@echo "No build needed for TypeScript"
 
 
 clean: stop
-	$(MAKE) -C $(PLAYER2_DIR) clean
-	$(MAKE) -C $(PLAYER1_DIR) clean
 
 fclean: clean
-	$(MAKE) -C $(PLAYER2_DIR) fclean
-	$(MAKE) -C $(PLAYER1_DIR) fclean
 
 re: fclean run
 
 stop:
 	@pkill server > /dev/null || true &
-	@pkill $(PLAYER1_BOT_NAME) > /dev/null || true &
-	@pkill $(PLAYER2_BOT_NAME) > /dev/null || true
+	@pkill bun > /dev/null || true
 
 update: stop-devcontainer remove-devcontainer
 	@docker compose --project-directory=./.devcontainer pull
