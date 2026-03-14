@@ -78,14 +78,6 @@ function deepClone<T>(obj: T): T {
 	return JSON.parse(JSON.stringify(obj));
 }
 
-function forceHttps(url: string): string {
-	const u = new URL(url, location.href);
-	if (location.protocol === "https:" && u.protocol !== "https:") {
-		u.protocol = "https:";
-	}
-	return u.toString();
-}
-
 function isDynamicSpeedEnabled(): boolean {
 	const p = new URLSearchParams(window.location.search);
 	return (
@@ -121,7 +113,7 @@ class ReplayLoader {
 	public async loadReplay(filePath: string): Promise<void> {
 		let fileData: string | null = replayDataOverride;
 		if (!fileData) {
-			await fetch(forceHttps(filePath), { cache: "no-cache" })
+			await fetch(filePath, { cache: "no-cache" })
 				.then((response) => {
 					if (!response.ok) {
 						throw new Error(
@@ -330,7 +322,7 @@ export async function setupReplayLoader(
 	// grab initial ETag
 	lastEtag = null;
 	try {
-		const headRes = await fetch(forceHttps(filePath), {
+		const headRes = await fetch(filePath, {
 			method: "HEAD",
 			cache: "no-cache",
 		});
@@ -354,7 +346,7 @@ export async function setupReplayLoader(
 	replayInterval = setInterval(async () => {
 		if (!currentFilePath) return;
 		try {
-			const head = await fetch(forceHttps(currentFilePath), {
+			const head = await fetch(currentFilePath, {
 				method: "HEAD",
 				cache: "no-cache",
 			});
