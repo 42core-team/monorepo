@@ -5,7 +5,10 @@ FROM oven/bun:debian AS bun-base
 WORKDIR /app
 
 RUN apt-get update && \
-    apt-get install -y make && \
+    apt-get install -y make curl && \
+    ARCH=$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/') && \
+    curl -fsSL "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${ARCH}" -o /usr/local/bin/yq && \
+    chmod +x /usr/local/bin/yq && \
     rm -rf /var/lib/apt/lists/*
 
 RUN bun add -g typescript
