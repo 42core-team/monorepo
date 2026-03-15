@@ -2,7 +2,8 @@ import * as net from 'node:net';
 import type {GameState, Action, Obj, Pos} from './types';
 import {ActionType, UnitType, ObjType, ObjState} from './types';
 
-export let game: GameState | null = null;
+let game: GameState | null = null;
+let isGameInitialized: boolean = false;
 
 // Internal module state replacing the class fields
 let socket: net.Socket | null = null;
@@ -15,6 +16,12 @@ let teamId: number = process.argv.length >= 3 ? Number(process.argv[2]) : 0;
 let teamNameInternal = '';
 let debug = false;
 let tickCallback: (() => void) | null = null;
+
+export function getGame(): GameState {
+    if (!isGameInitialized || !game)
+        throw new Error('Game is not initialized. Call initGame() before accessing game state.');
+    return game;
+}
 
 function validateTeamId(): void {
     if (Number.isNaN(teamId)) {
@@ -94,6 +101,7 @@ function handleLine(line: string): void {
                 my_team_id: teamId,
                 objects: []
             };
+            isGameInitialized = true;
             if (debug) console.log('Config received');
             // Send first packet of actions right after receiving config to start game loop
             sendActions();
@@ -125,7 +133,8 @@ function handleLine(line: string): void {
 }
 
 function updateGameState(parsed: any): void {
-    if (!game || !parsed) return;
+    if (!parsed) return;
+    const game = getGame();
     if (parsed.tick !== undefined) {
         game.elapsed_ticks = parsed.tick;
     }
@@ -144,7 +153,7 @@ function printServerErrors(errors: any[]): void {
 }
 
 function decrementCooldowns(): void {
-    if (!game) return;
+    const game = getGame();
     for (const obj of game.objects) {
         if (obj.type === ObjType.UNIT) {
             if (obj.s_unit.action_cooldown > 0) obj.s_unit.action_cooldown--;
@@ -155,11 +164,10 @@ function decrementCooldowns(): void {
 }
 
 function applyDiff(diff: any): void {
-    if (!game) return;
-
     const id = diff.id;
     if (id === undefined) return;
 
+    const game = getGame();
     if (diff.state === 'dead') {
         game.objects = game.objects.filter(o => o.id !== id);
         return;
@@ -171,7 +179,7 @@ function applyDiff(diff: any): void {
 }
 
 function findOrInitializeObject(id: number): Obj {
-    let obj = game!.objects.find(o => o.id === id);
+    let obj = getGame().objects.find(o => o.id === id);
     if (!obj) {
         obj = {
             id,
@@ -182,7 +190,7 @@ function findOrInitializeObject(id: number): Obj {
             s_deposit_gems_pile: {gems: 0},
             s_bomb: {countdown: 0}
         } as Obj;
-        game!.objects.push(obj);
+        getGame().objects.push(obj);
     }
     return obj;
 }
@@ -257,6 +265,76 @@ export function coreActionTransferGems(source: Obj, targetPos: Pos, amount: numb
         y: targetPos.y,
         amount: amount
     });
+}
+
+export function coreGetObjFromPos(pos: Pos): Obj | null {
+    return getGame().objects.find(o => o.pos.x === pos.x && o.pos.y === pos.y) || null;
+}
+
+export function coreInternalIsPosValid(pos: Pos): boolean {
+    const game = getGame();
+    return pos.x >= 0 && pos.y >= 0 && pos.x < game.config.gridSize && pos.y < game.config.gridSize;
+}
+
+function coreStaticIsFriendlyObj(o: Obj | null): boolean {
+    if (!o) return false;
+    const game = getGame();
+    if (o.type === ObjType.UNIT) return o.s_unit.team_id === game.my_team_id;
+    if (o.type === ObjType.CORE) return o.s_core.team_id === game.my_team_id;
+    return false;
+}
+
+export function coreActionPathfind(unit: Obj, pos: Pos): void {
+    if (!unit || unit.type !== ObjType.UNIT) return;
+    if (unit.pos.x === pos.x && unit.pos.y === pos.y) return;
+    if (unit.s_unit.action_cooldown !== 0) return;
+
+    const posOptionY = (pos.y === unit.pos.y)
+        ? unit.pos
+        : {x: unit.pos.x, y: unit.pos.y + (pos.y > unit.pos.y ? 1 : -1)} as Pos;
+    const posOptionX = (pos.x === unit.pos.x)
+        ? unit.pos
+        : {x: unit.pos.x + (pos.x > unit.pos.x ? 1 : -1), y: unit.pos.y} as Pos;
+
+    let posOptionXPriority = 0;
+    let posOptionYPriority = 0;
+
+    // 1. + 2. check: out-of-bounds & one axis done
+    if (!coreInternalIsPosValid(posOptionY) || posOptionY.y === unit.pos.y) posOptionYPriority += 500;
+    if (!coreInternalIsPosValid(posOptionX) || posOptionX.x === unit.pos.x) posOptionXPriority += 500;
+
+    // 2. check: prioritize larger axis
+    if (Math.abs(unit.pos.x - pos.x) > Math.abs(unit.pos.y - pos.y))
+        posOptionYPriority++;
+    else
+        posOptionXPriority++;
+
+    // 3. check: pos emptiness
+    const posOptionXObj = coreGetObjFromPos(posOptionX);
+    const posOptionYObj = coreGetObjFromPos(posOptionY);
+
+    if (posOptionXObj) posOptionXPriority += 50;
+    if (posOptionYObj) posOptionYPriority += 50;
+
+    // 4. check: obj friendliness check
+    if (coreStaticIsFriendlyObj(posOptionXObj)) posOptionXPriority += 100;
+    if (coreStaticIsFriendlyObj(posOptionYObj)) posOptionYPriority += 100;
+
+    // -----
+
+    if (posOptionXPriority < 250 && posOptionXPriority < posOptionYPriority) {
+        if (posOptionXObj && !coreStaticIsFriendlyObj(posOptionXObj))
+            coreActionAttack(unit, posOptionXObj);
+        else if (!posOptionXObj)
+            coreActionMove(unit, posOptionX);
+        return;
+    }
+    if (posOptionYPriority < 250) {
+        if (posOptionYObj && !coreStaticIsFriendlyObj(posOptionYObj))
+            coreActionAttack(unit, posOptionYObj);
+        else if (!posOptionYObj)
+            coreActionMove(unit, posOptionY);
+    }
 }
 
 export function coreActionBuild(builder: Obj, pos: Pos): void {
