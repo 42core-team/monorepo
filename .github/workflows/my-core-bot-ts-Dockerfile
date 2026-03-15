@@ -17,5 +17,3 @@ FROM bun-base AS release
 COPY --from=game /core/server /core/server
 COPY --from=game /core/data /core/data
 COPY bots/ts/client_lib/ /core/client_lib/
-
-CMD ["tail", "-f", "/dev/null"]
