@@ -111,7 +111,11 @@ function handleLine(line: string): void {
 
         // After state update, we should have a tick
         if (tickCallback)
-            tickCallback();
+            try {
+                tickCallback();
+            } catch (e) {
+                console.error('Error executing tick callback:', e);
+            }
 
         // ALWAYS send actions back to the server to prevent timeouts
         sendActions();
