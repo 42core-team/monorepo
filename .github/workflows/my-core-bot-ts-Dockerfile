@@ -1,7 +1,7 @@
 ARG TAG_NAME="dev"
 ARG SERVER_IMAGE="ghcr.io/42core-team/server"
 
-FROM oven/bun:latest AS bun-base
+FROM oven/bun:debian AS bun-base
 WORKDIR /app
 
 RUN apt-get update && \
