@@ -5,7 +5,7 @@ FROM oven/bun:debian AS bun-base
 WORKDIR /app
 
 RUN apt-get update && \
-    apt-get install -y make npm && \
+    apt-get install -y make && \
     rm -rf /var/lib/apt/lists/*
 
 RUN bun add -g typescript
