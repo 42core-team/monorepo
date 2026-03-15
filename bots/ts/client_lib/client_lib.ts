@@ -249,6 +249,35 @@ export function coreActionMove(unit: Obj, pos: Pos): void {
     });
 }
 
+export function coreGetObjsFilter(condition: (o: Obj) => boolean): Obj[] {
+    return getGame().objects.filter(condition);
+}
+
+export function coreInternalDistance(pos1: Pos, pos2: Pos): number {
+    return Math.abs(pos1.x - pos2.x) + Math.abs(pos1.y - pos2.y);
+}
+
+export function coreGetObjFilterNearest(pos: Pos, condition: (o: Obj) => boolean): Obj | null {
+    const objects = coreGetObjsFilter(condition);
+    if (objects.length === 0) return null;
+
+    let nearest: Obj | null = null;
+    let minDistance = Infinity;
+
+    for (const obj of objects) {
+        const distance = coreInternalDistance(pos, obj.pos);
+        if (distance < minDistance) {
+            minDistance = distance;
+            nearest = obj;
+        }
+    }
+    return nearest;
+}
+
+export function coreGetObjsFilterCount(condition: (o: Obj) => boolean): number {
+    return coreGetObjsFilter(condition).length;
+}
+
 export function coreActionAttack(attacker: Obj, target: Obj): void {
     actions.push({
         type: ActionType.ATTACK,
