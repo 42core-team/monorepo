@@ -92,5 +92,5 @@ func (game *Game) GetUnitConfigByType(unitType UnitType) *UnitConfig {
 }
 
 func (game *Game) Log(format string, args ...interface{}) {
-	fmt.Printf(format+"\n", args...)
+	fmt.Printf(format, args...)
 }

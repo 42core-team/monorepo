@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"net"
@@ -13,6 +14,7 @@ import (
 
 type Connection struct {
 	socket         *net.Conn
+	reader         *bufio.Reader
 	Game           *shared.Game
 	onTickCallback func(*shared.Game)
 	actionQueue    *actions.ActionQueue
@@ -34,6 +36,7 @@ func NewConnection(serverAddr string, selfTeamId uint) (*Connection, error) {
 
 	return &Connection{
 		socket:         &conn,
+		reader:         bufio.NewReader(conn),
 		Game:           &shared.Game{MyTeamId: selfTeamId},
 		onTickCallback: nil,
 		actionQueue:    actions.NewActionQueue(100),
@@ -53,10 +56,7 @@ func (connection *Connection) Start(teamId uint, teamName string) error {
 
 	buffer := make([]byte, BufferSize)
 	for {
-		n, err := (*connection.socket).Read(buffer)
-		if n == 0 {
-			return fmt.Errorf("recv no message from socket")
-		}
+		n, err := connection.reader.Read(buffer)
 		if err != nil {
 			panic(err)
 		}
@@ -89,8 +89,6 @@ func (connection *Connection) Send(buffer []byte) error {
 	if _, err := (*connection.socket).Write(buffer); err != nil {
 		return fmt.Errorf("error sending data to server: %v", err)
 	}
-	// TODO: find a nicer solution than this maybe?
-	fmt.Fprint(*connection.socket, "\n")
 	return nil
 }
 
