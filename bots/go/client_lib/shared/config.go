@@ -1,6 +1,10 @@
 package shared
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+	"strings"
+)
 
 type BuildType int
 
@@ -10,41 +14,59 @@ const (
 	BuildTypeBomb
 )
 
+func (b *BuildType) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return json.Unmarshal(data, (*int)(b))
+	}
+	switch strings.ToLower(s) {
+	case "none":
+		*b = BuildTypeNone
+	case "wall":
+		*b = BuildTypeWall
+	case "bomb":
+		*b = BuildTypeBomb
+	default:
+		*b = BuildTypeNone
+	}
+	return nil
+}
+
 type UnitConfig struct {
-	Name                   string
-	UnitType               UnitType
-	Cost                   uint
-	Hp                     uint
-	BaseActionCooldown     uint
-	MaxActionCooldown      uint
-	BalancePerCooldownStep uint
-	DamageCore             uint
-	DamageUnit             uint
-	DamageDeposit          uint
-	DamageWall             uint
-	DamageBomb             uint
-	BuildType              BuildType
+	Name                   string   `json:"name"`
+	UnitType               UnitType `json:"unitType"`
+	Cost                   uint     `json:"cost"`
+	Hp                     uint     `json:"hp"`
+	BaseActionCooldown     uint     `json:"baseActionCooldown"`
+	MaxActionCooldown      uint     `json:"maxActionCooldown"`
+	BalancePerCooldownStep uint     `json:"balancePerCooldownStep"`
+	DamageCore             uint     `json:"damageCore"`
+	DamageUnit             uint     `json:"damageUnit"`
+	DamageDeposit          uint     `json:"damageDeposit"`
+	DamageWall             uint     `json:"damageWall"`
+	DamageBomb             uint     `json:"damageBomb"`
+	BuildType              BuildType `json:"buildType"`
 }
 
 type Config struct {
-	GridSize          uint
-	IdleIncome        uint
-	IdleIncomeTimeout uint
-	DepositHp         uint
-	DepositIncome     uint
-	GemPileIncome     uint
-	CoreHp            uint
-	CoreSpawnCooldown uint
-	InitialBalance    uint
-	WallHp            uint
-	WallBuildCost     uint
-	BombCountdown     uint
-	BombThrowCost     uint
-	BombReach         uint
-	BombDamageCore    uint
-	BombDamageUnit    uint
-	BombDamageDeposit uint
-	Units             []UnitConfig
+	GridSize          uint         `json:"gridSize"`
+	IdleIncome        uint         `json:"idleIncome"`
+	IdleIncomeTimeout uint         `json:"idleIncomeTimeOut"`
+	DepositHp         uint         `json:"depositHp"`
+	DepositIncome     uint         `json:"depositIncome"`
+	GemPileIncome     uint         `json:"gemPileIncome"`
+	CoreHp            uint         `json:"coreHp"`
+	CoreSpawnCooldown uint         `json:"coreSpawnCooldown"`
+	InitialBalance    uint         `json:"initialBalance"`
+	WallHp            uint         `json:"wallHp"`
+	WallBuildCost     uint         `json:"wallBuildCost"`
+	BombCountdown     uint         `json:"bombCountdown"`
+	BombThrowCost     uint         `json:"bombThrowCost"`
+	BombReach         uint         `json:"bombReach"`
+	BombDamageCore    uint         `json:"bombDamageCore"`
+	BombDamageUnit    uint         `json:"bombDamageUnit"`
+	BombDamageDeposit uint         `json:"bombDamageDeposit"`
+	Units             []UnitConfig `json:"units"`
 }
 
 type Game struct {
