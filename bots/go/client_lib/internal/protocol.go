@@ -30,6 +30,7 @@ type incomingAction struct {
 type GameTick struct {
 	Objects []incomingObject `json:"objects"`
 	Actions []incomingAction `json:"actions"`
+	Tick    uint             `json:"tick"`
 }
 
 func NewGameTick(tickData []byte) (*GameTick, error) {
@@ -38,11 +39,12 @@ func NewGameTick(tickData []byte) (*GameTick, error) {
 	if err := json.Unmarshal(tickData, tick); err != nil {
 		return nil, fmt.Errorf("error unmarshalling game tick data: %v", err)
 	}
-
 	return tick, nil
 }
 
 func (tick *GameTick) UpdateGame(game *shared.Game) {
+
+	game.ElapsedTicks = tick.Tick
 	for _, obj := range game.Objects {
 		switch data := obj.ObjectData.(type) {
 		case shared.UnitData:
