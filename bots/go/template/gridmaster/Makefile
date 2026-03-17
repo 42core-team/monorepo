@@ -8,6 +8,9 @@ build:
 run: build
 	./$(EXEC)
 
+clean:
+	rm -rf $(OBJDIR)
+
 fclean:
 	rm -rf $(EXEC)
 
