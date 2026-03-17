@@ -33,13 +33,11 @@
 
 	// Uncomment the next line to run commands after the container is created.
 	// "postCreateCommand": "cat /etc/os-release",
-	"postCreateCommand": "cd /workspace/my-core-bot/src && go mod edit -replace github.com/42core-team/go-client-lib=/workspace/client_lib",
 
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"ms-vscode.cpptools",
 				"golang.go"
 			],
 			"settings": {
