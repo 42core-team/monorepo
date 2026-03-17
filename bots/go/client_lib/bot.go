@@ -74,7 +74,6 @@ func NewCoreGameBot(teamName string) (*Bot, error) {
 	if err != nil {
 		return nil, fmt.Errorf("could not create bot: %w", err)
 	}
-	fmt.Printf("Conn opened")
 
 	return &Bot{conn: conn, teamName: teamName, teamId: uint(teamId)}, nil
 }
@@ -128,8 +127,5 @@ func (bot *Bot) Build(builder *shared.Object, pos shared.Position) error {
 
 func (bot *Bot) Run(callback func(game *shared.Game)) error {
 	bot.conn.SetTickCallback(callback)
-	if err := bot.conn.Start(bot.teamId, bot.teamName); err != nil {
-		return err
-	}
-	return nil
+	return bot.conn.Start(bot.teamId, bot.teamName)
 }

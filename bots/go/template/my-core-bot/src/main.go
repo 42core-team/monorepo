@@ -26,7 +26,6 @@ func tick(game *shared.Game) {
 
 func main() {
 	cgb, err := COREGAME.NewCoreGameBot(teamName)
-	fmt.Printf("Coregame bot starting :D")
 	if err != nil {
 		fmt.Printf("Error creating bot: %v\n", err)
 		return
