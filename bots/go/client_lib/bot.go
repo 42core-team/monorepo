@@ -7,7 +7,7 @@ import (
 
 	"github.com/42core-team/go-client-lib/internal"
 	"github.com/42core-team/go-client-lib/shared"
-	"github.com/42core-team/go-client-lib/shared/schmeas/actions"
+	"github.com/42core-team/go-client-lib/shared/schemas/actions"
 )
 
 // CoreGameBot represents a game bot instance that connects to the game server.
@@ -74,6 +74,7 @@ func NewCoreGameBot(teamName string) (*Bot, error) {
 	if err != nil {
 		return nil, fmt.Errorf("could not create bot: %w", err)
 	}
+	fmt.Printf("Conn opened")
 
 	return &Bot{conn: conn, teamName: teamName, teamId: uint(teamId)}, nil
 }

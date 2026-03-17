@@ -1,6 +1,6 @@
 package actions
 
-import "github.com/42core-team/go-client-lib/shared/schmeas/actions"
+import "github.com/42core-team/go-client-lib/shared/schemas/actions"
 
 type ActionQueue struct {
 	queue      chan actions.Action

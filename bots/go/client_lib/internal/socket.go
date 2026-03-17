@@ -8,8 +8,8 @@ import (
 
 	"github.com/42core-team/go-client-lib/actions"
 	"github.com/42core-team/go-client-lib/shared"
-	"github.com/42core-team/go-client-lib/shared/schmeas"
-	schema_action "github.com/42core-team/go-client-lib/shared/schmeas/actions"
+	"github.com/42core-team/go-client-lib/shared/schemas"
+	schema_action "github.com/42core-team/go-client-lib/shared/schemas/actions"
 )
 
 type Connection struct {
@@ -47,7 +47,6 @@ func (connection *Connection) Start(teamId uint, teamName string) error {
 	defer func() {
 		if err := connection.Close(); err != nil {
 			fmt.Printf("Error closing connection: %v\n", err)
-			return
 		}
 	}()
 
@@ -65,11 +64,10 @@ func (connection *Connection) Start(teamId uint, teamName string) error {
 			return fmt.Errorf("failed to handle the latest socket message")
 		}
 	}
-	return nil
 }
 
 func (connection *Connection) sendLoginPacket(teamId uint, teamName string) error {
-	loginPacket, err := schmeas.NewLoginRequest(teamId, teamName).Marshal()
+	loginPacket, err := schemas.NewLoginRequest(teamId, teamName).Marshal()
 	if err != nil {
 		return fmt.Errorf("Error marshaling login request: %v\n", err)
 	}
@@ -95,7 +93,7 @@ func (connection *Connection) Send(buffer []byte) error {
 }
 
 func (connection *Connection) SendActions(plannedActions []schema_action.Action) error {
-	clientPacket, err := schmeas.NewClientPacket(plannedActions).Marshal()
+	clientPacket, err := schemas.NewClientPacket(plannedActions).Marshal()
 	if err != nil {
 		return fmt.Errorf("error marshaling client packet: %v", err)
 	}

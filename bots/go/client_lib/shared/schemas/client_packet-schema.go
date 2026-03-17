@@ -1,9 +1,9 @@
-package schmeas
+package schemas
 
 import (
 	"encoding/json"
 
-	"github.com/42core-team/go-client-lib/shared/schmeas/actions"
+	"github.com/42core-team/go-client-lib/shared/schemas/actions"
 )
 
 type ClientPacket struct {
