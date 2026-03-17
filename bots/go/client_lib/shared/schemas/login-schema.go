@@ -1,4 +1,4 @@
-package schmeas
+package schemas
 
 import "encoding/json"
 
