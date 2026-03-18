@@ -21,5 +21,6 @@ RUN apt-get update && apt-get install -y \
 	&& chmod +x /usr/local/bin/yq \
 	&& rm -rf /var/lib/apt/lists/*
 
-# Set default shell to zsh
+# Set default user and shell
+USER root
 SHELL ["/bin/zsh", "-c"]
