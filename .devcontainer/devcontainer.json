@@ -25,10 +25,10 @@
 			]
 		}
 	},
-	"remoteUser": "root",
+	"remoteUser": "vscode",
 	"postStartCommand": "make setup-hooks",
 	"mounts": [
-		"source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached,readonly",
-		"source=${localEnv:HOME}/.gitconfig,target=/root/.gitconfig,type=bind,consistency=cached,readonly"
+		"source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached,readonly",
+		"source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind,consistency=cached,readonly"
 	]
 }

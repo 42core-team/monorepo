@@ -21,6 +21,10 @@ RUN apt-get update && apt-get install -y \
 	&& chmod +x /usr/local/bin/yq \
 	&& rm -rf /var/lib/apt/lists/*
 
-# Set default user and shell
-USER root
+# Create non-root user and set default shell
+RUN useradd -m -s /bin/zsh vscode \
+	&& mkdir -p /workspaces \
+	&& chown vscode:vscode /workspaces
+
+USER vscode
 SHELL ["/bin/zsh", "-c"]
