@@ -1,15 +1,10 @@
 services:
   my-core-bot:
-    image: my-core-bot-go:latest
-    pull_policy: never
+    image: ghcr.io/42core-team/my-core-bot-go:dev
     volumes:
       - ..:/workspace
-      - ../../client_lib:/workspace/client_lib
       - replays:/workspace/replays
-    working_dir: /workspace/my-core-bot/src
-    entrypoint: /bin/zsh
     stdin_open: true
-    tty: true
 
   visualizer:
     image: ghcr.io/42core-team/visualizer:dev

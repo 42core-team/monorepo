@@ -43,7 +43,6 @@ func NewGameTick(tickData []byte) (*GameTick, error) {
 }
 
 func (tick *GameTick) UpdateGame(game *shared.Game) {
-
 	game.ElapsedTicks = tick.Tick
 	for _, obj := range game.Objects {
 		switch data := obj.ObjectData.(type) {

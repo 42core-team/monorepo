@@ -1,9 +1,8 @@
-SRCDIR = src
 OBJDIR = build
-EXEC = bot
+EXEC = gridmaster
 
 build:
-	cd $(SRCDIR) && go build -o ../$(EXEC) main.go
+	go build -o $(EXEC) main.go
 
 run: build
 	./$(EXEC)

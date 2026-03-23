@@ -6,7 +6,7 @@ require-vars:
 	@test -n "$(LANGUAGE)" || (echo "LANGUAGE is required (e.g. LANGUAGE=c)" && exit 2)
 	@test -n "$(STAGE)" || (echo "STAGE is required (dev|prod)" && exit 2)
 	@test -n "$(DIFFICULTY)" || (echo "DIFFICULTY is required (hardcore|softcore)" && exit 2)
-	@echo "$(LANGUAGE)" | grep -Eq '^(c)$$' || (echo "LANGUAGE must be c (got $(LANGUAGE))" && exit 2)
+	@echo "$(LANGUAGE)" | grep -Eq '^(c|go)$$' || (echo "LANGUAGE must be c or go (got $(LANGUAGE))" && exit 2)
 	@echo "$(STAGE)" | grep -Eq '^(dev|prod)$$' || (echo "STAGE must be dev or prod (got $(STAGE))" && exit 2)
 	@echo "$(DIFFICULTY)" | grep -Eq '^(hardcore|softcore)$$' || (echo "DIFFICULTY must be hardcore or softcore (got $(DIFFICULTY))" && exit 2)
 
@@ -34,8 +34,8 @@ CONFIG_GAME_FILE	:= $(CONFIG_FOLDER)/game.config.json
 
 .DEFAULT_GOAL := all
 all: setup-hooks require-vars stop
-	# build client lib
-	$(MAKE) -C $(CLIENT_LIB_DIR)
+	# build client lib (only for c)
+	$(if $(filter c,$(LANGUAGE)),$(MAKE) -C $(CLIENT_LIB_DIR))
 
 	# build clients
 	$(MAKE) -C $(PLAYER_1_FOLDER) CLIENT_LIB_DIR=$(CLIENT_LIB_DIR)
