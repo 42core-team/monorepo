@@ -33,18 +33,18 @@ func (b *BuildType) UnmarshalJSON(data []byte) error {
 }
 
 type UnitConfig struct {
-	Name                   string   `json:"name"`
-	UnitType               UnitType `json:"unitType"`
-	Cost                   uint     `json:"cost"`
-	Hp                     uint     `json:"hp"`
-	BaseActionCooldown     uint     `json:"baseActionCooldown"`
-	MaxActionCooldown      uint     `json:"maxActionCooldown"`
-	BalancePerCooldownStep uint     `json:"balancePerCooldownStep"`
-	DamageCore             uint     `json:"damageCore"`
-	DamageUnit             uint     `json:"damageUnit"`
-	DamageDeposit          uint     `json:"damageDeposit"`
-	DamageWall             uint     `json:"damageWall"`
-	DamageBomb             uint     `json:"damageBomb"`
+	Name                   string    `json:"name"`
+	UnitType               UnitType  `json:"unitType"`
+	Cost                   uint      `json:"cost"`
+	Hp                     uint      `json:"hp"`
+	BaseActionCooldown     uint      `json:"baseActionCooldown"`
+	MaxActionCooldown      uint      `json:"maxActionCooldown"`
+	BalancePerCooldownStep uint      `json:"balancePerCooldownStep"`
+	DamageCore             uint      `json:"damageCore"`
+	DamageUnit             uint      `json:"damageUnit"`
+	DamageDeposit          uint      `json:"damageDeposit"`
+	DamageWall             uint      `json:"damageWall"`
+	DamageBomb             uint      `json:"damageBomb"`
 	BuildType              BuildType `json:"buildType"`
 }
 
@@ -77,24 +77,59 @@ type Game struct {
 }
 
 func (game *Game) GetObjectById(id uint) (*Object, error) {
-	for _, object := range game.Objects {
-		if object.Id == id {
-			return &object, nil
+	for i := range game.Objects {
+		if game.Objects[i].Id == id {
+			return &game.Objects[i], nil
 		}
 	}
 	return nil, fmt.Errorf("object with id %d not found", id)
 }
 
+func (game *Game) GetMyCore() *Object {
+	for i := range game.Objects {
+		if game.Objects[i].IsOfType(ObjectCore) && game.Objects[i].IsAlly(game.MyTeamId) {
+			return &game.Objects[i]
+		}
+	}
+	return nil
+}
+
+func (game *Game) IsPositionWalkable(pos Position) bool {
+	if pos.X >= game.Config.GridSize || pos.Y >= game.Config.GridSize {
+		return false
+	}
+	for i := range game.Objects {
+		if game.Objects[i].Pos == pos && (game.Objects[i].IsOfType(ObjectWall) || game.Objects[i].IsOfType(ObjectCore)) {
+			return false
+		}
+	}
+	return true
+}
+
+func (game *Game) GetEnemyCore() *Object {
+	for i := range game.Objects {
+		if game.Objects[i].IsOfType(ObjectCore) && game.Objects[i].IsEnemy(game.MyTeamId) {
+			return &game.Objects[i]
+		}
+	}
+	return nil
+}
+
 func (game *Game) GetObjectFromPosition(pos Position) *Object {
-	return &game.Objects[0]
+	for i := range game.Objects {
+		if game.Objects[i].Pos == pos {
+			return &game.Objects[i]
+		}
+	}
+	return nil
 }
 
 func (game *Game) GetTeamUnits() []*Object {
 	var units []*Object
 
-	for _, object := range game.Objects {
-		if object.IsAlly(game.MyTeamId) {
-			units = append(units, &object)
+	for i := range game.Objects {
+		if game.Objects[i].IsAlly(game.MyTeamId) && game.Objects[i].IsOfType(ObjectUnit) {
+			units = append(units, &game.Objects[i])
 		}
 	}
 
@@ -102,15 +137,38 @@ func (game *Game) GetTeamUnits() []*Object {
 }
 
 func (game *Game) GetObjectsFromFilter(filter func(object *Object) bool) []*Object {
-	return []*Object{&game.Objects[0]}
+	var filtered []*Object
+	for i := range game.Objects {
+		if filter(&game.Objects[i]) {
+			filtered = append(filtered, &game.Objects[i])
+		}
+	}
+	return filtered
 }
 
 func (game *Game) GetObjectFromFilterNearest(pos Position, filter func(object *Object) bool) *Object {
-	return &game.Objects[0]
+	nearest := &game.Objects[0]
+	minDistance := uint(0)
+
+	for i := range game.Objects {
+		if filter(&game.Objects[i]) {
+			distance := game.Objects[i].DistanceTo(pos)
+			if minDistance == 0 || distance < minDistance {
+				minDistance = distance
+				nearest = &game.Objects[i]
+			}
+		}
+	}
+	return nearest
 }
 
 func (game *Game) GetUnitConfigByType(unitType UnitType) *UnitConfig {
-	return &game.Config.Units[0]
+	for i := range game.Config.Units {
+		if game.Config.Units[i].UnitType == unitType {
+			return &game.Config.Units[i]
+		}
+	}
+	return nil
 }
 
 func (game *Game) Log(format string, args ...interface{}) {

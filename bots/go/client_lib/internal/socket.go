@@ -70,14 +70,15 @@ func (connection *Connection) Start(teamId uint, teamName string) error {
 	}
 
 	// Receive config
+	fmt.Println("Waiting for config...")
 	configLine, err := connection.readLine()
 	if err != nil {
 		return fmt.Errorf("failed to receive config: %v", err)
 	}
-	if err := json.Unmarshal([]byte(configLine), &connection.Game.Config); err != nil {
+	if err := json.Unmarshal([]byte(string(configLine)), &connection.Game.Config); err != nil {
 		return fmt.Errorf("failed to parse config: %v", err)
 	}
-	fmt.Println("Config received")
+	fmt.Printf("Config received: %v\n", connection.Game.Config)
 
 	// Game loop: send actions -> receive state -> callback
 	for {
@@ -94,7 +95,7 @@ func (connection *Connection) Start(teamId uint, teamName string) error {
 			break
 		}
 
-		tick, err := NewGameTick([]byte(line))
+		tick, err := NewGameTick(string(line))
 		if err != nil {
 			return fmt.Errorf("error parsing game tick: %v", err)
 		}

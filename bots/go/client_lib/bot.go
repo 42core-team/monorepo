@@ -89,15 +89,191 @@ func (bot *Bot) CreateUnit(unitType shared.UnitType) error {
 }
 
 func (bot *Bot) Move(object *shared.Object, pos shared.Position) error {
-	if !object.IsReadyForAction() {
-		return fmt.Errorf("unit %d is on cooldown for %d more ticks", object.Id, object.ObjectData.(shared.UnitData).ActionCooldown)
-	}
 	bot.conn.GetActionQueue().Add(actions.NewActionMove(object.Id, pos.X, pos.Y))
 	return nil
 }
 
-func (bot *Bot) SimplePathfind(object *shared.Object, pos shared.Position) {
-	panic("unimplemented")
+func (bot *Bot) SimplePathfind(object *shared.Object, target shared.Position) shared.Position {
+	if object == nil {
+		return shared.Position{}
+	}
+
+	game := bot.GetGame()
+	if game == nil || game.Config.GridSize == 0 {
+		return object.Pos
+	}
+
+	current := object.Pos
+	if current == target {
+		return current
+	}
+
+	grid := int(game.Config.GridSize)
+	blocked := buildBlockedGrid(game, object.Id)
+
+	goals := buildGoalSet(target, grid, blocked)
+	if len(goals) == 0 {
+		return current
+	}
+
+	next, ok := findNextStepBFS(current, target, goals, grid, blocked)
+	if !ok {
+		return current
+	}
+	return next
+}
+
+func buildBlockedGrid(game *shared.Game, selfID uint) map[int]bool {
+	blocked := make(map[int]bool)
+	grid := int(game.Config.GridSize)
+
+	for i := range game.Objects {
+		obj := &game.Objects[i]
+		if !obj.IsAlive() || obj.Id == selfID {
+			continue
+		}
+		x := int(obj.Pos.X)
+		y := int(obj.Pos.Y)
+		if x < 0 || y < 0 || x >= grid || y >= grid {
+			continue
+		}
+		blocked[y*grid+x] = true
+	}
+
+	return blocked
+}
+
+func buildGoalSet(target shared.Position, grid int, blocked map[int]bool) map[int]bool {
+	goals := make(map[int]bool)
+	tx := int(target.X)
+	ty := int(target.Y)
+	if tx < 0 || ty < 0 || tx >= grid || ty >= grid {
+		return goals
+	}
+
+	targetKey := ty*grid + tx
+	if !blocked[targetKey] {
+		goals[targetKey] = true
+		return goals
+	}
+
+	for _, n := range neighbors(tx, ty, grid) {
+		key := n[1]*grid + n[0]
+		if !blocked[key] {
+			goals[key] = true
+		}
+	}
+
+	return goals
+}
+
+func findNextStepBFS(start shared.Position, target shared.Position, goals map[int]bool, grid int, blocked map[int]bool) (shared.Position, bool) {
+	sx := int(start.X)
+	sy := int(start.Y)
+	if sx < 0 || sy < 0 || sx >= grid || sy >= grid {
+		return start, false
+	}
+
+	startKey := sy*grid + sx
+	if goals[startKey] {
+		return start, true
+	}
+
+	queue := []int{startKey}
+	visited := map[int]bool{startKey: true}
+	prev := map[int]int{}
+
+	found := -1
+	bestKey := startKey
+	bestDist := manhattanDistance(start, target)
+
+	for len(queue) > 0 {
+		cur := queue[0]
+		queue = queue[1:]
+
+		cx := cur % grid
+		cy := cur / grid
+		curPos := shared.NewPosition(uint(cx), uint(cy))
+		d := manhattanDistance(curPos, target)
+		if d < bestDist {
+			bestDist = d
+			bestKey = cur
+		}
+
+		if goals[cur] {
+			found = cur
+			break
+		}
+
+		for _, n := range neighbors(cx, cy, grid) {
+			nx := n[0]
+			ny := n[1]
+			nKey := ny*grid + nx
+			if visited[nKey] || blocked[nKey] {
+				continue
+			}
+			visited[nKey] = true
+			prev[nKey] = cur
+			queue = append(queue, nKey)
+		}
+	}
+
+	targetKey := found
+	if targetKey == -1 {
+		targetKey = bestKey
+		if targetKey == startKey {
+			return start, false
+		}
+	}
+
+	stepKey := targetKey
+	for {
+		parent, ok := prev[stepKey]
+		if !ok {
+			return start, false
+		}
+		if parent == startKey {
+			break
+		}
+		stepKey = parent
+	}
+
+	return shared.NewPosition(uint(stepKey%grid), uint(stepKey/grid)), true
+}
+
+func neighbors(x, y, grid int) [][2]int {
+	result := make([][2]int, 0, 4)
+	if x > 0 {
+		result = append(result, [2]int{x - 1, y})
+	}
+	if x+1 < grid {
+		result = append(result, [2]int{x + 1, y})
+	}
+	if y > 0 {
+		result = append(result, [2]int{x, y - 1})
+	}
+	if y+1 < grid {
+		result = append(result, [2]int{x, y + 1})
+	}
+	return result
+}
+
+func manhattanDistance(a, b shared.Position) uint {
+	var dx uint
+	if a.X > b.X {
+		dx = a.X - b.X
+	} else {
+		dx = b.X - a.X
+	}
+
+	var dy uint
+	if a.Y > b.Y {
+		dy = a.Y - b.Y
+	} else {
+		dy = b.Y - a.Y
+	}
+
+	return dx + dy
 }
 
 func (bot *Bot) Attack(object *shared.Object, target *shared.Object) error {

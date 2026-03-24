@@ -8,7 +8,7 @@ import (
 )
 
 type incomingObject struct {
-	Id            uint               `json:"id"`
+	Id            *uint              `json:"id,omitempty"`
 	Type          *shared.ObjectType `json:"type,omitempty"`
 	X             *uint              `json:"x,omitempty"`
 	Y             *uint              `json:"y,omitempty"`
@@ -30,13 +30,13 @@ type incomingAction struct {
 type GameTick struct {
 	Objects []incomingObject `json:"objects"`
 	Actions []incomingAction `json:"actions"`
+	Errors  []string         `json:"errors"`
 	Tick    uint             `json:"tick"`
 }
 
-func NewGameTick(tickData []byte) (*GameTick, error) {
+func NewGameTick(tickData string) (*GameTick, error) {
 	tick := &GameTick{}
-
-	if err := json.Unmarshal(tickData, tick); err != nil {
+	if err := json.Unmarshal([]byte(tickData), tick); err != nil {
 		return nil, fmt.Errorf("error unmarshalling game tick data: %v", err)
 	}
 	return tick, nil
@@ -44,14 +44,15 @@ func NewGameTick(tickData []byte) (*GameTick, error) {
 
 func (tick *GameTick) UpdateGame(game *shared.Game) {
 	game.ElapsedTicks = tick.Tick
-	for _, obj := range game.Objects {
-		switch data := obj.ObjectData.(type) {
+	fmt.Println("Updating unit cooldowns")
+	for i := range game.Objects {
+		switch data := game.Objects[i].ObjectData.(type) {
 		case shared.UnitData:
 			{
 				if *data.ActionCooldown > 0 {
-					fmt.Printf("Unit %d is on cooldown for %d more ticks\n", obj.Id, data.ActionCooldown)
+					fmt.Printf("Unit %d is on cooldown for %d more ticks\n", game.Objects[i].Id, data.ActionCooldown)
 					*data.ActionCooldown--
-					obj.ObjectData = data
+					game.Objects[i].ObjectData = data
 				}
 			}
 		default:
@@ -61,10 +62,14 @@ func (tick *GameTick) UpdateGame(game *shared.Game) {
 
 	// Update the game state based on the tick data
 	for _, obj := range tick.Objects {
-		gameObject, err := game.GetObjectById(obj.Id)
+		if obj.Id == nil {
+			fmt.Printf("Received object with nil ID: %v\n", obj)
+			continue
+		}
+		gameObject, err := game.GetObjectById(*obj.Id)
 		if err != nil {
 			// Object doesn't exist, create a new one
-			newObject := shared.NewObject(*obj.Type, obj.Id, shared.Position{X: *obj.X, Y: *obj.Y}, int32(*obj.Hp), nil)
+			newObject := shared.NewObject(obj.Type, obj.Id, obj.X, obj.Y, obj.Hp, obj.TeamId, nil)
 			game.Objects = append(game.Objects, *newObject)
 			continue
 		}
@@ -105,9 +110,11 @@ func (tick *GameTick) UpdateGame(game *shared.Game) {
 				continue
 			}
 		}
-
 	}
 
+	for _, action := range tick.Errors {
+		fmt.Printf("Error: %s\n", action)
+	}
 	// TODO: implement action handling when everything else is working
 	//for _, action := range tick.Actions {
 	//	fmt.Printf("Action: %s\n", action.GetType())

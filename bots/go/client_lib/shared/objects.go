@@ -1,10 +1,25 @@
 package shared
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Position struct {
 	X uint `json:"x"`
 	Y uint `json:"y"`
+}
+
+func (p Position) DistanceTo(other Position) uint {
+	dx := int(p.X) - int(other.X)
+	dy := int(p.Y) - int(other.Y)
+	return uint(absInt(dx) + absInt(dy))
+}
+
+func absInt(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
 }
 
 func NewPosition(x uint, y uint) Position {
@@ -62,14 +77,30 @@ type Object struct {
 	ObjectData ObjectData
 }
 
-func NewObject(objType ObjectType, id uint, pos Position, hp int32, data ObjectData) *Object {
-	return &Object{
-		Type:       objType,
-		Id:         id,
-		Pos:        pos,
-		Hp:         hp,
-		ObjectData: data,
+func NewObject(objType *ObjectType, id *uint, X, Y *uint, hp *uint, teamId *uint, data *ObjectData) *Object {
+
+	var obj Object = Object{}
+
+	if objType != nil {
+		obj.Type = *objType
 	}
+	if id != nil {
+		obj.Id = *id
+	}
+	if X != nil && Y != nil {
+		obj.Pos = Position{X: *X, Y: *Y}
+	}
+	if hp != nil {
+		obj.Hp = int32(*hp)
+	}
+	if teamId != nil {
+		obj.TeamId = *teamId
+	}
+	if data != nil {
+		obj.ObjectData = *data
+	}
+
+	return &obj
 }
 
 func (o *Object) IsOfType(objectType ObjectType) bool {
@@ -137,6 +168,19 @@ func (o *Object) IsReadyForAction() bool {
 	default:
 		return true
 	}
+}
+
+func (o *Object) DistanceTo(pos Position) uint {
+	dx := int(o.Pos.X) - int(pos.X)
+	dy := int(o.Pos.Y) - int(pos.Y)
+	return uint(abs(dx) + abs(dy))
+}
+
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
 }
 
 //func (o *Object) Update(updatedData *Object) error {
