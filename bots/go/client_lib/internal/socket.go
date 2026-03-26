@@ -8,16 +8,24 @@ import (
 	"time"
 
 	"github.com/42core-team/go-client-lib/actions"
-	"github.com/42core-team/go-client-lib/shared"
-	"github.com/42core-team/go-client-lib/shared/schemas"
-	schema_action "github.com/42core-team/go-client-lib/shared/schemas/actions"
+	"github.com/42core-team/go-client-lib/game"
 )
+
+type loginRequest struct {
+	Id       uint   `json:"id"`
+	Password string `json:"password"`
+	TeamName string `json:"name"`
+}
+
+type clientPacket struct {
+	Actions []actions.Action `json:"actions"`
+}
 
 type Connection struct {
 	socket         net.Conn
 	scanner        *bufio.Scanner
-	Game           *shared.Game
-	onTickCallback func(*shared.Game)
+	Game           *game.Game
+	onTickCallback func(*game.Game, *actions.ActionQueue)
 	actionQueue    *actions.ActionQueue
 }
 
@@ -41,7 +49,7 @@ func NewConnection(serverAddr string, selfTeamId uint) (*Connection, error) {
 	return &Connection{
 		socket:         conn,
 		scanner:        scanner,
-		Game:           &shared.Game{MyTeamId: selfTeamId},
+		Game:           &game.Game{MyTeamId: selfTeamId},
 		onTickCallback: nil,
 		actionQueue:    actions.NewActionQueue(100),
 	}, nil
@@ -64,46 +72,38 @@ func (connection *Connection) Start(teamId uint, teamName string) error {
 		}
 	}()
 
-	// Send login
 	if err := connection.sendLoginPacket(teamId, teamName); err != nil {
 		return fmt.Errorf("failed to send login packet: %v", err)
 	}
 
-	// Receive config
-	fmt.Println("Waiting for config...")
 	configLine, err := connection.readLine()
 	if err != nil {
 		return fmt.Errorf("failed to receive config: %v", err)
 	}
-	if err := json.Unmarshal([]byte(string(configLine)), &connection.Game.Config); err != nil {
+	if err := json.Unmarshal([]byte(configLine), &connection.Game.Config); err != nil {
 		return fmt.Errorf("failed to parse config: %v", err)
 	}
-	fmt.Printf("Config received: %v\n", connection.Game.Config)
 
-	// Game loop: send actions -> receive state -> callback
 	for {
-		// Send queued actions
 		plannedActions := connection.actionQueue.GetAll()
 		if err := connection.SendActions(plannedActions); err != nil {
 			return fmt.Errorf("error sending actions: %v", err)
 		}
 
-		// Receive game state
 		line, err := connection.readLine()
 		if err != nil {
 			fmt.Println("The connection was closed by the server. Bye, bye!")
 			break
 		}
 
-		tick, err := NewGameTick(string(line))
+		tick, err := NewGameTick(line)
 		if err != nil {
 			return fmt.Errorf("error parsing game tick: %v", err)
 		}
 		tick.UpdateGame(connection.Game)
 
-		// Execute user callback
 		if connection.onTickCallback != nil {
-			connection.onTickCallback(connection.Game)
+			connection.onTickCallback(connection.Game, connection.actionQueue)
 		}
 	}
 
@@ -111,12 +111,16 @@ func (connection *Connection) Start(teamId uint, teamName string) error {
 }
 
 func (connection *Connection) sendLoginPacket(teamId uint, teamName string) error {
-	loginPacket, err := schemas.NewLoginRequest(teamId, teamName).Marshal()
+	login := loginRequest{
+		Id:       teamId,
+		Password: "42",
+		TeamName: teamName,
+	}
+	data, err := json.Marshal(login)
 	if err != nil {
 		return fmt.Errorf("error marshaling login request: %v", err)
 	}
-
-	if err := connection.Send(loginPacket); err != nil {
+	if err := connection.Send(data); err != nil {
 		return fmt.Errorf("error sending login request: %v", err)
 	}
 	return nil
@@ -130,13 +134,13 @@ func (connection *Connection) Send(buffer []byte) error {
 	return nil
 }
 
-func (connection *Connection) SendActions(plannedActions []schema_action.Action) error {
-	clientPacket, err := schemas.NewClientPacket(plannedActions).Marshal()
+func (connection *Connection) SendActions(plannedActions []actions.Action) error {
+	packet := clientPacket{Actions: plannedActions}
+	data, err := json.Marshal(packet)
 	if err != nil {
 		return fmt.Errorf("error marshaling client packet: %v", err)
 	}
-
-	if err := connection.Send(clientPacket); err != nil {
+	if err := connection.Send(data); err != nil {
 		return fmt.Errorf("error sending client packet: %v", err)
 	}
 	return nil
@@ -146,7 +150,7 @@ func (connection *Connection) Close() error {
 	return connection.socket.Close()
 }
 
-func (connection *Connection) GetGame() *shared.Game {
+func (connection *Connection) GetGame() *game.Game {
 	return connection.Game
 }
 
@@ -154,6 +158,6 @@ func (connection *Connection) GetActionQueue() *actions.ActionQueue {
 	return connection.actionQueue
 }
 
-func (connection *Connection) SetTickCallback(callback func(*shared.Game)) {
+func (connection *Connection) SetTickCallback(callback func(*game.Game, *actions.ActionQueue)) {
 	connection.onTickCallback = callback
 }

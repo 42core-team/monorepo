@@ -2,37 +2,46 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"strconv"
 
-	COREGAME "github.com/42core-team/go-client-lib"
-	"github.com/42core-team/go-client-lib/shared"
+	coregame "github.com/42core-team/go-client-lib"
+	"github.com/42core-team/go-client-lib/game"
 )
 
 const teamName = "GoBotExample"
 
-var coreBot *COREGAME.Bot
+func tick(g *game.Game, bot *coregame.Bot) {
+	g.Log("Tick %d", g.ElapsedTicks)
 
-func tick(game *shared.Game) {
-	game.Log("Tick %d", game.ElapsedTicks)
+	_ = bot.CreateUnit(game.UnitWarrior)
 
-	// Create a unit if we have enough gems
-	_ = coreBot.CreateUnit(shared.UnitWarrior)
-
-	// Move all our units
-	for _, obj := range game.GetTeamUnits() {
-		game.Log("Unit %d at position (%d, %d)", obj.Id, obj.Pos.X, obj.Pos.Y)
-		_ = coreBot.Move(obj, shared.NewPosition(obj.Pos.X+1, obj.Pos.Y))
+	for _, obj := range g.GetTeamUnits() {
+		g.Log("Unit %d at position (%d, %d)", obj.Id, obj.Pos.X, obj.Pos.Y)
+		_ = bot.Move(obj, game.NewPosition(obj.Pos.X+1, obj.Pos.Y))
 	}
 }
 
 func main() {
-	cgb, err := COREGAME.NewCoreGameBot(teamName)
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: gridmaster <team-id>")
+		os.Exit(1)
+	}
+
+	teamID, err := strconv.Atoi(os.Args[1])
+	if err != nil {
+		fmt.Printf("Invalid team ID: %v\n", err)
+		os.Exit(1)
+	}
+
+	cfg := coregame.DefaultBotConfig(teamID, teamName)
+	bot, err := coregame.NewBot(cfg)
 	if err != nil {
 		fmt.Printf("Error creating bot: %v\n", err)
 		return
 	}
-	coreBot = cgb
 
-	if err := coreBot.Run(tick); err != nil {
+	if err := bot.Run(tick); err != nil {
 		fmt.Printf("Bot error: %v\n", err)
 	}
 }

@@ -2,37 +2,73 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"strconv"
 
-	COREGAME "github.com/42core-team/go-client-lib"
-	"github.com/42core-team/go-client-lib/shared"
+	coregame "github.com/42core-team/go-client-lib"
+	"github.com/42core-team/go-client-lib/game"
 )
 
-const teamName = "GoBotExample"
+const teamName = "Tudn"
 
-var coreBot *COREGAME.Bot
+func tick(g *game.Game, bot *coregame.Bot) {
+	g.Log("Tick %d", g.ElapsedTicks)
 
-func tick(game *shared.Game) {
-	game.Log("Tick %d", game.ElapsedTicks)
+	if g.ElapsedTicks%3 == 0 {
+		_ = bot.CreateUnit(game.UnitMiner)
+	} else {
+		_ = bot.CreateUnit(game.UnitWarrior)
+	}
 
-	// Create a unit if we have enough gems
-	_ = coreBot.CreateUnit(shared.UnitWarrior)
+	var enemyCore = g.GetEnemyCore()
+	fmt.Printf("Number of team units: %d\n", len(g.GetTeamUnits()))
+	fmt.Printf("Number of enemy units: %d\n", len(g.GetEnemyUnits()))
+	for _, obj := range g.GetTeamUnits() {
+		if !obj.IsAlive() {
+			continue
+		}
 
-	// Move all our units
-	for _, obj := range game.GetTeamUnits() {
-		game.Log("Unit %d at position (%d, %d)", obj.Id, obj.Pos.X, obj.Pos.Y)
-		_ = coreBot.Move(obj, shared.NewPosition(obj.Pos.X+1, obj.Pos.Y))
+		var closestEnemy = g.GetObjectFromFilterNearest(obj.Pos, func(object *game.Object) bool {
+			return object.IsEnemy(obj.TeamId) && object.IsAlive() && (object.IsOfType(game.ObjectUnit) || object.IsOfType(game.ObjectCore))
+		})
+
+		// fmt.Printf("Enemy core pos: %v\n", enemyCore.Pos)
+		// fmt.Printf("closest enemy: %v\n", closestEnemy)
+
+		if closestEnemy != nil && closestEnemy.IsAlive() {
+			// fmt.Println("Moving to closest enemy")
+			pos := bot.SimplePathfind(obj, closestEnemy.Pos)
+			bot.Move(obj, pos)
+			bot.Attack(obj, closestEnemy)
+		} else {
+			// fmt.Println("Moving to enemy core")
+			pos := bot.SimplePathfind(obj, enemyCore.Pos)
+			bot.Move(obj, pos)
+			bot.Attack(obj, enemyCore)
+		}
 	}
 }
 
 func main() {
-	cgb, err := COREGAME.NewCoreGameBot(teamName)
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: my-core-bot <team-id>")
+		os.Exit(1)
+	}
+
+	teamID, err := strconv.Atoi(os.Args[1])
+	if err != nil {
+		fmt.Printf("Invalid team ID: %v\n", err)
+		os.Exit(1)
+	}
+
+	cfg := coregame.DefaultBotConfig(teamID, teamName)
+	bot, err := coregame.NewBot(cfg)
 	if err != nil {
 		fmt.Printf("Error creating bot: %v\n", err)
 		return
 	}
-	coreBot = cgb
 
-	if err := coreBot.Run(tick); err != nil {
+	if err := bot.Run(tick); err != nil {
 		fmt.Printf("Bot error: %v\n", err)
 	}
 }

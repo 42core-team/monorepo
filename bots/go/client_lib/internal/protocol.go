@@ -4,18 +4,18 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/42core-team/go-client-lib/shared"
+	"github.com/42core-team/go-client-lib/game"
 )
 
 type incomingObject struct {
-	Id            *uint              `json:"id,omitempty"`
-	Type          *shared.ObjectType `json:"type,omitempty"`
-	X             *uint              `json:"x,omitempty"`
-	Y             *uint              `json:"y,omitempty"`
-	Hp            *uint              `json:"hp,omitempty"`
-	TeamId        *uint              `json:"teamId,omitempty"`
-	Gems          *uint              `json:"gems,omitempty"`
-	SpawnCooldown *uint              `json:"SpawnCooldown,omitempty"`
+	Id            *uint            `json:"id,omitempty"`
+	Type          *game.ObjectType `json:"type,omitempty"`
+	X             *uint            `json:"x,omitempty"`
+	Y             *uint            `json:"y,omitempty"`
+	Hp            *uint            `json:"hp,omitempty"`
+	TeamId        *uint            `json:"teamId,omitempty"`
+	Gems          *uint            `json:"gems,omitempty"`
+	SpawnCooldown *uint            `json:"SpawnCooldown,omitempty"`
 }
 
 type incomingAction struct {
@@ -42,35 +42,19 @@ func NewGameTick(tickData string) (*GameTick, error) {
 	return tick, nil
 }
 
-func (tick *GameTick) UpdateGame(game *shared.Game) {
-	game.ElapsedTicks = tick.Tick
-	fmt.Println("Updating unit cooldowns")
-	for i := range game.Objects {
-		switch data := game.Objects[i].ObjectData.(type) {
-		case shared.UnitData:
-			{
-				if *data.ActionCooldown > 0 {
-					fmt.Printf("Unit %d is on cooldown for %d more ticks\n", game.Objects[i].Id, data.ActionCooldown)
-					*data.ActionCooldown--
-					game.Objects[i].ObjectData = data
-				}
-			}
-		default:
-			continue
-		}
-	}
+func (tick *GameTick) UpdateGame(g *game.Game) {
+	g.ElapsedTicks = tick.Tick
 
-	// Update the game state based on the tick data
+	// Apply server data
 	for _, obj := range tick.Objects {
 		if obj.Id == nil {
-			fmt.Printf("Received object with nil ID: %v\n", obj)
 			continue
 		}
-		gameObject, err := game.GetObjectById(*obj.Id)
+		gameObject, err := g.GetObjectById(*obj.Id)
 		if err != nil {
-			// Object doesn't exist, create a new one
-			newObject := shared.NewObject(obj.Type, obj.Id, obj.X, obj.Y, obj.Hp, obj.TeamId, nil)
-			game.Objects = append(game.Objects, *newObject)
+			newObject := game.NewObject(obj.Type, obj.Id, obj.X, obj.Y, obj.Hp, obj.TeamId, nil)
+			newObject.ObjectData = initializeObjectData(obj)
+			g.Objects = append(g.Objects, *newObject)
 			continue
 		}
 
@@ -88,26 +72,36 @@ func (tick *GameTick) UpdateGame(game *shared.Game) {
 		}
 		if obj.Gems != nil {
 			switch data := gameObject.ObjectData.(type) {
-			case shared.UnitData:
+			case game.UnitData:
 				data.Gems = obj.Gems
 				gameObject.ObjectData = data
-			case shared.CoreData:
+			case game.CoreData:
 				data.Gems = *obj.Gems
 				gameObject.ObjectData = data
-			case shared.DepositData:
+			case game.DepositData:
 				data.Gems = *obj.Gems
 				gameObject.ObjectData = data
-			default:
-				continue
 			}
 		}
 		if obj.SpawnCooldown != nil {
 			switch data := gameObject.ObjectData.(type) {
-			case shared.CoreData:
+			case game.CoreData:
 				data.SpawnCooldown = *obj.SpawnCooldown
 				gameObject.ObjectData = data
-			default:
-				continue
+			}
+		}
+	}
+
+	// Decrement cooldowns for alive units
+	for i := range g.Objects {
+		if !g.Objects[i].IsAlive() {
+			continue
+		}
+		switch data := g.Objects[i].ObjectData.(type) {
+		case game.UnitData:
+			if data.ActionCooldown != nil && *data.ActionCooldown > 0 {
+				*data.ActionCooldown--
+				g.Objects[i].ObjectData = data
 			}
 		}
 	}
@@ -115,8 +109,39 @@ func (tick *GameTick) UpdateGame(game *shared.Game) {
 	for _, action := range tick.Errors {
 		fmt.Printf("Error: %s\n", action)
 	}
-	// TODO: implement action handling when everything else is working
-	//for _, action := range tick.Actions {
-	//	fmt.Printf("Action: %s\n", action.GetType())
-	//}
+}
+
+func initializeObjectData(obj incomingObject) game.ObjectData {
+	if obj.Type == nil {
+		return nil
+	}
+	switch *obj.Type {
+	case game.ObjectUnit:
+		return game.UnitData{
+			UnitType: game.UnitWarrior,
+			Gems:     obj.Gems,
+		}
+	case game.ObjectCore:
+		d := game.CoreData{}
+		if obj.TeamId != nil {
+			d.TeamId = *obj.TeamId
+		}
+		if obj.Gems != nil {
+			d.Gems = *obj.Gems
+		}
+		if obj.SpawnCooldown != nil {
+			d.SpawnCooldown = *obj.SpawnCooldown
+		}
+		return d
+	case game.ObjectDeposit:
+		d := game.DepositData{}
+		if obj.Gems != nil {
+			d.Gems = *obj.Gems
+		}
+		return d
+	case game.ObjectBomb:
+		return game.BombData{}
+	default:
+		return nil
+	}
 }
