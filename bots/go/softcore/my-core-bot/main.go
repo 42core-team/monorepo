@@ -20,16 +20,14 @@ func tick(g *game.Game, bot *coregame.Bot) {
 		_ = bot.CreateUnit(game.UnitWarrior)
 	}
 
-	var enemyCore = g.GetEnemyCore()
-	fmt.Printf("Number of team units: %d\n", len(g.GetTeamUnits()))
-	fmt.Printf("Number of enemy units: %d\n", len(g.GetEnemyUnits()))
-	for _, obj := range g.GetTeamUnits() {
+	var enemyCore = g.MyCore()
+	for _, obj := range g.TeamUnits() {
 		if !obj.IsAlive() {
 			continue
 		}
 
-		var closestEnemy = g.GetObjectFromFilterNearest(obj.Pos, func(object *game.Object) bool {
-			return object.IsEnemy(obj.TeamId) && object.IsAlive() && (object.IsOfType(game.ObjectUnit) || object.IsOfType(game.ObjectCore))
+		var closestEnemy = g.NearestObject(obj.Pos, func(object *game.Object) bool {
+			return object.IsEnemy(obj.TeamID) && object.IsAlive() && (object.IsOfType(game.ObjectUnit) || object.IsOfType(game.ObjectCore))
 		})
 
 		// fmt.Printf("Enemy core pos: %v\n", enemyCore.Pos)

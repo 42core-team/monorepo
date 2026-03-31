@@ -16,10 +16,12 @@ func tick(g *game.Game, bot *coregame.Bot) {
 
 	_ = bot.CreateUnit(game.UnitWarrior)
 
-	for _, obj := range g.GetTeamUnits() {
-		g.Log("Unit %d at position (%d, %d)", obj.Id, obj.Pos.X, obj.Pos.Y)
+	for _, obj := range g.TeamUnits() {
+		// g.Log("Unit %d at position (%d, %d)", obj.ID, obj.Pos.X, obj.Pos.Y)
 		_ = bot.Move(obj, game.NewPosition(obj.Pos.X+1, obj.Pos.Y))
 	}
+
+	g.PrintField()
 }
 
 func main() {
