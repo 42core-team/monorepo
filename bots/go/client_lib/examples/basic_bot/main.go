@@ -14,8 +14,8 @@ func tick(g *game.Game, bot *coregame.Bot) {
 
 	_ = bot.CreateUnit(game.UnitWarrior)
 
-	for _, unit := range g.GetTeamUnits() {
-		g.Log("Unit %d at position (%d, %d)", unit.Id, unit.Pos.X, unit.Pos.Y)
+	for _, unit := range g.TeamUnits() {
+		g.Log("Unit %d at position (%d, %d)", unit.ID, unit.Pos.X, unit.Pos.Y)
 		_ = bot.Move(unit, game.NewPosition(unit.Pos.X+1, unit.Pos.Y))
 	}
 }
