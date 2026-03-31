@@ -1,21 +1,28 @@
 ARG TAG_NAME="dev"
 ARG SERVER_IMAGE="ghcr.io/42core-team/server"
 
-FROM oven/bun:debian AS bun-base
+FROM ubuntu:noble AS ubuntu-bun
+ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /app
 
-RUN apt-get update && \
-    apt-get install -y make curl && \
+RUN apt update && \
+    apt install -y curl ca-certificates make unzip git && \
     ARCH=$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/') && \
     curl -fsSL "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${ARCH}" -o /usr/local/bin/yq && \
     chmod +x /usr/local/bin/yq && \
     rm -rf /var/lib/apt/lists/*
 
-RUN bun add -g typescript
+# Install Bun (adds to /root/.bun)
+RUN curl -fsSL https://bun.sh/install | bash
+ENV BUN_INSTALL=/root/.bun
+ENV PATH="$BUN_INSTALL/bin:$PATH"
+
+# Ensure Bun is available and install TypeScript globally via Bun
+RUN bun --version && bun add -g typescript
 
 FROM ${SERVER_IMAGE}:${TAG_NAME} AS game
 
-FROM bun-base AS release
+FROM ubuntu-bun AS release
 
 COPY --from=game /core/server /core/server
 COPY --from=game /core/data /core/data
