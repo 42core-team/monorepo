@@ -9,47 +9,39 @@ import (
 	"github.com/42core-team/go-client-lib/game"
 )
 
-const teamName = "Tudn"
+const teamName = "Gridmaster"
+
+func isEnemyCore(myTeamID uint) func(*game.Object) bool {
+	return func(obj *game.Object) bool {
+		if obj.Type != game.ObjectCore {
+			return false
+		}
+		data := obj.GetCoreData()
+		if data == nil {
+			return false
+		}
+		return data.TeamID != myTeamID
+	}
+}
 
 func tick(g *game.Game, bot *coregame.Bot) {
-	g.Log("Tick %d", g.ElapsedTicks)
+	bot.CreateUnit(game.UnitWarrior)
 
-	if g.ElapsedTicks%3 == 0 {
-		_ = bot.CreateUnit(game.UnitMiner)
-	} else {
-		_ = bot.CreateUnit(game.UnitWarrior)
+	enemyCore := g.NearestObject(game.Position{X: 0, Y: 0}, isEnemyCore(g.MyTeamID))
+	if enemyCore == nil {
+		return
 	}
 
-	var enemyCore = g.MyCore()
-	for _, obj := range g.TeamUnits() {
-		if !obj.IsAlive() {
-			continue
-		}
-
-		var closestEnemy = g.NearestObject(obj.Pos, func(object *game.Object) bool {
-			return object.IsEnemy(obj.TeamID) && object.IsAlive() && (object.IsOfType(game.ObjectUnit) || object.IsOfType(game.ObjectCore))
-		})
-
-		// fmt.Printf("Enemy core pos: %v\n", enemyCore.Pos)
-		// fmt.Printf("closest enemy: %v\n", closestEnemy)
-
-		if closestEnemy != nil && closestEnemy.IsAlive() {
-			// fmt.Println("Moving to closest enemy")
-			pos := bot.SimplePathfind(obj, closestEnemy.Pos)
-			bot.Move(obj, pos)
-			bot.Attack(obj, closestEnemy)
-		} else {
-			// fmt.Println("Moving to enemy core")
-			pos := bot.SimplePathfind(obj, enemyCore.Pos)
-			bot.Move(obj, pos)
-			bot.Attack(obj, enemyCore)
-		}
+	for _, unit := range g.TeamUnits() {
+		pos := bot.SimplePathfind(unit, enemyCore.Pos)
+		bot.Move(unit, pos)
+		bot.AddObjectInfo(unit, "test")
 	}
 }
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Usage: my-core-bot <team-id>")
+		fmt.Println("Usage: gridmaster <team-id>")
 		os.Exit(1)
 	}
 

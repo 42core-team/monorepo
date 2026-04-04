@@ -17,19 +17,19 @@ type loginRequest struct {
 }
 
 type clientPacket struct {
-	Actions []Action `json:"actions"`
+	Actions []Action     `json:"actions"`
+	Debug   []DebugEntry `json:"debug_data,omitempty"`
 }
 
-// Connection manages the TCP connection to the game server.
 type Connection struct {
 	socket         net.Conn
 	scanner        *bufio.Scanner
 	game           *game.Game
-	onTickCallback func(*game.Game, *ActionQueue)
 	actionQueue    *ActionQueue
+	debugData      *DebugData
+	onTickCallback func(*game.Game)
 }
 
-// NewConnection dials the server, retrying until it is reachable.
 func NewConnection(serverAddr string, selfTeamID uint) (*Connection, error) {
 	fmt.Println("Connecting to server")
 	var conn net.Conn
@@ -51,7 +51,8 @@ func NewConnection(serverAddr string, selfTeamID uint) (*Connection, error) {
 		socket:      conn,
 		scanner:     scanner,
 		game:        &game.Game{MyTeamID: selfTeamID},
-		actionQueue: newActionQueue(100),
+		actionQueue: NewActionQueue(100),
+		debugData:   NewDebugData(100),
 	}, nil
 }
 
@@ -65,8 +66,6 @@ func (c *Connection) readLine() (string, error) {
 	return "", fmt.Errorf("connection closed by server")
 }
 
-// Start sends the login packet, receives the config, then runs the game loop
-// until the server closes the connection.
 func (c *Connection) Start(teamID uint, teamName string) error {
 	defer func() {
 		if err := c.Close(); err != nil {
@@ -87,8 +86,15 @@ func (c *Connection) Start(teamID uint, teamName string) error {
 	}
 
 	for {
-		if err := c.sendActions(c.actionQueue.drain()); err != nil {
-			return fmt.Errorf("error sending actions: %v", err)
+		actions := c.actionQueue.Drain()
+		var debugEntries []DebugEntry
+		if c.debugData.HasData() {
+			debugEntries = c.debugData.GetEntries()
+		}
+		c.debugData.Reset()
+
+		if err := c.sendPacket(actions, debugEntries); err != nil {
+			return fmt.Errorf("error sending packet: %v", err)
 		}
 
 		line, err := c.readLine()
@@ -104,7 +110,7 @@ func (c *Connection) Start(teamID uint, teamName string) error {
 		tick.applyTo(c.game)
 
 		if c.onTickCallback != nil {
-			c.onTickCallback(c.game, c.actionQueue)
+			c.onTickCallback(c.game)
 		}
 	}
 
@@ -120,6 +126,18 @@ func (c *Connection) sendLoginPacket(teamID uint, teamName string) error {
 	return c.send(data)
 }
 
+func (c *Connection) sendPacket(actions []Action, debugEntries []DebugEntry) error {
+	packet := clientPacket{
+		Actions: actions,
+		Debug:   debugEntries,
+	}
+	data, err := json.Marshal(packet)
+	if err != nil {
+		return fmt.Errorf("error marshaling client packet: %v", err)
+	}
+	return c.send(data)
+}
+
 func (c *Connection) send(buffer []byte) error {
 	buffer = append(buffer, '\n')
 	if _, err := c.socket.Write(buffer); err != nil {
@@ -128,31 +146,22 @@ func (c *Connection) send(buffer []byte) error {
 	return nil
 }
 
-func (c *Connection) sendActions(planned []Action) error {
-	packet := clientPacket{Actions: planned}
-	data, err := json.Marshal(packet)
-	if err != nil {
-		return fmt.Errorf("error marshaling client packet: %v", err)
-	}
-	return c.send(data)
-}
-
-// Close shuts down the TCP connection.
 func (c *Connection) Close() error {
 	return c.socket.Close()
 }
 
-// Game returns the current game state.
 func (c *Connection) Game() *game.Game {
 	return c.game
 }
 
-// ActionQueue returns the bot's action queue.
 func (c *Connection) ActionQueue() *ActionQueue {
 	return c.actionQueue
 }
 
-// SetTickCallback registers the function called after each game tick.
-func (c *Connection) SetTickCallback(callback func(*game.Game, *ActionQueue)) {
+func (c *Connection) DebugData() *DebugData {
+	return c.debugData
+}
+
+func (c *Connection) SetTickCallback(callback func(*game.Game)) {
 	c.onTickCallback = callback
 }

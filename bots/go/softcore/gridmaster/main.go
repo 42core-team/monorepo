@@ -9,19 +9,33 @@ import (
 	"github.com/42core-team/go-client-lib/game"
 )
 
-const teamName = "GoBotExample"
+const teamName = "Gridmaster"
+
+func isEnemyCore(myTeamID uint) func(*game.Object) bool {
+	return func(obj *game.Object) bool {
+		if obj.Type != game.ObjectCore {
+			return false
+		}
+		data := obj.GetCoreData()
+		if data == nil {
+			return false
+		}
+		return data.TeamID != myTeamID
+	}
+}
 
 func tick(g *game.Game, bot *coregame.Bot) {
-	g.Log("Tick %d", g.ElapsedTicks)
+	bot.CreateUnit(game.UnitWarrior)
 
-	_ = bot.CreateUnit(game.UnitWarrior)
-
-	for _, obj := range g.TeamUnits() {
-		// g.Log("Unit %d at position (%d, %d)", obj.ID, obj.Pos.X, obj.Pos.Y)
-		_ = bot.Move(obj, game.NewPosition(obj.Pos.X+1, obj.Pos.Y))
+	enemyCore := g.NearestObject(game.Position{X: 0, Y: 0}, isEnemyCore(g.MyTeamID))
+	if enemyCore == nil {
+		return
 	}
 
-	g.PrintField()
+	for _, unit := range g.TeamUnits() {
+		pos := bot.SimplePathfind(unit, enemyCore.Pos)
+		bot.Move(unit, pos)
+	}
 }
 
 func main() {

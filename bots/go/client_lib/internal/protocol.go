@@ -8,28 +8,22 @@ import (
 )
 
 type incomingObject struct {
-	ID            *uint            `json:"id,omitempty"`
-	Type          *game.ObjectType `json:"type,omitempty"`
-	X             *uint            `json:"x,omitempty"`
-	Y             *uint            `json:"y,omitempty"`
-	Hp            *uint            `json:"hp,omitempty"`
-	TeamID        *uint            `json:"teamId,omitempty"`
-	Gems          *uint            `json:"gems,omitempty"`
-	SpawnCooldown *uint            `json:"SpawnCooldown,omitempty"`
-}
-
-type incomingAction struct {
-	Type     *string `json:"type,omitempty"`
-	UnitID   *uint   `json:"unit_id,omitempty"`
-	X        *uint   `json:"x,omitempty"`
-	Y        *uint   `json:"y,omitempty"`
-	TargetID *uint   `json:"target_id,omitempty"`
-	UnitType *uint   `json:"unit_type,omitempty"`
+	ID             *uint            `json:"id,omitempty"`
+	Type           *game.ObjectType `json:"type,omitempty"`
+	X              *uint            `json:"x,omitempty"`
+	Y              *uint            `json:"y,omitempty"`
+	Hp             *uint            `json:"hp,omitempty"`
+	TeamID         *uint            `json:"teamId,omitempty"`
+	Gems           *uint            `json:"gems,omitempty"`
+	UnitType       *game.UnitType   `json:"unit_type,omitempty"`
+	ActionCooldown *uint            `json:"ActionCooldown,omitempty"`
+	SpawnCooldown  *uint            `json:"SpawnCooldown,omitempty"`
+	Countdown      *uint            `json:"countdown,omitempty"`
+	State          *string          `json:"state,omitempty"`
 }
 
 type gameTick struct {
 	Objects []incomingObject `json:"objects"`
-	Actions []incomingAction `json:"actions"`
 	Errors  []string         `json:"errors"`
 	Tick    uint             `json:"tick"`
 }
@@ -49,8 +43,14 @@ func (tick *gameTick) applyTo(g *game.Game) {
 		if obj.ID == nil {
 			continue
 		}
-		gameObject, err := g.ObjectByID(*obj.ID)
-		if err != nil {
+
+		if obj.State != nil && *obj.State == "dead" {
+			g.Objects = removeObject(g.Objects, *obj.ID)
+			continue
+		}
+
+		existingObj, _ := g.ObjectByID(*obj.ID)
+		if existingObj == nil {
 			newObj := game.Object{ID: *obj.ID}
 			if obj.Type != nil {
 				newObj.Type = *obj.Type
@@ -65,59 +65,55 @@ func (tick *gameTick) applyTo(g *game.Game) {
 				newObj.TeamID = *obj.TeamID
 			}
 			newObj.ObjectData = initObjectData(obj)
-			g.Objects = append(g.Objects, newObj)
+			g.Objects = append(g.Objects, &newObj)
 			continue
 		}
 
 		if obj.X != nil {
-			gameObject.Pos.X = *obj.X
+			existingObj.Pos.X = *obj.X
 		}
 		if obj.Y != nil {
-			gameObject.Pos.Y = *obj.Y
+			existingObj.Pos.Y = *obj.Y
 		}
 		if obj.Hp != nil {
-			gameObject.Hp = int32(*obj.Hp)
+			existingObj.Hp = int32(*obj.Hp)
 		}
 		if obj.TeamID != nil {
-			gameObject.TeamID = *obj.TeamID
+			existingObj.TeamID = *obj.TeamID
 		}
-		if obj.Gems != nil {
-			switch data := gameObject.ObjectData.(type) {
-			case game.UnitData:
-				data.Gems = obj.Gems
-				gameObject.ObjectData = data
-			case game.CoreData:
-				data.Gems = *obj.Gems
-				gameObject.ObjectData = data
-			case game.DepositData:
-				data.Gems = *obj.Gems
-				gameObject.ObjectData = data
-			}
-		}
-		if obj.SpawnCooldown != nil {
-			if data, ok := gameObject.ObjectData.(game.CoreData); ok {
-				data.SpawnCooldown = *obj.SpawnCooldown
-				gameObject.ObjectData = data
-			}
-		}
+		updateObjectData(existingObj, obj)
 	}
 
-	// Decrement cooldowns for alive units.
 	for i := range g.Objects {
 		if !g.Objects[i].IsAlive() {
 			continue
 		}
-		if data, ok := g.Objects[i].ObjectData.(game.UnitData); ok {
+		if data := g.Objects[i].GetUnitData(); data != nil {
 			if data.ActionCooldown != nil && *data.ActionCooldown > 0 {
 				*data.ActionCooldown--
-				g.Objects[i].ObjectData = data
+				g.Objects[i].ObjectData = *data
+			}
+		}
+		if data := g.Objects[i].GetCoreData(); data != nil {
+			if data.SpawnCooldown > 0 {
+				data.SpawnCooldown--
+				g.Objects[i].ObjectData = *data
 			}
 		}
 	}
 
 	for _, errMsg := range tick.Errors {
-		fmt.Printf("Error: %s\n", errMsg)
+		fmt.Printf("\033[31m%s\033[0m\n", errMsg)
 	}
+}
+
+func removeObject(objects []*game.Object, id uint) []*game.Object {
+	for i, obj := range objects {
+		if obj.ID == id {
+			return append(objects[:i], objects[i+1:]...)
+		}
+	}
+	return objects
 }
 
 func initObjectData(obj incomingObject) game.ObjectData {
@@ -126,28 +122,101 @@ func initObjectData(obj incomingObject) game.ObjectData {
 	}
 	switch *obj.Type {
 	case game.ObjectUnit:
-		return game.UnitData{UnitType: game.UnitWarrior, Gems: obj.Gems}
-	case game.ObjectCore:
-		d := game.CoreData{}
+		data := game.UnitData{}
+		if obj.UnitType != nil {
+			data.UnitType = *obj.UnitType
+		}
 		if obj.TeamID != nil {
-			d.TeamID = *obj.TeamID
+			data.TeamID = *obj.TeamID
 		}
 		if obj.Gems != nil {
-			d.Gems = *obj.Gems
+			data.Gems = obj.Gems
+		}
+		if obj.ActionCooldown != nil {
+			data.ActionCooldown = obj.ActionCooldown
+		}
+		return data
+	case game.ObjectCore:
+		data := game.CoreData{}
+		if obj.TeamID != nil {
+			data.TeamID = *obj.TeamID
+		}
+		if obj.Gems != nil {
+			data.Gems = *obj.Gems
 		}
 		if obj.SpawnCooldown != nil {
-			d.SpawnCooldown = *obj.SpawnCooldown
+			data.SpawnCooldown = *obj.SpawnCooldown
 		}
-		return d
-	case game.ObjectDeposit:
-		d := game.DepositData{}
+		return data
+	case game.ObjectDeposit, game.ObjectGemPile:
+		data := game.DepositData{}
 		if obj.Gems != nil {
-			d.Gems = *obj.Gems
+			data.Gems = *obj.Gems
 		}
-		return d
+		return data
 	case game.ObjectBomb:
-		return game.BombData{}
+		data := game.BombData{}
+		if obj.Countdown != nil {
+			data.Countdown = *obj.Countdown
+		}
+		return data
 	default:
 		return nil
+	}
+}
+
+func updateObjectData(obj *game.Object, incoming incomingObject) {
+	switch obj.Type {
+	case game.ObjectUnit:
+		data := obj.GetUnitData()
+		if data == nil {
+			data = &game.UnitData{}
+		}
+		if incoming.UnitType != nil {
+			data.UnitType = *incoming.UnitType
+		}
+		if incoming.TeamID != nil {
+			data.TeamID = *incoming.TeamID
+		}
+		if incoming.Gems != nil {
+			data.Gems = incoming.Gems
+		}
+		if incoming.ActionCooldown != nil {
+			data.ActionCooldown = incoming.ActionCooldown
+		}
+		obj.ObjectData = *data
+	case game.ObjectCore:
+		data := obj.GetCoreData()
+		if data == nil {
+			data = &game.CoreData{}
+		}
+		if incoming.TeamID != nil {
+			data.TeamID = *incoming.TeamID
+		}
+		if incoming.Gems != nil {
+			data.Gems = *incoming.Gems
+		}
+		if incoming.SpawnCooldown != nil {
+			data.SpawnCooldown = *incoming.SpawnCooldown
+		}
+		obj.ObjectData = *data
+	case game.ObjectDeposit, game.ObjectGemPile:
+		data := obj.GetDepositData()
+		if data == nil {
+			data = &game.DepositData{}
+		}
+		if incoming.Gems != nil {
+			data.Gems = *incoming.Gems
+		}
+		obj.ObjectData = *data
+	case game.ObjectBomb:
+		data := obj.GetBombData()
+		if data == nil {
+			data = &game.BombData{}
+		}
+		if incoming.Countdown != nil {
+			data.Countdown = *incoming.Countdown
+		}
+		obj.ObjectData = *data
 	}
 }
