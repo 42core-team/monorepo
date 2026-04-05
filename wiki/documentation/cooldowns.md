@@ -25,6 +25,7 @@ The core spawn cooldown is more straightforward, after a new unit was spawned, i
 
 ## Examples
 
+::: code-group labels=[C, Go]
 ```c
 int ft_util_actionCooldown(t_obj *unit)
 {
@@ -36,3 +37,28 @@ int ft_util_actionCooldown(t_obj *unit)
 	return (ac);
 }
 ```
+```go
+func predictActionCooldown(g *game.Game, unit *game.Object) uint {
+	data := unit.GetUnitData()
+	if data == nil {
+		return 0
+	}
+	uconf := g.Config.GetUnitConfig(data.UnitType)
+	if uconf == nil {
+		return 0
+	}
+	gems := uint(1)
+	if data.Gems != nil && *data.Gems > 1 {
+		gems = *data.Gems
+	}
+	ac := uconf.BaseActionCooldown + gems/uconf.BalancePerCooldown
+	if ac > uconf.MaxActionCooldown {
+		ac = uconf.MaxActionCooldown
+	}
+	if ac < 1 {
+		ac = 1
+	}
+	return ac
+}
+```
+:::

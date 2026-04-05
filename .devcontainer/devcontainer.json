@@ -21,7 +21,8 @@
 				"ms-vscode.cpptools",
 				"ms-vscode.vscode-typescript-tslint-plugin",
 				"GitHub.copilot",
-				"twxs.cmake"
+				"twxs.cmake",
+				"golang.go"
 			]
 		}
 	},

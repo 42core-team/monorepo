@@ -45,6 +45,6 @@ sidebarTitle: "FaQ"
 
 ### 💎 How do I pick up gem piles? How do I mine gem deposits?
 
-> You can do both of those things via the [attack action](reference/actions/core_action_attack). Just stand next to the object with a unit that can attack that object type.
+> You can do both of those things via the attack action ([C](reference/c/actions/core_action_attack) | [Go](reference/go/actions/Attack)). Just stand next to the object with a unit that can attack that object type.
 
 Other questions? There is an "faq" channel in the CORE global discord for all your questions.

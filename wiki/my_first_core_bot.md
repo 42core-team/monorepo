@@ -20,10 +20,11 @@ The program we will be writing will not avoid action failures. You'll have to fi
 
 ## The default program
 
-Look into the `my-CORE-bot/src` directory - in there you will find the files you'll be working in. We can ignore all the files but the `main.c` file for now.
+Look into your bot's source directory - for C this is `my-CORE-bot/src/main.c`, for Go this is your `main.go` file.
 
-In the `main.c` file you should currently see something roughly like this:
+You should currently see something roughly like this:
 
+::: code-group labels=[C, Go]
 ```c
 #include "bot.h"
 
@@ -39,14 +40,43 @@ void ft_on_tick(unsigned long tick)
 	printf("-----> [⚡️ TICK %ld 🔥]\n", tick);
 }
 ```
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+	"strconv"
+
+	coregame "github.com/42core-team/go-client-lib"
+	"github.com/42core-team/go-client-lib/game"
+)
+
+func main() {
+	teamID, _ := strconv.Atoi(os.Args[1])
+	cfg := coregame.DefaultBotConfig(teamID, "YOUR TEAM NAME HERE")
+	bot, err := coregame.NewBot(cfg)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer bot.Close()
+
+	bot.Run(func(g *game.Game, b *coregame.Bot) {
+		fmt.Printf("-----> [⚡️ TICK %d 🔥]\n", g.ElapsedTicks)
+	})
+}
+```
+:::
 
 If you have some more basic code in there, we will now be writing that again in this guide.
 
-- `#include "bot.h"` includes some util functions and the CORE Library, which we will use to interface with the game.
-- The `main` function starts up the CORE Library Gameloop. There's no need for you to touch it.
-- The `ft_on_tick` function prints out the current tick. It is called every time a [tick](https://www.reddit.com/r/explainlikeimfive/comments/4mn531/eli5_what_is_atick_in_gaming_development/) has passed. This function will be called multiple times a second while the game is running.
+- **C**: `#include "bot.h"` includes some util functions and the CORE Library, which we will use to interface with the game. The `main` function starts up the CORE Library Gameloop. The `ft_on_tick` function prints out the current tick.
+- **Go**: The `main` function sets up the bot using `NewBot` and starts the game loop with `bot.Run`. The tick callback is passed as an inline function that receives both the game state and the bot instance.
 
-Before you continue, insert your name into the `CORE_startGame` function call. Replace "YOUR TEAM NAME HERE" with a name for your team. (Note: The name you set will only be shown locally, in website games your team will have the name that you set for your team there.)\
+The tick function / callback is called every time a [tick](https://www.reddit.com/r/explainlikeimfive/comments/4mn531/eli5_what_is_atick_in_gaming_development/) has passed. It will be called multiple times a second while the game is running.
+
+Before you continue, insert your name into the startup call. Replace "YOUR TEAM NAME HERE" with a name for your team. (Note: The name you set will only be shown locally, in website games your team will have the name that you set for your team there.)\
 If you rerun the game and check out the visualizer, your CORE should now have the name you just set in a box next to it.
 
 ---
@@ -55,6 +85,7 @@ If you rerun the game and check out the visualizer, your CORE should now have th
 
 Let's create a unit!
 
+::: code-group labels=[C, Go]
 ```c
 void ft_on_tick(unsigned long tick)
 {
@@ -63,23 +94,44 @@ void ft_on_tick(unsigned long tick)
 	CORE_action_createUnit(UNIT_WARRIOR);
 }
 ```
+```go
+bot.Run(func(g *game.Game, b *coregame.Bot) {
+	fmt.Printf("-----> [⚡️ TICK %d 🔥]\n", g.ElapsedTicks)
 
-The [createUnit action](reference/actions/CORE_action_createUnit) takes the [type of unit](reference/objects/e_unit_type) you wish to create as an input. It then asks the server to create the unit. If all is right, then there will be a new unit spawned the next tick / the next time the `ft_on_tick` function gets executed. The unit does not spawn immediately in the same tick.
+	b.CreateUnit(game.UnitWarrior)
+})
+```
+:::
+
+The createUnit action ([C](reference/c/actions/core_action_createUnit) | [Go](reference/go/actions/CreateUnit)) takes the type of unit ([C](reference/c/objects/e_unit_type) | [Go](reference/go/objects/UnitType)) you wish to create as an input. It then asks the server to create the unit. If all is right, then there will be a new unit spawned the next tick / the next time the tick function gets executed. The unit does not spawn immediately in the same tick.
 
 If your CORE (your central base) does not have enough gems however, no unit will be created. Later, we will collect more gems to be able to spawn more units. For now, this warrior is enough. Because your CORE starts with a few hundred gems, we are able to afford it.
 
 To see how many gems your CORE holds, you can hover your mouse over it in the visualizer. To do this in code, you can get a reference to your CORE (you will learn how to do this soon), then check the gems property like this:
 
+::: code-group labels=[C, Go]
 ```c
 t_obj *my_CORE = /**/;
 printf("My CORE has %lu gems!\n", my_CORE->s_CORE.gems);
 ```
+```go
+myCore := g.MyCore()
+coreData := myCore.GetCoreData()
+fmt.Printf("My CORE has %d gems!\n", coreData.Gems)
+```
+:::
 
 You can find out how many gems a unit costs to create by looking at the game config. Here's how you can do this in the code:
 
+::: code-group labels=[C, Go]
 ```c
 printf("My warrior costs %lu gems!\n", CORE_get_unitConfig(UNIT_WARRIOR)->cost);
 ```
+```go
+uconf := g.Config.GetUnitConfig(game.UnitWarrior)
+fmt.Printf("My warrior costs %d gems!\n", uconf.Cost)
+```
+:::
 
 Currently there is an action error (almost) every tick because we try to create a new warrior every tick but don't have enough gems in our CORE. Knowing how to check for the amount of gems the CORE holds and how much gems creating a warrior costs, can you find a way to stop the action error from occurring?
 
@@ -93,10 +145,11 @@ Let's move the unit to the opponent CORE and perform an attack action!
 
 To do this, we'll first need a reference to our warrior. The game needs to know which specific unit should perform a certain action, not just that a unit that is a warrior should do a certain thing.
 
-All objects are represented in the library as the `t_obj` struct. A `t_obj` could therefore represent your own or your opponent's units, but also your CORE, a wall, a deposit or even a bomb. By using cmd+click in VSCode, you should be able to navigate to the `bot.h` file and from there to the `CORE_lib.h` file. Here you can see every struct and function provided to you by the CORE library, where you should also be able to find the `t_obj` struct. You don't ever have to allocate a `t_obj` yourself, as the library already created every object currently in the game for you, you just need to look for it.
+All objects are represented as the object struct ([C: `t_obj`](reference/c/objects/s_obj) | [Go: `Object`](reference/go/objects/Object)). An object could therefore represent your own or your opponent's units, but also your CORE, a wall, a deposit or even a bomb. You don't ever have to allocate an object yourself, as the library already created every object currently in the game for you, you just need to look for it.
 
-To get the `t_obj` struct of the warrior we created, let's have the CORE library make us an array of all of our units that we can then loop over. Let's add this new utility function:
+To get the object of the warrior we created, let's have the library make us a list of all of our units that we can then loop over. Let's add a filtering utility:
 
+::: code-group labels=[C, Go]
 ```c
 bool ft_is_own_unit(const t_obj *obj)
 {
@@ -105,11 +158,27 @@ bool ft_is_own_unit(const t_obj *obj)
 	return true;
 }
 ```
+```go
+// In Go, you can use inline predicates or the built-in TeamUnits() helper:
+isOwnUnit := func(obj *game.Object) bool {
+	if obj.Type != game.ObjectUnit {
+		return false
+	}
+	data := obj.GetUnitData()
+	if data == nil {
+		return false
+	}
+	return data.TeamID == g.MyTeamID
+}
+```
+:::
 
-This is a getter filtering function - it exactly matches the function signature required to be used with the CORE library's getter filtering functionality. For more info on that see the [getter filtering documentation](documentation/getter_filtering). The function takes a `t_obj *` as input, then returns false if the object isn't a unit, and if the object is not on our team, otherwise it returns true.
+- **C**: This is a getter filtering function - it exactly matches the function signature required to be used with the CORE library's getter filtering functionality. For more info on that see the [getter filtering documentation](documentation/getter_filtering). The function takes a `t_obj *` as input, then returns false if the object isn't a unit, and if the object is not on our team, otherwise it returns true.
+- **Go**: Filtering is done by passing predicate functions (closures) directly to getter methods like `ObjectsFilter()`. You can also use built-in helpers like `g.TeamUnits()` which returns all your team's units.
 
-With it, we can now do the following to easily have an array of all our warriors created for us:
+With it, we can now do the following to easily have a list of all our units created for us:
 
+::: code-group labels=[C, Go]
 ```c
 void ft_on_tick(unsigned long tick)
 {
@@ -122,27 +191,52 @@ void ft_on_tick(unsigned long tick)
 	free(my_units);
 }
 ```
+```go
+bot.Run(func(g *game.Game, b *coregame.Bot) {
+	fmt.Printf("-----> [⚡️ TICK %d 🔥]\n", g.ElapsedTicks)
 
-The library created an array of all of our units for us. We only need to remember to free it after using it! The getter filtering functions can be used to filter for any single or array of objects you may want to.
+	b.CreateUnit(game.UnitWarrior)
+
+	myUnits := g.TeamUnits()
+	// ... do something with the slice of all my units
+	// No need to free in Go - the garbage collector handles it!
+})
+```
+:::
+
+- **C**: The library created an array of all of our units for us. We only need to remember to free it after using it! The getter filtering functions can be used to filter for any single or array of objects you may want to.
+- **Go**: The library created a slice of all of our units for us. Go's garbage collector manages memory automatically, so no need to free anything.
 
 Now, let's loop through our units and find our warrior:
 
+::: code-group labels=[C, Go]
 ```c
 for (size_t i = 0; my_units && my_units[i] != NULL; i++)
 {
 	t_obj *unit = my_units[i];
-	
+
 	if (unit->s_unit.unit_type == UNIT_WARRIOR)
 	{
 		// we found our warrior
 	}
 }
 ```
+```go
+for _, unit := range myUnits {
+	data := unit.GetUnitData()
+	if data != nil && data.UnitType == game.UnitWarrior {
+		// we found our warrior
+	}
+}
+```
+:::
 
-Remember to check that my_units is initialized - otherwise you'll segfault if you don't have any units and the [`CORE_get_objs_filter`](reference/getters/CORE_get_objs_filter) function returns NULL.
+- **C**: Remember to check that my_units is initialized - otherwise you'll segfault if you don't have any units and the [`CORE_get_objs_filter`](reference/c/getters/core_get_objs_filter) function returns NULL.
+- **Go**: Ranging over a nil or empty slice is safe - no need for extra nil checks.
 
 With our warrior found, we can now have it pathfind to the opponent's CORE:
 
+::: code-group labels=[C, Go]
 ```c
 if (unit->s_unit.unit_type == UNIT_WARRIOR)
 {
@@ -153,12 +247,28 @@ if (unit->s_unit.unit_type == UNIT_WARRIOR)
 	CORE_action_pathfind(unit, opponent_CORE->pos);
 }
 ```
+```go
+if data != nil && data.UnitType == game.UnitWarrior {
+	// we found our warrior
 
-`ft_get_CORE_opponent()` returns the CORE of the opponent. It is not a part of the CORE Library, it is a utility function that is already a part of your bot in the `getters.c` file right next to the file we're in right now. It contains a few helpful getters that all utilize [getter filtering](documentation/getter_filtering). It may be useful to you. Another function in this file is `ft_get_CORE_own()`, which does exactly what it says tin. In fact, now that you understand how getter filtering works, if you wanted to, you could remove the previous `ft_is_own_unit` utility function entirely and use `t_obj **ft_get_units_own(void)` from the `getters.c` file to get all your units instead.
+	enemyCore := g.EnemyCore()
 
-[`CORE_action_pathfind`](reference/actions/CORE_action_pathfind) is another action similar to [`CORE_action_createUnit`](reference/actions/CORE_action_createUnit), which tries to move a certain object to a certain position. It makes one move each time it's called, so since multiple moves across multiple ticks are needed to move an object to another location, keep calling the pathfind function each tick until it's reached its target, as we do here.\
+	if enemyCore != nil {
+		nextPos := b.SimplePathfind(unit, enemyCore.Pos)
+		b.Move(unit, nextPos)
+	}
+}
+```
+:::
+
+- **C**: `ft_get_CORE_opponent()` returns the CORE of the opponent. It is not a part of the CORE Library, it is a utility function that is already a part of your bot in the `getters.c` file. Another function in this file is `ft_get_CORE_own()`, which does exactly what it says on the tin. [`CORE_action_pathfind`](reference/c/actions/core_action_pathfind) will determine the next move and execute it, attacking objects in its way.
+- **Go**: `g.EnemyCore()` and `g.MyCore()` are built-in helper methods on the Game struct. [`SimplePathfind`](reference/go/actions/SimplePathfind) determines the next move and handles attacking objects in its way, but you need to call `Move` with the returned position yourself.
+
+In fact, now that you understand how getter filtering works, if you wanted to, you could use the built-in helpers (**C**: `ft_get_units_own()` from the `getters.c` file | **Go**: `g.TeamUnits()`) to get all your units instead.
+
+The pathfind function ([C](reference/c/actions/core_action_pathfind) | [Go](reference/go/actions/SimplePathfind)) is another action similar to the createUnit action, which tries to move a certain object to a certain position. It makes one move each time it's called, so since multiple moves across multiple ticks are needed to move an object to another location, keep calling the pathfind function each tick until it's reached its target.\
 If there is an object in the way (that isn't one of your teams units or your CORE), it will attack that object to get to its target. So if we target the position of an object that's not our unit or our CORE, it will actually also attack it, making the function perfect for both moving and attacking.\
-Note that this function is only a temporary util - you'll probably want a custom function that's better at navigating the game field at some point. Once you do, you can use [`CORE_action_move`](reference/actions/CORE_action_move) and [`CORE_action_attack`](reference/actions/CORE_action_attack) to move and attack units manually.
+Note that this function is only a temporary util - you'll probably want a custom function that's better at navigating the game field at some point. Once you do, you can use the move action ([C](reference/c/actions/core_action_move) | [Go](reference/go/actions/Move)) and the attack action ([C](reference/c/actions/core_action_attack) | [Go](reference/go/actions/Attack)) to move and attack units manually.
 
 If you run the game again now, you should see your bot spawn a warrior and then see that warrior walk towards the opponent CORE.
 The problem is that the gridmaster opponent does the exact same - so it's entirely random which one of you wins. So let's improve our logic and gain a leg up on our opponent!
@@ -169,14 +279,13 @@ The problem is that the gridmaster opponent does the exact same - so it's entire
 
 The way we will win against our opponent is by not running past all of its units - instead, our units will first attack the units of the opponent and only then target the opponent CORE. Since the gridmaster opponent clearly only targets our CORE directly, when we hit the opponent's enemies, they won't hit back. Let's try it!
 
-First of all, let's create another getter filtering util from the `getters.c` file, `ft_get_units_opponent_nearest`. It uses a new getter filtering function, [`CORE_get_obj_filter_nearest`](reference/getters/CORE_get_obj_filter_nearest), which takes a position argument to return the closest object to the inputted position that matches the inserted condition function.
+First of all, let's find the nearest enemy unit. In C, you can use `ft_get_units_opponent_nearest` from the `getters.c` file. In Go, you can use `g.NearestObject` with a predicate. Both use [`NearestObject` / `CORE_get_obj_filter_nearest`](documentation/getter_filtering) which takes a position argument to return the closest object matching a condition.
 
-You should open the `getters.c` file and understand how the `ft_get_units_opponent_nearest` function is implemented and how it works.
-
-So, for each of our active warriors, let's use the `ft_get_units_opponent_nearest` function to get the closest opponent unit. If the function returns null (meaning there is no closest opponent unit, they're all dead), we will head for the opponent CORE, otherwise we'll make our way to killing that opponent unit.
+So, for each of our active warriors, let's find the closest opponent unit. If no opponent units exist (they're all dead), we will head for the opponent CORE, otherwise we'll make our way to killing that opponent unit.
 
 Let's put it all together & then run:
 
+::: code-group labels=[C, Go]
 ```c
 void ft_on_tick(unsigned long tick)
 {
@@ -185,11 +294,11 @@ void ft_on_tick(unsigned long tick)
 	CORE_action_createUnit(UNIT_WARRIOR);
 
 	t_obj **my_units = ft_get_units_own();
-	
+
 	for (size_t i = 0; my_units && my_units[i] != NULL; i++)
 	{
 		t_obj *unit = my_units[i];
-		
+
 		if (unit->s_unit.unit_type == UNIT_WARRIOR)
 		{
 			t_obj *opponent_CORE = ft_get_CORE_opponent();
@@ -205,6 +314,39 @@ void ft_on_tick(unsigned long tick)
 	free(my_units);
 }
 ```
+```go
+bot.Run(func(g *game.Game, b *coregame.Bot) {
+	fmt.Printf("-----> [⚡️ TICK %d 🔥]\n", g.ElapsedTicks)
+
+	b.CreateUnit(game.UnitWarrior)
+
+	myUnits := g.TeamUnits()
+
+	for _, unit := range myUnits {
+		data := unit.GetUnitData()
+		if data == nil {
+			continue
+		}
+
+		if data.UnitType == game.UnitWarrior {
+			enemyCore := g.EnemyCore()
+			nearestEnemy := g.NearestObject(unit.Pos, func(obj *game.Object) bool {
+				d := obj.GetUnitData()
+				return obj.Type == game.ObjectUnit && d != nil && d.TeamID != g.MyTeamID && d.TeamID != 0
+			})
+
+			if nearestEnemy != nil {
+				nextPos := b.SimplePathfind(unit, nearestEnemy.Pos)
+				b.Move(unit, nextPos)
+			} else if enemyCore != nil {
+				nextPos := b.SimplePathfind(unit, enemyCore.Pos)
+				b.Move(unit, nextPos)
+			}
+		}
+	}
+})
+```
+:::
 
 AWESOME! (You should have just won.)
 
@@ -224,6 +366,7 @@ Firstly, let's spawn the miner unit. As you can see in the [config](documentatio
 
 First, we need to spawn miner units, so let's modify the unit spawning logic at the beginning:
 
+::: code-group labels=[C, Go]
 ```c
 // getter filtering utility function
 bool ft_is_miner(const t_obj *obj)
@@ -232,9 +375,9 @@ bool ft_is_miner(const t_obj *obj)
 	if (obj->s_unit.unit_type != UNIT_MINER) return false;
 	return true;
 }
-```
 
-```c
+// ---
+
 void ft_on_tick(unsigned long tick)
 {
 	printf("-----> [⚡️ TICK %ld 🔥]\n", tick);
@@ -244,16 +387,32 @@ void ft_on_tick(unsigned long tick)
 	CORE_action_createUnit(UNIT_WARRIOR);
 // ...
 ```
+```go
+bot.Run(func(g *game.Game, b *coregame.Bot) {
+	fmt.Printf("-----> [⚡️ TICK %d 🔥]\n", g.ElapsedTicks)
 
-This will guarantee that there are always at least 2 miners, and we will start spawning warriors afterwards. [`CORE_get_objs_filter_count`](reference/getters/CORE_get_objs_filter_count) is similar to previous getter functions, but it simply returns an integer - the amount of objects in the game that match the custom filtering condition.
+	miners := g.ObjectsFilter(func(obj *game.Object) bool {
+		data := obj.GetUnitData()
+		return obj.Type == game.ObjectUnit && data != nil && data.TeamID == g.MyTeamID && data.UnitType == game.UnitMiner
+	})
+	if len(miners) < 2 {
+		b.CreateUnit(game.UnitMiner)
+	}
+	b.CreateUnit(game.UnitWarrior)
+// ...
+```
+:::
 
-Thirdly, let's have each of our miners attack the nearest deposits that are closest to them to mine them. To do this, we can use the helpfully provided `ft_get_deposit_nearest` function from `getters.c`.
+This will guarantee that there are always at least 2 miners, and we will start spawning warriors afterwards. In C, [`CORE_get_objs_filter_count`](reference/c/getters/core_get_objs_filter_count) is similar to previous getter functions, but it simply returns an integer. In Go, use `len(g.ObjectsFilter(...))` to count matching objects.
 
+Thirdly, let's have each of our miners attack the nearest deposits that are closest to them to mine them. In C, you can use the helpfully provided `ft_get_deposit_nearest` function from `getters.c`. In Go, use `g.NearestObject` with a deposit predicate.
+
+::: code-group labels=[C, Go]
 ```c
 for (size_t i = 0; my_units && my_units[i] != NULL; i++)
 {
 	t_obj *unit = my_units[i];
-	
+
 	if (unit->s_unit.unit_type == UNIT_WARRIOR)
 	{
 		// ...
@@ -267,12 +426,34 @@ for (size_t i = 0; my_units && my_units[i] != NULL; i++)
 	}
 }
 ```
+```go
+for _, unit := range myUnits {
+	data := unit.GetUnitData()
+	if data == nil {
+		continue
+	}
+
+	if data.UnitType == game.UnitWarrior {
+		// ...
+	} else if data.UnitType == game.UnitMiner {
+		nearestDeposit := g.NearestObject(unit.Pos, func(obj *game.Object) bool {
+			return obj.Type == game.ObjectDeposit
+		})
+		if nearestDeposit != nil {
+			nextPos := b.SimplePathfind(unit, nearestDeposit.Pos)
+			b.Move(unit, nextPos)
+		}
+	}
+}
+```
+:::
 
 Run the program!
 As you may have noticed, things aren't working quite as expected - the deposits are being mined, but our CORE is not gaining any gems. The gems just fall on the floor and our miner is not picking them up. The reason for this is that once a deposit was fully mined, it turns into a gem pile object with the same amount of gems. But since our miners aren't targeting gem piles, they just walk along.
 
-If we don't have our miners target the nearest deposit, but the nearest deposit or gem pile, they will attack the gem pile after it has dropped from the destroyed deposit. The gems will therefore be picked up by the miner. We can do this using the `ft_get_deposit_gems_nearest` function also provided in `getters.c`.
+If we don't have our miners target the nearest deposit, but the nearest deposit or gem pile, they will attack the gem pile after it has dropped from the destroyed deposit. The gems will therefore be picked up by the miner. In C, use the `ft_get_deposit_gems_nearest` function from `getters.c`. In Go, expand the predicate.
 
+::: code-group labels=[C, Go]
 ```c
 else if (unit->s_unit.unit_type == UNIT_MINER)
 {
@@ -281,13 +462,26 @@ else if (unit->s_unit.unit_type == UNIT_MINER)
 		CORE_action_pathfind(unit, nearest_deposit_or_gem_pile->pos);
 }
 ```
+```go
+} else if data.UnitType == game.UnitMiner {
+	nearest := g.NearestObject(unit.Pos, func(obj *game.Object) bool {
+		return obj.Type == game.ObjectDeposit || obj.Type == game.ObjectGemPile
+	})
+	if nearest != nil {
+		nextPos := b.SimplePathfind(unit, nearest.Pos)
+		b.Move(unit, nextPos)
+	}
+}
+```
+:::
 
 Great! Now the gems are being mined & picked up correctly. Trouble is that they are being picked up by the miner unit, not the CORE. We just need to bring them to our CORE now, so the CORE can use them to spawn more units!
 
-To do this, we can use yet another action, [`CORE_action_transferGems`](reference/actions/CORE_action_transferGems).
+To do this, we can use yet another action, the transferGems action ([C](reference/c/actions/core_action_transferGems) | [Go](reference/go/actions/TransferGems)).
 
-The logic itself isn't too tricky - we can just check whether the unit is holding any gems, very similar to how we previously checked whether our CORE had any gems. If so, we should walk back to our CORE and transfer the gems to the CORE, and if not, we should go get some more by mining deposits or picking up normal gem piles.
+The logic itself isn't too tricky - we can just check whether the unit is holding any gems. If so, we should walk back to our CORE and transfer the gems to the CORE, and if not, we should go get some more by mining deposits or picking up normal gem piles.
 
+::: code-group labels=[C, Go]
 ```c
 else if (unit->s_unit.unit_type == UNIT_MINER)
 {
@@ -305,6 +499,27 @@ else if (unit->s_unit.unit_type == UNIT_MINER)
 	}
 }
 ```
+```go
+} else if data.UnitType == game.UnitMiner {
+	if data.Gems != nil && *data.Gems > 0 {
+		myCore := g.MyCore()
+		if myCore != nil {
+			nextPos := b.SimplePathfind(unit, myCore.Pos)
+			b.Move(unit, nextPos)
+			b.TransferGems(unit, myCore.Pos, *data.Gems)
+		}
+	} else {
+		nearest := g.NearestObject(unit.Pos, func(obj *game.Object) bool {
+			return obj.Type == game.ObjectDeposit || obj.Type == game.ObjectGemPile
+		})
+		if nearest != nil {
+			nextPos := b.SimplePathfind(unit, nearest.Pos)
+			b.Move(unit, nextPos)
+		}
+	}
+}
+```
+:::
 
 Awesome! It works!
 
@@ -316,6 +531,7 @@ I hope you enjoyed this tutorial.
 
 Here's the entire code block we ended up with:
 
+::: code-group labels=[C, Go]
 ```c
 #include "bot.h"
 
@@ -343,11 +559,11 @@ void ft_on_tick(unsigned long tick)
 	CORE_action_createUnit(UNIT_WARRIOR);
 
 	t_obj **my_units = ft_get_units_own();
-	
+
 	for (size_t i = 0; my_units && my_units[i] != NULL; i++)
 	{
 		t_obj *unit = my_units[i];
-		
+
 		if (unit->s_unit.unit_type == UNIT_WARRIOR)
 		{
 			t_obj *opponent_CORE = ft_get_CORE_opponent();
@@ -378,6 +594,85 @@ void ft_on_tick(unsigned long tick)
 	free(my_units);
 }
 ```
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+	"strconv"
+
+	coregame "github.com/42core-team/go-client-lib"
+	"github.com/42core-team/go-client-lib/game"
+)
+
+func main() {
+	teamID, _ := strconv.Atoi(os.Args[1])
+	cfg := coregame.DefaultBotConfig(teamID, "testiebestie")
+	bot, err := coregame.NewBot(cfg)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer bot.Close()
+
+	bot.Run(func(g *game.Game, b *coregame.Bot) {
+		fmt.Printf("-----> [⚡️ TICK %d 🔥]\n", g.ElapsedTicks)
+
+		miners := g.ObjectsFilter(func(obj *game.Object) bool {
+			data := obj.GetUnitData()
+			return obj.Type == game.ObjectUnit && data != nil && data.TeamID == g.MyTeamID && data.UnitType == game.UnitMiner
+		})
+		if len(miners) < 2 {
+			b.CreateUnit(game.UnitMiner)
+		}
+		b.CreateUnit(game.UnitWarrior)
+
+		myUnits := g.TeamUnits()
+
+		for _, unit := range myUnits {
+			data := unit.GetUnitData()
+			if data == nil {
+				continue
+			}
+
+			if data.UnitType == game.UnitWarrior {
+				enemyCore := g.EnemyCore()
+				nearestEnemy := g.NearestObject(unit.Pos, func(obj *game.Object) bool {
+					d := obj.GetUnitData()
+					return obj.Type == game.ObjectUnit && d != nil && d.TeamID != g.MyTeamID && d.TeamID != 0
+				})
+
+				if nearestEnemy != nil {
+					nextPos := b.SimplePathfind(unit, nearestEnemy.Pos)
+					b.Move(unit, nextPos)
+				} else if enemyCore != nil {
+					nextPos := b.SimplePathfind(unit, enemyCore.Pos)
+					b.Move(unit, nextPos)
+				}
+			} else if data.UnitType == game.UnitMiner {
+				if data.Gems != nil && *data.Gems > 0 {
+					myCore := g.MyCore()
+					if myCore != nil {
+						nextPos := b.SimplePathfind(unit, myCore.Pos)
+						b.Move(unit, nextPos)
+						b.TransferGems(unit, myCore.Pos, *data.Gems)
+					}
+				} else {
+					nearest := g.NearestObject(unit.Pos, func(obj *game.Object) bool {
+						return obj.Type == game.ObjectDeposit || obj.Type == game.ObjectGemPile
+					})
+					if nearest != nil {
+						nextPos := b.SimplePathfind(unit, nearest.Pos)
+						b.Move(unit, nextPos)
+					}
+				}
+			}
+		}
+	})
+}
+```
+:::
 
 ---
 

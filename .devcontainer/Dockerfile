@@ -21,5 +21,12 @@ RUN apt-get update && apt-get install -y \
 	&& chmod +x /usr/local/bin/yq \
 	&& rm -rf /var/lib/apt/lists/*
 
+# Install Go 1.26.0
+ARG GO_VERSION=1.26.0
+RUN ARCH=$(dpkg --print-architecture) && \
+	curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-${ARCH}.tar.gz" | tar -C /usr/local -xz
+ENV PATH="/usr/local/go/bin:/root/go/bin:${PATH}"
+ENV GOPATH="/root/go"
+
 # Set default shell to zsh
 SHELL ["/bin/zsh", "-c"]
