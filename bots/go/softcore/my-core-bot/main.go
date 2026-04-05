@@ -25,7 +25,9 @@ func isEnemyCore(myTeamID uint) func(*game.Object) bool {
 }
 
 func tick(g *game.Game, bot *coregame.Bot) {
-	bot.CreateUnit(game.UnitWarrior)
+	if g.MyCore().GetCoreData().Gems > g.Config.Units[game.UnitWarrior].Cost {
+		bot.CreateUnit(game.UnitWarrior)
+	}
 
 	enemyCore := g.NearestObject(game.Position{X: 0, Y: 0}, isEnemyCore(g.MyTeamID))
 	if enemyCore == nil {
@@ -34,8 +36,10 @@ func tick(g *game.Game, bot *coregame.Bot) {
 
 	for _, unit := range g.TeamUnits() {
 		pos := bot.SimplePathfind(unit, enemyCore.Pos)
-		bot.Move(unit, pos)
-		bot.AddObjectInfo(unit, "test")
+		bot.AddObjectPathStep(unit, pos)
+		if *unit.GetUnitData().ActionCooldown == 0 {
+			bot.Move(unit, pos)
+		}
 	}
 }
 

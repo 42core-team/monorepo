@@ -59,7 +59,7 @@ func (tick *gameTick) applyTo(g *game.Game) {
 				newObj.Pos = game.Position{X: *obj.X, Y: *obj.Y}
 			}
 			if obj.Hp != nil {
-				newObj.Hp = int32(*obj.Hp)
+				newObj.Hp = *obj.Hp
 			}
 			if obj.TeamID != nil {
 				newObj.TeamID = *obj.TeamID
@@ -76,7 +76,7 @@ func (tick *gameTick) applyTo(g *game.Game) {
 			existingObj.Pos.Y = *obj.Y
 		}
 		if obj.Hp != nil {
-			existingObj.Hp = int32(*obj.Hp)
+			existingObj.Hp = *obj.Hp
 		}
 		if obj.TeamID != nil {
 			existingObj.TeamID = *obj.TeamID

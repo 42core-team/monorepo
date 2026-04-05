@@ -66,7 +66,7 @@ type Object struct {
 	ID         uint       `json:"id"`
 	Type       ObjectType `json:"type"`
 	Pos        Position   `json:"pos"`
-	Hp         int32      `json:"hp"`
+	Hp         uint      `json:"hp"`
 	TeamID     uint       `json:"teamId"`
 	ObjectData ObjectData `json:"-"`
 	Data       any        `json:"-"`

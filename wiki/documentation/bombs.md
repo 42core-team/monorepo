@@ -1,4 +1,4 @@
-Bombs can be built by units that have a t_build_type of "bomb". If there is no such unit in your event, you may not have to worry about being attacked with bombs.
+Bombs can be built by units that have a build type of "bomb". If there is no such unit in your event, you may not have to worry about being attacked with bombs.
 
 They cost a certain amount of gems and the gems must be held by the unit that is building the bomb, not by the units core.
 
@@ -25,6 +25,7 @@ For more info & specifics, please check out [the server bomb code](https://githu
 
 Warning: This code is not meant to be good, it's just to supposed to show off how bombs can work. That is to say, this code spawns a bomberman that ignites a bomb right next to its own core. Unfortunate. Tweaks are recommended.
 
+::: code-group labels=[C, Go]
 ```c
 static bool is_bomberman(const t_obj *o)
 {
@@ -59,7 +60,7 @@ void spawn_and_update_bombermen(void)
 			for (int k = 0; k < 4; k++)
 			{
 				t_pos s = adj[k];
-				if (s.x < game.config.gridSize && s.y < game.config.gridSize && core_get_obj_from_pos(s) == NULL) 
+				if (s.x < game.config.gridSize && s.y < game.config.gridSize && core_get_obj_from_pos(s) == NULL)
 				{
 					core_action_build(bomber, s);
 					bomber->data = (void*)1; // build now, light next tick
@@ -87,3 +88,87 @@ void spawn_and_update_bombermen(void)
 	free(bombermen);
 }
 ```
+```go
+const (
+	stateNeedBuild = iota
+	stateWaitLight
+	stateDone
+)
+
+func spawnAndUpdateBombermen(g *game.Game, b *coregame.Bot) {
+	isBomberman := func(obj *game.Object) bool {
+		data := obj.GetUnitData()
+		return obj.Type == game.ObjectUnit && data != nil && data.TeamID == g.MyTeamID && data.UnitType == game.UnitType(3) // UNIT_BOMBERMAN
+	}
+
+	bombermen := g.ObjectsFilter(isBomberman)
+	myCore := g.MyCore()
+	if len(bombermen) == 0 && myCore != nil {
+		coreData := myCore.GetCoreData()
+		uconf := g.Config.GetUnitConfig(game.UnitType(3))
+		if coreData != nil && uconf != nil && coreData.Gems >= uconf.Cost {
+			b.CreateUnit(game.UnitType(3))
+		}
+	}
+
+	bombermen = g.ObjectsFilter(isBomberman)
+	for _, bomber := range bombermen {
+		data := bomber.GetUnitData()
+		if data == nil || (data.ActionCooldown != nil && *data.ActionCooldown != 0) {
+			continue
+		}
+
+		// super-simple state machine using the Data field
+		state, _ := bomber.Data.(int)
+
+		if state == stateNeedBuild {
+			// 1. transfer bomb cost gems
+			gems := uint(0)
+			if data.Gems != nil {
+				gems = *data.Gems
+			}
+			if g.Config.BombThrowCost > gems {
+				missing := g.Config.BombThrowCost - gems
+				if myCore != nil {
+					b.TransferGems(myCore, bomber.Pos, missing)
+				}
+			}
+
+			// 2. build bomb
+			adj := []game.Position{
+				{X: bomber.Pos.X + 1, Y: bomber.Pos.Y},
+				{X: bomber.Pos.X - 1, Y: bomber.Pos.Y},
+				{X: bomber.Pos.X, Y: bomber.Pos.Y + 1},
+				{X: bomber.Pos.X, Y: bomber.Pos.Y - 1},
+			}
+			for _, s := range adj {
+				if g.IsPosValid(s) && g.ObjectAtPos(s) == nil {
+					b.Build(bomber, s)
+					bomber.Data = stateWaitLight
+					break
+				}
+			}
+			continue
+		}
+
+		if state == stateWaitLight {
+			// 3. find adjacent bomb and light it
+			adj := []game.Position{
+				{X: bomber.Pos.X + 1, Y: bomber.Pos.Y},
+				{X: bomber.Pos.X - 1, Y: bomber.Pos.Y},
+				{X: bomber.Pos.X, Y: bomber.Pos.Y + 1},
+				{X: bomber.Pos.X, Y: bomber.Pos.Y - 1},
+			}
+			for _, s := range adj {
+				maybeBomb := g.ObjectAtPos(s)
+				if maybeBomb != nil && maybeBomb.Type == game.ObjectBomb {
+					b.Attack(bomber, maybeBomb)
+					bomber.Data = stateDone
+					break
+				}
+			}
+		}
+	}
+}
+```
+:::
