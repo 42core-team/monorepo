@@ -29,7 +29,7 @@ fi
 get_json_value() {
     local key=$1
     local json=$2
-    
+
     echo "$json" | yq eval ".$key" -
 }
 
@@ -106,12 +106,12 @@ read -r USER_INPUT
 
 if [ "$USER_INPUT" = "yes" ]; then
     # Perform updates
-    
+
     if [ "$BOT_NEEDS_UPDATE" = true ]; then
         echo "Updating 'my-core-bot' image to: $NEW_BOT_VER"
         yq eval ".services[\"my-core-bot\"].image = \"$NEW_BOT_VER\"" -i "$COMPOSE_FILE"
     fi
-    
+
     if [ "$VIS_NEEDS_UPDATE" = true ]; then
         echo "Updating 'visualizer' image to: $NEW_VIS_VER"
         yq eval ".services[\"visualizer\"].image = \"$NEW_VIS_VER\"" -i "$COMPOSE_FILE"
@@ -124,7 +124,7 @@ if [ "$USER_INPUT" = "yes" ]; then
     echo ""
     echo "Note: Please also commit the changes of the docker-compose.yml file!"
     echo ""
-    
+
     exit 1
 else
     exit 0

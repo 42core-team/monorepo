@@ -1,0 +1,35 @@
+name: bot-base-integrity
+
+on:
+  pull_request:
+    paths:
+      - 'bots/base/**'
+      - 'bots/*/base/**'
+      - 'bots/*/softcore/**'
+      - 'bots/*/hardcore/**'
+      - 'bots/Makefile'
+      - 'bots/README.md'
+      - 'bots/sync_base_resources.sh'
+      - '.github/workflows/bot-base-integrity.yml'
+  push:
+    branches:
+      - main
+      - dev
+    paths:
+      - 'bots/base/**'
+      - 'bots/*/base/**'
+      - 'bots/*/softcore/**'
+      - 'bots/*/hardcore/**'
+      - 'bots/Makefile'
+      - 'bots/README.md'
+      - 'bots/sync_base_resources.sh'
+      - '.github/workflows/bot-base-integrity.yml'
+  workflow_dispatch:
+
+jobs:
+  bot-base-integrity:
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    steps:
+      - uses: actions/checkout@v4
+      - run: chmod +x bots/sync_base_resources.sh
+      - run: make -C bots check-base
