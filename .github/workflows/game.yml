@@ -24,8 +24,9 @@ permissions:
 
 env:
   SERVER_IMAGE: ghcr.io/${{ github.repository_owner }}/server
-  BOT_IMAGE: ghcr.io/${{ github.repository_owner }}/my-core-bot-c
+  BOT_C_IMAGE: ghcr.io/${{ github.repository_owner }}/my-core-bot-c
   BOT_TS_IMAGE: ghcr.io/${{ github.repository_owner }}/my-core-bot-ts
+  BOT_GO_IMAGE: ghcr.io/${{ github.repository_owner }}/my-core-bot-go
   RUNNER_AMD64: &RUNNER_AMD64 blacksmith-4vcpu-ubuntu-2404 # set this to ubuntu-24.04 for github hosted runners and X64 for self-hosted runners
   RUNNER_ARM64: &RUNNER_ARM64 blacksmith-4vcpu-ubuntu-2404-arm # set this to ubuntu-24.04-arm for github hosted runners and ARM64 for self-hosted runners
 
@@ -100,6 +101,20 @@ jobs:
           push: false
           provenance: false
 
+      - name: Build my-core-bot-go (PR, local only)
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ github.workspace }}
+          file: .github/workflows/my-core-bot-go-Dockerfile
+          builder: ${{ steps.builder.outputs.name }}
+          platforms: linux/amd64
+          build-args: |
+            SERVER_IMAGE=local/server
+            TAG_NAME=pr-${{ github.event.pull_request.head.sha }}
+          pull: false
+          push: false
+          provenance: false
+
   # Per-arch build: build server, tag temp per-arch for bot, then build bot — all in one job/matrix
   build-per-arch:
     if: github.event_name != 'pull_request'
@@ -138,16 +153,22 @@ jobs:
           images: ${{ env.SERVER_IMAGE }}
 
       - name: Docker meta (my-core-bot-c)
-        id: meta-bot
+        id: meta-bot-c
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.BOT_IMAGE }}
+          images: ${{ env.BOT_C_IMAGE }}
 
       - name: Docker meta (my-core-bot-ts)
         id: meta-bot-ts
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.BOT_TS_IMAGE }}
+
+      - name: Docker meta (my-core-bot-go)
+        id: meta-bot-go
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.BOT_GO_IMAGE }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -188,9 +209,9 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-      # Build bot on same runner arch, consuming the temp-tagged server image
+      # Build C bot on same runner arch, consuming the temp-tagged server image
       - name: Build and push by digest (my-core-bot-c)
-        id: build-bot
+        id: build-bot-c
         uses: useblacksmith/build-push-action@v2
         with:
           context: ${{ github.workspace }}
@@ -199,15 +220,15 @@ jobs:
             SERVER_IMAGE=${{ env.SERVER_IMAGE }}
             TAG_NAME=${{ env.TEMP_TAG }}
           platforms: ${{ matrix.platform }}
-          labels: ${{ steps.meta-bot.outputs.labels }}
-          tags: ${{ env.BOT_IMAGE }}
+          labels: ${{ steps.meta-bot-c.outputs.labels }}
+          tags: ${{ env.BOT_C_IMAGE }}
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
           provenance: false
 
       - name: Export digest (my-core-bot-c)
         run: |
           mkdir -p ${{ runner.temp }}/digests-bot-c
-          digest="${{ steps.build-bot.outputs.digest }}"
+          digest="${{ steps.build-bot-c.outputs.digest }}"
           touch "${{ runner.temp }}/digests-bot-c/${digest#sha256:}"
 
       - name: Upload digest (my-core-bot-c)
@@ -245,6 +266,36 @@ jobs:
         with:
           name: bot-ts-digests-${{ matrix.arch }}
           path: ${{ runner.temp }}/digests-bot-ts/*
+          if-no-files-found: error
+          retention-days: 1
+
+      # Build Go bot on same runner arch, consuming the temp-tagged server image
+      - name: Build and push by digest (my-core-bot-go)
+        id: build-bot-go
+        uses: useblacksmith/build-push-action@v2
+        with:
+          context: ${{ github.workspace }}
+          file: .github/workflows/my-core-bot-go-Dockerfile
+          build-args: |
+            SERVER_IMAGE=${{ env.SERVER_IMAGE }}
+            TAG_NAME=${{ env.TEMP_TAG }}
+          platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta-bot-go.outputs.labels }}
+          tags: ${{ env.BOT_GO_IMAGE }}
+          outputs: type=image,push-by-digest=true,name-canonical=true,push=true
+          provenance: false
+
+      - name: Export digest (my-core-bot-go)
+        run: |
+          mkdir -p ${{ runner.temp }}/digests-bot-go
+          digest="${{ steps.build-bot-go.outputs.digest }}"
+          touch "${{ runner.temp }}/digests-bot-go/${digest#sha256:}"
+
+      - name: Upload digest (my-core-bot-go)
+        uses: actions/upload-artifact@v4
+        with:
+          name: bot-go-digests-${{ matrix.arch }}
+          path: ${{ runner.temp }}/digests-bot-go/*
           if-no-files-found: error
           retention-days: 1
 
@@ -334,7 +385,7 @@ jobs:
         run: |
           docker buildx imagetools inspect ${{ env.SERVER_IMAGE }}:${{ steps.meta-server.outputs.version }}
 
-  # Merge bot digests into multi-arch manifest
+  # Merge C bot digests into multi-arch manifest
   push-bot-merge:
     if: github.event_name != 'pull_request'
     runs-on: *RUNNER_AMD64
@@ -359,10 +410,10 @@ jobs:
         uses: useblacksmith/setup-docker-builder@v1
 
       - name: Docker meta (my-core-bot-c)
-        id: meta-bot
+        id: meta-bot-c
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.BOT_IMAGE }}
+          images: ${{ env.BOT_C_IMAGE }}
           tags: |
             type=ref,event=branch
             type=ref,event=tag
@@ -370,7 +421,7 @@ jobs:
             type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
 
       - name: Generate additional version tags (my-core-bot-c)
-        id: version-tags-bot
+        id: version-tags-bot-c
         if: startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, '-')
         run: |
           # Extract version from tag (remove 'v' prefix if present)
@@ -383,16 +434,16 @@ jobs:
           # Generate hierarchical tags based on number of parts
           ADDITIONAL_TAGS=""
           if [ ${#parts[@]} -ge 1 ]; then
-            ADDITIONAL_TAGS="${{ env.BOT_IMAGE }}:v${parts[0]}"
+            ADDITIONAL_TAGS="${{ env.BOT_C_IMAGE }}:v${parts[0]}"
           fi
           if [ ${#parts[@]} -ge 2 ]; then
-            ADDITIONAL_TAGS="$ADDITIONAL_TAGS,${{ env.BOT_IMAGE }}:v${parts[0]}.${parts[1]}"
+            ADDITIONAL_TAGS="$ADDITIONAL_TAGS,${{ env.BOT_C_IMAGE }}:v${parts[0]}.${parts[1]}"
           fi
           if [ ${#parts[@]} -ge 3 ]; then
-            ADDITIONAL_TAGS="$ADDITIONAL_TAGS,${{ env.BOT_IMAGE }}:v${parts[0]}.${parts[1]}.${parts[2]}"
+            ADDITIONAL_TAGS="$ADDITIONAL_TAGS,${{ env.BOT_C_IMAGE }}:v${parts[0]}.${parts[1]}.${parts[2]}"
           fi
           if [ ${#parts[@]} -ge 4 ]; then
-            ADDITIONAL_TAGS="$ADDITIONAL_TAGS,${{ env.BOT_IMAGE }}:v${parts[0]}.${parts[1]}.${parts[2]}.${parts[3]}"
+            ADDITIONAL_TAGS="$ADDITIONAL_TAGS,${{ env.BOT_C_IMAGE }}:v${parts[0]}.${parts[1]}.${parts[2]}.${parts[3]}"
           fi
 
           echo "additional-tags=$ADDITIONAL_TAGS" >> $GITHUB_OUTPUT
@@ -403,23 +454,23 @@ jobs:
         run: |
           # Create manifest for base tags from metadata
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.BOT_IMAGE }}@sha256:%s ' *)
+            $(printf '${{ env.BOT_C_IMAGE }}@sha256:%s ' *)
 
           # Create manifest for additional version tags if they exist
-          if [ -n "${{ steps.version-tags-bot.outputs.additional-tags }}" ]; then
-            IFS=',' read -r -a additional_tags <<< "${{ steps.version-tags-bot.outputs.additional-tags }}"
+          if [ -n "${{ steps.version-tags-bot-c.outputs.additional-tags }}" ]; then
+            IFS=',' read -r -a additional_tags <<< "${{ steps.version-tags-bot-c.outputs.additional-tags }}"
             for tag in "${additional_tags[@]}"; do
               if [ -n "$tag" ]; then
                 echo "Creating manifest for additional tag: $tag"
                 docker buildx imagetools create -t "$tag" \
-                  $(printf '${{ env.BOT_IMAGE }}@sha256:%s ' *)
+                  $(printf '${{ env.BOT_C_IMAGE }}@sha256:%s ' *)
               fi
             done
           fi
 
       - name: Inspect image (my-core-bot-c)
         run: |
-          docker buildx imagetools inspect ${{ env.BOT_IMAGE }}:${{ steps.meta-bot.outputs.version }}
+          docker buildx imagetools inspect ${{ env.BOT_C_IMAGE }}:${{ steps.meta-bot-c.outputs.version }}
 
   # Merge bot digests into multi-arch manifest (TS)
   push-bot-ts-merge:
@@ -506,3 +557,89 @@ jobs:
       - name: Inspect image (my-core-bot-ts)
         run: |
           docker buildx imagetools inspect ${{ env.BOT_TS_IMAGE }}:${{ steps.meta-bot-ts.outputs.version }}
+
+  # Merge bot digests into multi-arch manifest (Go)
+  push-bot-go-merge:
+    if: github.event_name != 'pull_request'
+    runs-on: *RUNNER_AMD64
+    needs: build-per-arch
+    steps:
+      - name: Download digests (my-core-bot-go)
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests-bot-go
+          pattern: bot-go-digests-*
+          merge-multiple: true
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Blacksmith Builder
+        uses: useblacksmith/setup-docker-builder@v1
+
+      - name: Docker meta (my-core-bot-go)
+        id: meta-bot-go
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.BOT_GO_IMAGE }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=raw,value=${{ github.ref_name }}-${{ github.sha }}
+            type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
+
+      - name: Generate additional version tags (my-core-bot-go)
+        id: version-tags-bot-go
+        if: startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, '-')
+        run: |
+          # Extract version from tag (remove 'v' prefix if present)
+          VERSION=${GITHUB_REF#refs/tags/}
+          VERSION=${VERSION#v}
+
+          # Split version into parts
+          IFS='.' read -r -a parts <<< "$VERSION"
+
+          # Generate hierarchical tags based on number of parts
+          ADDITIONAL_TAGS=""
+          if [ ${#parts[@]} -ge 1 ]; then
+            ADDITIONAL_TAGS="${{ env.BOT_GO_IMAGE }}:v${parts[0]}"
+          fi
+          if [ ${#parts[@]} -ge 2 ]; then
+            ADDITIONAL_TAGS="$ADDITIONAL_TAGS,${{ env.BOT_GO_IMAGE }}:v${parts[0]}.${parts[1]}"
+          fi
+          if [ ${#parts[@]} -ge 3 ]; then
+            ADDITIONAL_TAGS="$ADDITIONAL_TAGS,${{ env.BOT_GO_IMAGE }}:v${parts[0]}.${parts[1]}.${parts[2]}"
+          fi
+          if [ ${#parts[@]} -ge 4 ]; then
+            ADDITIONAL_TAGS="$ADDITIONAL_TAGS,${{ env.BOT_GO_IMAGE }}:v${parts[0]}.${parts[1]}.${parts[2]}.${parts[3]}"
+          fi
+
+          echo "additional-tags=$ADDITIONAL_TAGS" >> $GITHUB_OUTPUT
+          echo "Generated additional tags: $ADDITIONAL_TAGS"
+
+      - name: Create manifest list and push (my-core-bot-go)
+        working-directory: ${{ runner.temp }}/digests-bot-go
+        run: |
+          # Create manifest for base tags from metadata
+          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf '${{ env.BOT_GO_IMAGE }}@sha256:%s ' *)
+
+          # Create manifest for additional version tags if they exist
+          if [ -n "${{ steps.version-tags-bot-go.outputs.additional-tags }}" ]; then
+            IFS=',' read -r -a additional_tags <<< "${{ steps.version-tags-bot-go.outputs.additional-tags }}"
+            for tag in "${additional_tags[@]}"; do
+              if [ -n "$tag" ]; then
+                echo "Creating manifest for additional tag: $tag"
+                docker buildx imagetools create -t "$tag" \
+                  $(printf '${{ env.BOT_GO_IMAGE }}@sha256:%s ' *)
+              fi
+            done
+          fi
+
+      - name: Inspect image (my-core-bot-go)
+        run: |
+          docker buildx imagetools inspect ${{ env.BOT_GO_IMAGE }}:${{ steps.meta-bot-go.outputs.version }}
