@@ -9,43 +9,39 @@ import (
 	"github.com/42core-team/go-client-lib/game"
 )
 
-const teamName = "Gridmaster"
+const teamName = "YOUR TEAM NAME HERE"
 
-func isEnemyCore(myTeamID uint) func(*game.Object) bool {
-	return func(obj *game.Object) bool {
-		if obj.Type != game.ObjectCore {
-			return false
-		}
-		data := obj.GetCoreData()
-		if data == nil {
-			return false
-		}
-		return data.TeamID != myTeamID
+func moveUnitIfNeeded(bot *coregame.Bot, unit *game.Object, nextPos game.Position) {
+	if nextPos != unit.Pos {
+		bot.Move(unit, nextPos)
 	}
 }
 
 func tick(g *game.Game, bot *coregame.Bot) {
-	if g.MyCore().GetCoreData().Gems > g.Config.Units[game.UnitWarrior].Cost {
-		bot.CreateUnit(game.UnitWarrior)
-	}
+	fmt.Printf("-----> [⚡️ TICK %d 🔥]\n", g.ElapsedTicks)
 
-	enemyCore := g.NearestObject(game.Position{X: 0, Y: 0}, isEnemyCore(g.MyTeamID))
+	bot.CreateUnit(game.UnitWarrior)
+
+	enemyCore := opponentCore(g)
 	if enemyCore == nil {
 		return
 	}
 
-	for _, unit := range g.TeamUnits() {
-		pos := bot.SimplePathfind(unit, enemyCore.Pos)
-		bot.AddObjectPathStep(unit, pos)
-		if *unit.GetUnitData().ActionCooldown == 0 {
-			bot.Move(unit, pos)
-		}
+	for _, unit := range ownUnits(g) {
+		nextPos := bot.SimplePathfind(unit, enemyCore.Pos)
+		bot.AddObjectPathStep(unit, nextPos)
+		moveUnitIfNeeded(bot, unit, nextPos)
+		bot.AddObjectInfo(unit, fmt.Sprintf(
+			"I am a warrior! 🗡️ - I am heading for the opponent core at [%d,%d]! 🏰\n",
+			enemyCore.Pos.X,
+			enemyCore.Pos.Y,
+		))
 	}
 }
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Usage: gridmaster <team-id>")
+		fmt.Println("Usage: bot <team-id>")
 		os.Exit(1)
 	}
 

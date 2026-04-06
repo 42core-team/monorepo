@@ -11,30 +11,23 @@ import (
 
 const teamName = "Gridmaster"
 
-func isEnemyCore(myTeamID uint) func(*game.Object) bool {
-	return func(obj *game.Object) bool {
-		if obj.Type != game.ObjectCore {
-			return false
-		}
-		data := obj.GetCoreData()
-		if data == nil {
-			return false
-		}
-		return data.TeamID != myTeamID
+func moveToward(bot *coregame.Bot, unit *game.Object, targetPos game.Position) {
+	nextPos := bot.SimplePathfind(unit, targetPos)
+	if nextPos != unit.Pos {
+		bot.Move(unit, nextPos)
 	}
 }
 
 func tick(g *game.Game, bot *coregame.Bot) {
 	bot.CreateUnit(game.UnitWarrior)
 
-	enemyCore := g.NearestObject(game.Position{X: 0, Y: 0}, isEnemyCore(g.MyTeamID))
+	enemyCore := g.EnemyCore()
 	if enemyCore == nil {
 		return
 	}
 
 	for _, unit := range g.TeamUnits() {
-		pos := bot.SimplePathfind(unit, enemyCore.Pos)
-		bot.Move(unit, pos)
+		moveToward(bot, unit, enemyCore.Pos)
 	}
 }
 
