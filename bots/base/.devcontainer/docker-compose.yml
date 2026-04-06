@@ -1,6 +1,6 @@
 services:
   my-core-bot:
-    image: ghcr.io/42core-team/my-core-bot-c:dev
+    image: ghcr.io/42core-team/my-core-bot-{{LANG}}:dev
     volumes:
       - ..:/workspace
       - replays:/workspace/replays

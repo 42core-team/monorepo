@@ -142,18 +142,8 @@ __install-devpod:
 
 __check-docker:
 	@if ! docker info > /dev/null 2>&1; then \
-		echo "$(COLOR_DATE)$$(date +'%H:%M:%S')$(COLOR_RESET) $(COLOR_ERROR)error$(COLOR_RESET) Docker is not running. Attempting to install and start Docker..."; \
-		if [ -f "./.devcontainer/init_docker.bash" ]; then \
-			echo "$(COLOR_DATE)$$(date +'%H:%M:%S')$(COLOR_RESET) $(COLOR_INFO)info$(COLOR_RESET) Running init_docker.bash script..."; \
-			bash ./.devcontainer/init_docker.bash; \
-			if ! docker info > /dev/null 2>&1; then \
-				echo "$(COLOR_DATE)$$(date +'%H:%M:%S')$(COLOR_RESET) $(COLOR_ERROR)error$(COLOR_RESET) Docker installation or startup failed. Please check the init_docker.bash script."; \
-				exit 1; \
-			fi; \
-		else \
-			echo "$(COLOR_DATE)$$(date +'%H:%M:%S')$(COLOR_RESET) $(COLOR_ERROR)error$(COLOR_RESET) init_docker.bash script not found. Cannot install Docker automatically."; \
-			exit 1; \
-		fi; \
+		echo "$(COLOR_DATE)$$(date +'%H:%M:%S')$(COLOR_RESET) $(COLOR_ERROR)error$(COLOR_RESET) Docker is not running. Please start Docker and try again."; \
+		exit 1; \
 	else \
 		echo "$(COLOR_DATE)$$(date +'%H:%M:%S')$(COLOR_RESET) $(COLOR_INFO)info$(COLOR_RESET) Docker is running."; \
 	fi
