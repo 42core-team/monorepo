@@ -2,3 +2,5 @@ core_lib.a
 obj
 docs/html
 docs/xml
+cmake-build/
+libcore_lib.a

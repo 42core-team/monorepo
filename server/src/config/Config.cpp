@@ -1,6 +1,7 @@
 #include "Config.h"
 
 #include <json-schema.hpp>
+#include <unordered_map>
 using nlohmann::json_schema::json_validator;
 
 std::string Config::serverConfigFilePath = "";
@@ -253,7 +254,13 @@ static GameConfig parseGameConfig()
 			unit.maxActionCooldown = unitJson.value("maxActionCooldown", 0);
 			unit.balancePerCooldownStep = std::max(1u, unitJson.value("balancePerCooldownStep", 1u));
 			unit.damageCore = unitJson.value("damageCore", 0);
-			unit.damageUnit = unitJson.value("damageUnit", 0);
+
+			unit.damageUnit.clear();
+			for (const auto &damageJson : unitJson["damageUnit"])
+			{
+				unit.damageUnit.push_back(damageJson.get<unsigned int>());
+			}
+
 			unit.damageDeposit = unitJson.value("damageDeposit", 0);
 			unit.damageWall = unitJson.value("damageWall", 0);
 			unit.damageBomb = unitJson.value("damageBomb", 0);
@@ -273,6 +280,16 @@ static GameConfig parseGameConfig()
 			}
 
 			config.units.push_back(unit);
+		}
+
+		for (size_t i = 0; i < config.units.size(); ++i)
+		{
+			if (config.units[i].damageUnit.size() != config.units.size())
+			{
+				Logger::LogErr("damageUnit for unit \"" + config.units[i].name + "\" must contain exactly " +
+							   std::to_string(config.units.size()) + " values (one per target unit type).");
+				exit(EXIT_FAILURE);
+			}
 		}
 	}
 

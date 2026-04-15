@@ -69,7 +69,7 @@ struct UnitConfig
 	unsigned int balancePerCooldownStep; // action cooldown = base action cooldown + gems / balancePerCooldownStep
 
 	unsigned int damageCore;
-	unsigned int damageUnit;
+	std::vector<unsigned int> damageUnit;
 	unsigned int damageDeposit;
 	unsigned int damageWall;
 	unsigned int damageBomb;

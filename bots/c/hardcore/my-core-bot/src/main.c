@@ -14,7 +14,7 @@ static bool ft_is_own_team_warrior(const t_obj *obj)
 {
 	if (obj == NULL) return false;
 	if (obj->type != OBJ_UNIT) return false;
-	if (obj->s_unit.unit_type != UNIT_WARRIOR) return false;
+	if (obj->s_unit.unit_type != UNIT_SCISSOR_WARRIOR) return false;
 	if (obj->s_unit.team_id != game.my_team_id) return false;
 	return true;
 }
@@ -23,12 +23,15 @@ void ft_on_tick(unsigned long tick)
 {
 	printf("-----> [⚡️ TICK %ld 🔥]\n", tick);
 
-	core_action_createUnit(UNIT_WARRIOR);
+	core_action_createUnit(UNIT_SCISSOR_WARRIOR);
 
 	t_obj **own_team_warriors = core_get_objs_filter(ft_is_own_team_warrior);
 	for (int i = 0; own_team_warriors && own_team_warriors[i]; i++)
 	{
-		t_path path = pathfind_full_path_dijkstra(own_team_warriors[i]->pos, ft_get_core_opponent()->pos);
+		t_obj *target = ft_get_units_opponent_nearest(own_team_warriors[i]->pos);
+		if (!target) target = ft_get_core_opponent();
+
+		t_path path = pathfind_full_path_dijkstra(own_team_warriors[i]->pos, target->pos);
 
 		// Add all path steps to debug visualization
 		for (size_t j = 0; j < path.length; j++)
@@ -42,9 +45,9 @@ void ft_on_tick(unsigned long tick)
 			core_action_move(own_team_warriors[i], path.steps[0]);
 		}
 
-		core_debug_addObjectInfo(own_team_warriors[i], "Moving towards opponent core at [%d,%d] :D\n",
-								 ft_get_core_opponent()->pos.x, ft_get_core_opponent()->pos.y);
-		core_action_attack(own_team_warriors[i], ft_get_core_opponent());
+		core_debug_addObjectInfo(own_team_warriors[i], "Moving towards target at [%d,%d] :D\n", target->pos.x,
+								 target->pos.y);
+		core_action_attack(own_team_warriors[i], target);
 
 		// Clean up
 		free(path.steps);

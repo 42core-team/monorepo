@@ -45,7 +45,10 @@ std::string AttackAction::execute(Core *core)
 	// apply attack damage depending on object type
 	unsigned int damage = 1;
 	if (obj->getType() == ObjectType::Unit)
-		damage = Config::game().units[unit->getUnitType()].damageUnit;
+	{
+		Unit *targetUnit = (Unit *)obj;
+		damage = Config::game().units[unit->getUnitType()].damageUnit[targetUnit->getUnitType()];
+	}
 	else if (obj->getType() == ObjectType::Core)
 		damage = Config::game().units[unit->getUnitType()].damageCore;
 	else if (obj->getType() == ObjectType::Deposit)
