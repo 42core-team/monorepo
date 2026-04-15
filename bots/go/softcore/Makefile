@@ -52,9 +52,9 @@ fclean: clean
 re: fclean run
 
 stop:
-	@pkill server > /dev/null || true &
-	@pkill $(PLAYER1_BOT_NAME) > /dev/null || true &
-	@pkill $(PLAYER2_BOT_NAME) > /dev/null || true
+	-@pkill server >/dev/null 2>&1 || true &
+	-@pkill $(PLAYER1_BOT_NAME) >/dev/null 2>&1 || true &
+	-@pkill $(PLAYER2_BOT_NAME) >/dev/null 2>&1 || true
 
 update: stop-devcontainer remove-devcontainer
 	@docker compose --project-directory=./.devcontainer pull
