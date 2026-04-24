@@ -25,8 +25,8 @@ env:
   BOT_BASE_IMAGE: ghcr.io/${{ github.repository_owner }}/bot-base
   DEFAULT_SERVER_TAG: ${{ inputs.server_tag != '' && inputs.server_tag || github.ref_name }}
   DEFAULT_BOT_BASE_TAG: ${{ inputs.bot_base_tag != '' && inputs.bot_base_tag || github.ref_name }}
-  RUNNER_AMD64: blacksmith-4vcpu-ubuntu-2404
-  RUNNER_ARM64: blacksmith-4vcpu-ubuntu-2404-arm
+  RUNNER_AMD64: &runner_amd64 blacksmith-4vcpu-ubuntu-2404
+  RUNNER_ARM64: &runner_arm64 blacksmith-4vcpu-ubuntu-2404-arm
 
 concurrency:
   group: "bot-go @ ${{ github.event_name }} @ ${{ github.ref_name }}"
@@ -39,10 +39,10 @@ jobs:
       matrix:
         include:
           - arch: amd64
-            runner: ${{ env.RUNNER_AMD64 }}
+            runner: *runner_amd64
             platform: linux/amd64
           - arch: arm64
-            runner: ${{ env.RUNNER_ARM64 }}
+            runner: *runner_arm64
             platform: linux/arm64
     runs-on:
       - ${{ matrix.runner }}
@@ -106,7 +106,7 @@ jobs:
           retention-days: 1
 
   push_merge:
-    runs-on: ${{ env.RUNNER_AMD64 }}
+    runs-on: *runner_amd64
     needs: build_per_arch
     outputs:
       image_tag: ${{ steps.expose.outputs.tag }}

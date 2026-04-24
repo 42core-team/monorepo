@@ -23,8 +23,8 @@ permissions:
   packages: write
 
 env:
-  RUNNER_AMD64: blacksmith-4vcpu-ubuntu-2404
-  RUNNER_ARM64: blacksmith-4vcpu-ubuntu-2404-arm
+  RUNNER_AMD64: &runner_amd64 blacksmith-4vcpu-ubuntu-2404
+  RUNNER_ARM64: &runner_arm64 blacksmith-4vcpu-ubuntu-2404-arm
 
 concurrency:
   group: "ci @ ${{ github.ref_name }}"
@@ -33,7 +33,7 @@ concurrency:
 jobs:
   pr_build_bot_base:
     if: github.event_name == 'pull_request'
-    runs-on: ${{ env.RUNNER_AMD64 }}
+    runs-on: *runner_amd64
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -71,7 +71,7 @@ jobs:
 
   pr_build_server:
     if: github.event_name == 'pull_request'
-    runs-on: ${{ env.RUNNER_AMD64 }}
+    runs-on: *runner_amd64
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -112,7 +112,7 @@ jobs:
     needs:
       - pr_build_bot_base
       - pr_build_server
-    runs-on: ${{ env.RUNNER_AMD64 }}
+    runs-on: *runner_amd64
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -166,7 +166,7 @@ jobs:
     needs:
       - pr_build_bot_base
       - pr_build_server
-    runs-on: ${{ env.RUNNER_AMD64 }}
+    runs-on: *runner_amd64
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -220,7 +220,7 @@ jobs:
     needs:
       - pr_build_bot_base
       - pr_build_server
-    runs-on: ${{ env.RUNNER_AMD64 }}
+    runs-on: *runner_amd64
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
