@@ -1,17 +1,11 @@
 ARG TAG_NAME="dev"
 ARG SERVER_IMAGE="ghcr.io/42core-team/server"
+ARG BOT_BASE_IMAGE="ghcr.io/42core-team/bot-base"
+ARG BOT_BASE_TAG="dev"
 
 FROM ${SERVER_IMAGE}:${TAG_NAME} AS game
 
-FROM ubuntu:noble AS release
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt update && \
-    apt install -y git build-essential libcurl4 curl && \
-    ARCH=$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/') && \
-    curl -fsSL "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${ARCH}" -o /usr/local/bin/yq && \
-    chmod +x /usr/local/bin/yq && \
-    rm -rf /var/lib/apt/lists/*
+FROM ${BOT_BASE_IMAGE}:${BOT_BASE_TAG} AS release
 
 ARG GO_VERSION=1.26.0
 RUN ARCH=$(dpkg --print-architecture) && \
@@ -22,8 +16,3 @@ ENV GOPATH="/root/go"
 COPY --from=game /core/server /core/server
 COPY --from=game /core/data /core/data
 COPY bots/go/client_lib/ /client_lib
-
-# RUN curl -o /root/.zshrc https://raw.githubusercontent.com/42core-team/.shellrc/refs/heads/main/.zshrc
-
-# SHELL ["/bin/zsh", "-c"]
-# ENV SHELL=/bin/zsh

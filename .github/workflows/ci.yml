@@ -1,0 +1,325 @@
+name: ci
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - dev
+    tags:
+      - "v*"
+    paths:
+      - ".github/workflows/**"
+      - "bots/**"
+      - "server/**"
+  pull_request:
+    paths:
+      - ".github/workflows/**"
+      - "bots/**"
+      - "server/**"
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  RUNNER_AMD64: &runner_amd64 blacksmith-4vcpu-ubuntu-2404
+  RUNNER_ARM64: &runner_arm64 blacksmith-4vcpu-ubuntu-2404-arm
+
+concurrency:
+  group: "ci @ ${{ github.ref_name }}"
+  cancel-in-progress: true
+
+jobs:
+  pr_build_bot_base:
+    if: github.event_name == 'pull_request'
+    runs-on: *runner_amd64
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 1
+
+      - name: Set up Docker Buildx (driver=docker)
+        id: builder
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker
+          install: true
+          use: true
+
+      - name: Build bot-base (PR, local only)
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ github.workspace }}
+          file: .github/workflows/bot-base-Dockerfile
+          builder: ${{ steps.builder.outputs.name }}
+          platforms: linux/amd64
+          tags: local/bot-base:pr-${{ github.event.pull_request.head.sha }}
+          load: true
+          push: false
+          provenance: false
+
+      - name: Export bot-base image archive
+        run: |
+          docker save \
+            --output ${{ runner.temp }}/bot-base-pr.tar \
+            local/bot-base:pr-${{ github.event.pull_request.head.sha }}
+
+      - name: Upload bot-base image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-bot-base-image-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/bot-base-pr.tar
+          if-no-files-found: error
+          retention-days: 1
+
+  pr_build_server:
+    if: github.event_name == 'pull_request'
+    runs-on: *runner_amd64
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 1
+
+      - name: Set up Docker Buildx (driver=docker)
+        id: builder
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker
+          install: true
+          use: true
+
+      - name: Build server (PR, local only)
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ github.workspace }}
+          file: .github/workflows/server-Dockerfile
+          builder: ${{ steps.builder.outputs.name }}
+          platforms: linux/amd64
+          tags: local/server:pr-${{ github.event.pull_request.head.sha }}
+          load: true
+          push: false
+          provenance: false
+
+      - name: Export server image archive
+        run: |
+          docker save \
+            --output ${{ runner.temp }}/server-pr.tar \
+            local/server:pr-${{ github.event.pull_request.head.sha }}
+
+      - name: Upload server image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-server-image-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/server-pr.tar
+          if-no-files-found: error
+          retention-days: 1
+
+  pr_build_bot_c:
+    if: github.event_name == 'pull_request'
+    needs:
+      - pr_build_bot_base
+      - pr_build_server
+    runs-on: *runner_amd64
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 1
+
+      - name: Download bot-base image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pr-bot-base-image-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}
+
+      - name: Download server image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pr-server-image-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}
+
+      - name: Load local images
+        run: |
+          docker load --input ${{ runner.temp }}/bot-base-pr.tar
+          docker load --input ${{ runner.temp }}/server-pr.tar
+
+      - name: Set up Docker Buildx (driver=docker)
+        id: builder
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker
+          install: true
+          use: true
+
+      - name: Build my-core-bot-c (PR, local only)
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ github.workspace }}
+          file: .github/workflows/my-core-bot-c-Dockerfile
+          builder: ${{ steps.builder.outputs.name }}
+          platforms: linux/amd64
+          build-args: |
+            SERVER_IMAGE=local/server
+            TAG_NAME=pr-${{ github.event.pull_request.head.sha }}
+            BOT_BASE_IMAGE=local/bot-base
+            BOT_BASE_TAG=pr-${{ github.event.pull_request.head.sha }}
+          pull: false
+          push: false
+          provenance: false
+
+  # pr_build_bot_ts:
+  #   if: github.event_name == 'pull_request'
+  #   needs:
+  #     - pr_build_bot_base
+  #     - pr_build_server
+  #   runs-on: *runner_amd64
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
+  #         fetch-depth: 1
+  #
+  #     - name: Download bot-base image artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: pr-bot-base-image-${{ github.event.pull_request.head.sha }}
+  #         path: ${{ runner.temp }}
+  #
+  #     - name: Download server image artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: pr-server-image-${{ github.event.pull_request.head.sha }}
+  #         path: ${{ runner.temp }}
+  #
+  #     - name: Load local images
+  #       run: |
+  #         docker load --input ${{ runner.temp }}/bot-base-pr.tar
+  #         docker load --input ${{ runner.temp }}/server-pr.tar
+  #
+  #     - name: Set up Docker Buildx (driver=docker)
+  #       id: builder
+  #       uses: docker/setup-buildx-action@v3
+  #       with:
+  #         driver: docker
+  #         install: true
+  #         use: true
+  #
+  #     - name: Build my-core-bot-ts (PR, local only)
+  #       uses: docker/build-push-action@v6
+  #       with:
+  #         context: ${{ github.workspace }}
+  #         file: .github/workflows/my-core-bot-ts-Dockerfile
+  #         builder: ${{ steps.builder.outputs.name }}
+  #         platforms: linux/amd64
+  #         build-args: |
+  #           SERVER_IMAGE=local/server
+  #           TAG_NAME=pr-${{ github.event.pull_request.head.sha }}
+  #           BOT_BASE_IMAGE=local/bot-base
+  #           BOT_BASE_TAG=pr-${{ github.event.pull_request.head.sha }}
+  #         pull: false
+  #         push: false
+  #         provenance: false
+
+  pr_build_bot_go:
+    if: github.event_name == 'pull_request'
+    needs:
+      - pr_build_bot_base
+      - pr_build_server
+    runs-on: *runner_amd64
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 1
+
+      - name: Download bot-base image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pr-bot-base-image-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}
+
+      - name: Download server image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pr-server-image-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}
+
+      - name: Load local images
+        run: |
+          docker load --input ${{ runner.temp }}/bot-base-pr.tar
+          docker load --input ${{ runner.temp }}/server-pr.tar
+
+      - name: Set up Docker Buildx (driver=docker)
+        id: builder
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker
+          install: true
+          use: true
+
+      - name: Build my-core-bot-go (PR, local only)
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ github.workspace }}
+          file: .github/workflows/my-core-bot-go-Dockerfile
+          builder: ${{ steps.builder.outputs.name }}
+          platforms: linux/amd64
+          build-args: |
+            SERVER_IMAGE=local/server
+            TAG_NAME=pr-${{ github.event.pull_request.head.sha }}
+            BOT_BASE_IMAGE=local/bot-base
+            BOT_BASE_TAG=pr-${{ github.event.pull_request.head.sha }}
+          pull: false
+          push: false
+          provenance: false
+
+  server:
+    if: github.event_name != 'pull_request'
+    uses: ./.github/workflows/server.yml
+    secrets: inherit
+
+  bot_base:
+    if: github.event_name != 'pull_request'
+    uses: ./.github/workflows/bot-base.yml
+    secrets: inherit
+
+  bot_c:
+    if: github.event_name != 'pull_request'
+    needs:
+      - server
+      - bot_base
+    uses: ./.github/workflows/bot-c.yml
+    with:
+      server_tag: ${{ needs.server.outputs.image_tag }}
+      bot_base_tag: ${{ needs.bot_base.outputs.image_tag }}
+    secrets: inherit
+
+  # bot_ts:
+  #   if: github.event_name != 'pull_request'
+  #   needs:
+  #     - server
+  #     - bot_base
+  #   uses: ./.github/workflows/bot-ts.yml
+  #   with:
+  #     server_tag: ${{ needs.server.outputs.image_tag }}
+  #     bot_base_tag: ${{ needs.bot_base.outputs.image_tag }}
+  #   secrets: inherit
+
+  bot_go:
+    if: github.event_name != 'pull_request'
+    needs:
+      - server
+      - bot_base
+    uses: ./.github/workflows/bot-go.yml
+    with:
+      server_tag: ${{ needs.server.outputs.image_tag }}
+      bot_base_tag: ${{ needs.bot_base.outputs.image_tag }}
+    secrets: inherit
