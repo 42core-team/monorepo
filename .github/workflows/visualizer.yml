@@ -220,30 +220,34 @@ jobs:
             echo "Manifest created for $tag"
           done
 
-          # Create manifest for additional version tags if they exist
           if [ -n "${{ steps.version-tags.outputs.additional-tags }}" ]; then
-            # Find the ref tag from the base tags to use as source
             REF_TAG=""
             for tag in $TAGS; do
-              if [[ "$tag" == *"$GITHUB_REF_NAME" ]] && [[ "$tag" != *"-"* ]]; then
+              if [[ -z "$tag" ]]; then
+                continue
+              fi
+              ref_part="${tag##*:}"
+              if [[ "$ref_part" == "$GITHUB_REF_NAME" ]]; then
                 REF_TAG="$tag"
                 break
               fi
             done
-            
+
             if [ -n "$REF_TAG" ]; then
               IFS=',' read -r -a additional_tags <<< "${{ steps.version-tags.outputs.additional-tags }}"
               for tag in "${additional_tags[@]}"; do
                 if [ -n "$tag" ]; then
                   echo "Creating additional tag: $tag from $REF_TAG"
-                  # Create additional tags from the ref tag that was already built
                   docker buildx imagetools create -t "$tag" \
                     "${REF_TAG}-amd64" \
                     "${REF_TAG}-arm64"
-                  
+
                   echo "Additional manifest created for $tag"
                 fi
               done
+            else
+              echo "ERROR: Could not find ref tag matching $GITHUB_REF_NAME in base tags; additional version tags were not created." >&2
+              exit 1
             fi
           fi
 
