@@ -173,59 +173,59 @@ jobs:
           push: false
           provenance: false
 
-  pr_build_bot_ts:
-    if: github.event_name == 'pull_request'
-    needs:
-      - pr_build_bot_base
-      - pr_build_server
-    runs-on: *runner_amd64
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-          fetch-depth: 1
-
-      - name: Download bot-base image artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: pr-bot-base-image-${{ github.event.pull_request.head.sha }}
-          path: ${{ runner.temp }}
-
-      - name: Download server image artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: pr-server-image-${{ github.event.pull_request.head.sha }}
-          path: ${{ runner.temp }}
-
-      - name: Load local images
-        run: |
-          docker load --input ${{ runner.temp }}/bot-base-pr.tar
-          docker load --input ${{ runner.temp }}/server-pr.tar
-
-      - name: Set up Docker Buildx (driver=docker)
-        id: builder
-        uses: docker/setup-buildx-action@v3
-        with:
-          driver: docker
-          install: true
-          use: true
-
-      - name: Build my-core-bot-ts (PR, local only)
-        uses: docker/build-push-action@v6
-        with:
-          context: ${{ github.workspace }}
-          file: .github/workflows/my-core-bot-ts-Dockerfile
-          builder: ${{ steps.builder.outputs.name }}
-          platforms: linux/amd64
-          build-args: |
-            SERVER_IMAGE=local/server
-            TAG_NAME=pr-${{ github.event.pull_request.head.sha }}
-            BOT_BASE_IMAGE=local/bot-base
-            BOT_BASE_TAG=pr-${{ github.event.pull_request.head.sha }}
-          pull: false
-          push: false
-          provenance: false
+  # pr_build_bot_ts:
+  #   if: github.event_name == 'pull_request'
+  #   needs:
+  #     - pr_build_bot_base
+  #     - pr_build_server
+  #   runs-on: *runner_amd64
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
+  #         fetch-depth: 1
+  #
+  #     - name: Download bot-base image artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: pr-bot-base-image-${{ github.event.pull_request.head.sha }}
+  #         path: ${{ runner.temp }}
+  #
+  #     - name: Download server image artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: pr-server-image-${{ github.event.pull_request.head.sha }}
+  #         path: ${{ runner.temp }}
+  #
+  #     - name: Load local images
+  #       run: |
+  #         docker load --input ${{ runner.temp }}/bot-base-pr.tar
+  #         docker load --input ${{ runner.temp }}/server-pr.tar
+  #
+  #     - name: Set up Docker Buildx (driver=docker)
+  #       id: builder
+  #       uses: docker/setup-buildx-action@v3
+  #       with:
+  #         driver: docker
+  #         install: true
+  #         use: true
+  #
+  #     - name: Build my-core-bot-ts (PR, local only)
+  #       uses: docker/build-push-action@v6
+  #       with:
+  #         context: ${{ github.workspace }}
+  #         file: .github/workflows/my-core-bot-ts-Dockerfile
+  #         builder: ${{ steps.builder.outputs.name }}
+  #         platforms: linux/amd64
+  #         build-args: |
+  #           SERVER_IMAGE=local/server
+  #           TAG_NAME=pr-${{ github.event.pull_request.head.sha }}
+  #           BOT_BASE_IMAGE=local/bot-base
+  #           BOT_BASE_TAG=pr-${{ github.event.pull_request.head.sha }}
+  #         pull: false
+  #         push: false
+  #         provenance: false
 
   pr_build_bot_go:
     if: github.event_name == 'pull_request'
@@ -302,16 +302,16 @@ jobs:
       bot_base_tag: ${{ needs.bot_base.outputs.image_tag }}
     secrets: inherit
 
-  bot_ts:
-    if: github.event_name != 'pull_request'
-    needs:
-      - server
-      - bot_base
-    uses: ./.github/workflows/bot-ts.yml
-    with:
-      server_tag: ${{ needs.server.outputs.image_tag }}
-      bot_base_tag: ${{ needs.bot_base.outputs.image_tag }}
-    secrets: inherit
+  # bot_ts:
+  #   if: github.event_name != 'pull_request'
+  #   needs:
+  #     - server
+  #     - bot_base
+  #   uses: ./.github/workflows/bot-ts.yml
+  #   with:
+  #     server_tag: ${{ needs.server.outputs.image_tag }}
+  #     bot_base_tag: ${{ needs.bot_base.outputs.image_tag }}
+  #   secrets: inherit
 
   bot_go:
     if: github.event_name != 'pull_request'
