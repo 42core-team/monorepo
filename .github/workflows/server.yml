@@ -151,8 +151,19 @@ jobs:
       - name: Create manifest list and push (server)
         working-directory: ${{ runner.temp }}/digests
         run: |
+          set -euo pipefail
+
+          shopt -s nullglob
+          digests=( *)
+          shopt -u nullglob
+
+          if [ ${#digests[@]} -eq 0 ]; then
+            echo "No server digest artifacts were downloaded; cannot create a multi-arch manifest." >&2
+            exit 1
+          fi
+
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.IMAGE }}@sha256:%s ' *)
+            $(printf '${{ env.IMAGE }}@sha256:%s ' "${digests[@]}")
 
           if [ -n "${{ steps.version_tags.outputs.additional_tags }}" ]; then
             IFS=',' read -r -a additional_tags <<< "${{ steps.version_tags.outputs.additional_tags }}"
@@ -160,7 +171,7 @@ jobs:
               if [ -n "$tag" ]; then
                 echo "Creating manifest for additional tag: $tag"
                 docker buildx imagetools create -t "$tag" \
-                  $(printf '${{ env.IMAGE }}@sha256:%s ' *)
+                  $(printf '${{ env.IMAGE }}@sha256:%s ' "${digests[@]}")
               fi
             done
           fi

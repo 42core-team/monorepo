@@ -2,6 +2,11 @@ name: bot-go
 
 on:
   workflow_dispatch:
+    inputs:
+      fallback_tag:
+        description: Fallback published tag to use when server_tag/bot_base_tag are not provided
+        required: false
+        default: dev
   workflow_call:
     inputs:
       server_tag:
@@ -10,6 +15,10 @@ on:
       bot_base_tag:
         required: false
         type: string
+      fallback_tag:
+        required: false
+        type: string
+        default: dev
     outputs:
       image_tag:
         description: Immutable image tag for this workflow run
@@ -23,8 +32,8 @@ env:
   IMAGE: ghcr.io/${{ github.repository_owner }}/my-core-bot-go
   SERVER_IMAGE: ghcr.io/${{ github.repository_owner }}/server
   BOT_BASE_IMAGE: ghcr.io/${{ github.repository_owner }}/bot-base
-  DEFAULT_SERVER_TAG: ${{ inputs.server_tag != '' && inputs.server_tag || github.ref_name }}
-  DEFAULT_BOT_BASE_TAG: ${{ inputs.bot_base_tag != '' && inputs.bot_base_tag || github.ref_name }}
+  DEFAULT_SERVER_TAG: ${{ inputs.server_tag != '' && inputs.server_tag || inputs.fallback_tag != '' && inputs.fallback_tag || 'dev' }}
+  DEFAULT_BOT_BASE_TAG: ${{ inputs.bot_base_tag != '' && inputs.bot_base_tag || inputs.fallback_tag != '' && inputs.fallback_tag || 'dev' }}
   RUNNER_AMD64: &runner_amd64 blacksmith-4vcpu-ubuntu-2404
   RUNNER_ARM64: &runner_arm64 blacksmith-4vcpu-ubuntu-2404-arm
 
@@ -73,6 +82,32 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Validate upstream image tags
+        run: |
+          set -euo pipefail
+
+          if [ -z "${{ env.DEFAULT_SERVER_TAG }}" ]; then
+            echo "DEFAULT_SERVER_TAG resolved to an empty value." >&2
+            exit 1
+          fi
+
+          if [ -z "${{ env.DEFAULT_BOT_BASE_TAG }}" ]; then
+            echo "DEFAULT_BOT_BASE_TAG resolved to an empty value." >&2
+            exit 1
+          fi
+
+          docker buildx imagetools inspect "${{ env.SERVER_IMAGE }}:${{ env.DEFAULT_SERVER_TAG }}" >/dev/null 2>&1 || {
+            echo "Required server image not found: ${{ env.SERVER_IMAGE }}:${{ env.DEFAULT_SERVER_TAG }}" >&2
+            echo "Pass server_tag explicitly or use a published fallback_tag such as 'dev'." >&2
+            exit 1
+          }
+
+          docker buildx imagetools inspect "${{ env.BOT_BASE_IMAGE }}:${{ env.DEFAULT_BOT_BASE_TAG }}" >/dev/null 2>&1 || {
+            echo "Required bot-base image not found: ${{ env.BOT_BASE_IMAGE }}:${{ env.DEFAULT_BOT_BASE_TAG }}" >&2
+            echo "Pass bot_base_tag explicitly or use a published fallback_tag such as 'dev'." >&2
+            exit 1
+          }
 
       - name: Build and push by digest (my-core-bot-go)
         id: build
