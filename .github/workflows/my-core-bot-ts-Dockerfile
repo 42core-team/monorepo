@@ -1,18 +1,16 @@
 ARG TAG_NAME="dev"
 ARG SERVER_IMAGE="ghcr.io/42core-team/server"
-
-FROM oven/bun:latest AS bun-base
-WORKDIR /app
+ARG BOT_BASE_IMAGE="ghcr.io/42core-team/bot-base"
+ARG BOT_BASE_TAG="dev"
 
 FROM ${SERVER_IMAGE}:${TAG_NAME} AS game
 
-# Build connection library from monorepo sources
-FROM bun-base AS connection
-WORKDIR /connection
-COPY bots/ts/client_lib/ ./
+FROM ${BOT_BASE_IMAGE}:${BOT_BASE_TAG} AS release
+RUN curl -fsSL https://bun.sh/install | bash
+ENV BUN_INSTALL="/root/.bun"
+ENV PATH="/root/.bun/bin:${PATH}"
 
-FROM bun-base AS release
-
+WORKDIR /core
 COPY --from=game /core/server /core/server
 COPY --from=game /core/data /core/data
-COPY --from=connection /connection/ /core/ts/client_lib/
+COPY bots/ts/client_lib/ /core/ts/client_lib/

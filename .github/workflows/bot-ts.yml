@@ -1,0 +1,190 @@
+name: bot-ts
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      server_tag:
+        required: false
+        type: string
+      bot_base_tag:
+        required: false
+        type: string
+    outputs:
+      image_tag:
+        description: Immutable image tag for this workflow run
+        value: ${{ jobs.push_merge.outputs.image_tag }}
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE: ghcr.io/${{ github.repository_owner }}/my-core-bot-ts
+  SERVER_IMAGE: ghcr.io/${{ github.repository_owner }}/server
+  BOT_BASE_IMAGE: ghcr.io/${{ github.repository_owner }}/bot-base
+  DEFAULT_SERVER_TAG: ${{ inputs.server_tag != '' && inputs.server_tag || github.ref_name }}
+  DEFAULT_BOT_BASE_TAG: ${{ inputs.bot_base_tag != '' && inputs.bot_base_tag || github.ref_name }}
+  RUNNER_AMD64: blacksmith-4vcpu-ubuntu-2404
+  RUNNER_ARM64: blacksmith-4vcpu-ubuntu-2404-arm
+
+concurrency:
+  group: "bot-ts @ ${{ github.event_name }} @ ${{ github.ref_name }}"
+  cancel-in-progress: true
+
+jobs:
+  build_per_arch:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ${{ env.RUNNER_AMD64 }}
+            platform: linux/amd64
+          - arch: arm64
+            runner: ${{ env.RUNNER_ARM64 }}
+            platform: linux/arm64
+    runs-on:
+      - ${{ matrix.runner }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 1
+
+      - name: Prepare
+        run: |
+          platform=${{ matrix.platform }}
+          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
+
+      - name: Setup Blacksmith Builder
+        uses: useblacksmith/setup-docker-builder@v1
+
+      - name: Docker meta (my-core-bot-ts)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push by digest (my-core-bot-ts)
+        id: build
+        uses: useblacksmith/build-push-action@v2
+        with:
+          context: ${{ github.workspace }}
+          file: .github/workflows/my-core-bot-ts-Dockerfile
+          build-args: |
+            SERVER_IMAGE=${{ env.SERVER_IMAGE }}
+            TAG_NAME=${{ env.DEFAULT_SERVER_TAG }}
+            BOT_BASE_IMAGE=${{ env.BOT_BASE_IMAGE }}
+            BOT_BASE_TAG=${{ env.DEFAULT_BOT_BASE_TAG }}
+          platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ env.IMAGE }}
+          outputs: type=image,push-by-digest=true,name-canonical=true,push=true
+          provenance: false
+
+      - name: Export digest (my-core-bot-ts)
+        run: |
+          mkdir -p ${{ runner.temp }}/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "${{ runner.temp }}/digests/${digest#sha256:}"
+
+      - name: Upload digest (my-core-bot-ts)
+        uses: actions/upload-artifact@v4
+        with:
+          name: bot-ts-digests-${{ matrix.arch }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  push_merge:
+    runs-on: ${{ env.RUNNER_AMD64 }}
+    needs: build_per_arch
+    outputs:
+      image_tag: ${{ steps.expose.outputs.tag }}
+    steps:
+      - name: Download digests (my-core-bot-ts)
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: bot-ts-digests-*
+          merge-multiple: true
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Blacksmith Builder
+        uses: useblacksmith/setup-docker-builder@v1
+
+      - name: Docker meta (my-core-bot-ts)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=raw,value=${{ github.ref_name }}-${{ github.sha }}
+            type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
+
+      - name: Generate additional version tags (my-core-bot-ts)
+        id: version_tags
+        if: startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, '-')
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          VERSION=${VERSION#v}
+          IFS='.' read -r -a parts <<< "$VERSION"
+
+          ADDITIONAL_TAGS=""
+          if [ ${#parts[@]} -ge 1 ]; then
+            ADDITIONAL_TAGS="${{ env.IMAGE }}:v${parts[0]}"
+          fi
+          if [ ${#parts[@]} -ge 2 ]; then
+            ADDITIONAL_TAGS="$ADDITIONAL_TAGS,${{ env.IMAGE }}:v${parts[0]}.${parts[1]}"
+          fi
+          if [ ${#parts[@]} -ge 3 ]; then
+            ADDITIONAL_TAGS="$ADDITIONAL_TAGS,${{ env.IMAGE }}:v${parts[0]}.${parts[1]}.${parts[2]}"
+          fi
+          if [ ${#parts[@]} -ge 4 ]; then
+            ADDITIONAL_TAGS="$ADDITIONAL_TAGS,${{ env.IMAGE }}:v${parts[0]}.${parts[1]}.${parts[2]}.${parts[3]}"
+          fi
+
+          echo "additional_tags=$ADDITIONAL_TAGS" >> $GITHUB_OUTPUT
+          echo "Generated additional tags: $ADDITIONAL_TAGS"
+
+      - name: Create manifest list and push (my-core-bot-ts)
+        working-directory: ${{ runner.temp }}/digests
+        run: |
+          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf '${{ env.IMAGE }}@sha256:%s ' *)
+
+          if [ -n "${{ steps.version_tags.outputs.additional_tags }}" ]; then
+            IFS=',' read -r -a additional_tags <<< "${{ steps.version_tags.outputs.additional_tags }}"
+            for tag in "${additional_tags[@]}"; do
+              if [ -n "$tag" ]; then
+                echo "Creating manifest for additional tag: $tag"
+                docker buildx imagetools create -t "$tag" \
+                  $(printf '${{ env.IMAGE }}@sha256:%s ' *)
+              fi
+            done
+          fi
+
+      - name: Inspect image (my-core-bot-ts)
+        run: |
+          docker buildx imagetools inspect ${{ env.IMAGE }}:${{ steps.meta.outputs.version }}
+
+      - name: Expose immutable image tag
+        id: expose
+        run: echo "tag=${{ github.ref_name }}-${{ github.sha }}" >> $GITHUB_OUTPUT

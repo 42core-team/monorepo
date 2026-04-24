@@ -1,0 +1,24 @@
+FROM ubuntu:noble
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV SHELL=/bin/bash
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        git \
+        build-essential \
+        libcurl4 \
+        libcurl4-openssl-dev \
+        curl \
+        jq \
+        make && \
+    ARCH=$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/') && \
+    curl -fsSL "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${ARCH}" \
+        -o /usr/local/bin/yq && \
+    chmod +x /usr/local/bin/yq && \
+    curl -fsSL -o /root/.bashrc \
+        https://raw.githubusercontent.com/42core-team/.shellrc/refs/heads/main/.bashrc && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /core
