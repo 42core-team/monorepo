@@ -24,7 +24,7 @@
 		"bombDamageDeposit",
 		"worldGenerator",
 		"worldGeneratorConfig",
-		"units",
+		"components",
 		"corePositions"
 	],
 	"properties": {
@@ -133,12 +133,8 @@
 		"worldGeneratorConfig": {
 			"type": "object"
 		},
-		"units": {
-			"type": "array",
-			"minItems": 1,
-			"items": {
-				"$ref": "#/$defs/unit"
-			}
+		"components": {
+			"$ref": "#/$defs/componentsCfg"
 		},
 		"corePositions": {
 			"type": "array",
@@ -247,84 +243,155 @@
 				}
 			}
 		},
-		"unit": {
+		"componentPropertyName": {
+			"type": "string",
+			"enum": [
+				"hp",
+				"baseActionCooldown",
+				"balancePerCooldownStep",
+				"maxBalance",
+				"damageReductionPercent",
+				"damageCore",
+				"damageUnit",
+				"damageObject",
+				"postSpawnCoreCooldown"
+			]
+		},
+		"unitDefaultProperties": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"hp",
+				"baseActionCooldown",
+				"balancePerCooldownStep",
+				"maxBalance",
+				"damageReductionPercent",
+				"damageCore",
+				"damageUnit",
+				"damageObject",
+				"postSpawnCoreCooldown"
+			],
+			"properties": {
+				"hp": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 10000000
+				},
+				"baseActionCooldown": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 10000000
+				},
+				"balancePerCooldownStep": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 10000000
+				},
+				"maxBalance": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 10000000
+				},
+				"damageReductionPercent": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 100
+				},
+				"damageCore": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 10000000
+				},
+				"damageUnit": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 10000000
+				},
+				"damageObject": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 10000000
+				},
+				"postSpawnCoreCooldown": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 10000000
+				}
+			}
+		},
+		"componentPropertyModification": {
 			"type": "object",
 			"additionalProperties": false,
 			"required": [
 				"name",
-				"visualizer_asset_path",
-				"cost",
-				"hp",
-				"baseActionCooldown",
-				"maxActionCooldown",
-				"balancePerCooldownStep",
-				"damageCore",
-				"damageUnit",
-				"damageDeposit",
-				"damageWall",
-				"damageBomb",
-				"buildType"
+				"modification"
 			],
 			"properties": {
 				"name": {
+					"$ref": "#/$defs/componentPropertyName"
+				},
+				"modification": {
+					"type": "integer",
+					"minimum": -10000000,
+					"maximum": 10000000
+				}
+			}
+		},
+		"component": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"id",
+				"properties",
+				"cost"
+			],
+			"properties": {
+				"id": {
 					"type": "string",
 					"minLength": 1
 				},
-				"visualizer_asset_path": {
-					"type": "string",
-					"minLength": 1
-				},
-				"cost": {
+				"maxAdded": {
 					"type": "integer",
-					"minimum": 0
+					"minimum": 1,
+					"maximum": 10000000
 				},
-				"hp": {
-					"type": "integer",
-					"minimum": 0
-				},
-				"baseActionCooldown": {
-					"type": "integer",
-					"minimum": 0
-				},
-				"maxActionCooldown": {
-					"type": "integer",
-					"minimum": 1
-				},
-				"balancePerCooldownStep": {
-					"type": "integer",
-					"minimum": 1
-				},
-				"damageCore": {
-					"type": "integer",
-					"minimum": 0
-				},
-				"damageUnit": {
+				"properties": {
 					"type": "array",
 					"minItems": 1,
 					"items": {
-						"type": "integer",
-						"minimum": 0
+						"$ref": "#/$defs/componentPropertyModification"
 					}
 				},
-				"damageDeposit": {
+				"cost": {
 					"type": "integer",
-					"minimum": 0
-				},
-				"damageWall": {
+					"minimum": 0,
+					"maximum": 10000000
+				}
+			}
+		},
+		"componentsCfg": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"maxComponentsPerUnit",
+				"unitDefaultProperties",
+				"components"
+			],
+			"properties": {
+				"maxComponentsPerUnit": {
 					"type": "integer",
-					"minimum": 0
+					"minimum": 0,
+					"maximum": 10000000
 				},
-				"damageBomb": {
-					"type": "integer",
-					"minimum": 0
+				"unitDefaultProperties": {
+					"$ref": "#/$defs/unitDefaultProperties"
 				},
-				"buildType": {
-					"type": "string",
-					"enum": [
-						"none",
-						"wall",
-						"bomb"
-					]
+				"components": {
+					"type": "array",
+					"minItems": 1,
+					"items": {
+						"$ref": "#/$defs/component"
+					}
 				}
 			}
 		},

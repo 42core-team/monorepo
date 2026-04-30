@@ -1,0 +1,16 @@
+{
+	"json.schemas": [
+		{
+			"fileMatch": [
+				"game.config.json"
+			],
+			"url": "./server/data/json-schemas/configs/game-config.schema.json"
+		},
+		{
+			"fileMatch": [
+				"server.config.json"
+			],
+			"url": "./server/data/json-schemas/configs/server-config.schema.json"
+		}
+	]
+}

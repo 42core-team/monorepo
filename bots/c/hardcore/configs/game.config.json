@@ -1,23 +1,23 @@
 {
-	"gridSize": 20, // tile count in each x and y directions of map, map will always be square
-	"seed": "", // if server is run twice with same seed, exact same world is generated. specify any string of any length, leave empty for a random seed
-	"idleIncome": 3, // amount of gems automatically deposited into each core each tick before the timeout
-	"idleIncomeTimeOut": 100, // how many ticks the idleIncome last before no more gems are deposited
-	"depositHp": 50, // default HP when a deposit object is spawned
-	"depositIncome": 100, // default amount of gems a deposit is spawned with, might be modified depending on world generator
-	"gemPileIncome": 35, // default amount of gems a gem pile is spawned with, might be modified depending on world generator
-	"coreHp": 99, // health points of a core when its spawned
-	"coreSpawnCooldown": 25, // cooldown in in ticks a core must wait after spawning a unit before it can spawn another unit
-	"initialBalance": 300, // default amount of gems a core is spawned with, might be modified depending on world generator
-	"wallHp": 77, // health points of a wall when its spawned
-	"wallBuildCost": 10, // amount of gems a wall builder unit must pay to build a wall
-	"bombHp": 10, // health points of a bomb when its spawned
-	"bombCountdown": 8, // countdown in ticks from when a bomb is first attacked to when it explodes
-	"bombThrowCost": 24, // amount of gems a bomb builder unit must pay to build a wall
-	"bombReach": 2, // bomb explosion range
-	"bombDamageCore": 49, // damage a bomb does to a core
-	"bombDamageUnit": 15, // damage a bomb does to a unit
-	"bombDamageDeposit": 25, // damage a bomb does to a deposit
+	"gridSize": 20,
+	"seed": "",
+	"idleIncome": 3,
+	"idleIncomeTimeOut": 100,
+	"depositHp": 50,
+	"depositIncome": 100,
+	"gemPileIncome": 35,
+	"coreHp": 99,
+	"coreSpawnCooldown": 25,
+	"initialBalance": 300,
+	"wallHp": 77,
+	"wallBuildCost": 10,
+	"bombHp": 10,
+	"bombCountdown": 8,
+	"bombThrowCost": 24,
+	"bombReach": 2,
+	"bombDamageCore": 49,
+	"bombDamageUnit": 15,
+	"bombDamageDeposit": 25,
 	"worldGenerator": "jigsaw",
 	"worldGeneratorConfig": {
 		"templatePlaceAttemptCount": 5000,
@@ -31,98 +31,103 @@
 		"randomDepositIncomeVariation": 100,
 		"randomGemPileIncomeVariation": 20
 	},
-	"units": [
-		{
-			"name": "Scissor Snipper Warrior", // name, for aesthetic / display purposes only
-			"visualizer_asset_path": "warrior", // folder that the units visuals are picked from by visualizer
-			"cost": 100, // amount of gems needed to spawn the unit
-			"hp": 22, // amount of healthpoints the unit spawns with
-			"baseActionCooldown": 3, // base delay between action executions
-			"maxActionCooldown": 12, // max delay between action executions if unit is holding a lot of gems
-			"balancePerCooldownStep": 12, // defines increase of delay between action executions, see wiki for details
-			"damageCore": 7, // damage the unit does to a core
-			"damageUnit": [6, 9, 3, 6, 6, 6], // damage the unit does to a unit
-			"damageDeposit": 2, // damage the unit does to a deposit
-			"damageWall": 2, // damage the unit does to a wall
-			"damageBomb": 4, // damage the unit does to a bomb
-			"buildType": "none" // whether & what the unit can build
-		},
-		{
-			"name": "Paper Cut Warrior", // name, for aesthetic / display purposes only
-			"visualizer_asset_path": "warrior", // folder that the units visuals are picked from by visualizer
-			"cost": 100, // amount of gems needed to spawn the unit
-			"hp": 22, // amount of healthpoints the unit spawns with
-			"baseActionCooldown": 3, // base delay between action executions
-			"maxActionCooldown": 12, // max delay between action executions if unit is holding a lot of gems
-			"balancePerCooldownStep": 12, // defines increase of delay between action executions, see wiki for details
-			"damageCore": 7, // damage the unit does to a core
-			"damageUnit": [3, 6, 9, 6, 6, 6], // damage the unit does to a unit
-			"damageDeposit": 2, // damage the unit does to a deposit
-			"damageWall": 2, // damage the unit does to a wall
-			"damageBomb": 4, // damage the unit does to a bomb
-			"buildType": "none" // whether & what the unit can build
-		},
-		{
-			"name": "Stone Thrower Warrior", // name, for aesthetic / display purposes only
-			"visualizer_asset_path": "warrior", // folder that the units visuals are picked from by visualizer
-			"cost": 100, // amount of gems needed to spawn the unit
-			"hp": 22, // amount of healthpoints the unit spawns with
-			"baseActionCooldown": 3, // base delay between action executions
-			"maxActionCooldown": 12, // max delay between action executions if unit is holding a lot of gems
-			"balancePerCooldownStep": 12, // defines increase of delay between action executions, see wiki for details
-			"damageCore": 7, // damage the unit does to a core
-			"damageUnit": [9, 3, 6, 6, 6, 6], // damage the unit does to a unit
-			"damageDeposit": 2, // damage the unit does to a deposit
-			"damageWall": 2, // damage the unit does to a wall
-			"damageBomb": 4, // damage the unit does to a bomb
-			"buildType": "none" // whether & what the unit can build
-		},
-		{
-			"name": "Acid Spitting Warrior", // name, for aesthetic / display purposes only
-			"visualizer_asset_path": "warrior", // folder that the units visuals are picked from by visualizer
-			"cost": 250, // amount of gems needed to spawn the unit
-			"hp": 22, // amount of healthpoints the unit spawns with
-			"baseActionCooldown": 3, // base delay between action executions
-			"maxActionCooldown": 12, // max delay between action executions if unit is holding a lot of gems
-			"balancePerCooldownStep": 12, // defines increase of delay between action executions, see wiki for details
-			"damageCore": 3, // damage the unit does to a core
-			"damageUnit": [6, 6, 6, 6, 6, 6], // damage the unit does to a unit
-			"damageDeposit": 2, // damage the unit does to a deposit
-			"damageWall": 2, // damage the unit does to a wall
-			"damageBomb": 4, // damage the unit does to a bomb
-			"buildType": "none" // whether & what the unit can build
-		},
-		{
-			"name": "Miner",
-			"visualizer_asset_path": "miner",
-			"cost": 100,
-			"hp": 15,
-			"baseActionCooldown": 4,
-			"maxActionCooldown": 10,
-			"balancePerCooldownStep": 42,
-			"damageCore": 3,
-			"damageUnit": [2, 2, 2, 2, 2, 2],
-			"damageDeposit": 10,
-			"damageWall": 15,
-			"damageBomb": 6,
-			"buildType": "none"
-		},
-		{
-			"name": "Carrier",
-			"visualizer_asset_path": "carrier",
-			"cost": 200,
+	"components": {
+		"maxComponentsPerUnit": 5,
+		"unitDefaultProperties": {
 			"hp": 5,
-			"baseActionCooldown": 0,
-			"maxActionCooldown": 1,
-			"balancePerCooldownStep": 999999,
+			"baseActionCooldown": 3,
+			"balancePerCooldownStep": 10,
+			"maxBalance": 100,
+			"damageReductionPercent": 0, 
 			"damageCore": 0,
-			"damageUnit": [0, 0, 0, 0, 0, 0],
-			"damageDeposit": 0,
-			"damageWall": 1,
-			"damageBomb": 2,
-			"buildType": "none"
-		}
-	],
+			"damageUnit": 0,
+			"damageObject": 0,
+			"postSpawnCoreCooldown": 10
+		},
+		"components": [
+			{
+				"id": "health",
+				"properties": [
+					{
+						"name": "hp",
+						"modification": 3
+					}
+				],
+				"cost": 12
+			},
+			{
+				"id": "speed",
+				"properties": [
+					{
+						"name": "baseActionCooldown",
+						"modification": -2
+					}
+				],
+				"cost": 12
+			},
+			{
+				"id": "armor",
+				"maxAdded": 4,
+				"properties": [
+					{
+						"name": "damageReductionPercent",
+						"modification": 20
+					}
+				],
+				"cost": 30
+			},
+			{
+				"id": "unit_attack",
+				"properties": [
+					{
+						"name": "damageUnit",
+						"modification": 3
+					}
+				],
+				"cost": 15
+			},
+			{
+				"id": "core_attack",
+				"properties": [
+					{
+						"name": "damageCore",
+						"modification": 3
+					}
+				],
+				"cost": 15
+			},
+			{
+				"id": "mining",
+				"properties": [
+					{
+						"name": "damageObject",
+						"modification": 3
+					}
+				],
+				"cost": 15
+			},
+			{
+				"id": "gem_carrying_efficiency",
+				"properties": [
+					{
+						"name": "balancePerCooldownStep",
+						"modification": 10
+					}
+				],
+				"cost": 20
+			},
+			{
+				"id": "gem_carrying_capacity",
+				"properties": [
+					{
+						"name": "maxBalance",
+						"modification": 50
+					}
+				],
+				"cost": 20
+			}
+		]
+	},
 	"corePositions": [
 		{
 			"x": 0,
