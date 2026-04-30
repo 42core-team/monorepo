@@ -14,14 +14,6 @@
 		"coreSpawnCooldown",
 		"initialBalance",
 		"wallHp",
-		"wallBuildCost",
-		"bombHp",
-		"bombCountdown",
-		"bombThrowCost",
-		"bombReach",
-		"bombDamageCore",
-		"bombDamageUnit",
-		"bombDamageDeposit",
 		"worldGenerator",
 		"worldGeneratorConfig",
 		"components",
@@ -77,46 +69,6 @@
 			"maximum": 10000000
 		},
 		"wallHp": {
-			"type": "integer",
-			"minimum": 0,
-			"maximum": 10000000
-		},
-		"wallBuildCost": {
-			"type": "integer",
-			"minimum": 0,
-			"maximum": 10000000
-		},
-		"bombHp": {
-			"type": "integer",
-			"minimum": 0,
-			"maximum": 10000000
-		},
-		"bombCountdown": {
-			"type": "integer",
-			"minimum": 0,
-			"maximum": 10000000
-		},
-		"bombThrowCost": {
-			"type": "integer",
-			"minimum": 0,
-			"maximum": 10000000
-		},
-		"bombReach": {
-			"type": "integer",
-			"minimum": 0,
-			"maximum": 10000000
-		},
-		"bombDamageCore": {
-			"type": "integer",
-			"minimum": 0,
-			"maximum": 10000000
-		},
-		"bombDamageUnit": {
-			"type": "integer",
-			"minimum": 0,
-			"maximum": 10000000
-		},
-		"bombDamageDeposit": {
 			"type": "integer",
 			"minimum": 0,
 			"maximum": 10000000

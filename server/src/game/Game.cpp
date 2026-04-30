@@ -230,14 +230,9 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 								  ": Action Failure: " + Action::getActionName(action->getActionType()) + ": " + err +
 								  " (" + actionJson.dump() + ")";
 
-			unsigned int actingUnitInError = 0;
 			if (actionJson.contains("unit_id"))
-				actingUnitInError = actionJson["unit_id"];
-			else if (actionJson.contains("builder_id"))
-				actingUnitInError = actionJson["builder_id"];
-			if (actingUnitInError != 0)
 			{
-				Object *obj = Board::instance().getObjectById(actingUnitInError);
+				Object *obj = Board::instance().getObjectById(actionJson["unit_id"]);
 				if (obj != NULL)
 				{
 					if (obj->getDebugInfo().find("[begin_errs]") != std::string::npos)
@@ -313,7 +308,6 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 	// 5. SEND STATE
 
 	sendState(actions, tick, failures);
-	Visualizer::visualizeGameState(tick);
 
 
 	// ----------------------------

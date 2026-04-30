@@ -10,7 +10,6 @@
 class CreateAction;
 class MoveAction;
 class TransferGemsAction;
-class BuildAction;
 class AttackAction;
 
 #include "json.hpp"
@@ -21,8 +20,7 @@ enum class ActionType
 	MOVE,
 	ATTACK,
 	CREATE,
-	TRANSFER_GEMS,
-	BUILD
+	TRANSFER_GEMS
 };
 
 class Action
@@ -45,7 +43,6 @@ class Action
 };
 
 #include "AttackAction.h"
-#include "BuildAction.h"
 #include "CreateAction.h"
 #include "MoveAction.h"
 #include "TransferGemsAction.h"

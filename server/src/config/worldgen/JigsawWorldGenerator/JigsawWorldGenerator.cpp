@@ -414,8 +414,6 @@ void JigsawWorldGenerator::generateWorld(uint64_t seed)
 
 	Logger::Log("Generating world with JigsawWorldGenerator");
 
-	Visualizer::visualizeGameState(0, true);
-
 	unsigned int width = Config::game().gridSize;
 	unsigned int height = Config::game().gridSize;
 
@@ -434,29 +432,22 @@ void JigsawWorldGenerator::generateWorld(uint64_t seed)
 			Logger::Log("Placed template " + original.name + " at (" + std::to_string(posX) + ", " +
 						std::to_string(posY) + ")");
 	}
-	Visualizer::visualizeGameState(0, true);
-
 	Logger::Log("Step 2: Placing walls");
 	placeWalls();
-	Visualizer::visualizeGameState(0, true);
 
 	Logger::Log("Step 3: Balancing Gem Deposits");
 	balanceObjectType(ObjectType::Deposit, Config::game().worldGeneratorConfig.value("depositCount", 20) /
 												   2); // gems to half, will be doubled again later by mirroring
-	Visualizer::visualizeGameState(0, true);
 
 	Logger::Log("Step 4: Balancing Gem Piles");
 	balanceObjectType(ObjectType::GemPile, Config::game().worldGeneratorConfig.value("gemPileCount", 20) /
 												   2); // gems to half, will be doubled again later by mirroring
-	Visualizer::visualizeGameState(0, true);
 
 	Logger::Log("Step 5: Varying Gem Pile & Deposit Income");
 	varyDepositIncome();
-	Visualizer::visualizeGameState(0, true);
 
 	Logger::Log("Step 6: Mirroring world");
 	mirrorWorld();
-	Visualizer::visualizeGameState(0, true);
 
 	Logger::Log("World generation complete");
 }

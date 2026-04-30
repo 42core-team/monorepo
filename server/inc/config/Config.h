@@ -4,7 +4,6 @@
 #include "Common.h"
 #include "json.hpp"
 
-#include <memory>
 #include <string>
 #include <vector>
 using json = nlohmann::ordered_json;
@@ -36,45 +35,34 @@ struct GameConfig
 	unsigned int initialBalance;
 
 	unsigned int wallHp;
-	unsigned int wallBuildCost;
 
-	unsigned int bombHp;
-	unsigned int bombCountdown;
-	unsigned int bombThrowCost;
-	unsigned int bombReach;
-	unsigned int bombDamageCore;
-	unsigned int bombDamageUnit;
-	unsigned int bombDamageDeposit;
-
-	std::vector<UnitConfig> units;
+	unsigned int maxComponentsPerUnit;
+	std::vector<std::pair<UnitProperty, int>> defaultUnitProperties;
+	std::vector<ComponentConfig> componentTypes;
 
 	// core positions. length defines max supported player count
 	std::vector<Position> corePositions;
 };
 
-enum class BuildType
+enum class UnitProperty
 {
-	NONE,
-	BOMB,
-	WALL
+	HP,
+	BASE_ACTION_COOLDOWN,
+	BALANCE_PER_COOLDOWN_STEP,
+	MAX_BALANCE,
+	DAMAGE_REDUCTION_PERCENT,
+	DAMAGE_CORE,
+	DAMAGE_UNIT,
+	DAMAGE_OBJECT,
+	POST_SPAWN_CORE_COOLDOWN
 };
 
-struct UnitConfig
+struct ComponentConfig
 {
-	std::string name;
+	std::string id;
+	int maxAddable; // -1 if no limit
+	std::vector<std::pair<UnitProperty, int>> properties;
 	unsigned int cost;
-	unsigned int hp;
-	unsigned int baseActionCooldown; // timeout between actions in ticks
-	unsigned int maxActionCooldown;
-	unsigned int balancePerCooldownStep; // action cooldown = base action cooldown + gems / balancePerCooldownStep
-
-	unsigned int damageCore;
-	std::vector<unsigned int> damageUnit;
-	unsigned int damageDeposit;
-	unsigned int damageWall;
-	unsigned int damageBomb;
-
-	BuildType buildType;
 };
 
 struct ServerConfig
@@ -85,7 +73,6 @@ struct ServerConfig
 	unsigned int clientWaitTimeoutMs;
 	unsigned int clientConnectTimeoutMs;
 	unsigned int clientPacketsMaxSizeKb;
-	bool enableTerminalVisualizer;
 };
 
 class Config
@@ -97,7 +84,7 @@ class Config
 	static json encodeConfig();
 
 	static Position &getCorePosition(unsigned int teamId);
-	static UnitConfig &getUnitConfig(unsigned int typeId);
+	static ComponentConfig &getComponentConfig(const std::string &id);
 
 	static void setServerConfigFilePath(const std::string &path) { serverConfigFilePath = path; }
 	static std::string getServerConfigFilePath() { return serverConfigFilePath; }
