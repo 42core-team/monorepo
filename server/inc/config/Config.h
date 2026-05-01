@@ -57,6 +57,17 @@ enum class UnitProperty
 	DAMAGE_OBJECT,
 	POST_SPAWN_CORE_COOLDOWN
 };
+inline constexpr std::array<std::pair<std::string_view, UnitProperty>, 9> UNIT_PROPERTY_ENTRIES{{
+		{"hp", UnitProperty::HP},
+		{"baseActionCooldown", UnitProperty::BASE_ACTION_COOLDOWN},
+		{"balancePerCooldownStep", UnitProperty::BALANCE_PER_COOLDOWN_STEP},
+		{"maxBalance", UnitProperty::MAX_BALANCE},
+		{"damageReductionPercent", UnitProperty::DAMAGE_REDUCTION_PERCENT},
+		{"damageCore", UnitProperty::DAMAGE_CORE},
+		{"damageUnit", UnitProperty::DAMAGE_UNIT},
+		{"damageObject", UnitProperty::DAMAGE_OBJECT},
+		{"postSpawnCoreCooldown", UnitProperty::POST_SPAWN_CORE_COOLDOWN},
+}};
 
 struct ComponentConfig
 {
@@ -97,6 +108,8 @@ class Config
 		if (dataFolderPath.back() == '/') dataFolderPath.pop_back();
 	}
 	static std::string getDataFolderPath() { return dataFolderPath; }
+
+	static std::string_view unitPropertyToString(UnitProperty property);
 
 	// misc utils
 	static json load_json_schema(const std::string &schema_name);

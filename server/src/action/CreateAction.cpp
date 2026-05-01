@@ -69,7 +69,7 @@ std::string CreateAction::execute(Core *core)
 		return "insufficient funds - has " + std::to_string(core->getBalance()) + ", needs " + std::to_string(unitCost);
 
 	std::map<UnitProperty, int> properties = ComponentLogic::getUnitProperties(componentCounts);
-	Board::instance().addObject<Unit>(Unit(core->getTeamId(), properties), closestEmptyPos);
+	Board::instance().addObject<Unit>(Unit(core->getTeamId(), properties, components_), closestEmptyPos);
 	core->setBalance(core->getBalance() - unitCost);
 
 	Stats::instance().inc(stat_keys::units_spawned);

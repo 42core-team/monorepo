@@ -1,5 +1,7 @@
 #include "StateEncoder.h"
 
+#include "Config.h"
+
 json StateEncoder::encodeFullState()
 {
 	json state = json::array();
@@ -23,9 +25,13 @@ json StateEncoder::encodeFullState()
 		if (obj.getType() == ObjectType::Unit)
 		{
 			o["teamId"] = ((Unit &)obj).getTeamId();
-			o["unit_type"] = ((Unit &)obj).getUnitType();
 			o["gems"] = ((Unit &)obj).getBalance();
 			o["ActionCooldown"] = ((Unit &)obj).getActionCooldown();
+
+			o["components"] = ((Unit &)obj).getComponents();
+			o["properties"] = json::object();
+			for (const auto &[prop, value] : ((Unit &)obj).getProperties())
+				o["properties"][std::string(Config::unitPropertyToString(prop))] = value;
 		}
 		if (obj.getType() == ObjectType::Deposit)
 		{

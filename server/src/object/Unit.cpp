@@ -1,7 +1,8 @@
 #include "Unit.h"
 
-Unit::Unit(unsigned int teamId, std::map<UnitProperty, int> properties)
-	: Object(properties.at(UnitProperty::HP), ObjectType::Unit), properties_(properties), team_id_(teamId), balance_(0)
+Unit::Unit(unsigned int teamId, std::map<UnitProperty, int> properties, std::vector<std::string> components)
+	: Object(properties.at(UnitProperty::HP), ObjectType::Unit), properties_(properties), components_(components),
+	  team_id_(teamId), balance_(0)
 {
 	resetActionCooldown();
 }

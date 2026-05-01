@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cctype>
+#include <stdexcept>
 #include <string>
 
 void shuffle_actions_vector(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions)
@@ -12,16 +13,14 @@ void shuffle_actions_vector(std::vector<std::pair<std::unique_ptr<Action>, Core 
 		{
 		case ActionType::TRANSFER_GEMS:
 			return 0;
-		case ActionType::BUILD:
-			return 1;
 		case ActionType::ATTACK:
-			return 2;
+			return 1;
 		case ActionType::MOVE:
-			return 3;
+			return 2;
 		case ActionType::CREATE:
-			return 4;
+			return 3;
 		default:
-			return 3; // sane default
+			throw std::runtime_error("Unknown ActionType");
 		}
 	};
 

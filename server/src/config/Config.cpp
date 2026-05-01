@@ -146,28 +146,17 @@ static std::string read_file_strip_json_comments(const std::string &path)
 	return out;
 }
 
-static UnitProperty parseUnitProperty(const std::string &name)
+static UnitProperty stringToUnitProperty(std::string_view name)
 {
-	if (name == "hp")
-		return UnitProperty::HP;
-	else if (name == "baseActionCooldown")
-		return UnitProperty::BASE_ACTION_COOLDOWN;
-	else if (name == "balancePerCooldownStep")
-		return UnitProperty::BALANCE_PER_COOLDOWN_STEP;
-	else if (name == "maxBalance")
-		return UnitProperty::MAX_BALANCE;
-	else if (name == "damageReductionPercent")
-		return UnitProperty::DAMAGE_REDUCTION_PERCENT;
-	else if (name == "damageCore")
-		return UnitProperty::DAMAGE_CORE;
-	else if (name == "damageUnit")
-		return UnitProperty::DAMAGE_UNIT;
-	else if (name == "damageObject")
-		return UnitProperty::DAMAGE_OBJECT;
-	else if (name == "postSpawnCoreCooldown")
-		return UnitProperty::POST_SPAWN_CORE_COOLDOWN;
-
-	throw std::runtime_error("Unknown unit property name: \"" + name + "\".");
+	for (const auto &[entryName, property] : UNIT_PROPERTY_ENTRIES)
+		if (entryName == name) return property;
+	throw std::runtime_error("Unknown unit property name: \"" + std::string(name) + "\".");
+}
+std::string_view Config::unitPropertyToString(UnitProperty property)
+{
+	for (const auto &[name, entryProperty] : UNIT_PROPERTY_ENTRIES)
+		if (entryProperty == property) return name;
+	throw std::runtime_error("Unknown UnitProperty value.");
 }
 
 static ServerConfig parseServerConfig()
@@ -267,9 +256,9 @@ static GameConfig parseGameConfig()
 	const json &defaults = components.at("unitDefaultProperties");
 	for (const auto &[name, valueJson] : defaults.items())
 	{
-		UnitProperty propType = parseUnitProperty(name);
+		UnitProperty propType = stringToUnitProperty(name);
 		int value = valueJson.get<int>();
-		config.defaultUnitProperties.insert(propType, value);
+		config.defaultUnitProperties[propType] = value;
 	}
 
 	for (const auto &componentJson : components.at("components"))
@@ -279,10 +268,10 @@ static GameConfig parseGameConfig()
 		comp.maxAddable = componentJson.value("maxAddable", UINT_MAX);
 		for (const auto &propJson : componentJson.at("properties"))
 		{
-			UnitProperty propType = parseUnitProperty(propJson.at("name").get<std::string>());
+			UnitProperty propType = stringToUnitProperty(propJson.at("name").get<std::string>());
 			int modification = propJson.at("modification").get<int>();
 
-			comp.properties.insert(propType, modification);
+			comp.properties[propType] = modification;
 		}
 		comp.cost = componentJson.at("cost").get<unsigned int>();
 
