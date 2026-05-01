@@ -5,22 +5,28 @@
 	"additionalProperties": false,
 	"required": [
 		"type",
-		"unit_type"
+		"components"
 	],
 	"properties": {
 		"type": {
 			"type": "string",
 			"const": "create"
 		},
-		"unit_type": {
-			"type": "integer",
-			"minimum": 0
+		"components": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
 		}
 	},
 	"examples": [
 		{
 			"type": "create",
-			"unit_type": 2
+			"components": [
+				"COMPONENT_ID_1",
+				"COMPONENT_ID_2",
+				"COMPONENT_ID_3"
+			]
 		}
 	]
 }

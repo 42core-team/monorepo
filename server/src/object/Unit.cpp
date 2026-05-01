@@ -1,7 +1,7 @@
 #include "Unit.h"
 
-Unit::Unit(unsigned int teamId, unsigned int unit_type)
-	: Object(Config::game().units[unit_type].hp, ObjectType::Unit), unit_type_(unit_type), team_id_(teamId), balance_(0)
+Unit::Unit(unsigned int teamId, std::map<UnitProperty, int> properties)
+	: Object(properties.at(UnitProperty::HP), ObjectType::Unit), properties_(properties), team_id_(teamId), balance_(0)
 {
 	resetActionCooldown();
 }
@@ -22,12 +22,9 @@ void Unit::tickActionCooldown()
 
 unsigned int Unit::calcActionCooldown()
 {
-	const auto &u = Config::game().units[unit_type_];
-	unsigned int step = std::max(1u, u.balancePerCooldownStep);
+	unsigned int step = std::max(1, properties_.at(UnitProperty::BALANCE_PER_COOLDOWN_STEP));
 	unsigned int steps = balance_ / step;
-
-	unsigned int cd = u.baseActionCooldown + steps;
-	if (u.maxActionCooldown > 0 && cd > u.maxActionCooldown) cd = u.maxActionCooldown;
+	unsigned int cd = properties_.at(UnitProperty::BASE_ACTION_COOLDOWN) + steps;
 
 	return std::max(1u, cd);
 }

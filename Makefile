@@ -81,5 +81,5 @@ visualizer:
 	cd visualizer && npm i && npm run dev
 
 setup-hooks:
-	chmod +x .githooks/* || true
-	git config core.hooksPath .githooks
+	@chmod +x .githooks/* || true
+	@git config core.hooksPath .githooks

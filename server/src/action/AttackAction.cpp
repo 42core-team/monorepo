@@ -45,18 +45,22 @@ std::string AttackAction::execute(Core *core)
 	// apply attack damage depending on object type
 	unsigned int damage = 1;
 	if (obj->getType() == ObjectType::Unit)
+		damage = unit->getProperties().at(UnitProperty::DAMAGE_UNIT);
+	else if (obj->getType() == ObjectType::Core)
+		damage = unit->getProperties().at(UnitProperty::DAMAGE_CORE);
+	else if (obj->getType() == ObjectType::Deposit)
+		damage = unit->getProperties().at(UnitProperty::DAMAGE_OBJECT);
+	else if (obj->getType() == ObjectType::Wall)
+		damage = unit->getProperties().at(UnitProperty::DAMAGE_OBJECT);
+
+	int damageReductionPercent = 0;
+	if (obj->getType() == ObjectType::Unit)
 	{
 		Unit *targetUnit = (Unit *)obj;
-		damage = Config::game().units[unit->getUnitType()].damageUnit[targetUnit->getUnitType()];
+		damageReductionPercent = targetUnit->getProperties().at(UnitProperty::DAMAGE_REDUCTION_PERCENT);
 	}
-	else if (obj->getType() == ObjectType::Core)
-		damage = Config::game().units[unit->getUnitType()].damageCore;
-	else if (obj->getType() == ObjectType::Deposit)
-		damage = Config::game().units[unit->getUnitType()].damageDeposit;
-	else if (obj->getType() == ObjectType::Wall)
-		damage = Config::game().units[unit->getUnitType()].damageWall;
-	else if (obj->getType() == ObjectType::Bomb)
-		damage = Config::game().units[unit->getUnitType()].damageBomb;
+	damage = damage * (100 - damageReductionPercent) / 100;
+
 	obj->damage(unit, damage);
 
 	Stats::instance().inc(stat_keys::actions_executed);

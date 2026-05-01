@@ -13,14 +13,12 @@ class CreateAction : public Action
   public:
 	CreateAction(json msg);
 
-	unsigned int getUnitType() const { return unit_type_; }
-
 	std::string execute(Core *core);
 	void decodeJSON(json msg);
 	json encodeJSON();
 
   private:
-	unsigned int unit_type_;
+	std::vector<std::string> components_;
 };
 
 #endif // CREATE_ACTION_H

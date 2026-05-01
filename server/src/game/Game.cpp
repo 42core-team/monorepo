@@ -269,9 +269,6 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 		case ObjectType::Core:
 			Stats::instance().inc(stat_keys::cores_destroyed);
 			break;
-		case ObjectType::Bomb:
-			Stats::instance().inc(stat_keys::bombs_destroyed);
-			break;
 		default:
 			break;
 		}
@@ -285,8 +282,8 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 
 			if (unitBalance > 0) Board::instance().addObject<GemPile>(GemPile(unitBalance), objPos);
 		}
-		// Cores must stay so clients know they died, Bombs must stay so the visualizer can get encoded positions where the explosion happened
-		else if (obj.getType() != ObjectType::Core && obj.getType() != ObjectType::Bomb)
+		// Cores must stay so clients know they died
+		else if (obj.getType() != ObjectType::Core)
 		{
 			Board::instance().removeObjectById(obj.getId());
 		}
@@ -345,17 +342,7 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 		}
 	}
 
-	// 7. REMOVE BOMBS
-
-	for (auto &obj : Board::instance())
-	{
-		if (obj.getType() == ObjectType::Bomb && obj.getHP() <= 0)
-		{
-			Board::instance().removeObjectById(obj.getId());
-		}
-	}
-
-	// 8. ActionCooldown / SpawnCooldown DECREMENT FOR UNITS / CORES
+	// 7. ActionCooldown / SpawnCooldown DECREMENT FOR UNITS / CORES
 	// must happen AFTER state send cause clients & visualizer also do it locally for replay efficiency, otherwise we get a server/client desync with two decrements in one tick when ActionCooldown is reset
 
 	for (auto &obj : Board::instance())
@@ -366,7 +353,7 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 			static_cast<Core &>(obj).tickSpawnCooldown();
 	}
 
-	// 9. Clean up debug info / paths
+	// 8. Clean up debug info / paths
 	for (auto &obj : Board::instance())
 	{
 		if (obj.hasDebugInfo()) obj.resetDebugInfo();

@@ -21,14 +21,12 @@ inline constexpr std::string_view damage_deposits = "damage_deposits";
 
 inline constexpr std::string_view units_spawned = "units_spawned";
 inline constexpr std::string_view walls_spawned = "walls_spawned";
-inline constexpr std::string_view bombs_spawned = "bombs_spawned";
 
 inline constexpr std::string_view units_destroyed = "units_destroyed";
 inline constexpr std::string_view cores_destroyed = "cores_destroyed";
 inline constexpr std::string_view deposits_destroyed = "deposits_destroyed";
 inline constexpr std::string_view gempiles_destroyed = "gempiles_destroyed"; // picked up
 inline constexpr std::string_view walls_destroyed = "walls_destroyed";
-inline constexpr std::string_view bombs_destroyed = "bombs_destroyed"; // explosions
 
 inline constexpr std::string_view gems_transferred = "gems_transferred";
 inline constexpr std::string_view tiles_traveled = "tiles_traveled";

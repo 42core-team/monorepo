@@ -241,7 +241,6 @@ static GameConfig parseGameConfig()
 	config.gemPileIncome = j.at("gemPileIncome").get<unsigned int>();
 
 	config.coreHp = j.at("coreHp").get<unsigned int>();
-	config.coreSpawnCooldown = j.at("coreSpawnCooldown").get<unsigned int>();
 	config.initialBalance = j.at("initialBalance").get<unsigned int>();
 
 	config.wallHp = j.at("wallHp").get<unsigned int>();
@@ -270,20 +269,20 @@ static GameConfig parseGameConfig()
 	{
 		UnitProperty propType = parseUnitProperty(name);
 		int value = valueJson.get<int>();
-		config.defaultUnitProperties.push_back({propType, value});
+		config.defaultUnitProperties.insert(propType, value);
 	}
 
 	for (const auto &componentJson : components.at("components"))
 	{
 		ComponentConfig comp;
 		comp.id = componentJson.at("id").get<std::string>();
-		comp.maxAddable = componentJson.value("maxAddable", -1);
+		comp.maxAddable = componentJson.value("maxAddable", UINT_MAX);
 		for (const auto &propJson : componentJson.at("properties"))
 		{
 			UnitProperty propType = parseUnitProperty(propJson.at("name").get<std::string>());
 			int modification = propJson.at("modification").get<int>();
 
-			comp.properties.push_back({propType, modification});
+			comp.properties.insert(propType, modification);
 		}
 		comp.cost = componentJson.at("cost").get<unsigned int>();
 

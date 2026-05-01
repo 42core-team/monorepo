@@ -7,7 +7,6 @@
 	"depositIncome": 100,
 	"gemPileIncome": 35,
 	"coreHp": 99,
-	"coreSpawnCooldown": 25,
 	"initialBalance": 300,
 	"wallHp": 77,
 	"worldGenerator": "jigsaw",

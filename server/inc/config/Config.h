@@ -11,6 +11,8 @@ using json = nlohmann::ordered_json;
 class WorldGenerator;
 
 struct UnitConfig;
+struct ComponentConfig;
+enum class UnitProperty;
 
 struct GameConfig
 {
@@ -31,13 +33,12 @@ struct GameConfig
 	unsigned int gemPileIncome;
 
 	unsigned int coreHp;
-	unsigned int coreSpawnCooldown;
 	unsigned int initialBalance;
 
 	unsigned int wallHp;
 
 	unsigned int maxComponentsPerUnit;
-	std::vector<std::pair<UnitProperty, int>> defaultUnitProperties;
+	std::map<UnitProperty, int> defaultUnitProperties;
 	std::vector<ComponentConfig> componentTypes;
 
 	// core positions. length defines max supported player count
@@ -60,8 +61,8 @@ enum class UnitProperty
 struct ComponentConfig
 {
 	std::string id;
-	int maxAddable; // -1 if no limit
-	std::vector<std::pair<UnitProperty, int>> properties;
+	unsigned int maxAddable;
+	std::map<UnitProperty, int> properties;
 	unsigned int cost;
 };
 
