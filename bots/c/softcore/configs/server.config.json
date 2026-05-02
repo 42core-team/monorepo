@@ -9,6 +9,5 @@
 	"timeoutMs": 3000000,
 	"clientWaitTimeoutMs": 50000,
 	"clientConnectTimeoutMs": 30000,
-	"clientPacketsMaxSizeKb": 16,
-	"enableTerminalVisualizer": false
+	"clientPacketsMaxSizeKb": 16
 }

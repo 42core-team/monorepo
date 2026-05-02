@@ -9,18 +9,14 @@
 	"coreHp": 99,
 	"initialBalance": 300,
 	"wallHp": 77,
-	"worldGenerator": "jigsaw",
+	"worldGenerator": "sparse",
 	"worldGeneratorConfig": {
-		"templatePlaceAttemptCount": 5000,
-		"additionalWallPlaceAttemptCount": 50,
-		"depositCount": 35,
-		"gemPileCount": 25,
-		"minTemplateSpacing": 1,
-		"minCoreDistance": 5,
-		"depositAdditionalIncomePerAdjacentWall": 40,
-		"depositMultiplierIfFullySurrounded": 1.3,
-		"randomDepositIncomeVariation": 100,
-		"randomGemPileIncomeVariation": 20
+		"depositCount": 20,
+		"depositBalanceVariation": 100,
+		"gemPileCount": 10,
+		"gemPileBalanceVariation": 50,
+		"wallCount": 30,
+		"coreBuffer": 3
 	},
 	"components": {
 		"maxComponentsPerUnit": 5,

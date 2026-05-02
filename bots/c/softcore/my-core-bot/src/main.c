@@ -14,7 +14,7 @@ void ft_on_tick(unsigned long tick)
 {
 	printf("-----> [⚡️ TICK %ld 🔥]\n", tick);
 
-	core_action_createUnit(UNIT_WARRIOR);
+	core_action_createUnit("unit_attack", "core_attack", "health", NULL);
 
 	t_obj **units = ft_get_units_own();
 	for (int i = 0; units && units[i]; i++)
