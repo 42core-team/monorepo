@@ -15,11 +15,23 @@ int core_internal_distance(t_pos pos1, t_pos pos2)
 
 bool core_internal_isPosValid(t_pos pos)
 {
-	return (pos.y < game.config.gridSize && pos.x < game.config.gridSize);
+	return (pos.y < game.grid_size && pos.x < game.grid_size);
 }
 
 void core_internal_reset_actions(void)
 {
+	if (actions.list)
+	{
+		for (size_t i = 0; i < actions.count; i++)
+		{
+			if (actions.list[i].type == ACTION_CREATE)
+			{
+				core_static_freeStringArray(actions.list[i].data.create.components);
+				actions.list[i].data.create.components = NULL;
+			}
+		}
+	}
+
 	free(actions.list);
 	actions.list = NULL;
 	actions.count = 0;
@@ -52,13 +64,28 @@ void core_internal_reset_debugData(void)
 	debug_data.capacity = 0;
 }
 
-void core_internal_freeGame(void)
+void core_internal_freeStringArray(char **array)
+{
+	if (!array) return;
+
+	for (size_t i = 0; array[i]; i++)
+		free(array[i]);
+
+	free(array);
+}
+
+void core_internal_freeObject(t_obj *obj)
+{
+	if (obj->type == OBJ_UNIT) core_internal_freeStringArray(obj->s_unit.components);
+	free(obj);
+}
+void core_internal_freeObjects(void)
 {
 	if (game.objects)
 	{
 		for (int i = 0; game.objects[i]; i++)
 		{
-			free(game.objects[i]);
+			core_internal_freeObject(game.objects[i]);
 		}
 		free(game.objects);
 		game.objects = NULL;
@@ -68,7 +95,7 @@ void core_internal_freeGame(void)
 void core_internal_freeAndExit(const char *msg, int count, ...)
 {
 	core_internal_reset_actions();
-	core_internal_freeGame();
+	core_internal_freeObjects();
 
 	va_list ap;
 	va_start(ap, count);

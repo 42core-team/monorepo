@@ -28,7 +28,15 @@ json Config::load_json_schema(const std::string &schema_name)
 		Logger::LogErr("Could not open schema: " + fullName);
 		exit(EXIT_FAILURE);
 	}
-	return json::parse(s);
+	try
+	{
+		return json::parse(s);
+	}
+	catch (const std::exception &e)
+	{
+		Logger::LogErr("Failed to parse schema " + schema_name + ": " + std::string(e.what()));
+		exit(EXIT_FAILURE);
+	}
 }
 
 static void validate_or_die(const json &instance, const std::string &schema_name)

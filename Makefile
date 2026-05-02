@@ -3,7 +3,7 @@
 .PHONY: require-vars
 
 require-vars:
-	@test -n "$(LANGUAGE)" || (echo "LANGUAGE is required (e.g. LANGUAGE=c)" && exit 2)
+	@test -n "$(LANGUAGE)" || (echo "LANGUAGE is required (e.g. LANGUAGE=c) (c|go)" && exit 2)
 	@test -n "$(STAGE)" || (echo "STAGE is required (dev|prod)" && exit 2)
 	@test -n "$(DIFFICULTY)" || (echo "DIFFICULTY is required (hardcore|softcore)" && exit 2)
 	@echo "$(LANGUAGE)" | grep -Eq '^(c|go)$$' || (echo "LANGUAGE must be c or go (got $(LANGUAGE))" && exit 2)

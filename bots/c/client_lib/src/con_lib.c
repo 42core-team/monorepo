@@ -130,7 +130,7 @@ int core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 
 	// clean up
 	close(socket_fd);
-	core_internal_freeGame();
+	core_internal_freeObjects();
 	core_internal_reset_actions();
 
 	return 0;

@@ -30,6 +30,20 @@ typedef struct s_pos
 	unsigned short y;
 } t_pos;
 
+/// @brief Definition of a units properties resulting from its components.
+typedef struct s_unit_properties
+{
+	int hp;
+	int base_action_cooldown;
+	int balance_per_cooldown_step;
+	int max_balance;
+	int damage_reduction_percent;
+	int damage_core;
+	int damage_unit;
+	int damage_object;
+	int post_spawn_core_cooldown;
+} t_unit_properties;
+
 /// @brief Game object structure representing all entities in the game
 typedef struct s_obj
 {
@@ -62,6 +76,10 @@ typedef struct s_obj
 			unsigned long gems;
 			/// @brief Countdown to the next tick the unit can move, defined by it's speed & how much it's carrying.
 			unsigned long action_cooldown;
+			/// @brief Null-terminated string array of all component ids the unit has.
+			char **components;
+			/// @brief The properties of the unit, derived from its components.
+			t_unit_properties properties;
 		} s_unit;
 		struct
 		{
@@ -115,7 +133,7 @@ int core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 
 /// @brief Create a new unit of specified type.
 /// @param unit_type The type of unit to create.
-void core_action_createUnit(t_unit_type unit_type);
+void core_action_createUnit(char *component, ...);
 
 /// @brief Moves a unit to a specific position.
 /// @details Units can only move one tile up, down, left or right; and only if their action_cooldown is 0.

@@ -86,7 +86,7 @@ static t_path reconstruct_full_path(size_t *parent, size_t start_idx, size_t goa
 t_path pathfind_full_path_dijkstra(t_pos start, t_pos target)
 {
 	t_path empty_path = {.steps = NULL, .length = 0};
-	const unsigned long grid = game.config.gridSize;
+	const unsigned long grid = game.grid_size;
 	const size_t total = (size_t)grid * (size_t)grid;
 
 	if (grid == 0 || !pos_in_bounds(start, grid) || !pos_in_bounds(target, grid)) return empty_path;

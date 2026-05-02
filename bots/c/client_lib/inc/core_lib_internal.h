@@ -7,7 +7,9 @@
 
 int core_internal_distance(t_pos pos1, t_pos pos2);
 bool core_internal_isPosValid(t_pos pos);
-void core_internal_freeGame(void);
+void core_internal_freeStringArray(char **array);
+void core_internal_freeObject(t_obj *obj);
+void core_internal_freeObjects(void);
 void core_internal_freeAndExit(const char *msg, int count, ...);
 
 // ----- Socket
@@ -47,7 +49,7 @@ typedef struct s_action
 	{
 		struct
 		{
-			unsigned long unit_type;
+			char **components;
 		} create;
 		struct
 		{

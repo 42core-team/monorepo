@@ -24,10 +24,23 @@ json_node *core_internal_encode_packet_actions(void)
 			t->string = strdup("create");
 			obj->array[idx++] = t;
 			{
-				json_node *u = create_node(JSON_TYPE_NUMBER);
-				u->key = strdup("unit_type");
-				u->number = clamp_ulong_for_json(a->data.create.unit_type);
-				obj->array[idx++] = u;
+				size_t component_count = 0;
+				while (a->data.create.components && a->data.create.components[component_count])
+					component_count++;
+
+				json_node *components = create_node(JSON_TYPE_ARRAY);
+				components->key = strdup("components");
+				components->array = malloc(sizeof(json_node *) * (component_count + 1));
+
+				for (size_t j = 0; j < component_count; j++)
+				{
+					json_node *component = create_node(JSON_TYPE_STRING);
+					component->string = strdup(a->data.create.components[j]);
+					components->array[j] = component;
+				}
+
+				components->array[component_count] = NULL;
+				obj->array[idx++] = components;
 			}
 			break;
 		case ACTION_MOVE:

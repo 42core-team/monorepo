@@ -9,7 +9,7 @@
 		"timeoutMs",
 		"clientWaitTimeoutMs",
 		"clientConnectTimeoutMs",
-		"clientPacketsMaxSizeKb",
+		"clientPacketsMaxSizeKb"
 	],
 	"properties": {
 		"replayFolderPaths": {
