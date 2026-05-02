@@ -233,8 +233,21 @@ export function formatObjectData(obj: TickObject): string {
 
 	let objectData = result.join("<br>");
 
+	if (obj.type === 1) {
+		const properties = Object.entries(obj.properties)
+			.map(
+				([key, value]) =>
+					`<span style="color: var(--text)">${escapeHtml(key)}: ${num(value)}</span>`,
+			)
+			.join("<br>");
+
+		if (properties) {
+			objectData += `<br><br><span style="color: var(--text)">⚙️ Properties: ⤵</span><br>${properties}`;
+		}
+	}
+
 	if (obj.debug_info) {
-		// split dbug info string by "[begin_errs]"
+		// split debug info string by "[begin_errs]"
 		const debugInfo = obj.debug_info.split("[begin_errs]");
 
 		if (debugInfo[0].trim() !== "") {
