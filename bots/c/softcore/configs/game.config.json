@@ -58,7 +58,6 @@
 			},
 			{
 				"id": "armor",
-				"maxAdded": 4,
 				"properties": [
 					{
 						"name": "damageReductionPercent",
@@ -128,6 +127,50 @@
 				"cost": 20,
 				"visualizer_asset_prioritized": false,
 				"visualizer_asset_path": "bag"
+			}
+		],
+		"invalidConditions": [
+			{
+				"message": "Your action cooldown may not be less than your total attacks added together",
+				"condition": {
+					"type": "less_than",
+					"1": {
+						"type": "property",
+						"property": "baseActionCooldown"
+					},
+					"2": {
+						"type": "sum",
+						"1": {
+							"type": "sum",
+							"1": {
+								"type": "property",
+								"property": "damageUnit"
+							},
+							"2": {
+								"type": "property",
+								"property": "damageCore"
+							}
+						},
+						"2": {
+							"type": "property",
+							"property": "damageObject"
+						}
+					}
+				}
+			},
+			{
+				"message": "You may not have more than 4 armor components",
+				"condition": {
+					"type": "greater_than",
+					"1": {
+						"type": "component_count",
+						"component": "armor"
+					},
+					"2": {
+						"type": "const",
+						"value": 4
+					}
+				}
 			}
 		]
 	},

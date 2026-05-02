@@ -154,7 +154,7 @@ static std::string read_file_strip_json_comments(const std::string &path)
 	return out;
 }
 
-static UnitProperty stringToUnitProperty(std::string_view name)
+UnitProperty Config::stringToUnitProperty(std::string_view name)
 {
 	for (const auto &[entryName, property] : UNIT_PROPERTY_ENTRIES)
 		if (entryName == name) return property;
@@ -264,7 +264,7 @@ static GameConfig parseGameConfig()
 	const json &defaults = components.at("unitDefaultProperties");
 	for (const auto &[name, valueJson] : defaults.items())
 	{
-		UnitProperty propType = stringToUnitProperty(name);
+		UnitProperty propType = Config::stringToUnitProperty(name);
 		int value = valueJson.get<int>();
 		config.defaultUnitProperties[propType] = value;
 	}
@@ -273,10 +273,9 @@ static GameConfig parseGameConfig()
 	{
 		ComponentConfig comp;
 		comp.id = componentJson.at("id").get<std::string>();
-		comp.maxAddable = componentJson.value("maxAddable", UINT_MAX);
 		for (const auto &propJson : componentJson.at("properties"))
 		{
-			UnitProperty propType = stringToUnitProperty(propJson.at("name").get<std::string>());
+			UnitProperty propType = Config::stringToUnitProperty(propJson.at("name").get<std::string>());
 			int modification = propJson.at("modification").get<int>();
 
 			comp.properties[propType] = modification;
@@ -284,6 +283,14 @@ static GameConfig parseGameConfig()
 		comp.cost = componentJson.at("cost").get<unsigned int>();
 
 		config.componentTypes.push_back(comp);
+	}
+
+	for (const auto &conditionJson : components.at("invalidConditions"))
+	{
+		InvalidConditionConfig condition;
+		condition.message = conditionJson.at("message").get<std::string>();
+		condition.condition = conditionJson.at("condition");
+		config.invalidConditions.push_back(std::move(condition));
 	}
 
 	for (const auto &posJson : j.at("corePositions"))

@@ -13,6 +13,7 @@ class WorldGenerator;
 struct UnitConfig;
 struct ComponentConfig;
 enum class UnitProperty;
+struct InvalidConditionConfig;
 
 struct GameConfig
 {
@@ -40,6 +41,7 @@ struct GameConfig
 	unsigned int maxComponentsPerUnit;
 	std::map<UnitProperty, int> defaultUnitProperties;
 	std::vector<ComponentConfig> componentTypes;
+	std::vector<InvalidConditionConfig> invalidConditions;
 
 	// core positions. length defines max supported player count
 	std::vector<Position> corePositions;
@@ -69,10 +71,15 @@ inline constexpr std::array<std::pair<std::string_view, UnitProperty>, 9> UNIT_P
 		{"postSpawnCoreCooldown", UnitProperty::POST_SPAWN_CORE_COOLDOWN},
 }};
 
+struct InvalidConditionConfig
+{
+	std::string message;
+	json condition;
+};
+
 struct ComponentConfig
 {
 	std::string id;
-	unsigned int maxAddable;
 	std::map<UnitProperty, int> properties;
 	unsigned int cost;
 };
@@ -110,6 +117,7 @@ class Config
 	static std::string getDataFolderPath() { return dataFolderPath; }
 
 	static std::string_view unitPropertyToString(UnitProperty property);
+	static UnitProperty stringToUnitProperty(std::string_view name);
 
 	// misc utils
 	static json load_json_schema(const std::string &schema_name);

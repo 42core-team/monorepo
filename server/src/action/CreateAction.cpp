@@ -53,15 +53,7 @@ std::string CreateAction::execute(Core *core)
 	for (const std::string &componentId : components_)
 	{
 		ComponentConfig &component = Config::getComponentConfig(componentId);
-
 		componentCounts[componentId]++;
-
-		if (componentCounts[componentId] > component.maxAddable)
-		{
-			return "too many copies of component \"" + componentId + "\" - has " +
-				   std::to_string(componentCounts[componentId]) + ", max is " + std::to_string(component.maxAddable);
-		}
-
 		unitCost += component.cost;
 	}
 
@@ -69,6 +61,10 @@ std::string CreateAction::execute(Core *core)
 		return "insufficient funds - has " + std::to_string(core->getBalance()) + ", needs " + std::to_string(unitCost);
 
 	std::map<UnitProperty, int> properties = ComponentLogic::getUnitProperties(componentCounts);
+
+	const std::string invalidConditionMessage = ComponentLogic::getInvalidConditionMessage(properties, componentCounts);
+	if (!invalidConditionMessage.empty()) return invalidConditionMessage;
+
 	Board::instance().addObject<Unit>(Unit(core->getTeamId(), properties, components_), closestEmptyPos);
 	core->setBalance(core->getBalance() - unitCost);
 
