@@ -26,7 +26,7 @@ void core_internal_reset_actions(void)
 		{
 			if (actions.list[i].type == ACTION_CREATE)
 			{
-				core_static_freeStringArray(actions.list[i].data.create.components);
+				core_internal_freeStringArray(actions.list[i].data.create.components);
 				actions.list[i].data.create.components = NULL;
 			}
 		}

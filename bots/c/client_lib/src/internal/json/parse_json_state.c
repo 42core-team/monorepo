@@ -30,7 +30,7 @@ static void core_static_removeObjWithId(unsigned long id)
 	{
 		if (game.objects[i]->id == id)
 		{
-			free(game.objects[i]);
+			core_internal_freeObject(game.objects[i]);
 			for (size_t j = i; game.objects[j]; j++)
 				game.objects[j] = game.objects[j + 1];
 			return;
@@ -43,8 +43,14 @@ static void core_static_parseComponents(t_obj *obj, json_node *field)
 	if (!obj || obj->type != OBJ_UNIT) return;
 	if (!field || field->type != JSON_TYPE_ARRAY) return;
 
-	core_static_free_components(obj->s_unit.components);
-	obj->s_unit.components = NULL;
+	if (obj->s_unit.components)
+	{
+		for (size_t i = 0; obj->s_unit.components[i]; i++)
+			free(obj->s_unit.components[i]);
+
+		free(obj->s_unit.components);
+		obj->s_unit.components = NULL;
+	}
 
 	size_t count = 0;
 	while (field->array && field->array[count])
@@ -62,9 +68,19 @@ static void core_static_parseComponents(t_obj *obj, json_node *field)
 		json_node *component = field->array[i];
 
 		if (component->type == JSON_TYPE_STRING && component->string)
-			components[i] = core_static_strdup(component->string);
+			components[i] = strdup(component->string);
 		else
-			components[i] = core_static_strdup("");
+			components[i] = strdup("");
+
+		if (!components[i])
+		{
+			for (size_t j = 0; j < i; j++)
+				free(components[j]);
+
+			free(components);
+			perror("strdup");
+			exit(EXIT_FAILURE);
+		}
 	}
 
 	components[count] = NULL;
@@ -83,21 +99,21 @@ static void core_static_parseProperties(t_obj *obj, json_node *field)
 		{
 			if (strcmp(prop->key, "hp") == 0)
 				obj->s_unit.properties.hp = prop->number;
-			else if (strcmp(prop->key, "base_action_cooldown") == 0)
+			else if (strcmp(prop->key, "baseActionCooldown") == 0)
 				obj->s_unit.properties.base_action_cooldown = prop->number;
-			else if (strcmp(prop->key, "balance_per_cooldown_step") == 0)
+			else if (strcmp(prop->key, "balancePerCooldownStep") == 0)
 				obj->s_unit.properties.balance_per_cooldown_step = prop->number;
-			else if (strcmp(prop->key, "max_balance") == 0)
+			else if (strcmp(prop->key, "maxBalance") == 0)
 				obj->s_unit.properties.max_balance = prop->number;
-			else if (strcmp(prop->key, "damage_reduction_percent") == 0)
+			else if (strcmp(prop->key, "damageReductionPercent") == 0)
 				obj->s_unit.properties.damage_reduction_percent = prop->number;
-			else if (strcmp(prop->key, "damage_core") == 0)
+			else if (strcmp(prop->key, "damageCore") == 0)
 				obj->s_unit.properties.damage_core = prop->number;
-			else if (strcmp(prop->key, "damage_unit") == 0)
+			else if (strcmp(prop->key, "damageUnit") == 0)
 				obj->s_unit.properties.damage_unit = prop->number;
-			else if (strcmp(prop->key, "damage_object") == 0)
+			else if (strcmp(prop->key, "damageObject") == 0)
 				obj->s_unit.properties.damage_object = prop->number;
-			else if (strcmp(prop->key, "post_spawn_core_cooldown") == 0)
+			else if (strcmp(prop->key, "postSpawnCoreCooldown") == 0)
 				obj->s_unit.properties.post_spawn_core_cooldown = prop->number;
 		}
 	}

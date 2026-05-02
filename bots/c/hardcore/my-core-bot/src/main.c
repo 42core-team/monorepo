@@ -19,7 +19,7 @@ void ft_on_tick(unsigned long tick)
 {
 	printf("-----> [⚡️ TICK %ld 🔥]\n", tick);
 
-	core_action_createUnit("unit_attack", "core_attack", "health");
+	core_action_createUnit("unit_attack", "core_attack", "health", NULL);
 
 	t_obj **own_team_units = core_get_objs_filter(is_unit_own);
 	for (int i = 0; own_team_units && own_team_units[i]; i++)

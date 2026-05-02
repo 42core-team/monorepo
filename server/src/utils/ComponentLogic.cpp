@@ -1,8 +1,10 @@
 #include "ComponentLogic.h"
 
+#include "Config.h"
+
 std::map<UnitProperty, int> ComponentLogic::getUnitProperties(const std::map<std::string, unsigned int> &components)
 {
-	std::map<UnitProperty, int> properties;
+	std::map<UnitProperty, int> properties = Config::game().defaultUnitProperties;
 
 	for (const auto &pair : components)
 	{

@@ -57,7 +57,7 @@ void core_action_createUnit(char *component, ...)
 			if (!new_components)
 			{
 				va_end(args);
-				core_static_freeStringArray(action->data.create.components);
+				core_internal_freeStringArray(action->data.create.components);
 				action->data.create.components = NULL;
 				perror("realloc");
 				exit(EXIT_FAILURE);
@@ -72,7 +72,7 @@ void core_action_createUnit(char *component, ...)
 		{
 			va_end(args);
 			action->data.create.components[count] = NULL;
-			core_static_freeStringArray(action->data.create.components);
+			core_internal_freeStringArray(action->data.create.components);
 			action->data.create.components = NULL;
 			perror("malloc");
 			exit(EXIT_FAILURE);
