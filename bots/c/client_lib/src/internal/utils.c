@@ -63,17 +63,6 @@ void core_internal_freeGame(void)
 		free(game.objects);
 		game.objects = NULL;
 	}
-
-	if (game.config.units)
-	{
-		for (int i = 0; game.config.units[i]; i++)
-		{
-			free(game.config.units[i]->name);
-			free(game.config.units[i]);
-		}
-		free(game.config.units);
-		game.config.units = NULL;
-	}
 }
 
 void core_internal_freeAndExit(const char *msg, int count, ...)

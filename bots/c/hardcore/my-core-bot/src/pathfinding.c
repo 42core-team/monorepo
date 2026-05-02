@@ -18,13 +18,12 @@ static unsigned long movement_cost_at(t_pos pos)
 		switch (any_obj->type)
 		{
 		case OBJ_WALL:
+			return 2; // passable by breaking, but costs more
 		case OBJ_CORE:
 		case OBJ_DEPOSIT:
 			return ULONG_MAX; // impassable
 		case OBJ_UNIT:
 		case OBJ_GEM_PILE:
-		case OBJ_BOMB:
-			return 2; // passable, but costs more
 		default:
 			return 1; // unknown object, assume passable
 		}

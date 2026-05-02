@@ -97,8 +97,6 @@ static void core_static_updateObj(t_obj *existingObj, json_node *updates)
 			existingObj->s_unit.action_cooldown = property->number;
 		else if (strncmp(property->key, "SpawnCooldown", 11) == 0)
 			existingObj->s_core.spawn_cooldown = property->number;
-		else if (strncmp(property->key, "countdown", 9) == 0)
-			existingObj->s_bomb.countdown = property->number;
 	}
 }
 

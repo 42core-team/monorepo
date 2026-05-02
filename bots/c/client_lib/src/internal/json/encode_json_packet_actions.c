@@ -5,7 +5,7 @@ json_node *core_internal_encode_packet_actions(void)
 	// Build actions array
 	json_node *actions_arr = create_node(JSON_TYPE_ARRAY);
 	actions_arr->array = malloc(sizeof(json_node *) * (actions.count + 1));
-	
+
 	for (unsigned i = 0; i < actions.count; i++)
 	{
 		t_action *a = &actions.list[i];
@@ -17,7 +17,7 @@ json_node *core_internal_encode_packet_actions(void)
 
 		json_node *t = create_node(JSON_TYPE_STRING);
 		t->key = strdup("type");
-		
+
 		switch (a->type)
 		{
 		case ACTION_CREATE:
@@ -83,24 +83,6 @@ json_node *core_internal_encode_packet_actions(void)
 				json_node *y = create_node(JSON_TYPE_NUMBER);
 				y->key = strdup("y");
 				y->number = clamp_ulong_for_json(a->data.transfer.target_pos.y);
-				obj->array[idx++] = y;
-			}
-			break;
-		case ACTION_BUILD:
-			t->string = strdup("build");
-			obj->array[idx++] = t;
-			{
-				json_node *bid = create_node(JSON_TYPE_NUMBER);
-				bid->key = strdup("unit_id");
-				bid->number = clamp_ulong_for_json(a->data.build.builder_id);
-				obj->array[idx++] = bid;
-				json_node *x = create_node(JSON_TYPE_NUMBER);
-				x->key = strdup("x");
-				x->number = clamp_ulong_for_json(a->data.build.pos.x);
-				obj->array[idx++] = x;
-				json_node *y = create_node(JSON_TYPE_NUMBER);
-				y->key = strdup("y");
-				y->number = clamp_ulong_for_json(a->data.build.pos.y);
 				obj->array[idx++] = y;
 			}
 			break;

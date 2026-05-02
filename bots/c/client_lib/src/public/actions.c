@@ -115,14 +115,3 @@ void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned lo
 	action->data.transfer.target_pos = target_pos;
 	action->data.transfer.amount = amount;
 }
-
-void core_action_build(const t_obj *builder, t_pos pos)
-{
-	if (!builder) return;
-
-	core_static_ensureCapacity();
-	t_action *action = &actions.list[actions.count++];
-	action->type = ACTION_BUILD;
-	action->data.build.builder_id = builder->id;
-	action->data.build.pos = pos;
-}

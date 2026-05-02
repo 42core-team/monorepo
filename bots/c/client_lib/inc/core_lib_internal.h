@@ -37,8 +37,7 @@ typedef enum e_action_type
 	ACTION_CREATE,
 	ACTION_MOVE,
 	ACTION_ATTACK,
-	ACTION_TRANSFER,
-	ACTION_BUILD
+	ACTION_TRANSFER
 } t_action_type;
 
 typedef struct s_action
@@ -66,11 +65,6 @@ typedef struct s_action
 			t_pos target_pos;
 			unsigned long amount;
 		} transfer;
-		struct
-		{
-			unsigned long builder_id;
-			t_pos pos;
-		} build;
 	} data;
 } t_action;
 
@@ -151,7 +145,6 @@ json_node *create_node(json_type type);						// Create a new, empty-initialized 
 unsigned long clamp_ulong_for_json(unsigned long value);
 
 void core_internal_parse_state(char *json);
-void core_internal_parse_config(char *json);
 
 char *core_internal_encode_login(const char *team_name, int argc, char **argv);
 
