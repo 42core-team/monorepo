@@ -1,6 +1,6 @@
 #include "ReplayEncoder.h"
 
-#define REPLAY_VERSION std::string("1.4.0")
+#define REPLAY_VERSION std::string("2.0.0")
 
 ReplayEncoder &ReplayEncoder::instance()
 {

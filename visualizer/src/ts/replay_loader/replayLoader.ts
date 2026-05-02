@@ -9,7 +9,7 @@ import type { TickAction } from "./action";
 import type { GameConfig } from "./config";
 import type { TickObject } from "./object";
 
-const expectedReplayVersion = "1.4.0";
+const expectedReplayVersion = "2.0.0";
 const winnerNameElement = document.getElementById(
 	"winnername",
 ) as HTMLSpanElement;
@@ -76,6 +76,17 @@ let replayDataOverride: string | null = null; // if a file was dropped into the 
 
 function deepClone<T>(obj: T): T {
 	return JSON.parse(JSON.stringify(obj));
+}
+
+function initializeDerivedObjectFields(obj: TickObject): TickObject {
+	if (
+		obj.type === 0 &&
+		typeof obj.SpawnCooldown === "number" &&
+		typeof obj.SpawnCooldownLastResetTo !== "number"
+	) {
+		obj.SpawnCooldownLastResetTo = obj.SpawnCooldown;
+	}
+	return obj;
 }
 
 function isDynamicSpeedEnabled(): boolean {
@@ -161,7 +172,7 @@ class ReplayLoader {
 		const tick0 = this.replayData.ticks["0"];
 		if (tick0?.objects) {
 			for (const obj of tick0.objects) {
-				fullState[obj.id] = deepClone(obj);
+				fullState[obj.id] = initializeDerivedObjectFields(deepClone(obj));
 			}
 		}
 		this.cache.set(0, deepClone(fullState));
@@ -189,14 +200,35 @@ class ReplayLoader {
 	private applyDiff(state: State, tickData: ReplayTick): void {
 		for (const diffObj of tickData.objects) {
 			const id = diffObj.id;
+
 			if (state[id]) {
-				Object.assign(state[id], diffObj);
-				// bombs only have state: dead reported 1 tick delayed so they can still communicate the tiles that exploded on their actual death tick
+				const existingObj = state[id];
+
+				Object.assign(existingObj, diffObj);
+
+				if (
+					existingObj.type === 0 &&
+					"SpawnCooldown" in diffObj &&
+					typeof diffObj.SpawnCooldown === "number"
+				) {
+					existingObj.SpawnCooldownLastResetTo = diffObj.SpawnCooldown;
+				}
+
 				if (diffObj.state === "dead") {
 					delete state[id];
 				}
 			} else {
-				state[id] = deepClone(diffObj);
+				const newObj = deepClone(diffObj);
+
+				if (
+					newObj.type === 0 &&
+					"SpawnCooldown" in newObj &&
+					typeof newObj.SpawnCooldown === "number"
+				) {
+					newObj.SpawnCooldownLastResetTo = newObj.SpawnCooldown;
+				}
+
+				state[id] = newObj;
 			}
 		}
 	}
@@ -440,23 +472,6 @@ export function getTotalReplayTicks(): number {
 	}
 
 	return totalReplayTicks;
-}
-export function getNameOfUnitType(unitType: number): string {
-	if (!replayLoader) {
-		throw new Error("Replay not loaded. Please call loadReplay first.");
-	}
-	const cfg = replayLoader.getGameConfig();
-	if (!cfg) {
-		throw new Error("GameConfig is missing! Did loadReplay parse config?");
-	}
-	if (
-		!Array.isArray(cfg.units) ||
-		unitType < 0 ||
-		unitType >= cfg.units.length
-	) {
-		throw new Error(`Invalid unitType index: ${unitType}`);
-	}
-	return cfg.units[unitType].name;
 }
 
 export function getGameConfig(): GameConfig | undefined {

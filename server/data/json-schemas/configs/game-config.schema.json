@@ -289,7 +289,9 @@
 			"required": [
 				"id",
 				"properties",
-				"cost"
+				"cost",
+				"visualizer_asset_prioritized",
+				"visualizer_asset_path"
 			],
 			"properties": {
 				"id": {
@@ -312,6 +314,13 @@
 					"type": "integer",
 					"minimum": 0,
 					"maximum": 10000000
+				},
+				"visualizer_asset_prioritized": {
+					"type": "boolean"
+				},
+				"visualizer_asset_path": {
+					"type": "string",
+					"minLength": 1
 				}
 			}
 		},

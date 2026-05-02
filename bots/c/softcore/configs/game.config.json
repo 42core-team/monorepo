@@ -40,7 +40,9 @@
 						"modification": 3
 					}
 				],
-				"cost": 12
+				"cost": 12,
+				"visualizer_asset_prioritized": false,
+				"visualizer_asset_path": "heart"
 			},
 			{
 				"id": "speed",
@@ -50,7 +52,9 @@
 						"modification": -2
 					}
 				],
-				"cost": 12
+				"cost": 12,
+				"visualizer_asset_prioritized": false,
+				"visualizer_asset_path": "lightning"
 			},
 			{
 				"id": "armor",
@@ -61,7 +65,9 @@
 						"modification": 20
 					}
 				],
-				"cost": 30
+				"cost": 30,
+				"visualizer_asset_prioritized": true,
+				"visualizer_asset_path": "shield"
 			},
 			{
 				"id": "unit_attack",
@@ -71,7 +77,9 @@
 						"modification": 3
 					}
 				],
-				"cost": 15
+				"cost": 15,
+				"visualizer_asset_prioritized": true,
+				"visualizer_asset_path": "sword"
 			},
 			{
 				"id": "core_attack",
@@ -81,7 +89,9 @@
 						"modification": 3
 					}
 				],
-				"cost": 15
+				"cost": 15,
+				"visualizer_asset_prioritized": true,
+				"visualizer_asset_path": "axe"
 			},
 			{
 				"id": "mining",
@@ -91,7 +101,9 @@
 						"modification": 3
 					}
 				],
-				"cost": 15
+				"cost": 15,
+				"visualizer_asset_prioritized": true,
+				"visualizer_asset_path": "pickaxe"
 			},
 			{
 				"id": "gem_carrying_efficiency",
@@ -101,7 +113,9 @@
 						"modification": 10
 					}
 				],
-				"cost": 20
+				"cost": 20,
+				"visualizer_asset_prioritized": false,
+				"visualizer_asset_path": "feather"
 			},
 			{
 				"id": "gem_carrying_capacity",
@@ -111,7 +125,9 @@
 						"modification": 50
 					}
 				],
-				"cost": 20
+				"cost": 20,
+				"visualizer_asset_prioritized": false,
+				"visualizer_asset_path": "bag"
 			}
 		]
 	},
