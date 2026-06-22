@@ -410,19 +410,19 @@
           "minLength": 1
         },
         "1": {
-          "type": "object"
+          "$ref": "`#/`$defs/invalidConditionExpr"
         },
         "2": {
-          "type": "object"
+          "$ref": "`#/`$defs/invalidConditionExpr"
         },
         "if": {
-          "type": "object"
+          "$ref": "`#/`$defs/invalidConditionExpr"
         },
         "then": {
-          "type": "object"
+          "$ref": "`#/`$defs/invalidConditionExpr"
         },
         "else": {
-          "type": "object"
+          "$ref": "`#/`$defs/invalidConditionExpr"
         }
       },
       "allOf": [
