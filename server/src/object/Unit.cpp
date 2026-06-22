@@ -25,7 +25,7 @@ unsigned int Unit::calcActionCooldown()
 {
 	unsigned int step = std::max(1, properties_.at(UnitProperty::BALANCE_PER_COOLDOWN_STEP));
 	unsigned int steps = balance_ / step;
-	unsigned int cd = properties_.at(UnitProperty::BASE_ACTION_COOLDOWN) + steps;
+	unsigned int cd = std::max(0, properties_.at(UnitProperty::BASE_ACTION_COOLDOWN)) + steps;
 
 	return std::max(1u, cd);
 }

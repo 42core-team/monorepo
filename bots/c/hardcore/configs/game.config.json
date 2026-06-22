@@ -62,7 +62,6 @@
 			},
 			{
 				"id": "armor",
-				"maxAdded": 4,
 				"properties": [
 					{
 						"name": "damageReductionPercent",

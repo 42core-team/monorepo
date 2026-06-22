@@ -269,19 +269,23 @@ static GameConfig parseGameConfig()
 		config.defaultUnitProperties[propType] = value;
 	}
 
+	std::set<std::string> seenComponentIds;
 	for (const auto &componentJson : components.at("components"))
 	{
 		ComponentConfig comp;
 		comp.id = componentJson.at("id").get<std::string>();
+		if (!seenComponentIds.insert(comp.id).second)
+			throw std::runtime_error("Duplicate component id: \"" + comp.id + "\".");
+		std::set<UnitProperty> seenProperties;
 		for (const auto &propJson : componentJson.at("properties"))
 		{
 			UnitProperty propType = Config::stringToUnitProperty(propJson.at("name").get<std::string>());
 			int modification = propJson.at("modification").get<int>();
-
+			if (!seenProperties.insert(propType).second)
+				throw std::runtime_error("Duplicate property modification \"" + std::string(Config::unitPropertyToString(propType)) + "\" in component \"" + comp.id + "\".");
 			comp.properties[propType] = modification;
 		}
 		comp.cost = componentJson.at("cost").get<unsigned int>();
-
 		config.componentTypes.push_back(comp);
 	}
 
@@ -326,14 +330,14 @@ Position &Config::getCorePosition(unsigned int teamId)
 {
 	return game().corePositions[teamId];
 }
-ComponentConfig &Config::getComponentConfig(const std::string &id)
+ComponentConfig *Config::getComponentConfig(const std::string &id)
 {
 	for (auto &component : game().componentTypes)
 	{
 		if (component.id == id) return component;
 	}
 
-	throw std::runtime_error("Unknown component id: \"" + id + "\".");
+	return null;
 }
 
 json Config::encodeConfig()

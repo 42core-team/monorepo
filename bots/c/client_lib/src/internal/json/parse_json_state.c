@@ -129,6 +129,17 @@ static void core_static_updateObj(t_obj *existingObj, json_node *updates)
 		return;
 	}
 
+	// parse object type first so later parsed conditional properties won't be skipped if json is out of order
+	for (int i = 0; updates->array && updates->array[i]; i++)
+	{
+		json_node *field = updates->array[i];
+		if (field->key && strcmp(field->key, "type") == 0)
+		{
+			existingObj->type = field->number;
+			break;
+		}
+	}
+
 	for (int i = 0; updates->array && updates->array[i]; i++)
 	{
 		json_node *field = updates->array[i];

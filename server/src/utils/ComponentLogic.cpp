@@ -13,7 +13,8 @@ std::map<UnitProperty, int> ComponentLogic::getUnitProperties(const std::map<std
 		const std::string &componentId = pair.first;
 		unsigned int count = pair.second;
 
-		const ComponentConfig &config = Config::getComponentConfig(componentId);
+		const ComponentConfig *config = Config::getComponentConfig(componentId);
+		if (!config) continue;
 
 		for (const auto &propertyPair : config.properties)
 		{
