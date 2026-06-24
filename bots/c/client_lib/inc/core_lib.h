@@ -109,8 +109,10 @@ typedef struct s_unit_config
 	unsigned long balancePerCooldownStep;
 	/// @brief How much damage the unit deals to cores.
 	unsigned long dmg_core;
-	/// @brief How much damage the unit deals to units.
-	unsigned long dmg_unit;
+	/// @brief How much damage the unit deals to each unit type, indexed by t_unit_type.
+	unsigned long *dmg_unit;
+	/// @brief Number of entries in dmg_unit.
+	unsigned long dmg_unit_count;
 	/// @brief How much damage the unit deals to deposits.
 	unsigned long dmg_deposit;
 	/// @brief How much damage the unit deals to walls.

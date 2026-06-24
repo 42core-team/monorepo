@@ -14,6 +14,23 @@ static t_build_type core_static_parse_buildType(json_node *node)
 	return BUILD_TYPE_NONE;
 }
 
+static unsigned long *core_static_parse_unitDamage(json_node *node, unsigned long *count)
+{
+	*count = 0;
+	for (unsigned long i = 0; node->array && node->array[i]; i++)
+		(*count)++;
+
+	if (*count == 0) return NULL;
+
+	unsigned long *damage = malloc(sizeof(unsigned long) * *count);
+	if (!damage) core_static_util_perrorExit("Failed to allocate memory for unit damage config\n");
+
+	for (unsigned long i = 0; i < *count; i++)
+		damage[i] = (unsigned long)node->array[i]->number;
+
+	return damage;
+}
+
 static t_unit_config **core_static_parse_unitConfig(json_node *root)
 {
 	json_node *json = json_find(root, "units");
@@ -39,11 +56,12 @@ static t_unit_config **core_static_parse_unitConfig(json_node *root)
 		units[i]->baseActionCooldown = (unsigned long)json_find(unit_node, "baseActionCooldown")->number;
 		units[i]->maxActionCooldown = (unsigned long)json_find(unit_node, "maxActionCooldown")->number;
 		units[i]->balancePerCooldownStep = (unsigned long)json_find(unit_node, "balancePerCooldownStep")->number;
-		units[i]->dmg_core = (long)json_find(unit_node, "damageCore")->number;
-		units[i]->dmg_unit = (long)json_find(unit_node, "damageUnit")->number;
-		units[i]->dmg_deposit = (long)json_find(unit_node, "damageDeposit")->number;
-		units[i]->dmg_wall = (long)json_find(unit_node, "damageWall")->number;
-		units[i]->dmg_bomb = (long)json_find(unit_node, "damageBomb")->number;
+		units[i]->dmg_core = (unsigned long)json_find(unit_node, "damageCore")->number;
+		units[i]->dmg_unit =
+				core_static_parse_unitDamage(json_find(unit_node, "damageUnit"), &units[i]->dmg_unit_count);
+		units[i]->dmg_deposit = (unsigned long)json_find(unit_node, "damageDeposit")->number;
+		units[i]->dmg_wall = (unsigned long)json_find(unit_node, "damageWall")->number;
+		units[i]->dmg_bomb = (unsigned long)json_find(unit_node, "damageBomb")->number;
 		units[i]->build_type = core_static_parse_buildType(json_find(unit_node, "buildType"));
 	}
 	units[array_size] = NULL;
