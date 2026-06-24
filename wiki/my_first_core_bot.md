@@ -91,7 +91,7 @@ void ft_on_tick(unsigned long tick)
 {
 	printf("-----> [⚡️ TICK %ld 🔥]\n", tick);
 
-	CORE_action_createUnit(UNIT_WARRIOR);
+	CORE_action_createUnit(UNIT_ACID_WARRIOR);
 }
 ```
 ```go
@@ -105,7 +105,11 @@ bot.Run(func(g *game.Game, b *coregame.Bot) {
 
 The createUnit action ([C](reference/c/actions/core_action_createUnit) | [Go](reference/go/actions/CreateUnit)) takes the type of unit ([C](reference/c/objects/e_unit_type) | [Go](reference/go/objects/UnitType)) you wish to create as an input. It then asks the server to create the unit. If all is right, then there will be a new unit spawned the next tick / the next time the tick function gets executed. The unit does not spawn immediately in the same tick.
 
-If your CORE (your central base) does not have enough gems however, no unit will be created. Later, we will collect more gems to be able to spawn more units. For now, this warrior is enough. Because your CORE starts with a few hundred gems, we are able to afford it.
+If your CORE (your central base) does not have enough gems however, no unit will be created. Later, we will collect more gems to be able to spawn more units. For now, this acid warrior is enough.
+
+In your config, there is also a rock warrior, a scissors warrior, and a paper warrior. These, intuitively, work like the classic childrens game [rock paper scissors](https://en.wikipedia.org/wiki/Rock_paper_scissors). For example, the paper warrior does more damage to rock warriors and less damage to scissor warriors. The acid warrior is quite bad in comparison to any of these three even when they're used highly ineffectively. It is only included to help you get started easier when writing your first bot. You should switch to rps warriors at a later point.
+
+Because your CORE starts with a few hundred gems, we are able to afford buying the acid warrior for now.
 
 To see how many gems your CORE holds, you can hover your mouse over it in the visualizer. To do this in code, you can get a reference to your CORE (you will learn how to do this soon), then check the gems property like this:
 
@@ -125,7 +129,7 @@ You can find out how many gems a unit costs to create by looking at the game con
 
 ::: code-group labels=[C, Go]
 ```c
-printf("My warrior costs %lu gems!\n", CORE_get_unitConfig(UNIT_WARRIOR)->cost);
+printf("My warrior costs %lu gems!\n", CORE_get_unitConfig(UNIT_ACID_WARRIOR)->cost);
 ```
 ```go
 uconf := g.Config.GetUnitConfig(game.UnitWarrior)
@@ -184,7 +188,7 @@ void ft_on_tick(unsigned long tick)
 {
 	printf("-----> [⚡️ TICK %ld 🔥]\n", tick);
 
-	CORE_action_createUnit(UNIT_WARRIOR);
+	CORE_action_createUnit(UNIT_ACID_WARRIOR);
 
 	t_obj **my_units = CORE_get_objs_filter(ft_is_own_unit);
 	// ... do something with the array of all my units
@@ -215,7 +219,7 @@ for (size_t i = 0; my_units && my_units[i] != NULL; i++)
 {
 	t_obj *unit = my_units[i];
 
-	if (unit->s_unit.unit_type == UNIT_WARRIOR)
+	if (unit->s_unit.unit_type == UNIT_ACID_WARRIOR)
 	{
 		// we found our warrior
 	}
@@ -238,7 +242,7 @@ With our warrior found, we can now have it pathfind to the opponent's CORE:
 
 ::: code-group labels=[C, Go]
 ```c
-if (unit->s_unit.unit_type == UNIT_WARRIOR)
+if (unit->s_unit.unit_type == UNIT_ACID_WARRIOR)
 {
 	// we found our warrior
 
@@ -291,7 +295,7 @@ void ft_on_tick(unsigned long tick)
 {
 	printf("-----> [⚡️ TICK %ld 🔥]\n", tick);
 
-	CORE_action_createUnit(UNIT_WARRIOR);
+	CORE_action_createUnit(UNIT_ACID_WARRIOR);
 
 	t_obj **my_units = ft_get_units_own();
 
@@ -299,7 +303,7 @@ void ft_on_tick(unsigned long tick)
 	{
 		t_obj *unit = my_units[i];
 
-		if (unit->s_unit.unit_type == UNIT_WARRIOR)
+		if (unit->s_unit.unit_type == UNIT_ACID_WARRIOR)
 		{
 			t_obj *opponent_CORE = ft_get_CORE_opponent();
 			t_obj *nearest_enemy = ft_get_units_opponent_nearest(unit->pos);
@@ -384,7 +388,7 @@ void ft_on_tick(unsigned long tick)
 
 	if (CORE_get_objs_filter_count(ft_is_miner) < 2)
 		CORE_action_createUnit(UNIT_MINER);
-	CORE_action_createUnit(UNIT_WARRIOR);
+	CORE_action_createUnit(UNIT_ACID_WARRIOR);
 // ...
 ```
 ```go
@@ -413,7 +417,7 @@ for (size_t i = 0; my_units && my_units[i] != NULL; i++)
 {
 	t_obj *unit = my_units[i];
 
-	if (unit->s_unit.unit_type == UNIT_WARRIOR)
+	if (unit->s_unit.unit_type == UNIT_ACID_WARRIOR)
 	{
 		// ...
 	}
@@ -556,7 +560,7 @@ void ft_on_tick(unsigned long tick)
 
 	if (CORE_get_objs_filter_count(ft_is_miner) < 2)
 		CORE_action_createUnit(UNIT_MINER);
-	CORE_action_createUnit(UNIT_WARRIOR);
+	CORE_action_createUnit(UNIT_ACID_WARRIOR);
 
 	t_obj **my_units = ft_get_units_own();
 
@@ -564,7 +568,7 @@ void ft_on_tick(unsigned long tick)
 	{
 		t_obj *unit = my_units[i];
 
-		if (unit->s_unit.unit_type == UNIT_WARRIOR)
+		if (unit->s_unit.unit_type == UNIT_ACID_WARRIOR)
 		{
 			t_obj *opponent_CORE = ft_get_CORE_opponent();
 			t_obj *nearest_enemy = ft_get_units_opponent_nearest(unit->pos);
