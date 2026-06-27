@@ -155,6 +155,14 @@ static void core_static_updateObj(t_obj *existingObj, json_node *updates)
 			existingObj->type = field->number;
 		else if (strcmp(field->key, "id") == 0)
 			existingObj->id = field->number;
+		else if (strcmp(field->key, "name") == 0)
+		{
+			if (existingObj->type == OBJ_UNIT && field->type == JSON_TYPE_STRING && field->string)
+			{
+				free(existingObj->s_unit.name);
+				existingObj->s_unit.name = strdup(field->string);
+			}
+		}
 		else if (strcmp(field->key, "components") == 0)
 			core_static_parseComponents(existingObj, field);
 		else if (strcmp(field->key, "properties") == 0)

@@ -80,6 +80,8 @@ typedef struct s_obj
 			char **components;
 			/// @brief The properties of the unit, derived from its components.
 			t_unit_properties properties;
+			/// @brief Custom name of the unit, or a generated rogue-style name if none was set on spawn.
+			char *name;
 		} s_unit;
 		struct
 		{
@@ -131,9 +133,10 @@ int core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 
 // ACTION FUNCTIONS are used to perform actions in the game, like creating units, moving them, attacking, etc. Their changes are applied between ticks.
 
-/// @brief Create a new unit of specified type.
-/// @param unit_type The type of unit to create.
-void core_action_createUnit(char *component, ...);
+/// @brief Create a new unit with the given components.
+/// @param name Custom name for the unit, or NULL for a random rogue-style name.
+/// @param component First component id (variadic, NULL-terminated).
+void core_action_createUnit(const char *name, char *component, ...);
 
 /// @brief Moves a unit to a specific position.
 /// @details Units can only move one tile up, down, left or right; and only if their action_cooldown is 0.

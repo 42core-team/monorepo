@@ -49,6 +49,7 @@ typedef struct s_action
 	{
 		struct
 		{
+			char *name;
 			char **components;
 		} create;
 		struct

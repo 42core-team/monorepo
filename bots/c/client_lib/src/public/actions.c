@@ -21,7 +21,7 @@ static inline bool core_static_isFriendlyObj(const t_obj *o)
 	return false;
 }
 
-void core_action_createUnit(char *component, ...)
+void core_action_createUnit(const char *name, char *component, ...)
 {
 	core_static_ensureCapacity();
 
@@ -29,6 +29,8 @@ void core_action_createUnit(char *component, ...)
 	memset(action, 0, sizeof(t_action));
 
 	action->type = ACTION_CREATE;
+
+	action->data.create.name = name ? strdup(name) : NULL;
 
 	size_t count = 0;
 	size_t capacity = 4;

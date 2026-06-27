@@ -26,6 +26,8 @@ void core_internal_reset_actions(void)
 		{
 			if (actions.list[i].type == ACTION_CREATE)
 			{
+				free(actions.list[i].data.create.name);
+				actions.list[i].data.create.name = NULL;
 				core_internal_freeStringArray(actions.list[i].data.create.components);
 				actions.list[i].data.create.components = NULL;
 			}
@@ -76,7 +78,11 @@ void core_internal_freeStringArray(char **array)
 
 void core_internal_freeObject(t_obj *obj)
 {
-	if (obj->type == OBJ_UNIT) core_internal_freeStringArray(obj->s_unit.components);
+	if (obj->type == OBJ_UNIT)
+	{
+		core_internal_freeStringArray(obj->s_unit.components);
+		free(obj->s_unit.name);
+	}
 	free(obj);
 }
 void core_internal_freeObjects(void)
