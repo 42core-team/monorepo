@@ -50,21 +50,14 @@ std::string CreateAction::execute(Core *core)
 	std::map<std::string, unsigned int> componentCounts;
 	unsigned int unitCost = 0;
 
- 	for (const std::string &componentId : components_)
- 	{
-		try
-		{
-			const ComponentConfig *component = Config::getComponentConfig(componentId);
-			if (!component) continue;
+	for (const std::string &componentId : components_)
+	{
+		ComponentConfig *component = Config::getComponentConfig(componentId);
+		if (!component) return "invalid component \"" + componentId + "\"";
 
-			componentCounts[componentId]++;
-			unitCost += component.cost;
-		}
-		catch (const std::exception &)
-		{
-			return "invalid component \"" + componentId + "\"";
-		}
- 	}
+		componentCounts[componentId]++;
+		unitCost += component->cost;
+	}
 
 	if (core->getBalance() < unitCost)
 		return "insufficient funds - has " + std::to_string(core->getBalance()) + ", needs " + std::to_string(unitCost);

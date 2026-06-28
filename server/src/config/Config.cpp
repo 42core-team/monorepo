@@ -17,6 +17,7 @@ std::string Config::dataFolderPath = "";
 #include "Utils.h"
 #include "xxhash.h"
 
+#include <set>
 #include <stdexcept>
 
 json Config::load_json_schema(const std::string &schema_name)
@@ -167,6 +168,71 @@ std::string_view Config::unitPropertyToString(UnitProperty property)
 	throw std::runtime_error("Unknown UnitProperty value.");
 }
 
+// json schema isnt recursive, so we can validate the invalid condition expressions with a simple recursive function instead of using json-schema
+static void requireExprKeys(const json &expr, const std::set<std::string> &keys)
+{
+	for (auto it = expr.begin(); it != expr.end(); ++it)
+		if (!keys.count(it.key())) throw std::runtime_error("Unexpected invalid condition key: \"" + it.key() + "\".");
+	for (const auto &key : keys)
+		if (!expr.contains(key)) throw std::runtime_error("Missing invalid condition key: \"" + key + "\".");
+}
+static void validateInvalidConditionExpr(const json &expr)
+{
+	if (!expr.is_object()) throw std::runtime_error("Invalid condition expression must be an object.");
+	const std::string type = expr.at("type").get<std::string>();
+
+	if (type == "const")
+	{
+		requireExprKeys(expr, {"type", "value"});
+		const int64_t value = expr.at("value").get<int64_t>();
+		if (value < -10000000 || value > 10000000) throw std::runtime_error("Invalid condition const is out of range.");
+		return;
+	}
+	if (type == "property")
+	{
+		requireExprKeys(expr, {"type", "property"});
+		Config::stringToUnitProperty(expr.at("property").get<std::string>());
+		return;
+	}
+	if (type == "component_count")
+	{
+		requireExprKeys(expr, {"type", "component"});
+		if (expr.at("component").get<std::string>().empty())
+			throw std::runtime_error("Invalid condition component must not be empty.");
+		return;
+	}
+	if (type == "not")
+	{
+		requireExprKeys(expr, {"type", "1"});
+		validateInvalidConditionExpr(expr.at("1"));
+		return;
+	}
+	if (type == "ternary")
+	{
+		requireExprKeys(expr, {"type", "if", "then", "else"});
+		validateInvalidConditionExpr(expr.at("if"));
+		validateInvalidConditionExpr(expr.at("then"));
+		validateInvalidConditionExpr(expr.at("else"));
+		return;
+	}
+
+	static const std::set<std::string> binaryTypes = {"sum",
+													  "subtract",
+													  "multiply",
+													  "divide",
+													  "min",
+													  "max",
+													  "less_than",
+													  "greater_than",
+													  "less_than_or_equal",
+													  "greater_than_or_equal",
+													  "equal"};
+	if (!binaryTypes.count(type)) throw std::runtime_error("Unknown invalid condition type: \"" + type + "\".");
+	requireExprKeys(expr, {"type", "1", "2"});
+	validateInvalidConditionExpr(expr.at("1"));
+	validateInvalidConditionExpr(expr.at("2"));
+}
+
 static ServerConfig parseServerConfig()
 {
 	ServerConfig config;
@@ -282,7 +348,9 @@ static GameConfig parseGameConfig()
 			UnitProperty propType = Config::stringToUnitProperty(propJson.at("name").get<std::string>());
 			int modification = propJson.at("modification").get<int>();
 			if (!seenProperties.insert(propType).second)
-				throw std::runtime_error("Duplicate property modification \"" + std::string(Config::unitPropertyToString(propType)) + "\" in component \"" + comp.id + "\".");
+				throw std::runtime_error("Duplicate property modification \"" +
+										 std::string(Config::unitPropertyToString(propType)) + "\" in component \"" +
+										 comp.id + "\".");
 			comp.properties[propType] = modification;
 		}
 		comp.cost = componentJson.at("cost").get<unsigned int>();
@@ -294,6 +362,7 @@ static GameConfig parseGameConfig()
 		InvalidConditionConfig condition;
 		condition.message = conditionJson.at("message").get<std::string>();
 		condition.condition = conditionJson.at("condition");
+		validateInvalidConditionExpr(condition.condition);
 		config.invalidConditions.push_back(std::move(condition));
 	}
 
@@ -334,10 +403,10 @@ ComponentConfig *Config::getComponentConfig(const std::string &id)
 {
 	for (auto &component : game().componentTypes)
 	{
-		if (component.id == id) return component;
+		if (component.id == id) return &component;
 	}
 
-	return null;
+	return nullptr;
 }
 
 json Config::encodeConfig()
