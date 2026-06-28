@@ -103,7 +103,7 @@ class Config
 	static json encodeConfig();
 
 	static Position &getCorePosition(unsigned int teamId);
-	static ComponentConfig &getComponentConfig(const std::string &id);
+	static ComponentConfig *getComponentConfig(const std::string &id);
 
 	static void setServerConfigFilePath(const std::string &path) { serverConfigFilePath = path; }
 	static std::string getServerConfigFilePath() { return serverConfigFilePath; }

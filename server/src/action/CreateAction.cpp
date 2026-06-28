@@ -70,18 +70,11 @@ std::string CreateAction::execute(Core *core)
 
 	for (const std::string &componentId : components_)
 	{
-		try
-		{
-			const ComponentConfig *component = Config::getComponentConfig(componentId);
-			if (!component) continue;
+		ComponentConfig *component = Config::getComponentConfig(componentId);
+		if (!component) return "invalid component \"" + componentId + "\"";
 
-			componentCounts[componentId]++;
-			unitCost += component.cost;
-		}
-		catch (const std::exception &)
-		{
-			return "invalid component \"" + componentId + "\"";
-		}
+		componentCounts[componentId]++;
+		unitCost += component->cost;
 	}
 
 	if (core->getBalance() < unitCost)
