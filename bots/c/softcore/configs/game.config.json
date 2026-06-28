@@ -1,8 +1,9 @@
 /*
-	For this event, there are 3 different major unit types available:
-	1. Warrior: A melee combat unit that excels in attacking enemy cores and units. (With Rock, Paper, Scissors and generic Acid variants)
+	For this event, there are 4 different unit types available:
+	1. Warrior: A melee combat unit that excels in attacking enemy cores and units.
 	2. Miner: A unit specialized in breaking hard objects such as gem deposits and walls.
 	3. Carrier: A non-combat unit that is very quick, even when carrying many gems.
+	4. Tank: A heavily armored and slow unit that packs a huge punch.
 */
 {
 	"gridSize": 20, // tile count in each x and y directions of map, map will always be square
@@ -35,63 +36,18 @@
 	},
 	"units": [
 		{
-			"name": "Scissor Snipper Warrior", // name, for aesthetic / display purposes only
-			"visualizer_asset_path": "hand-scissors", // folder that the units visuals are picked from by visualizer
-			"cost": 100, // amount of gems needed to spawn the unit
-			"hp": 35, // amount of healthpoints the unit spawns with
-			"baseActionCooldown": 5, // base delay between action executions
-			"maxActionCooldown": 12, // max delay between action executions if unit is holding a lot of gems
-			"balancePerCooldownStep": 12, // defines increase of delay between action executions, see wiki for details
-			"damageCore": 15, // damage the unit does to a core
-			"damageUnit": [6, 9, 3, 6, 6, 6], // damage the unit does to a unit
-			"damageDeposit": 4, // damage the unit does to a deposit
-			"damageWall": 5, // damage the unit does to a wall
-			"damageBomb": 4, // damage the unit does to a bomb
-			"buildType": "none" // whether & what the unit can build
-		},
-		{
-			"name": "Paper Cut Warrior", // name, for aesthetic / display purposes only
-			"visualizer_asset_path": "hand-paper", // folder that the units visuals are picked from by visualizer
-			"cost": 100, // amount of gems needed to spawn the unit
-			"hp": 35, // amount of healthpoints the unit spawns with
-			"baseActionCooldown": 5, // base delay between action executions
-			"maxActionCooldown": 12, // max delay between action executions if unit is holding a lot of gems
-			"balancePerCooldownStep": 12, // defines increase of delay between action executions, see wiki for details
-			"damageCore": 15, // damage the unit does to a core
-			"damageUnit": [3, 6, 9, 6, 6, 6], // damage the unit does to a unit
-			"damageDeposit": 4, // damage the unit does to a deposit
-			"damageWall": 5, // damage the unit does to a wall
-			"damageBomb": 4, // damage the unit does to a bomb
-			"buildType": "none" // whether & what the unit can build
-		},
-		{
-			"name": "Stone Thrower Warrior", // name, for aesthetic / display purposes only
-			"visualizer_asset_path": "hand-rock", // folder that the units visuals are picked from by visualizer
-			"cost": 100, // amount of gems needed to spawn the unit
-			"hp": 35, // amount of healthpoints the unit spawns with
-			"baseActionCooldown": 5, // base delay between action executions
-			"maxActionCooldown": 12, // max delay between action executions if unit is holding a lot of gems
-			"balancePerCooldownStep": 12, // defines increase of delay between action executions, see wiki for details
-			"damageCore": 15, // damage the unit does to a core
-			"damageUnit": [9, 3, 6, 6, 6, 6], // damage the unit does to a unit
-			"damageDeposit": 4, // damage the unit does to a deposit
-			"damageWall": 5, // damage the unit does to a wall
-			"damageBomb": 4, // damage the unit does to a bomb
-			"buildType": "none" // whether & what the unit can build
-		},
-		{
-			"name": "Acid Spitting Warrior", // name, for aesthetic / display purposes only
+			"name": "Warrior", // name, for aesthetic / display purposes only
 			"visualizer_asset_path": "warrior", // folder that the units visuals are picked from by visualizer
-			"cost": 250, // amount of gems needed to spawn the unit
+			"cost": 150, // amount of gems needed to spawn the unit
 			"hp": 35, // amount of healthpoints the unit spawns with
 			"baseActionCooldown": 5, // base delay between action executions
 			"maxActionCooldown": 12, // max delay between action executions if unit is holding a lot of gems
 			"balancePerCooldownStep": 12, // defines increase of delay between action executions, see wiki for details
-			"damageCore": 6, // damage the unit does to a core
-			"damageUnit": [3, 3, 3, 3, 3, 3], // damage the unit does to a unit
+			"damageCore": 12, // damage the unit does to a core
+			"damageUnit": 6, // damage the unit does to a unit
 			"damageDeposit": 4, // damage the unit does to a deposit
 			"damageWall": 5, // damage the unit does to a wall
-			"damageBomb": 4, // damage the unit does to a bomb
+			"damageBomb": 5, // damage the unit does to a bomb
 			"buildType": "none" // whether & what the unit can build
 		},
 		{
@@ -103,7 +59,7 @@
 			"maxActionCooldown": 8,
 			"balancePerCooldownStep": 35,
 			"damageCore": 5,
-			"damageUnit": [2, 2, 2, 2, 2, 2],
+			"damageUnit": 2,
 			"damageDeposit": 10,
 			"damageWall": 12,
 			"damageBomb": 5,
@@ -118,10 +74,25 @@
 			"maxActionCooldown": 1,
 			"balancePerCooldownStep": 99999,
 			"damageCore": 0,
-			"damageUnit": [0, 0, 0, 0, 0, 0],
+			"damageUnit": 0,
 			"damageDeposit": 0,
 			"damageWall": 2,
 			"damageBomb": 2,
+			"buildType": "none"
+		},
+		{
+			"name": "Tank",
+			"visualizer_asset_path": "tank",
+			"cost": 500,
+			"hp": 75,
+			"baseActionCooldown": 12,
+			"maxActionCooldown": 16,
+			"balancePerCooldownStep": 10,
+			"damageCore": 50,
+			"damageUnit": 50,
+			"damageDeposit": 6,
+			"damageWall": 25,
+			"damageBomb": 25,
 			"buildType": "none"
 		}
 	],

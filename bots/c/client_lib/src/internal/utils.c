@@ -69,7 +69,6 @@ void core_internal_freeGame(void)
 		for (int i = 0; game.config.units[i]; i++)
 		{
 			free(game.config.units[i]->name);
-			free(game.config.units[i]->dmg_unit);
 			free(game.config.units[i]);
 		}
 		free(game.config.units);

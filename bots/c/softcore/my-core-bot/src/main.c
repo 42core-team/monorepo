@@ -14,17 +14,13 @@ void ft_on_tick(unsigned long tick)
 {
 	printf("-----> [⚡️ TICK %ld 🔥]\n", tick);
 
-	core_action_createUnit(UNIT_ACID_WARRIOR);
+	core_action_createUnit(UNIT_WARRIOR);
 
 	t_obj **units = ft_get_units_own();
 	for (int i = 0; units && units[i]; i++)
 	{
 		core_action_pathfind(units[i], ft_get_core_opponent()->pos);
-
-		// this message will be displayed in the units tooltip in the visualizer,
-		// which can be helpful for debugging and understanding what your bot is doing.
-		core_debug_addObjectInfo(units[i],
-								 "I am an acid warrior! 🗡️🧬 - I am heading for the opponent core at [%d,%d]! 🏰\n",
+		core_debug_addObjectInfo(units[i], "I am a warrior! 🗡️ - I am heading for the opponent core at [%d,%d]! 🏰\n",
 								 ft_get_core_opponent()->pos.x, ft_get_core_opponent()->pos.y);
 	}
 	free(units);

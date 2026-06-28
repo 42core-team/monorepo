@@ -76,15 +76,7 @@ void core_print_config_unit(t_unit_type unit_type)
 	printf("	- Cost: %lu\n", unit_config->cost);
 	printf("	- HP: %lu\n", unit_config->hp);
 	printf("	- Damage to Core: %lu\n", unit_config->dmg_core);
-	printf("	- Damage to Units:\n");
-	for (unsigned long i = 0; i < unit_config->dmg_unit_count; i++)
-	{
-		t_unit_config *target_config = core_get_unitConfig((t_unit_type)i);
-		if (target_config)
-			printf("		- %s (%lu): %lu\n", target_config->name, i, unit_config->dmg_unit[i]);
-		else
-			printf("		- Unit type %lu: %lu\n", i, unit_config->dmg_unit[i]);
-	}
+	printf("	- Damage to Unit: %lu\n", unit_config->dmg_unit);
 	printf("	- Damage to Deposit: %lu\n", unit_config->dmg_deposit);
 	printf("	- Damage to Wall: %lu\n", unit_config->dmg_wall);
 	printf("	- Damage to Bombs: %lu\n", unit_config->dmg_bomb);

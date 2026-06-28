@@ -1,6 +1,5 @@
 JOBS ?= $(shell nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
 MAKEFLAGS += -j$(JOBS)
-.DEFAULT_GOAL := all
 
 LIBRARY = core_lib.a
 
