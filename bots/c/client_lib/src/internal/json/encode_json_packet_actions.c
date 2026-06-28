@@ -24,6 +24,11 @@ json_node *core_internal_encode_packet_actions(void)
 			t->string = strdup("create");
 			obj->array[idx++] = t;
 			{
+				json_node *name_node = create_node(a->data.create.name ? JSON_TYPE_STRING : JSON_TYPE_NULL);
+				name_node->key = strdup("name");
+				if (a->data.create.name) name_node->string = strdup(a->data.create.name);
+				obj->array[idx++] = name_node;
+
 				size_t component_count = 0;
 				while (a->data.create.components && a->data.create.components[component_count])
 					component_count++;

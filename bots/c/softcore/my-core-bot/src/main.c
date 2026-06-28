@@ -19,38 +19,38 @@ static void create_random_icon_test_unit(void)
 	{
 	case 0:
 		// sword: unit_attack is prioritized
-		core_action_createUnit("unit_attack", "health", "speed", NULL);
+		core_action_createUnit("Test unit", "unit_attack", "health", "speed", NULL);
 		break;
 
 	case 1:
 		// axe: core_attack is prioritized
-		core_action_createUnit("core_attack", "health", "speed", NULL);
+		core_action_createUnit("Test unit", "core_attack", "health", "speed", NULL);
 		break;
 
 	case 2:
 		// pickaxe: mining is prioritized
-		core_action_createUnit("mining", "health", "speed", NULL);
+		core_action_createUnit("Test unit", "mining", "health", "speed", NULL);
 		break;
 
 	case 3:
 		// shield: armor is prioritized
-		core_action_createUnit("armor", "health", "speed", NULL);
+		core_action_createUnit("Test unit", "armor", "health", "speed", NULL);
 		break;
 
 	case 4:
 		// heart: no prioritized components, health is most common
-		core_action_createUnit("health", "health", "health", "speed", "gem_carrying_efficiency", NULL);
+		core_action_createUnit("Test unit", "health", "health", "health", "speed", "gem_carrying_efficiency", NULL);
 		break;
 
 	case 5:
 		// lightning: no prioritized components, speed is most common
-		core_action_createUnit("speed", "speed", "speed", "health", "gem_carrying_efficiency", NULL);
+		core_action_createUnit(NULL, "speed", "speed", "speed", "health", "gem_carrying_efficiency", NULL);
 		break;
 
 	case 6:
 		// bag: no prioritized components, bag component is most common
-		core_action_createUnit("gem_carrying_efficiency", "gem_carrying_efficiency", "gem_carrying_capacity", "health",
-							   "speed", NULL);
+		core_action_createUnit(NULL, "gem_carrying_efficiency", "gem_carrying_efficiency", "gem_carrying_capacity",
+							   "health", "speed", NULL);
 		break;
 	}
 }

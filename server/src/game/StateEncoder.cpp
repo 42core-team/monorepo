@@ -25,6 +25,7 @@ json StateEncoder::encodeFullState()
 		if (obj.getType() == ObjectType::Unit)
 		{
 			o["teamId"] = ((Unit &)obj).getTeamId();
+			o["name"] = ((Unit &)obj).getName();
 			o["gems"] = ((Unit &)obj).getBalance();
 			o["ActionCooldown"] = ((Unit &)obj).getActionCooldown();
 

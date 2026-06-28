@@ -19,6 +19,7 @@ class CreateAction : public Action
 
   private:
 	std::vector<std::string> components_;
+	std::string name_;
 };
 
 #endif // CREATE_ACTION_H

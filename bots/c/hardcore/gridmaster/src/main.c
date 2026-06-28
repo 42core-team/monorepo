@@ -16,7 +16,7 @@ void ft_on_tick(unsigned long tick)
 {
 	(void)tick;
 
-	core_action_createUnit("unit_attack", "core_attack", "health", NULL);
+	core_action_createUnit(NULL, "unit_attack", "core_attack", "health", NULL);
 
 	for (int i = 0; game.objects && game.objects[i]; i++)
 		if (game.objects[i]->type == OBJ_UNIT && game.objects[i]->s_unit.team_id == game.my_team_id)

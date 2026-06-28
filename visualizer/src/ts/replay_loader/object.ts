@@ -18,6 +18,7 @@ export interface CoreObject extends BaseObject {
 }
 export interface UnitObject extends BaseObject {
 	type: 1; // Unit
+	name: string;
 	components: string[];
 	properties: UnitProperties;
 	teamId: number;
@@ -42,14 +43,6 @@ export type TickObject =
 	| DepositObject
 	| WallObject
 	| GemPileObject;
-
-const objectTypeNames = {
-	0: "Core",
-	1: "Unit",
-	2: "Gem Deposit",
-	3: "Wall",
-	4: "Gem Pile",
-};
 
 export interface UnitProperties {
 	hp: number;
@@ -142,17 +135,26 @@ function renderUnitComponentSummary(unit: UnitObject): string {
 export function formatObjectData(obj: TickObject): string {
 	const num = (v: unknown) =>
 		Number.isFinite(Number(v)) ? String(Number(v)) : "NaN"; // XSS prevention
+	const title = (obj: TickObject) => {
+		switch (obj.type) {
+			case 0:
+				return `Core (ID: ${num(obj.id)})`;
+			case 1:
+				return `${obj.name ? `${obj.name} Unit` : "Unit"} (ID: ${num(obj.id)})`;
+			case 2:
+				return `Gem Deposit (ID: ${num(obj.id)})`;
+			case 3:
+				return `Wall (ID: ${num(obj.id)})`;
+			case 4:
+				return `Gem Pile (ID: ${num(obj.id)})`;
+		}
+	};
 
 	const lines: { line: string; priority: number; color: string }[] = [];
 
 	lines.push({
-		line: `#️⃣ ID: ${num(obj.id)}`,
-		priority: 0,
-		color: "var(--text)",
-	});
-	lines.push({
-		line: `❓ Object Type: ${objectTypeNames[obj.type] || "Unknown"}`,
-		priority: 1,
+		line: escapeHtml(title(obj)),
+		priority: -1,
 		color: "var(--text)",
 	});
 	lines.push({
@@ -227,7 +229,7 @@ export function formatObjectData(obj: TickObject): string {
 
 	const result: string[] = [];
 	for (const { line, priority, color } of lines) {
-		if ([-1, 3, 2.5].includes(priority)) result.push(""); // add visual separator
+		if ([3, 2.5].includes(priority)) result.push(""); // add visual separator
 		result.push(`<span style="color: ${color}">${line}</span>`);
 	}
 

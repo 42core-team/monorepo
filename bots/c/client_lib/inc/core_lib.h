@@ -80,6 +80,8 @@ typedef struct s_obj
 			char **components;
 			/// @brief The properties of the unit, derived from its components.
 			t_unit_properties properties;
+			/// @brief Custom name of the unit, or a generated rogue-style name if none was set on spawn.
+			char *name;
 		} s_unit;
 		struct
 		{
@@ -131,9 +133,10 @@ int core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 
 // ACTION FUNCTIONS are used to perform actions in the game, like creating units, moving them, attacking, etc. Their changes are applied between ticks.
 
-/// @brief Create a new unit of specified type.
-/// @param unit_type The type of unit to create.
-void core_action_createUnit(char *component, ...);
+/// @brief Create a new unit with the given components.
+/// @param name Custom name for the unit, or NULL for a random rogue-style name.
+/// @param component First component id (variadic, NULL-terminated).
+void core_action_createUnit(const char *name, char *component, ...);
 
 /// @brief Moves a unit to a specific position.
 /// @details Units can only move one tile up, down, left or right; and only if their action_cooldown is 0.
@@ -174,6 +177,11 @@ t_obj *core_get_obj_from_pos(t_pos pos);
 /// @param condition Selection function pointer returning if the inputted object should be selected
 /// @return Null-terminated array of selected objects or NULL if no condition is provided or no objects match the condition.
 t_obj **core_get_objs_filter(bool (*condition)(const t_obj *));
+
+/// @brief Get all units with the given name.
+/// @param name Unit name to match.
+/// @return Null-terminated array of matching units or NULL if name is NULL or no units match. Free the returned array, not the objects.
+t_obj **core_get_units_by_name(const char *name);
 
 /// @brief Get the nearest object to a given position matching a custom condition.
 /// @param pos Position to search from
