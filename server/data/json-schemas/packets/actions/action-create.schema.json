@@ -5,6 +5,7 @@
 	"additionalProperties": false,
 	"required": [
 		"type",
+		"name",
 		"components"
 	],
 	"properties": {
@@ -13,9 +14,16 @@
 			"const": "create"
 		},
 		"name": {
-			"type": "string",
-			"minLength": 1,
-			"maxLength": 32
+			"oneOf": [
+				{
+					"type": "string",
+					"minLength": 1,
+					"maxLength": 32
+				},
+				{
+					"type": "null"
+				}
+			]
 		},
 		"components": {
 			"type": "array",
@@ -29,6 +37,7 @@
 	"examples": [
 		{
 			"type": "create",
+			"name": null,
 			"components": [
 				"COMPONENT_ID_1",
 				"COMPONENT_ID_2",

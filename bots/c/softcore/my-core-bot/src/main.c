@@ -19,27 +19,27 @@ static void create_random_icon_test_unit(void)
 	{
 	case 0:
 		// sword: unit_attack is prioritized
-		core_action_createUnit(NULL, "unit_attack", "health", "speed", NULL);
+		core_action_createUnit("Test unit", "unit_attack", "health", "speed", NULL);
 		break;
 
 	case 1:
 		// axe: core_attack is prioritized
-		core_action_createUnit(NULL, "core_attack", "health", "speed", NULL);
+		core_action_createUnit("Test unit", "core_attack", "health", "speed", NULL);
 		break;
 
 	case 2:
 		// pickaxe: mining is prioritized
-		core_action_createUnit(NULL, "mining", "health", "speed", NULL);
+		core_action_createUnit("Test unit", "mining", "health", "speed", NULL);
 		break;
 
 	case 3:
 		// shield: armor is prioritized
-		core_action_createUnit(NULL, "armor", "health", "speed", NULL);
+		core_action_createUnit("Test unit", "armor", "health", "speed", NULL);
 		break;
 
 	case 4:
 		// heart: no prioritized components, health is most common
-		core_action_createUnit(NULL, "health", "health", "health", "speed", "gem_carrying_efficiency", NULL);
+		core_action_createUnit("Test unit", "health", "health", "health", "speed", "gem_carrying_efficiency", NULL);
 		break;
 
 	case 5:

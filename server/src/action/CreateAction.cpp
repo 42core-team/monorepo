@@ -11,12 +11,38 @@
 
 static std::string generateUnitName()
 {
-	static const std::vector<std::string> adjectives = {"Iron",	  "Shadow",	 "Swift",  "Bold",	"Stone", "Dark",
-														"Silver", "Grim",	 "Frost",  "Ember", "Ashen", "Dread",
-														"Wild",	  "Crimson", "Silent", "Hollow"};
-	static const std::vector<std::string> nouns = {"Wolf",	 "Hawk",   "Blade",	   "Lance",	  "Shield", "Claw",
-												   "Fang",	 "Arrow",  "Warden",   "Striker", "Rover",	"Specter",
-												   "Reaper", "Hunter", "Sentinel", "Wraith"};
+	static const std::vector<std::string> adjectives = {
+			"Ashen",	"Burned",	  "Irradiated", "Scorched",	 "Blasted",		 "Frozen",	  "Grim",	 "Wasteland",
+			"Dustborn", "Feral",	  "Scarred",	"Savage",	 "Vengeful",	 "Raging",	  "Furious", "Wrathful",
+			"Vicious",	"Relentless", "Unyielding", "Merciless", "Bloodstained", "Desperate", "Defiant", "Red",
+			"Black",	"Crimson",	  "Golden",		"Silver",	 "Volatile"};
+	static const std::vector<std::string> nouns = {"Goblin",
+												   "Skeleton",
+												   "Daemon",
+												   "Ghoul",
+												   "Husk",
+												   "Mutant",
+												   "Crawler",
+												   "Beast",
+												   "Vermin",
+												   "Survivor",
+												   "Scavenger",
+												   "Raider",
+												   "Wanderer",
+												   "Heretic",
+												   "Marauder",
+												   "Lunatic",
+												   "Castaway",
+												   "Nomad",
+												   "Rogue",
+												   "Brute",
+												   "Agent",
+												   "Orphan",
+												   "Outcast",
+												   "Fugitive",
+												   "Runner",
+												   "Dieter Schwarz Bär",
+												   "Theo-looking creature"};
 	static std::mt19937 rng(std::random_device{}());
 	std::uniform_int_distribution<size_t> adjDist(0, adjectives.size() - 1);
 	std::uniform_int_distribution<size_t> nounDist(0, nouns.size() - 1);
@@ -37,7 +63,7 @@ void CreateAction::decodeJSON(json msg)
 		components_.push_back(componentIdJson.get<std::string>());
 	}
 
-	name_ = msg.contains("name") ? msg["name"].get<std::string>() : "";
+	name_ = msg["name"].is_null() ? "" : msg["name"].get<std::string>();
 }
 
 json CreateAction::encodeJSON()
@@ -45,7 +71,7 @@ json CreateAction::encodeJSON()
 	json js;
 
 	js["type"] = "create";
-	if (!name_.empty()) js["name"] = name_;
+	js["name"] = name_.empty() ? nullptr : json(name_);
 	js["components"] = components_;
 
 	return js;

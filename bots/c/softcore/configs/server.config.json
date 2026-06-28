@@ -5,7 +5,7 @@
         "/workspaces/monorepo/visualizer/public/replays",
         "./replays"
     ],
-    "timeoutTicks": 30000,
+    "timeoutTicks": 1000,
     "timeoutMs": 3000000,
     "clientWaitTimeoutMs": 50000,
     "clientConnectTimeoutMs": 30000,
