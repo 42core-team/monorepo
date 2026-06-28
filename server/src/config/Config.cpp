@@ -176,7 +176,7 @@ static void requireExprKeys(const json &expr, const std::set<std::string> &keys)
 	for (const auto &key : keys)
 		if (!expr.contains(key)) throw std::runtime_error("Missing invalid condition key: \"" + key + "\".");
 }
-static void validateInvalidConditionExpr(const json &expr)
+static void validateInvalidConditionExpr(const json &expr, const std::set<std::string> &componentIds)
 {
 	if (!expr.is_object()) throw std::runtime_error("Invalid condition expression must be an object.");
 	const std::string type = expr.at("type").get<std::string>();
@@ -197,22 +197,24 @@ static void validateInvalidConditionExpr(const json &expr)
 	if (type == "component_count")
 	{
 		requireExprKeys(expr, {"type", "component"});
-		if (expr.at("component").get<std::string>().empty())
-			throw std::runtime_error("Invalid condition component must not be empty.");
+		const std::string componentId = expr.at("component").get<std::string>();
+		if (componentId.empty()) throw std::runtime_error("Invalid condition component must not be empty.");
+		if (!componentIds.count(componentId))
+			throw std::runtime_error("Invalid condition references unknown component: \"" + componentId + "\".");
 		return;
 	}
 	if (type == "not")
 	{
 		requireExprKeys(expr, {"type", "1"});
-		validateInvalidConditionExpr(expr.at("1"));
+		validateInvalidConditionExpr(expr.at("1"), componentIds);
 		return;
 	}
 	if (type == "ternary")
 	{
 		requireExprKeys(expr, {"type", "if", "then", "else"});
-		validateInvalidConditionExpr(expr.at("if"));
-		validateInvalidConditionExpr(expr.at("then"));
-		validateInvalidConditionExpr(expr.at("else"));
+		validateInvalidConditionExpr(expr.at("if"), componentIds);
+		validateInvalidConditionExpr(expr.at("then"), componentIds);
+		validateInvalidConditionExpr(expr.at("else"), componentIds);
 		return;
 	}
 
@@ -229,8 +231,8 @@ static void validateInvalidConditionExpr(const json &expr)
 													  "equal"};
 	if (!binaryTypes.count(type)) throw std::runtime_error("Unknown invalid condition type: \"" + type + "\".");
 	requireExprKeys(expr, {"type", "1", "2"});
-	validateInvalidConditionExpr(expr.at("1"));
-	validateInvalidConditionExpr(expr.at("2"));
+	validateInvalidConditionExpr(expr.at("1"), componentIds);
+	validateInvalidConditionExpr(expr.at("2"), componentIds);
 }
 
 static ServerConfig parseServerConfig()
@@ -362,7 +364,7 @@ static GameConfig parseGameConfig()
 		InvalidConditionConfig condition;
 		condition.message = conditionJson.at("message").get<std::string>();
 		condition.condition = conditionJson.at("condition");
-		validateInvalidConditionExpr(condition.condition);
+		validateInvalidConditionExpr(condition.condition, seenComponentIds);
 		config.invalidConditions.push_back(std::move(condition));
 	}
 

@@ -124,26 +124,28 @@ class ReplayLoader {
 	public async loadReplay(filePath: string): Promise<void> {
 		let fileData: string | null = replayDataOverride;
 		if (!fileData) {
-			const response = await fetch(filePath, { cache: "no-cache" });
-			fileData = await response.text();
-			if (!response.ok) {
-				throw new Error(
-					`Failed to fetch replay file: ${response.status} ${response.statusText}`,
-				);
-			}
+			await fetch(filePath, { cache: "no-cache" })
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error(
+							`Failed to fetch replay file: ${response.statusText}`,
+						);
+					}
+					return response.text();
+				})
+				.then((data) => {
+					fileData = data;
+				})
+				.catch((err) => {
+					console.error("Error fetching replay file:", err);
+				});
 		}
 
 		if (!fileData) {
 			throw new Error("No replay data available to load.");
 		}
 
-		try {
-			this.replayData = JSON.parse(fileData) as ReplayData;
-		} catch (err) {
-			throw new Error(
-				`Invalid replay JSON from ${filePath}: ${fileData.slice(0, 80)}`,
-			);
-		}
+		this.replayData = JSON.parse(fileData) as ReplayData;
 		if (
 			!this.replayData.ticks ||
 			typeof this.replayData.full_tick_amount !== "number"
