@@ -10,7 +10,6 @@
 #include "StateEncoder.h"
 #include "Unit.h"
 #include "Utils.h"
-#include "Visualizer.h"
 #include "Wall.h"
 #include "json.hpp"
 

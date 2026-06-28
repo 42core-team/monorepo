@@ -9,8 +9,7 @@
 		"timeoutMs",
 		"clientWaitTimeoutMs",
 		"clientConnectTimeoutMs",
-		"clientPacketsMaxSizeKb",
-		"enableTerminalVisualizer"
+		"clientPacketsMaxSizeKb"
 	],
 	"properties": {
 		"replayFolderPaths": {
@@ -45,9 +44,6 @@
 			"type": "integer",
 			"minimum": 1,
 			"maximum": 1000
-		},
-		"enableTerminalVisualizer": {
-			"type": "boolean"
 		}
 	}
 }

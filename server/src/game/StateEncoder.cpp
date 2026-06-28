@@ -1,5 +1,7 @@
 #include "StateEncoder.h"
 
+#include "Config.h"
+
 json StateEncoder::encodeFullState()
 {
 	json state = json::array();
@@ -23,9 +25,13 @@ json StateEncoder::encodeFullState()
 		if (obj.getType() == ObjectType::Unit)
 		{
 			o["teamId"] = ((Unit &)obj).getTeamId();
-			o["unit_type"] = ((Unit &)obj).getUnitType();
 			o["gems"] = ((Unit &)obj).getBalance();
 			o["ActionCooldown"] = ((Unit &)obj).getActionCooldown();
+
+			o["components"] = ((Unit &)obj).getComponents();
+			o["properties"] = json::object();
+			for (const auto &[prop, value] : ((Unit &)obj).getProperties())
+				o["properties"][std::string(Config::unitPropertyToString(prop))] = value;
 		}
 		if (obj.getType() == ObjectType::Deposit)
 		{
@@ -34,24 +40,6 @@ json StateEncoder::encodeFullState()
 		if (obj.getType() == ObjectType::GemPile)
 		{
 			o["gems"] = ((GemPile &)obj).getBalance();
-		}
-		if (obj.getType() == ObjectType::Bomb)
-		{
-			o["countdown"] = ((Bomb &)obj).getCountdown();
-			o["countdownStarted"] = ((Bomb &)obj).isCountdownStarted();
-
-			json tiles = json::array();
-			const Bomb &b = static_cast<const Bomb &>(obj);
-			auto exploded = b.explosionTiles_;
-			for (const Position &p : exploded)
-			{
-				json t;
-				t["x"] = p.x;
-				t["y"] = p.y;
-				tiles.push_back(t);
-			}
-
-			o["explosionTiles"] = tiles;
 		}
 
 		if (obj.hasDebugInfo())

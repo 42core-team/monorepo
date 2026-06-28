@@ -1,8 +1,6 @@
 #ifndef CORE_LIB_H
 #define CORE_LIB_H
 
-#include "units.h"
-
 #include <limits.h>
 #include <math.h>
 #include <stdarg.h>
@@ -20,8 +18,7 @@ typedef enum e_obj_type
 	OBJ_UNIT,
 	OBJ_DEPOSIT,
 	OBJ_WALL,
-	OBJ_GEM_PILE,
-	OBJ_BOMB
+	OBJ_GEM_PILE
 } t_obj_type;
 
 /// @brief Position structure for 2D coordinates. 0 indexed. Valid coordinates are 0,1,2,...gridSize-3,gridSize-2,gridSize-1.
@@ -32,6 +29,20 @@ typedef struct s_pos
 	/// @brief Y coordinate
 	unsigned short y;
 } t_pos;
+
+/// @brief Definition of a units properties resulting from its components.
+typedef struct s_unit_properties
+{
+	int hp;
+	int base_action_cooldown;
+	int balance_per_cooldown_step;
+	int max_balance;
+	int damage_reduction_percent;
+	int damage_core;
+	int damage_unit;
+	int damage_object;
+	int post_spawn_core_cooldown;
+} t_unit_properties;
 
 /// @brief Game object structure representing all entities in the game
 typedef struct s_obj
@@ -59,107 +70,24 @@ typedef struct s_obj
 		} s_core;
 		struct
 		{
-			/// @brief Which type of unit this is.
-			t_unit_type unit_type;
 			/// @brief The id of the team that owns the unit.
 			unsigned long team_id;
 			/// @brief The amount of gems the unit is carrying.
 			unsigned long gems;
 			/// @brief Countdown to the next tick the unit can move, defined by it's speed & how much it's carrying.
 			unsigned long action_cooldown;
+			/// @brief Null-terminated string array of all component ids the unit has.
+			char **components;
+			/// @brief The properties of the unit, derived from its components.
+			t_unit_properties properties;
 		} s_unit;
 		struct
 		{
 			/// @brief The amount of gems the deposit / gem pile contains.
 			unsigned long gems;
 		} s_deposit_gems_pile;
-		struct
-		{
-			/// @brief How much longer the bomb will take to explode.
-			unsigned long countdown;
-		} s_bomb;
 	};
 } t_obj;
-
-// ----- CONFIG -----
-
-/// @brief Determines what a unit can build
-typedef enum e_build_type
-{
-	BUILD_TYPE_NONE = 0,
-	BUILD_TYPE_WALL = 1,
-	BUILD_TYPE_BOMB = 2
-} t_build_type;
-
-typedef struct s_unit_config
-{
-	/// @brief The name of the unit.
-	char *name;
-	/// @brief The unit type of the unit.
-	t_unit_type unit_type;
-	/// @brief What the unit costs to create.
-	unsigned long cost;
-	/// @brief How much healthpoints the unit has.
-	unsigned long hp;
-	/// @brief The time a unit waits between moves if it is not carrying gems.
-	unsigned long baseActionCooldown;
-	/// @brief The minimum time a unit waits between moves.
-	unsigned long maxActionCooldown;
-	/// @brief Defines increase of delay between action executions
-	unsigned long balancePerCooldownStep;
-	/// @brief How much damage the unit deals to cores.
-	unsigned long dmg_core;
-	/// @brief How much damage the unit deals to units.
-	unsigned long dmg_unit;
-	/// @brief How much damage the unit deals to deposits.
-	unsigned long dmg_deposit;
-	/// @brief How much damage the unit deals to walls.
-	unsigned long dmg_wall;
-	/// @brief How much damage the unit deals to bombs.
-	unsigned long dmg_bomb;
-	/// @brief The units build type.
-	t_build_type build_type;
-} t_unit_config;
-/// @brief Game configuration structure containing all game settings
-typedef struct s_config
-{
-	/// @brief The width & height of the map.
-	unsigned long gridSize;
-	/// @brief How much idle income you get every second.
-	unsigned long idle_income;
-	/// @brief How many ticks you get idle income.
-	unsigned long idle_income_timeout;
-	/// @brief How much healthpoints a deposit has at the start of the game.
-	unsigned long deposit_hp;
-	/// @brief How much income you get when you destroy a deposit.
-	unsigned long deposit_income;
-	/// @brief How many gems a gem pile object contains.
-	unsigned long gem_pile_income;
-	/// @brief How much healthpoints a core has at the start of the game.
-	unsigned long core_hp;
-	/// @brief Ticks it takes after a unit was spawned before core can spawn another unit.
-	unsigned long core_spawn_cooldown;
-	/// @brief How many gems a team starts with.
-	unsigned long initial_balance;
-	/// @brief How much healthpoints a wall has at the start of the game.
-	unsigned long wall_hp;
-	/// @brief How much it costs for a builder to build a wall.
-	unsigned long wall_build_cost;
-	/// @brief How many ticks a bomb takes to explode after being thrown.
-	unsigned long bomb_countdown;
-	/// @brief How much it costs to throw a bomb.
-	unsigned long bomb_throw_cost;
-	/// @brief How big the explosion of a bomb is.
-	unsigned long bomb_reach;
-	/// @brief How much damage a bomb does to cores hit by its explosion.
-	unsigned long bomb_damage_core;
-	/// @brief How much damage a bomb does to units hit by its explosion.
-	unsigned long bomb_damage_unit;
-	/// @brief How much damage a bomb does to deposits hit by its explosion.
-	unsigned long bomb_damage_deposit;
-	/// @brief List of all unit types that are available in the game. NULL-terminated.
-	t_unit_config **units;
-} t_config;
 
 // ----- GENERAL -----
 
@@ -171,13 +99,13 @@ typedef struct s_game
 	 */
 	unsigned long elapsed_ticks;
 	/**
-	 * @brief The config contains base informations about the game that don't change like the map size and the unit types.
-	 */
-	t_config config;
-	/**
 	 * @brief The id of the team that you are playing for. Saved in your cores team_id field.
 	 */
 	unsigned long my_team_id;
+	/**
+	 * @brief The size of the grid. The grid is square, so this is the width and height of the grid.
+	 */
+	unsigned short grid_size;
 	/**
 	 * @brief List of all objects (units, cores, deposits, etc.) and their informations. NULL-terminated.
 	 */
@@ -205,7 +133,7 @@ int core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 
 /// @brief Create a new unit of specified type.
 /// @param unit_type The type of unit to create.
-void core_action_createUnit(t_unit_type unit_type);
+void core_action_createUnit(char *component, ...);
 
 /// @brief Moves a unit to a specific position.
 /// @details Units can only move one tile up, down, left or right; and only if their action_cooldown is 0.
@@ -229,12 +157,6 @@ void core_action_attack(const t_obj *attacker, const t_obj *target);
 /// @param target_pos The position of the object to transfer the gems to, or the non-occupied position where the gems should be dropped.
 /// @param amount The amount of gems to transfer or drop.
 void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned long amount);
-
-/// @brief Builds a new object.
-/// @details Units can only build one tile up, down, left or right. Not all units can build, and they may build different things. Please consult config for details.
-/// @param builder The unit that should build a new object. What will be built depends on the buildType of the builder unit.
-/// @param pos The position where the object should be built.
-void core_action_build(const t_obj *builder, t_pos pos);
 
 // ----- GETTER FUNCTIONS -----
 
@@ -264,11 +186,6 @@ t_obj *core_get_obj_filter_nearest(t_pos pos, bool (*condition)(const t_obj *));
 /// @return The count of objects that match the condition or 0 if no such object exists
 unsigned int core_get_objs_filter_count(bool (*condition)(const t_obj *));
 
-/// @brief Get the unit config for a specific unit type.
-/// @param type The type of unit to get the config for.
-/// @return The unit config or NULL if no such unit type or unit config exists.
-t_unit_config *core_get_unitConfig(t_unit_type type);
-
 // ----- DEBUG FUNCTIONS -----
 
 /// @brief Add debug information to an object for visualization
@@ -282,28 +199,5 @@ void core_debug_addObjectInfo(const t_obj *obj, const char *format, ...);
 /// @param unit The unit to attach the debug path step to
 /// @param pos The position to add as a step to the debug path
 void core_debug_addObjectPathStep(const t_obj *unit, t_pos pos);
-
-// ----- PRINT FUNCTIONS -----
-
-// PRINT FUNCTIONS are used to print information about the game state to the console.
-
-/// @brief Prints all information about the current game state of a given object. Handles NULL.
-/// @param obj The object to print information about.
-void core_print_obj(t_obj *obj);
-
-/// @brief Prints all information about the current game state of multiple objects. Handles NULL.
-/// @param objs The objects to print information about.
-/// @return The inputted objects array, so you can easily free in the same line as you print.
-t_obj **core_print_objs(t_obj **objs);
-
-/// @brief Prints a selected unit config.
-/// @param unit_type The type of unit to print the config for.
-void core_print_config_unit(t_unit_type unit_type);
-
-/// @brief Prints the entire game config
-void core_print_config_game(void);
-
-/// @brief Prints the entire game config and all unit configs
-void core_print_config(void);
 
 #endif // CORE_LIB_H

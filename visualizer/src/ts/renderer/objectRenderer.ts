@@ -1,8 +1,11 @@
 import type { tickData } from "../input_manager/timeManager";
-import { getBarMetrics, type TickObject } from "../replay_loader/object";
+import {
+	getBarMetrics,
+	getDominantUnitAssetPath,
+	type TickObject,
+} from "../replay_loader/object";
 import {
 	getActionsByExecutor,
-	getGameConfig,
 	getStateAt,
 } from "../replay_loader/replayLoader";
 import {
@@ -125,17 +128,7 @@ export function drawSpawnPreviewForNextTick(
 		mid,
 	);
 
-	let scale = mid;
-	if (spawnObj.type === 5) {
-		const cfgTotal = Math.max(1, getGameConfig()?.bombCountdown ?? 1);
-		const currLeft = Math.max(
-			0,
-			Math.min(cfgTotal, (spawnObj as { countdown?: number }).countdown ?? 0),
-		);
-		const p = 1 - currLeft / cfgTotal;
-		const bombScale = 0.65 + 0.65 * p;
-		scale *= bombScale / 0.8;
-	}
+	const scale = mid;
 
 	drawObject(svgCanvas, spawnObj, spawnObj.x, spawnObj.y, scale, metrics);
 }
@@ -184,19 +177,14 @@ function drawObject(
 		switch (obj.type) {
 			case 0:
 				return getTeamIndex(obj.teamId) === 0 ? "icon-core-1" : "icon-core-2";
-			case 1: {
-				const assetPath =
-					getGameConfig()?.units[obj.unit_type!]?.visualizer_asset_path;
-				return `icon-unit-${assetPath}-${getTeamIndex(obj.teamId) + 1}`;
-			}
+			case 1:
+				return `icon-unit-${getDominantUnitAssetPath(obj)}-${getTeamIndex(obj.teamId) + 1}`;
 			case 2:
 				return "icon-deposit";
 			case 3:
 				return "icon-wall";
 			case 4:
 				return "icon-gem";
-			case 5:
-				return "icon-bomb";
 		}
 	})();
 
@@ -331,73 +319,5 @@ export function calcAndDrawObject(
 		new MidTickIncreaseTimingCurve().getValue(currentTickData.tickProgress),
 	);
 
-	if (currObj.type === 5) {
-		const cfgTotal = Math.max(1, getGameConfig()?.bombCountdown ?? 1);
-		const currLeft = Math.max(
-			0,
-			Math.min(cfgTotal, (currObj as { countdown?: number }).countdown ?? 0),
-		);
-		const inferredNext = Math.max(0, currLeft - 1);
-		const nextLeftRaw =
-			nextObj &&
-			nextObj.type === 5 &&
-			typeof (nextObj as { countdown?: number }).countdown === "number"
-				? Math.max(
-						0,
-						Math.min(cfgTotal, (nextObj as { countdown?: number }).countdown),
-					)
-				: inferredNext;
-		const leftSmooth =
-			currLeft + (nextLeftRaw - currLeft) * currentTickData.tickProgress;
-		const p = 1 - leftSmooth / cfgTotal;
-		const bombScale = 0.65 + 0.65 * p;
-		if (nextObj)
-			// if the bomb doesnt exist next frame, use the normal despawning animation
-			scale *= bombScale / 0.8;
-	}
-
 	drawObject(svgCanvas, currObj, x, y, scale, metricBars);
-
-	// bomb explosion
-	const explosionScale = (t: number): number => {
-		const ease = new EaseInOutTimingCurve();
-		if (t < 0.5) return ease.getValue(t / 0.5);
-		return ease.getValue(1 - (t - 0.5) / 0.5);
-	};
-	if (
-		nextObj &&
-		nextObj.type === 5 &&
-		(nextObj as { countdown?: number }).countdown === 0
-	) {
-		const tiles = (
-			nextObj as {
-				explosionTiles?: { x: number; y: number }[];
-			}
-		).explosionTiles;
-		if (tiles && tiles.length > 0) {
-			const s = Math.max(
-				0,
-				Math.min(1, explosionScale(currentTickData.tickProgress)),
-			);
-			for (const tile of tiles) {
-				const key = `exp-${tile.x},${tile.y}`;
-				let img = svgCanvas.querySelector(
-					`image[data-exp-key="${key}"]`,
-				) as SVGImageElement | null;
-				if (!img) {
-					img = document.createElementNS(svgNS, "image");
-					img.setAttribute("data-exp-key", key);
-					img.setAttribute("href", "/assets/object-svgs/explosion.svg");
-				}
-				img.classList.add("game-object");
-				img.classList.remove("not-touched");
-				img.setAttribute("width", "1");
-				img.setAttribute("height", "1");
-				const tx = tile.x + 0.5 - 0.5 * s;
-				const ty = tile.y + 0.5 - 0.5 * s;
-				img.setAttribute("transform", `translate(${tx},${ty}) scale(${s})`);
-				if (img.parentNode !== svgCanvas) svgCanvas.appendChild(img);
-			}
-		}
-	}
 }

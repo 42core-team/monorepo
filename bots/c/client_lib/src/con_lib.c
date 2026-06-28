@@ -74,12 +74,14 @@ int core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 	char *conf = core_internal_socket_read_once(socket_fd);
 	if (!conf)
 	{
-		printf("Something went very awry and there was no json received.\n");
+		printf("Something went very awry and there was no json received, expected to receive config.\n");
 		return 1;
 	}
-	if (debug) printf("Received: %s\n", conf);
-	core_internal_parse_config(conf);
+	if (debug) printf("Received config: %s\n", conf);
+	json_node *conf_json = string_to_json(conf);
+	game.grid_size = (unsigned short)json_find(conf_json, "gridSize")->number;
 	free(conf);
+	free_json(conf_json);
 
 	// run game loop
 	bool first_tick = true;
@@ -107,7 +109,7 @@ int core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 		{
 			json_node *node = string_to_json(msg);
 			char *formatted = json_to_formatted_string(node);
-			printf("Received: %s\n", formatted);
+			printf("Received state: %s\n", formatted);
 			free(formatted);
 			free_json(node);
 		}
@@ -128,7 +130,7 @@ int core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 
 	// clean up
 	close(socket_fd);
-	core_internal_freeGame();
+	core_internal_freeObjects();
 	core_internal_reset_actions();
 
 	return 0;

@@ -17,6 +17,9 @@ std::string Config::dataFolderPath = "";
 #include "Utils.h"
 #include "xxhash.h"
 
+#include <set>
+#include <stdexcept>
+
 json Config::load_json_schema(const std::string &schema_name)
 {
 	std::string fullName = Config::getDataFolderPath() + "/json-schemas/" + schema_name;
@@ -26,7 +29,15 @@ json Config::load_json_schema(const std::string &schema_name)
 		Logger::LogErr("Could not open schema: " + fullName);
 		exit(EXIT_FAILURE);
 	}
-	return json::parse(s);
+	try
+	{
+		return json::parse(s);
+	}
+	catch (const std::exception &e)
+	{
+		Logger::LogErr("Failed to parse schema " + schema_name + ": " + std::string(e.what()));
+		exit(EXIT_FAILURE);
+	}
 }
 
 static void validate_or_die(const json &instance, const std::string &schema_name)
@@ -144,6 +155,84 @@ static std::string read_file_strip_json_comments(const std::string &path)
 	return out;
 }
 
+UnitProperty Config::stringToUnitProperty(std::string_view name)
+{
+	for (const auto &[entryName, property] : UNIT_PROPERTY_ENTRIES)
+		if (entryName == name) return property;
+	throw std::runtime_error("Unknown unit property name: \"" + std::string(name) + "\".");
+}
+std::string_view Config::unitPropertyToString(UnitProperty property)
+{
+	for (const auto &[name, entryProperty] : UNIT_PROPERTY_ENTRIES)
+		if (entryProperty == property) return name;
+	throw std::runtime_error("Unknown UnitProperty value.");
+}
+
+// json schema isnt recursive, so we can validate the invalid condition expressions with a simple recursive function instead of using json-schema
+static void requireExprKeys(const json &expr, const std::set<std::string> &keys)
+{
+	for (auto it = expr.begin(); it != expr.end(); ++it)
+		if (!keys.count(it.key())) throw std::runtime_error("Unexpected invalid condition key: \"" + it.key() + "\".");
+	for (const auto &key : keys)
+		if (!expr.contains(key)) throw std::runtime_error("Missing invalid condition key: \"" + key + "\".");
+}
+static void validateInvalidConditionExpr(const json &expr)
+{
+	if (!expr.is_object()) throw std::runtime_error("Invalid condition expression must be an object.");
+	const std::string type = expr.at("type").get<std::string>();
+
+	if (type == "const")
+	{
+		requireExprKeys(expr, {"type", "value"});
+		const int64_t value = expr.at("value").get<int64_t>();
+		if (value < -10000000 || value > 10000000) throw std::runtime_error("Invalid condition const is out of range.");
+		return;
+	}
+	if (type == "property")
+	{
+		requireExprKeys(expr, {"type", "property"});
+		Config::stringToUnitProperty(expr.at("property").get<std::string>());
+		return;
+	}
+	if (type == "component_count")
+	{
+		requireExprKeys(expr, {"type", "component"});
+		if (expr.at("component").get<std::string>().empty())
+			throw std::runtime_error("Invalid condition component must not be empty.");
+		return;
+	}
+	if (type == "not")
+	{
+		requireExprKeys(expr, {"type", "1"});
+		validateInvalidConditionExpr(expr.at("1"));
+		return;
+	}
+	if (type == "ternary")
+	{
+		requireExprKeys(expr, {"type", "if", "then", "else"});
+		validateInvalidConditionExpr(expr.at("if"));
+		validateInvalidConditionExpr(expr.at("then"));
+		validateInvalidConditionExpr(expr.at("else"));
+		return;
+	}
+
+	static const std::set<std::string> binaryTypes = {"sum",
+													  "subtract",
+													  "multiply",
+													  "divide",
+													  "min",
+													  "max",
+													  "less_than",
+													  "greater_than",
+													  "less_than_or_equal",
+													  "greater_than_or_equal",
+													  "equal"};
+	if (!binaryTypes.count(type)) throw std::runtime_error("Unknown invalid condition type: \"" + type + "\".");
+	requireExprKeys(expr, {"type", "1", "2"});
+	validateInvalidConditionExpr(expr.at("1"));
+	validateInvalidConditionExpr(expr.at("2"));
+}
+
 static ServerConfig parseServerConfig()
 {
 	ServerConfig config;
@@ -175,12 +264,11 @@ static ServerConfig parseServerConfig()
 	{
 		config.replayFolderPaths = {"replays"};
 	}
-	config.timeoutTicks = j.value("timeoutTicks", 3000);
-	config.timeoutMs = j.value("timeoutMs", 3000);
-	config.clientWaitTimeoutMs = j.value("clientWaitTimeoutMs", 500);
-	config.clientConnectTimeoutMs = j.value("clientConnectTimeoutMs", 30000);
-	config.clientPacketsMaxSizeKb = j.value("clientPacketsMaxSizeKb", 16);
-	config.enableTerminalVisualizer = j.value("enableTerminalVisualizer", false);
+	config.timeoutTicks = j.at("timeoutTicks").get<unsigned int>();
+	config.timeoutMs = j.at("timeoutMs").get<unsigned int>();
+	config.clientWaitTimeoutMs = j.at("clientWaitTimeoutMs").get<unsigned int>();
+	config.clientConnectTimeoutMs = j.at("clientConnectTimeoutMs").get<unsigned int>();
+	config.clientPacketsMaxSizeKb = j.at("clientPacketsMaxSizeKb").get<unsigned int>();
 
 	return config;
 }
@@ -198,7 +286,7 @@ static GameConfig parseGameConfig()
 	json j = json::parse(cleaned);
 	validate_or_die(j, "configs/game-config.schema.json");
 
-	config.gridSize = j.value("gridSize", 25);
+	config.gridSize = j.at("gridSize").get<unsigned int>();
 
 	config.seedString = j.value("seed", "");
 	if (config.seedString.empty())
@@ -208,25 +296,19 @@ static GameConfig parseGameConfig()
 	}
 	config.seed = XXH64(config.seedString.data(), config.seedString.size(), 0);
 
-	config.idleIncome = j.value("idleIncome", 1);
-	config.idleIncomeTimeOut = j.value("idleIncomeTimeOut", 600);
-	config.depositHp = j.value("depositHp", 50);
-	config.depositIncome = j.value("depositIncome", 200);
-	config.gemPileIncome = j.value("gemPileIncome", 100);
-	config.coreHp = j.value("coreHp", 350);
-	config.coreSpawnCooldown = j.value("coreSpawnCooldown", 20);
-	config.initialBalance = j.value("initialBalance", 200);
-	config.wallHp = j.value("wallHp", 100);
-	config.wallBuildCost = j.value("wallBuildCost", 20);
-	config.bombHp = j.value("bombHp", 25);
-	config.bombCountdown = j.value("bombCountdown", 25);
-	config.bombThrowCost = j.value("bombThrowCost", 50);
-	config.bombReach = j.value("bombReach", 3);
-	config.bombDamageCore = j.value("bombDamageCore", 50);
-	config.bombDamageUnit = j.value("bombDamageUnit", 30);
-	config.bombDamageDeposit = j.value("bombDamageDeposit", 40);
+	config.idleIncome = j.at("idleIncome").get<unsigned int>();
+	config.idleIncomeTimeOut = j.at("idleIncomeTimeOut").get<unsigned int>();
 
-	std::string wgType = j.value("worldGenerator", "jigsaw");
+	config.depositHp = j.at("depositHp").get<unsigned int>();
+	config.depositIncome = j.at("depositIncome").get<unsigned int>();
+	config.gemPileIncome = j.at("gemPileIncome").get<unsigned int>();
+
+	config.coreHp = j.at("coreHp").get<unsigned int>();
+	config.initialBalance = j.at("initialBalance").get<unsigned int>();
+
+	config.wallHp = j.at("wallHp").get<unsigned int>();
+
+	std::string wgType = j.at("worldGenerator").get<std::string>();
 	if (wgType == "jigsaw")
 		config.worldGenerator = std::make_unique<JigsawWorldGenerator>();
 	else if (wgType == "sparse")
@@ -237,85 +319,66 @@ static GameConfig parseGameConfig()
 		config.worldGenerator = std::make_unique<EmptyWorldGenerator>();
 	else
 	{
-		Logger::Log(LogLevel::WARNING, "Unknown world generator type: \"" + wgType + "\". Using jigsaw as default.");
-		config.worldGenerator = std::make_unique<JigsawWorldGenerator>();
+		throw std::runtime_error("Unknown world generator type: \"" + wgType + "\".");
 	}
-	config.worldGeneratorConfig = j.value("worldGeneratorConfig", json());
+	config.worldGeneratorConfig = j.at("worldGeneratorConfig").get<json>();
 
-	if (j.contains("units") && j["units"].is_array())
+	json components = j.at("components").get<json>();
+
+	config.maxComponentsPerUnit = components.at("maxComponentsPerUnit").get<unsigned int>();
+
+	const json &defaults = components.at("unitDefaultProperties");
+	for (const auto &[name, valueJson] : defaults.items())
 	{
-		for (const auto &unitJson : j["units"])
-		{
-			UnitConfig unit;
-			unit.name = unitJson.value("name", "Unnamed");
-			unit.cost = unitJson.value("cost", 0);
-			unit.hp = unitJson.value("hp", 0);
-			unit.baseActionCooldown = unitJson.value("baseActionCooldown", 0);
-			unit.maxActionCooldown = unitJson.value("maxActionCooldown", 0);
-			unit.balancePerCooldownStep = std::max(1u, unitJson.value("balancePerCooldownStep", 1u));
-			unit.damageCore = unitJson.value("damageCore", 0);
-
-			unit.damageUnit.clear();
-			for (const auto &damageJson : unitJson["damageUnit"])
-			{
-				unit.damageUnit.push_back(damageJson.get<unsigned int>());
-			}
-
-			unit.damageDeposit = unitJson.value("damageDeposit", 0);
-			unit.damageWall = unitJson.value("damageWall", 0);
-			unit.damageBomb = unitJson.value("damageBomb", 0);
-
-			std::string buildTypeJson = unitJson.value("buildType", "none");
-			if (buildTypeJson == "none")
-				unit.buildType = BuildType::NONE;
-			else if (buildTypeJson == "wall")
-				unit.buildType = BuildType::WALL;
-			else if (buildTypeJson == "bomb")
-				unit.buildType = BuildType::BOMB;
-
-			if (unit.baseActionCooldown > unit.maxActionCooldown)
-			{
-				Logger::LogErr("baseActionCooldown > maxActionCooldown for unit: " + unit.name);
-				exit(EXIT_FAILURE);
-			}
-
-			config.units.push_back(unit);
-		}
-
-		for (size_t i = 0; i < config.units.size(); ++i)
-		{
-			if (config.units[i].damageUnit.size() != config.units.size())
-			{
-				Logger::LogErr("damageUnit for unit \"" + config.units[i].name + "\" must contain exactly " +
-							   std::to_string(config.units.size()) + " values (one per target unit type).");
-				exit(EXIT_FAILURE);
-			}
-		}
+		UnitProperty propType = Config::stringToUnitProperty(name);
+		int value = valueJson.get<int>();
+		config.defaultUnitProperties[propType] = value;
 	}
 
-	if (j.contains("corePositions") && j["corePositions"].is_array())
+	std::set<std::string> seenComponentIds;
+	for (const auto &componentJson : components.at("components"))
 	{
-		for (const auto &posJson : j["corePositions"])
+		ComponentConfig comp;
+		comp.id = componentJson.at("id").get<std::string>();
+		if (!seenComponentIds.insert(comp.id).second)
+			throw std::runtime_error("Duplicate component id: \"" + comp.id + "\".");
+		std::set<UnitProperty> seenProperties;
+		for (const auto &propJson : componentJson.at("properties"))
 		{
-			Position pos;
-			pos.x = posJson.value("x", 0);
-			pos.y = posJson.value("y", 0);
-
-			if (!pos.isValid(config.gridSize))
-			{
-				Logger::LogErr("Invalid core position: (" + std::to_string(pos.x) + ", " + std::to_string(pos.y) +
-							   ").");
-				exit(EXIT_FAILURE);
-			}
-
-			config.corePositions.push_back(pos);
+			UnitProperty propType = Config::stringToUnitProperty(propJson.at("name").get<std::string>());
+			int modification = propJson.at("modification").get<int>();
+			if (!seenProperties.insert(propType).second)
+				throw std::runtime_error("Duplicate property modification \"" +
+										 std::string(Config::unitPropertyToString(propType)) + "\" in component \"" +
+										 comp.id + "\".");
+			comp.properties[propType] = modification;
 		}
+		comp.cost = componentJson.at("cost").get<unsigned int>();
+		config.componentTypes.push_back(comp);
 	}
-	else
+
+	for (const auto &conditionJson : components.at("invalidConditions"))
 	{
-		Logger::Log(LogLevel::ERROR, "No core positions found in config. Using default positions. Please fix this.");
-		config.corePositions.push_back({0, 0});
-		config.corePositions.push_back({static_cast<int>(config.gridSize - 1), static_cast<int>(config.gridSize - 1)});
+		InvalidConditionConfig condition;
+		condition.message = conditionJson.at("message").get<std::string>();
+		condition.condition = conditionJson.at("condition");
+		validateInvalidConditionExpr(condition.condition);
+		config.invalidConditions.push_back(std::move(condition));
+	}
+
+	for (const auto &posJson : j.at("corePositions"))
+	{
+		Position pos;
+		pos.x = posJson.at("x").get<int>();
+		pos.y = posJson.at("y").get<int>();
+
+		if (!pos.isValid(config.gridSize))
+		{
+			Logger::LogErr("Invalid core position: (" + std::to_string(pos.x) + ", " + std::to_string(pos.y) + ").");
+			exit(EXIT_FAILURE);
+		}
+
+		config.corePositions.push_back(pos);
 	}
 
 	return config;
@@ -336,9 +399,14 @@ Position &Config::getCorePosition(unsigned int teamId)
 {
 	return game().corePositions[teamId];
 }
-UnitConfig &Config::getUnitConfig(unsigned int unit_type)
+ComponentConfig *Config::getComponentConfig(const std::string &id)
 {
-	return game().units[unit_type];
+	for (auto &component : game().componentTypes)
+	{
+		if (component.id == id) return &component;
+	}
+
+	return nullptr;
 }
 
 json Config::encodeConfig()

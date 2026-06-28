@@ -7,7 +7,6 @@
 #include "Logger.h"
 #include "MapTemplate.h"
 #include "Object.h"
-#include "Visualizer.h"
 #include "Wall.h"
 #include "WorldGenerator.h"
 

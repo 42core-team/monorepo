@@ -22,16 +22,21 @@ export async function ensureIcons() {
 		["icon-deposit", "/assets/object-svgs/deposit.svg"],
 		["icon-wall", "/assets/object-svgs/wall.svg"],
 		["icon-gem", "/assets/object-svgs/gem_pile.svg"],
-		["icon-bomb", "/assets/object-svgs/bomb.svg"],
 	];
-	for (const unit of getGameConfig()?.units || []) {
+	const unitAssetPaths = new Set([
+		"fallback",
+		...(getGameConfig()?.components.components ?? [])
+			.map((component) => component.visualizer_asset_path)
+			.filter((path): path is string => Boolean(path)),
+	]);
+	for (const assetPath of unitAssetPaths) {
 		paths.push([
-			`icon-unit-${unit.visualizer_asset_path}-1`,
-			`/assets/object-svgs/units/${unit.visualizer_asset_path}/1.svg`,
+			`icon-unit-${assetPath}-1`,
+			`/assets/object-svgs/units/${assetPath}/1.svg`,
 		]);
 		paths.push([
-			`icon-unit-${unit.visualizer_asset_path}-2`,
-			`/assets/object-svgs/units/${unit.visualizer_asset_path}/2.svg`,
+			`icon-unit-${assetPath}-2`,
+			`/assets/object-svgs/units/${assetPath}/2.svg`,
 		]);
 	}
 

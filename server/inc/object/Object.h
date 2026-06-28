@@ -11,8 +11,7 @@ enum class ObjectType
 	Unit,
 	Deposit,
 	Wall,
-	GemPile,
-	Bomb
+	GemPile
 };
 
 class Object

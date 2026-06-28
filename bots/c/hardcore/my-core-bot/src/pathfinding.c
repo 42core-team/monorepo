@@ -18,13 +18,12 @@ static unsigned long movement_cost_at(t_pos pos)
 		switch (any_obj->type)
 		{
 		case OBJ_WALL:
+			return 2; // passable by breaking, but costs more
 		case OBJ_CORE:
 		case OBJ_DEPOSIT:
 			return ULONG_MAX; // impassable
 		case OBJ_UNIT:
 		case OBJ_GEM_PILE:
-		case OBJ_BOMB:
-			return 2; // passable, but costs more
 		default:
 			return 1; // unknown object, assume passable
 		}
@@ -87,7 +86,7 @@ static t_path reconstruct_full_path(size_t *parent, size_t start_idx, size_t goa
 t_path pathfind_full_path_dijkstra(t_pos start, t_pos target)
 {
 	t_path empty_path = {.steps = NULL, .length = 0};
-	const unsigned long grid = game.config.gridSize;
+	const unsigned long grid = game.grid_size;
 	const size_t total = (size_t)grid * (size_t)grid;
 
 	if (grid == 0 || !pos_in_bounds(start, grid) || !pos_in_bounds(target, grid)) return empty_path;

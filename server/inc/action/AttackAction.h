@@ -3,7 +3,6 @@
 
 #include "Action.h"
 #include "Board.h"
-#include "Bomb.h"
 #include "Common.h"
 #include "Deposit.h"
 #include "GemPile.h"

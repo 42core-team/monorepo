@@ -14,7 +14,6 @@ static inline const char *schema_for_type(const std::string &t)
 	if (t == "move") return "packets/actions/action-move.schema.json";
 	if (t == "create") return "packets/actions/action-create.schema.json";
 	if (t == "transfer_gems") return "packets/actions/action-transfer-gems.schema.json";
-	if (t == "build") return "packets/actions/action-build.schema.json";
 	if (t == "attack") return "packets/actions/action-attack.schema.json";
 	return nullptr;
 }
@@ -55,8 +54,6 @@ std::vector<std::unique_ptr<Action>> Action::parseActions(json msg, std::vector<
 					newAction = std::make_unique<CreateAction>(actionJson);
 				else if (t == "transfer_gems")
 					newAction = std::make_unique<TransferGemsAction>(actionJson);
-				else if (t == "build")
-					newAction = std::make_unique<BuildAction>(actionJson);
 				else if (t == "attack")
 					newAction = std::make_unique<AttackAction>(actionJson);
 			}
@@ -90,8 +87,6 @@ std::string Action::getActionName(ActionType type)
 		return "create";
 	case ActionType::TRANSFER_GEMS:
 		return "transfer_gems";
-	case ActionType::BUILD:
-		return "build";
 	default:
 		return "unknown";
 	}

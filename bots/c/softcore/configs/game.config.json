@@ -1,101 +1,177 @@
-/*
-	For this event, there are 4 different unit types available:
-	1. Warrior: A melee combat unit that excels in attacking enemy cores and units.
-	2. Miner: A unit specialized in breaking hard objects such as gem deposits and walls.
-	3. Carrier: A non-combat unit that is very quick, even when carrying many gems.
-	4. Tank: A heavily armored and slow unit that packs a huge punch.
-*/
 {
-	"gridSize": 20, // tile count in each x and y directions of map, map will always be square
-	"seed": "", // if server is run twice with same seed, exact same world is generated. specify any string of any length, leave empty for a random seed
-	"idleIncome": 2, // amount of gems automatically deposited into each core each tick before the timeout
-	"idleIncomeTimeOut": 1000, // how many ticks the idleIncome last before no more gems are deposited
-	"depositHp": 50, // default HP when a deposit object is spawned
-	"depositIncome": 150, // default amount of gems a deposit is spawned with, might be modified depending on world generator
-	"gemPileIncome": 35, // default amount of gems a gem pile is spawned with, might be modified depending on world generator
-	"coreHp": 200, // health points of a core when its spawned
-	"coreSpawnCooldown": 20, // cooldown in in ticks a core must wait after spawning a unit before it can spawn another unit
-	"initialBalance": 200, // default amount of gems a core is spawned with, might be modified depending on world generator
-	"wallHp": 50, // health points of a wall when its spawned
-	"wallBuildCost": 20, // amount of gems a wall builder unit must pay to build a wall
-	"bombHp": 25, // health points of a bomb when its spawned
-	"bombCountdown": 10, // countdown in ticks from when a bomb is first attacked to when it explodes
-	"bombThrowCost": 50, // amount of gems a bomb builder unit must pay to build a wall
-	"bombReach": 3, // bomb explosion range
-	"bombDamageCore": 50, // damage a bomb does to a core
-	"bombDamageUnit": 30, // damage a bomb does to a unit
-	"bombDamageDeposit": 40, // damage a bomb does to a deposit
+	"gridSize": 20,
+	"seed": "",
+	"idleIncome": 3,
+	"idleIncomeTimeOut": 100,
+	"depositHp": 50,
+	"depositIncome": 100,
+	"gemPileIncome": 35,
+	"coreHp": 99,
+	"initialBalance": 300,
+	"wallHp": 77,
 	"worldGenerator": "sparse",
 	"worldGeneratorConfig": {
 		"depositCount": 20,
-		"depositBalanceVariation": 100,
 		"gemPileCount": 10,
-		"gemPileBalanceVariation": 50,
 		"wallCount": 30,
 		"coreBuffer": 3
 	},
-	"units": [
-		{
-			"name": "Warrior", // name, for aesthetic / display purposes only
-			"visualizer_asset_path": "warrior", // folder that the units visuals are picked from by visualizer
-			"cost": 150, // amount of gems needed to spawn the unit
-			"hp": 35, // amount of healthpoints the unit spawns with
-			"baseActionCooldown": 5, // base delay between action executions
-			"maxActionCooldown": 12, // max delay between action executions if unit is holding a lot of gems
-			"balancePerCooldownStep": 12, // defines increase of delay between action executions, see wiki for details
-			"damageCore": 12, // damage the unit does to a core
-			"damageUnit": 6, // damage the unit does to a unit
-			"damageDeposit": 4, // damage the unit does to a deposit
-			"damageWall": 5, // damage the unit does to a wall
-			"damageBomb": 5, // damage the unit does to a bomb
-			"buildType": "none" // whether & what the unit can build
-		},
-		{
-			"name": "Miner",
-			"visualizer_asset_path": "miner",
-			"cost": 100,
-			"hp": 20,
-			"baseActionCooldown": 4,
-			"maxActionCooldown": 8,
-			"balancePerCooldownStep": 35,
-			"damageCore": 5,
-			"damageUnit": 2,
-			"damageDeposit": 10,
-			"damageWall": 12,
-			"damageBomb": 5,
-			"buildType": "none"
-		},
-		{
-			"name": "Carrier",
-			"visualizer_asset_path": "carrier",
-			"cost": 200,
-			"hp": 10,
-			"baseActionCooldown": 0,
-			"maxActionCooldown": 1,
-			"balancePerCooldownStep": 99999,
+	"components": {
+		"maxComponentsPerUnit": 5,
+		"unitDefaultProperties": {
+			"hp": 5,
+			"baseActionCooldown": 3,
+			"balancePerCooldownStep": 10,
+			"maxBalance": 100,
+			"damageReductionPercent": 0, 
 			"damageCore": 0,
 			"damageUnit": 0,
-			"damageDeposit": 0,
-			"damageWall": 2,
-			"damageBomb": 2,
-			"buildType": "none"
+			"damageObject": 0,
+			"postSpawnCoreCooldown": 10
 		},
-		{
-			"name": "Tank",
-			"visualizer_asset_path": "tank",
-			"cost": 500,
-			"hp": 75,
-			"baseActionCooldown": 12,
-			"maxActionCooldown": 16,
-			"balancePerCooldownStep": 10,
-			"damageCore": 50,
-			"damageUnit": 50,
-			"damageDeposit": 6,
-			"damageWall": 25,
-			"damageBomb": 25,
-			"buildType": "none"
-		}
-	],
+		"components": [
+			{
+				"id": "health",
+				"properties": [
+					{
+						"name": "hp",
+						"modification": 3
+					}
+				],
+				"cost": 12,
+				"visualizer_asset_prioritized": false,
+				"visualizer_asset_path": "heart"
+			},
+			{
+				"id": "speed",
+				"properties": [
+					{
+						"name": "baseActionCooldown",
+						"modification": -2
+					}
+				],
+				"cost": 12,
+				"visualizer_asset_prioritized": false,
+				"visualizer_asset_path": "lightning"
+			},
+			{
+				"id": "armor",
+				"properties": [
+					{
+						"name": "damageReductionPercent",
+						"modification": 20
+					}
+				],
+				"cost": 30,
+				"visualizer_asset_prioritized": true,
+				"visualizer_asset_path": "shield"
+			},
+			{
+				"id": "unit_attack",
+				"properties": [
+					{
+						"name": "damageUnit",
+						"modification": 3
+					}
+				],
+				"cost": 15,
+				"visualizer_asset_prioritized": true,
+				"visualizer_asset_path": "sword"
+			},
+			{
+				"id": "core_attack",
+				"properties": [
+					{
+						"name": "damageCore",
+						"modification": 3
+					}
+				],
+				"cost": 15,
+				"visualizer_asset_prioritized": true,
+				"visualizer_asset_path": "axe"
+			},
+			{
+				"id": "mining",
+				"properties": [
+					{
+						"name": "damageObject",
+						"modification": 3
+					}
+				],
+				"cost": 15,
+				"visualizer_asset_prioritized": true,
+				"visualizer_asset_path": "pickaxe"
+			},
+			{
+				"id": "gem_carrying_efficiency",
+				"properties": [
+					{
+						"name": "balancePerCooldownStep",
+						"modification": 10
+					}
+				],
+				"cost": 20,
+				"visualizer_asset_prioritized": false,
+				"visualizer_asset_path": "feather"
+			},
+			{
+				"id": "gem_carrying_capacity",
+				"properties": [
+					{
+						"name": "maxBalance",
+						"modification": 50
+					}
+				],
+				"cost": 20,
+				"visualizer_asset_prioritized": false,
+				"visualizer_asset_path": "bag"
+			}
+		],
+		"invalidConditions": [
+			{
+				"message": "Your action cooldown may not be less than your total attacks added together",
+				"condition": {
+					"type": "less_than",
+					"1": {
+						"type": "property",
+						"property": "baseActionCooldown"
+					},
+					"2": {
+						"type": "sum",
+						"1": {
+							"type": "sum",
+							"1": {
+								"type": "property",
+								"property": "damageUnit"
+							},
+							"2": {
+								"type": "property",
+								"property": "damageCore"
+							}
+						},
+						"2": {
+							"type": "property",
+							"property": "damageObject"
+						}
+					}
+				}
+			},
+			{
+				"message": "You may not have more than 4 armor components",
+				"condition": {
+					"type": "greater_than",
+					"1": {
+						"type": "component_count",
+						"component": "armor"
+					},
+					"2": {
+						"type": "const",
+						"value": 4
+					}
+				}
+			}
+		]
+	},
 	"corePositions": [
 		{
 			"x": 0,

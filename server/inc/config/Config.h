@@ -4,7 +4,6 @@
 #include "Common.h"
 #include "json.hpp"
 
-#include <memory>
 #include <string>
 #include <vector>
 using json = nlohmann::ordered_json;
@@ -12,6 +11,9 @@ using json = nlohmann::ordered_json;
 class WorldGenerator;
 
 struct UnitConfig;
+struct ComponentConfig;
+enum class UnitProperty;
+struct InvalidConditionConfig;
 
 struct GameConfig
 {
@@ -32,49 +34,54 @@ struct GameConfig
 	unsigned int gemPileIncome;
 
 	unsigned int coreHp;
-	unsigned int coreSpawnCooldown;
 	unsigned int initialBalance;
 
 	unsigned int wallHp;
-	unsigned int wallBuildCost;
 
-	unsigned int bombHp;
-	unsigned int bombCountdown;
-	unsigned int bombThrowCost;
-	unsigned int bombReach;
-	unsigned int bombDamageCore;
-	unsigned int bombDamageUnit;
-	unsigned int bombDamageDeposit;
-
-	std::vector<UnitConfig> units;
+	unsigned int maxComponentsPerUnit;
+	std::map<UnitProperty, int> defaultUnitProperties;
+	std::vector<ComponentConfig> componentTypes;
+	std::vector<InvalidConditionConfig> invalidConditions;
 
 	// core positions. length defines max supported player count
 	std::vector<Position> corePositions;
 };
 
-enum class BuildType
+enum class UnitProperty
 {
-	NONE,
-	BOMB,
-	WALL
+	HP,
+	BASE_ACTION_COOLDOWN,
+	BALANCE_PER_COOLDOWN_STEP,
+	MAX_BALANCE,
+	DAMAGE_REDUCTION_PERCENT,
+	DAMAGE_CORE,
+	DAMAGE_UNIT,
+	DAMAGE_OBJECT,
+	POST_SPAWN_CORE_COOLDOWN
+};
+inline constexpr std::array<std::pair<std::string_view, UnitProperty>, 9> UNIT_PROPERTY_ENTRIES{{
+		{"hp", UnitProperty::HP},
+		{"baseActionCooldown", UnitProperty::BASE_ACTION_COOLDOWN},
+		{"balancePerCooldownStep", UnitProperty::BALANCE_PER_COOLDOWN_STEP},
+		{"maxBalance", UnitProperty::MAX_BALANCE},
+		{"damageReductionPercent", UnitProperty::DAMAGE_REDUCTION_PERCENT},
+		{"damageCore", UnitProperty::DAMAGE_CORE},
+		{"damageUnit", UnitProperty::DAMAGE_UNIT},
+		{"damageObject", UnitProperty::DAMAGE_OBJECT},
+		{"postSpawnCoreCooldown", UnitProperty::POST_SPAWN_CORE_COOLDOWN},
+}};
+
+struct InvalidConditionConfig
+{
+	std::string message;
+	json condition;
 };
 
-struct UnitConfig
+struct ComponentConfig
 {
-	std::string name;
+	std::string id;
+	std::map<UnitProperty, int> properties;
 	unsigned int cost;
-	unsigned int hp;
-	unsigned int baseActionCooldown; // timeout between actions in ticks
-	unsigned int maxActionCooldown;
-	unsigned int balancePerCooldownStep; // action cooldown = base action cooldown + gems / balancePerCooldownStep
-
-	unsigned int damageCore;
-	std::vector<unsigned int> damageUnit;
-	unsigned int damageDeposit;
-	unsigned int damageWall;
-	unsigned int damageBomb;
-
-	BuildType buildType;
 };
 
 struct ServerConfig
@@ -85,7 +92,6 @@ struct ServerConfig
 	unsigned int clientWaitTimeoutMs;
 	unsigned int clientConnectTimeoutMs;
 	unsigned int clientPacketsMaxSizeKb;
-	bool enableTerminalVisualizer;
 };
 
 class Config
@@ -97,7 +103,7 @@ class Config
 	static json encodeConfig();
 
 	static Position &getCorePosition(unsigned int teamId);
-	static UnitConfig &getUnitConfig(unsigned int typeId);
+	static ComponentConfig *getComponentConfig(const std::string &id);
 
 	static void setServerConfigFilePath(const std::string &path) { serverConfigFilePath = path; }
 	static std::string getServerConfigFilePath() { return serverConfigFilePath; }
@@ -109,6 +115,9 @@ class Config
 		if (dataFolderPath.back() == '/') dataFolderPath.pop_back();
 	}
 	static std::string getDataFolderPath() { return dataFolderPath; }
+
+	static std::string_view unitPropertyToString(UnitProperty property);
+	static UnitProperty stringToUnitProperty(std::string_view name);
 
 	// misc utils
 	static json load_json_schema(const std::string &schema_name);

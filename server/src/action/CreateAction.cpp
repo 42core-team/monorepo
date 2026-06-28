@@ -1,5 +1,13 @@
 #include "CreateAction.h"
 
+#include "Board.h"
+#include "ComponentLogic.h"
+#include "Config.h"
+#include "Stats.h"
+#include "Unit.h"
+
+#include <unordered_map>
+
 CreateAction::CreateAction(json msg) : Action(ActionType::CREATE)
 {
 	decodeJSON(msg);
@@ -7,14 +15,20 @@ CreateAction::CreateAction(json msg) : Action(ActionType::CREATE)
 
 void CreateAction::decodeJSON(json msg)
 {
-	unit_type_ = msg["unit_type"];
+	components_.clear();
+
+	for (const auto &componentIdJson : msg.at("components"))
+	{
+		components_.push_back(componentIdJson.get<std::string>());
+	}
 }
+
 json CreateAction::encodeJSON()
 {
 	json js;
 
 	js["type"] = "create";
-	js["unit_type"] = unit_type_;
+	js["components"] = components_;
 
 	return js;
 }
@@ -27,19 +41,39 @@ std::string CreateAction::execute(Core *core)
 	Position closestEmptyPos = findFirstEmptyGridCell(Board::instance().getObjectPositionById(core->getId()));
 	if (!closestEmptyPos.isValid(Config::game().gridSize)) return "no valid position found - entire grid is filled up";
 
-	if (unit_type_ >= Config::game().units.size()) return "invalid unit type";
+	if (components_.size() > Config::game().maxComponentsPerUnit)
+	{
+		return "too many components - has " + std::to_string(components_.size()) + ", max is " +
+			   std::to_string(Config::game().maxComponentsPerUnit);
+	}
 
-	unsigned int unitCost = Config::getUnitConfig(unit_type_).cost;
+	std::map<std::string, unsigned int> componentCounts;
+	unsigned int unitCost = 0;
+
+	for (const std::string &componentId : components_)
+	{
+		ComponentConfig *component = Config::getComponentConfig(componentId);
+		if (!component) return "invalid component \"" + componentId + "\"";
+
+		componentCounts[componentId]++;
+		unitCost += component->cost;
+	}
+
 	if (core->getBalance() < unitCost)
 		return "insufficient funds - has " + std::to_string(core->getBalance()) + ", needs " + std::to_string(unitCost);
 
-	Board::instance().addObject<Unit>(Unit(core->getTeamId(), unit_type_), closestEmptyPos);
+	std::map<UnitProperty, int> properties = ComponentLogic::getUnitProperties(componentCounts);
+
+	const std::string invalidConditionMessage = ComponentLogic::getInvalidConditionMessage(properties, componentCounts);
+	if (!invalidConditionMessage.empty()) return invalidConditionMessage;
+
+	Board::instance().addObject<Unit>(Unit(core->getTeamId(), properties, components_), closestEmptyPos);
 	core->setBalance(core->getBalance() - unitCost);
 
 	Stats::instance().inc(stat_keys::units_spawned);
 	Stats::instance().inc(stat_keys::actions_executed);
 
-	core->setSpawnCooldown(Config::game().coreSpawnCooldown);
+	core->setSpawnCooldown(properties.at(UnitProperty::POST_SPAWN_CORE_COOLDOWN));
 
 	return "";
 }

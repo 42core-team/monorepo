@@ -9,7 +9,7 @@ import type { TickAction } from "./action";
 import type { GameConfig } from "./config";
 import type { TickObject } from "./object";
 
-const expectedReplayVersion = "1.4.0";
+const expectedReplayVersion = "2.0.0";
 const winnerNameElement = document.getElementById(
 	"winnername",
 ) as HTMLSpanElement;
@@ -78,6 +78,17 @@ function deepClone<T>(obj: T): T {
 	return JSON.parse(JSON.stringify(obj));
 }
 
+function initializeDerivedObjectFields(obj: TickObject): TickObject {
+	if (
+		obj.type === 0 &&
+		typeof obj.SpawnCooldown === "number" &&
+		typeof obj.SpawnCooldownLastResetTo !== "number"
+	) {
+		obj.SpawnCooldownLastResetTo = obj.SpawnCooldown;
+	}
+	return obj;
+}
+
 function isDynamicSpeedEnabled(): boolean {
 	const p = new URLSearchParams(window.location.search);
 	return (
@@ -113,28 +124,26 @@ class ReplayLoader {
 	public async loadReplay(filePath: string): Promise<void> {
 		let fileData: string | null = replayDataOverride;
 		if (!fileData) {
-			await fetch(filePath, { cache: "no-cache" })
-				.then((response) => {
-					if (!response.ok) {
-						throw new Error(
-							`Failed to fetch replay file: ${response.statusText}`,
-						);
-					}
-					return response.text();
-				})
-				.then((data) => {
-					fileData = data;
-				})
-				.catch((err) => {
-					console.error("Error fetching replay file:", err);
-				});
+			const response = await fetch(filePath, { cache: "no-cache" });
+			fileData = await response.text();
+			if (!response.ok) {
+				throw new Error(
+					`Failed to fetch replay file: ${response.status} ${response.statusText}`,
+				);
+			}
 		}
 
 		if (!fileData) {
 			throw new Error("No replay data available to load.");
 		}
 
-		this.replayData = JSON.parse(fileData) as ReplayData;
+		try {
+			this.replayData = JSON.parse(fileData) as ReplayData;
+		} catch (err) {
+			throw new Error(
+				`Invalid replay JSON from ${filePath}: ${fileData.slice(0, 80)}`,
+			);
+		}
 		if (
 			!this.replayData.ticks ||
 			typeof this.replayData.full_tick_amount !== "number"
@@ -161,7 +170,7 @@ class ReplayLoader {
 		const tick0 = this.replayData.ticks["0"];
 		if (tick0?.objects) {
 			for (const obj of tick0.objects) {
-				fullState[obj.id] = deepClone(obj);
+				fullState[obj.id] = initializeDerivedObjectFields(deepClone(obj));
 			}
 		}
 		this.cache.set(0, deepClone(fullState));
@@ -189,14 +198,35 @@ class ReplayLoader {
 	private applyDiff(state: State, tickData: ReplayTick): void {
 		for (const diffObj of tickData.objects) {
 			const id = diffObj.id;
+
 			if (state[id]) {
-				Object.assign(state[id], diffObj);
-				// bombs only have state: dead reported 1 tick delayed so they can still communicate the tiles that exploded on their actual death tick
+				const existingObj = state[id];
+
+				Object.assign(existingObj, diffObj);
+
+				if (
+					existingObj.type === 0 &&
+					"SpawnCooldown" in diffObj &&
+					typeof diffObj.SpawnCooldown === "number"
+				) {
+					existingObj.SpawnCooldownLastResetTo = diffObj.SpawnCooldown;
+				}
+
 				if (diffObj.state === "dead") {
 					delete state[id];
 				}
 			} else {
-				state[id] = deepClone(diffObj);
+				const newObj = deepClone(diffObj);
+
+				if (
+					newObj.type === 0 &&
+					"SpawnCooldown" in newObj &&
+					typeof newObj.SpawnCooldown === "number"
+				) {
+					newObj.SpawnCooldownLastResetTo = newObj.SpawnCooldown;
+				}
+
+				state[id] = newObj;
 			}
 		}
 	}
@@ -440,23 +470,6 @@ export function getTotalReplayTicks(): number {
 	}
 
 	return totalReplayTicks;
-}
-export function getNameOfUnitType(unitType: number): string {
-	if (!replayLoader) {
-		throw new Error("Replay not loaded. Please call loadReplay first.");
-	}
-	const cfg = replayLoader.getGameConfig();
-	if (!cfg) {
-		throw new Error("GameConfig is missing! Did loadReplay parse config?");
-	}
-	if (
-		!Array.isArray(cfg.units) ||
-		unitType < 0 ||
-		unitType >= cfg.units.length
-	) {
-		throw new Error(`Invalid unitType index: ${unitType}`);
-	}
-	return cfg.units[unitType].name;
 }
 
 export function getGameConfig(): GameConfig | undefined {

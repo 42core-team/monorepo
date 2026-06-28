@@ -106,8 +106,7 @@ function drawFrame(timestamp: number): void {
 	}
 
 	for (const currObj of replayData.objects) {
-		// bombs will still persist for one more tick with 0 hp to communicate the explosion positions, but mustnt be rendered
-		if (currObj.hp > 0) calcAndDrawObject(currObj, svgCanvas, currentTickData);
+		calcAndDrawObject(currObj, svgCanvas, currentTickData);
 	}
 	const nextTickData = getStateAt(currentTickData.tick + 1);
 	if (nextTickData) {

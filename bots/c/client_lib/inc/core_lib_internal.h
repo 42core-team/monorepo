@@ -7,7 +7,9 @@
 
 int core_internal_distance(t_pos pos1, t_pos pos2);
 bool core_internal_isPosValid(t_pos pos);
-void core_internal_freeGame(void);
+void core_internal_freeStringArray(char **array);
+void core_internal_freeObject(t_obj *obj);
+void core_internal_freeObjects(void);
 void core_internal_freeAndExit(const char *msg, int count, ...);
 
 // ----- Socket
@@ -37,8 +39,7 @@ typedef enum e_action_type
 	ACTION_CREATE,
 	ACTION_MOVE,
 	ACTION_ATTACK,
-	ACTION_TRANSFER,
-	ACTION_BUILD
+	ACTION_TRANSFER
 } t_action_type;
 
 typedef struct s_action
@@ -48,7 +49,7 @@ typedef struct s_action
 	{
 		struct
 		{
-			unsigned long unit_type;
+			char **components;
 		} create;
 		struct
 		{
@@ -66,11 +67,6 @@ typedef struct s_action
 			t_pos target_pos;
 			unsigned long amount;
 		} transfer;
-		struct
-		{
-			unsigned long builder_id;
-			t_pos pos;
-		} build;
 	} data;
 } t_action;
 
@@ -151,7 +147,6 @@ json_node *create_node(json_type type);						// Create a new, empty-initialized 
 unsigned long clamp_ulong_for_json(unsigned long value);
 
 void core_internal_parse_state(char *json);
-void core_internal_parse_config(char *json);
 
 char *core_internal_encode_login(const char *team_name, int argc, char **argv);
 
