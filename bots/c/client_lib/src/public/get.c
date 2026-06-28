@@ -20,6 +20,35 @@ t_obj *core_get_obj_from_pos(t_pos pos)
 
 // -
 
+t_obj **core_get_units_by_name(const char *name)
+{
+	if (!name) return NULL;
+
+	int count = 0;
+	for (int i = 0; game.objects && game.objects[i] != NULL; i++)
+	{
+		t_obj *obj = game.objects[i];
+		if (obj->type == OBJ_UNIT && obj->s_unit.name && strcmp(obj->s_unit.name, name) == 0) count++;
+	}
+
+	if (count == 0) return NULL;
+
+	t_obj **result = malloc(sizeof(t_obj *) * (count + 1));
+	if (!result) return NULL;
+
+	int index = 0;
+	for (int i = 0; game.objects && game.objects[i] != NULL; i++)
+	{
+		t_obj *obj = game.objects[i];
+		if (obj->type == OBJ_UNIT && obj->s_unit.name && strcmp(obj->s_unit.name, name) == 0) result[index++] = obj;
+	}
+	result[index] = NULL;
+
+	return result;
+}
+
+// -
+
 t_obj **core_get_objs_filter(bool (*condition)(const t_obj *))
 {
 	int count = 0;

@@ -178,6 +178,11 @@ t_obj *core_get_obj_from_pos(t_pos pos);
 /// @return Null-terminated array of selected objects or NULL if no condition is provided or no objects match the condition.
 t_obj **core_get_objs_filter(bool (*condition)(const t_obj *));
 
+/// @brief Get all units with the given name.
+/// @param name Unit name to match.
+/// @return Null-terminated array of matching units or NULL if name is NULL or no units match. Free the returned array, not the objects.
+t_obj **core_get_units_by_name(const char *name);
+
 /// @brief Get the nearest object to a given position matching a custom condition.
 /// @param pos Position to search from
 /// @param condition Selection function pointer returning if the inputted object should be selected
