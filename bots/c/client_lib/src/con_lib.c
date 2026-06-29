@@ -1,3 +1,4 @@
+/* iterator norm: use I, J, K (uppercase) for all loop variables in bot code */
 #include "core_lib_internal.h"
 
 t_game game = {0};
