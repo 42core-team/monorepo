@@ -328,6 +328,7 @@ static GameConfig parseGameConfig()
 	json components = j.at("components").get<json>();
 
 	config.maxComponentsPerUnit = components.at("maxComponentsPerUnit").get<unsigned int>();
+	config.baseUnitCost = components.at("baseUnitCost").get<unsigned int>();
 
 	const json &defaults = components.at("unitDefaultProperties");
 	for (const auto &[name, valueJson] : defaults.items())

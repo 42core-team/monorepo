@@ -307,7 +307,7 @@
         },
         "cost": {
           "type": "integer",
-          "minimum": 0,
+          "minimum": 1,
           "maximum": 10000000
         },
         "visualizer_asset_prioritized": {
@@ -324,12 +324,18 @@
       "additionalProperties": false,
       "required": [
         "maxComponentsPerUnit",
+        "baseUnitCost",
         "unitDefaultProperties",
         "components",
         "invalidConditions"
       ],
       "properties": {
         "maxComponentsPerUnit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000000
+        },
+        "baseUnitCost": {
           "type": "integer",
           "minimum": 0,
           "maximum": 10000000
