@@ -2,6 +2,9 @@
 
 #include "Unit.h"
 
+#include <algorithm>
+#include <cmath>
+
 AttackAction::AttackAction(json msg) : Action(ActionType::ATTACK)
 {
 	decodeJSON(msg);
@@ -59,7 +62,12 @@ std::string AttackAction::execute(Core *core)
 		Unit *targetUnit = (Unit *)obj;
 		damageReductionPercent = targetUnit->getProperties().at(UnitProperty::DAMAGE_REDUCTION_PERCENT);
 	}
-	damage = damage * (100 - damageReductionPercent) / 100;
+	const unsigned int baseDamage = damage;
+	const int armorPercent = std::clamp(damageReductionPercent, 0, 100);
+	const unsigned int roundedDamage =
+			static_cast<unsigned int>(std::round(static_cast<double>(baseDamage) * (100 - armorPercent) / 100.0));
+	// Positive attacks always do at least 1 damage no matter the armor; exactly 0 damage stays 0. that way no amount of armor makes unkillable
+	damage = baseDamage == 0 ? 0 : std::max(1u, roundedDamage);
 
 	obj->damage(unit, damage);
 
