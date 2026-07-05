@@ -18,6 +18,7 @@
 	},
 	"components": {
 		"maxComponentsPerUnit": 5,
+		"unitDefaultCost": 20,
 		"unitDefaultProperties": {
 			"hp": 5,
 			"baseActionCooldown": 3,
