@@ -39,7 +39,7 @@ struct GameConfig
 	unsigned int wallHp;
 
 	unsigned int maxComponentsPerUnit;
-	unsigned int baseUnitCost;
+	unsigned int defaultUnitCost;
 	std::map<UnitProperty, int> defaultUnitProperties;
 	std::vector<ComponentConfig> componentTypes;
 	std::vector<InvalidConditionConfig> invalidConditions;

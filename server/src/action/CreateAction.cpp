@@ -92,7 +92,7 @@ std::string CreateAction::execute(Core *core)
 	}
 
 	std::map<std::string, unsigned int> componentCounts;
-	unsigned int unitCost = Config::game().baseUnitCost;
+	unsigned int unitCost = Config::game().defaultUnitCost;
 
 	for (const std::string &componentId : components_)
 	{
