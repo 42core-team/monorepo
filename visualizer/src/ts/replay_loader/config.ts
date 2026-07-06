@@ -21,6 +21,7 @@ export interface GameConfig {
 	seed: number;
 	idleIncome: number;
 	idleIncomeTimeOut: number;
+	maxUnitStandingCooldown: number;
 	depositHp: number;
 	depositIncome: number;
 	gemPileIncome: number;

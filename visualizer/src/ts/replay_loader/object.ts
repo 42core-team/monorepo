@@ -324,7 +324,7 @@ export function getBarMetrics(
 		const denom = Math.max(calc, obj.ActionCooldown);
 		metrics.push({
 			key: "cooldown",
-			percentage: (obj.ActionCooldown / denom) * 100,
+			percentage: (Math.max(0, obj.ActionCooldown) / denom) * 100,
 		});
 	} else if (obj.type === 0) {
 		const cfg = getGameConfig();

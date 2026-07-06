@@ -183,8 +183,7 @@ class ReplayLoader {
 				this.applyDiff(fullState, tickData);
 			}
 			for (const obj of Object.values(fullState)) {
-				if ("ActionCooldown" in obj && obj.ActionCooldown > 0)
-					obj.ActionCooldown--;
+				if ("ActionCooldown" in obj) obj.ActionCooldown--;
 				if ("SpawnCooldown" in obj && obj.SpawnCooldown > 0)
 					obj.SpawnCooldown--;
 			}
@@ -261,8 +260,7 @@ class ReplayLoader {
 				this.applyDiff(state, tickData);
 			}
 			for (const obj of Object.values(state)) {
-				if ("ActionCooldown" in obj && obj.ActionCooldown > 0)
-					obj.ActionCooldown--;
+				if ("ActionCooldown" in obj) obj.ActionCooldown--;
 				if ("SpawnCooldown" in obj && obj.SpawnCooldown > 0)
 					obj.SpawnCooldown--;
 			}
