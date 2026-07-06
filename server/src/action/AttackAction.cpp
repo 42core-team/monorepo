@@ -37,7 +37,8 @@ std::string AttackAction::execute(Core *core)
 	Position target_pos_ = Board::instance().getObjectPositionById(getTargetId());
 
 	if (Board::instance().getObjectPositionById(unit->getId()).distance(target_pos_) > 1) return "unit is too far away";
-	if (unit->getActionCooldown() > 0) return "unit is on action cooldown (action cooldown should be 0)";
+	if (unit->getActionCooldown() > 0)
+		return "unit is on action cooldown (action cooldown should be 0 or less to perform an action)";
 	if (unit->getTeamId() != core->getTeamId()) return "unit does not belong to your team";
 
 	Object *obj = Board::instance().getObjectAtPos(target_pos_);

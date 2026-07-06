@@ -55,7 +55,7 @@ type UnitData struct {
 	UnitType       UnitType
 	TeamID         uint
 	Gems           *uint    // pointer - may be nil
-	ActionCooldown *uint    // pointer - may be nil
+	ActionCooldown *int     // pointer - may be nil; negative means ready and standing still
 }
 ```
 

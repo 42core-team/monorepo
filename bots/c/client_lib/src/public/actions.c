@@ -104,7 +104,7 @@ void core_action_pathfind(const t_obj *unit, t_pos pos)
 {
 	if (!unit || unit->type != OBJ_UNIT) return;
 	if (unit->pos.x == pos.x && unit->pos.y == pos.y) return;
-	if (unit->s_unit.action_cooldown != 0) return;
+	if (unit->s_unit.action_cooldown > 0) return;
 
 	t_pos posOptionY = (pos.y == unit->pos.y)
 							   ? unit->pos

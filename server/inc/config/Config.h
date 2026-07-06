@@ -28,6 +28,7 @@ struct GameConfig
 
 	unsigned int idleIncome;		// idle income per tick
 	unsigned int idleIncomeTimeOut; // idle income duration in ticks
+	unsigned int maxUnitStandingCooldown;
 
 	unsigned int depositHp;
 	unsigned int depositIncome;

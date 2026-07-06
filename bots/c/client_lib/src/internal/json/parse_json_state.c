@@ -266,7 +266,7 @@ void core_internal_parse_state(char *json)
 	{
 		if (game.objects[i]->type == OBJ_UNIT)
 		{
-			if (game.objects[i]->s_unit.action_cooldown > 0) game.objects[i]->s_unit.action_cooldown--;
+			game.objects[i]->s_unit.action_cooldown--;
 		}
 		else if (game.objects[i]->type == OBJ_CORE)
 		{

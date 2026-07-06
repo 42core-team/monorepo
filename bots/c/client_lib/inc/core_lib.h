@@ -74,8 +74,8 @@ typedef struct s_obj
 			unsigned long team_id;
 			/// @brief The amount of gems the unit is carrying.
 			unsigned long gems;
-			/// @brief Countdown to the next tick the unit can move, defined by it's speed & how much it's carrying.
-			unsigned long action_cooldown;
+			/// @brief Countdown to the next tick the unit can act. Negative means ready and standing still.
+			long action_cooldown;
 			/// @brief Null-terminated string array of all component ids the unit has.
 			char **components;
 			/// @brief The properties of the unit, derived from its components.
@@ -139,7 +139,7 @@ int core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 void core_action_createUnit(const char *name, char *component, ...);
 
 /// @brief Moves a unit to a specific position.
-/// @details Units can only move one tile up, down, left or right; and only if their action_cooldown is 0.
+/// @details Units can only move one tile up, down, left or right; and only if their action_cooldown is 0 or less.
 /// @param unit The unit that should move.
 /// @param pos The position where the unit should move to. Must be next to the unit object.
 void core_action_move(const t_obj *unit, t_pos pos);
@@ -150,7 +150,7 @@ void core_action_move(const t_obj *unit, t_pos pos);
 void core_action_pathfind(const t_obj *unit, t_pos pos);
 
 /// @brief Attacks a target position with a unit.
-/// @details Units can only attack one tile up, down, left or right; and only if their action_cooldown is 0.
+/// @details Units can only attack one tile up, down, left or right; and only if their action_cooldown is 0 or less.
 /// @param attacker The unit that should attack.
 /// @param target The object that the unit should attack.
 void core_action_attack(const t_obj *attacker, const t_obj *target);

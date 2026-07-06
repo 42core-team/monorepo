@@ -17,7 +17,7 @@ The `BuildType` of the builder unit in the config will determine what gets built
 The builder must hold enough money to be able to afford the object it is building as defined by the [config](documentation/configs).
 
 - Objects can only be built one tile up, down, left or right from the builder; for more see [Action Position Limits](documentation/action_position_limits).
-- Builders objects can only build if their action cooldown is 0, for more see [Cooldowns](documentation/cooldowns).
+- Builders objects can only build if their action cooldown is 0 or less, for more see [Cooldowns](documentation/cooldowns).
 
 ## Signature
 

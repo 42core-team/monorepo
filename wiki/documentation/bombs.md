@@ -42,7 +42,7 @@ void spawn_and_update_bombermen(void)
 	for (size_t i = 0; bombermen && bombermen[i]; i++)
 	{
 		t_obj *bomber = bombermen[i];
-		if (bomber->s_unit.action_cooldown != 0) continue;
+		if (bomber->s_unit.action_cooldown > 0) continue;
 
 		// super-simple state machine: NULL = need to build, (void*)1 = built, waiting to light, (void*)2 = done
 
@@ -114,7 +114,7 @@ func spawnAndUpdateBombermen(g *game.Game, b *coregame.Bot) {
 	bombermen = g.ObjectsFilter(isBomberman)
 	for _, bomber := range bombermen {
 		data := bomber.GetUnitData()
-		if data == nil || (data.ActionCooldown != nil && *data.ActionCooldown != 0) {
+		if data == nil || (data.ActionCooldown != nil && *data.ActionCooldown > 0) {
 			continue
 		}
 

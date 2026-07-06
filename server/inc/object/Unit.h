@@ -28,7 +28,7 @@ class Unit : public Object
 
 	unsigned int getTeamId() const { return team_id_; }
 	unsigned int getBalance() const { return balance_; }
-	unsigned int getActionCooldown() const { return action_cooldown_; }
+	long long getActionCooldown() const { return action_cooldown_; }
 
 	bool isOwnedByTeam(unsigned int teamId) const override { return teamId == team_id_; }
 
@@ -42,7 +42,7 @@ class Unit : public Object
 	std::string name_;
 	unsigned int team_id_;
 	unsigned int balance_;
-	unsigned int action_cooldown_ = 0;
+	long long action_cooldown_ = 0;
 
 	unsigned int calcActionCooldown();
 };

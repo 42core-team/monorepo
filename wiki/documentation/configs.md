@@ -2,7 +2,7 @@ If you are in an event, **look at the config**! They contain invaluable info.
 
 # Config Types
 
-- The Game Config contains all gameplay-related settings: Units and their damage values, deposit gem counts, and bomb countdowns.
+- The Game Config contains all gameplay-related settings: Units and their damage values, deposit gem counts, cooldown caps, and bomb countdowns.
 - The Server Config contains settings about how the game runs, e.g. timeouts.
 
 The configs also contain comments detailing what each field in the config means.

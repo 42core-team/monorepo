@@ -300,6 +300,7 @@ static GameConfig parseGameConfig()
 
 	config.idleIncome = j.at("idleIncome").get<unsigned int>();
 	config.idleIncomeTimeOut = j.at("idleIncomeTimeOut").get<unsigned int>();
+	config.maxUnitStandingCooldown = j.at("maxUnitStandingCooldown").get<unsigned int>();
 
 	config.depositHp = j.at("depositHp").get<unsigned int>();
 	config.depositIncome = j.at("depositIncome").get<unsigned int>();

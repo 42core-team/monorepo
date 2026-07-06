@@ -29,7 +29,8 @@ std::string MoveAction::execute(Core *core)
 	Unit *unit = (Unit *)unitObj;
 
 	if (unit->getActionCooldown() > 0)
-		return "unit is on action cooldown (action cooldown should be 0) or has already moved this tick";
+		return "unit is on action cooldown (action cooldown should be 0 or less to perform an action) or has already "
+			   "moved this tick";
 	if (unit->getTeamId() != core->getTeamId()) return "unit does not belong to your team";
 
 	if (!target_.isValid(Config::game().gridSize)) return "target position out of bounds";

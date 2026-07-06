@@ -3,6 +3,7 @@
 	"seed": "",
 	"idleIncome": 3,
 	"idleIncomeTimeOut": 100,
+	"maxUnitStandingCooldown": 50,
 	"depositHp": 50,
 	"depositIncome": 100,
 	"gemPileIncome": 35,

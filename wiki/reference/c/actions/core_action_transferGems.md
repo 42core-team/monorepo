@@ -16,7 +16,7 @@ If the position points to an object that can hold gems (Cores / Units / Gem Pile
 
 Only units are able to drop gems on the floor.
 
-- Objects can only transfer gems if their action cooldown is 0, for more see [Cooldowns](documentation/cooldowns).
+- Objects can only transfer gems if their action cooldown is 0 or less, for more see [Cooldowns](documentation/cooldowns).
 - Objects can only transfer gems one tile up, down, left or right; for more see [Action Position Limits](documentation/action_position_limits). The only exception to this is outlined in the tip box below.
 
 The transferring object must be a Core or Unit of your team, and the target object must be a Core or Unit of any team, a Gem Pile, or an empty grid position.

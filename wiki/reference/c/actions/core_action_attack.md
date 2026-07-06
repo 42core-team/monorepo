@@ -18,7 +18,7 @@ This action not only used to damage any object, but it's also good for destroyin
 > There is friendly fire - you can damage your own units and core. So **BE _CAREFUL!_**
 
 - Units can only attack one tile up, down, left or right; for more see [Action Position Limits](documentation/action_position_limits).
-- Units can only attack if their action cooldown is 0, for more see [Cooldowns](documentation/cooldowns).
+- Units can only attack if their action cooldown is 0 or less, for more see [Cooldowns](documentation/cooldowns).
 
 ## Signature
 

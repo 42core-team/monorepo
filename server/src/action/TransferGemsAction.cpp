@@ -36,7 +36,8 @@ std::string TransferGemsAction::dropGems(Core *core, Object *srcObj)
 
 	Unit *srcUnit = (Unit *)srcObj;
 	if (srcUnit->getTeamId() != core->getTeamId()) return "can't drop gems from another team";
-	if (srcUnit->getActionCooldown() > 0) return "unit is on action cooldown (action cooldown should be 0)";
+	if (srcUnit->getActionCooldown() > 0)
+		return "unit is on action cooldown (action cooldown should be 0 or less to perform an action)";
 
 	if (srcUnit->getBalance() < amount_) amount_ = srcUnit->getBalance();
 	if (amount_ <= 0) return "invalid amount";
@@ -94,7 +95,7 @@ std::string TransferGemsAction::execute(Core *core)
 	{
 		Unit *srcUnit = (Unit *)srcObj;
 		if (srcUnit->getTeamId() != core->getTeamId()) return "can't transfer gems from another team unit";
-		if (srcUnit->getActionCooldown() > 0) return "unit is on action cooldown (action cooldown should be 0)";
+		if (srcUnit->getActionCooldown() > 0) return "unit is on action cooldown (action cooldown should be 0 or less)";
 		srcUnit->resetActionCooldown();
 		if (srcUnit->getBalance() < amount_) amount_ = srcUnit->getBalance();
 		if (srcUnit->getBalance() <= 0)

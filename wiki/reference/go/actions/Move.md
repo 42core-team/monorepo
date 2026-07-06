@@ -13,7 +13,7 @@ https://github.com/42core-team/monorepo/blob/dev/bots/go/client_lib/actions.go
 Moves a unit to a specific position.
 
 - Units can only move one tile up, down, left or right; for more see [Action Position Limits](documentation/action_position_limits).
-- Units can only move if their action cooldown is 0, for more see [Cooldowns](documentation/cooldowns).
+- Units can only move if their action cooldown is 0 or less, for more see [Cooldowns](documentation/cooldowns).
 
 ## Signature
 
