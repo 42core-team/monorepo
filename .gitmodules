@@ -1,0 +1,4 @@
+[submodule "bots/configs/real"]
+	path = bots/configs/real
+	url = ../config.git
+	branch = main

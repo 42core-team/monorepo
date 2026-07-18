@@ -25,7 +25,7 @@ COPY --from=build-game /core/server ./server
 COPY --from=build-game /core/data ./data
 
 COPY ./.github/workflows/server-docker-entrypoint.sh ./docker-entrypoint.sh
-COPY ./bots/c/softcore/configs ./configs
+COPY ./bots/configs/fake_demo ./configs
 
 RUN mkdir replays && chmod +x ./docker-entrypoint.sh
 
