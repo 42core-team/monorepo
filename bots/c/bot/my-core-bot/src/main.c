@@ -55,6 +55,14 @@ static void create_random_icon_test_unit(void)
 	}
 }
 
+static int get_travel_weight(t_pos pos, const t_obj *unit)
+{
+	t_obj *obstacle = core_get_obj_from_pos(pos);
+	if (obstacle && obstacle->type == OBJ_UNIT && obstacle->s_unit.team_id == unit->s_unit.team_id) return -1;
+	if (obstacle && obstacle->type == OBJ_CORE && obstacle->s_core.team_id == unit->s_unit.team_id) return -1;
+	return obstacle ? 10 : 1;
+}
+
 void ft_on_tick(unsigned long tick)
 {
 	printf("-----> [ICON TEST TICK %ld]\n", tick);
@@ -64,7 +72,7 @@ void ft_on_tick(unsigned long tick)
 	t_obj **units = ft_get_units_own();
 	for (int i = 0; units && units[i]; i++)
 	{
-		core_action_pathfind(units[i], ft_get_core_opponent()->pos);
+		core_action_travel(units[i], ft_get_core_opponent()->pos, get_travel_weight);
 
 		core_debug_addObjectInfo(units[i],
 								 "Icon test unit. Components should determine this unit's visualizer icon.\n");
