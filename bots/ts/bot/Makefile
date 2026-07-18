@@ -14,7 +14,7 @@ PLAYER1_BOT_NAME = $(notdir $(PLAYER1_BOT))
 PLAYER2_BOT_NAME = $(notdir $(PLAYER2_BOT))
 
 
-run: stop check_updates
+run: stop check_updates $(PLAYER1_BOT) $(PLAYER2_BOT)
 	@echo ""
 	@echo "$(COLOR_INFO)🎮 Game Visualizer is running at: localhost:4000 $(COLOR_RESET)"
 	@echo ""
@@ -32,9 +32,11 @@ check_updates:
 	./scripts/check_image_updates.sh
 
 $(PLAYER1_BOT):
+	@test "$(PLAYER1_DIR)" != "." || { echo "PLAYER1_BOT must include a directory, e.g. my-core-bot/index.ts" >&2; exit 1; }
 	@echo "No build needed for TypeScript"
 
 $(PLAYER2_BOT):
+	@test "$(PLAYER2_DIR)" != "." || { echo "PLAYER2_BOT must include a directory, e.g. gridmaster/index.ts" >&2; exit 1; }
 	@echo "No build needed for TypeScript"
 
 

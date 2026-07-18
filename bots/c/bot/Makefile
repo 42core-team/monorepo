@@ -32,15 +32,11 @@ check_updates:
 	./scripts/check_image_updates.sh
 
 $(PLAYER1_BOT):
-	ifeq ($(PLAYER1_DIR),.)
-		$(error PLAYER1_BOT must include a directory, e.g. my-core-bot/bot)
-	endif
+	@test "$(PLAYER1_DIR)" != "." || { echo "PLAYER1_BOT must include a directory, e.g. my-core-bot/bot" >&2; exit 1; }
 	$(MAKE) -C $(PLAYER1_DIR)
 
 $(PLAYER2_BOT):
-	ifeq ($(PLAYER2_DIR),.)
-		$(error PLAYER2_BOT must include a directory, e.g. gridmaster/gridmaster)
-	endif
+	@test "$(PLAYER2_DIR)" != "." || { echo "PLAYER2_BOT must include a directory, e.g. gridmaster/gridmaster" >&2; exit 1; }
 	$(MAKE) -C $(PLAYER2_DIR)
 
 
