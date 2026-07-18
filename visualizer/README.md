@@ -54,6 +54,7 @@ This project includes Docker support for containerized deployment.
 
 ```bash
 # Build the Docker image
+./scripts/prepare-version-context.sh
 docker build -t debug-visualizer .
 
 # Run the container
@@ -61,6 +62,11 @@ docker run -p 8080:80 --rm debug-visualizer
 
 # Access the application at http://localhost:8080
 ```
+
+Pass `--build-arg INCLUDE_DEV_ALIAS=true` to expose the current checkout at
+`/dev/` as well as `/`. Stable release tags are grouped by their first three
+version components and the newest fourth-component revision is embedded at a
+route such as `/v0.1.2/`.
 
 ### Multi-Architecture Support
 

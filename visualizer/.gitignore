@@ -2,6 +2,7 @@ node_modules/
 .DS_Store
 .env
 dist/
+.version-builds/
 public/js/*
 nohup.out
 public/replays/*
