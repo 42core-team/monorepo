@@ -6,14 +6,14 @@ sidebarTitle: "⚙️ action_move()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/src/public/actions.c#L32
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h#L141
 
 ## Description
 
 Moves a unit to a specific position.
 
 - Units can only move one tile up, down, left or right; for more see [Action Position Limits](documentation/action_position_limits).
-- Units can only move if their action cooldown is 0 or less, for more see [Cooldowns](documentation/cooldowns).
+- Units can only move if their action cooldown is 0 or less; see [`baseActionCooldown`](documentation/unit_builder#baseactioncooldown).
 
 ## Signature
 
@@ -35,19 +35,24 @@ void
 ```c
 t_obj *target = ft_get_target();
 t_obj *moving_unit = ft_get_moving_unit();
+t_pos next = moving_unit->pos;
 
 if (moving_unit->pos.x < target->pos.x)
-{
-	core_action_move(moving_unit, (t_pos){moving_unit->pos.x + 1, moving_unit->pos.y});
-}
-if (moving_unit->pos.y < target->pos.y)
-{
-	core_action_move(moving_unit, (t_pos){moving_unit->pos.x, moving_unit->pos.y + 1});
-}
-// ...
+	next.x++;
+else if (moving_unit->pos.x > target->pos.x)
+	next.x--;
+else if (moving_unit->pos.y < target->pos.y)
+	next.y++;
+else if (moving_unit->pos.y > target->pos.y)
+	next.y--;
+
+if ((next.x != moving_unit->pos.x || next.y != moving_unit->pos.y)
+	&& core_get_obj_from_pos(next) == NULL)
+	core_action_move(moving_unit, next);
 ```
 
 ## Related
 
 - [🧩 struct s_obj](reference/c/objects/s_obj)
 - [🧩 struct s_pos](reference/c/objects/s_pos)
+- [⚙️ function core_action_travel(...)](reference/c/actions/core_action_travel)

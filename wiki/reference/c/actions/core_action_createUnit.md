@@ -6,41 +6,50 @@ sidebarTitle: "⚙️ action_createUnit()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/src/public/actions.c#L24
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h#L136
 
 ## Description
 
-Creates a new unit of specified type.
+Requests a new unit built from component IDs. Use the event's [Unit Builder](documentation/unit_builder) to choose the components and see the unit's properties, cost, and core spawn cooldown.
 
-Your core needs to own a certain amount of money to be able to create a unit. This amount is different depending on the [type of unit](reference/c/objects/e_unit_type) and can be found in the [config](documentation/configs).
+Every unit starts with the event's default cost and properties. Each component changes those properties and adds to the cost.
 
-Cores with a spawn cooldown that isn't 0 are unable to spawn new units. [More info on spawn cooldowns](documentation/cooldowns).
+No unit is created when a component is unknown, there are too many components, the design breaks an event rule, the core cannot afford it, or `s_core.spawn_cooldown > 0`.
 
-Units are spawned as close to your core as possible - but if all positions directly next to your core are occupied, a flood fill algorithm will be used looking for the next empty space and the unit will be placed there.
+The unit appears on a later tick, at the nearest empty position around the core. If the grid has no empty position, creation fails.
 
 ## Signature
 
 ```c
-void core_action_createUnit(t_unit_type unit_type);
+void core_action_createUnit(const char *name, char *component, ...);
 ```
 
 ## Parameters
 
-- `t_unit_type unit_type`: The type of unit to create
+- `const char *name`: Custom unit name. Pass `NULL` for a generated rogue-style name.
+- `char *component`: First component ID from the Unit Builder, or `NULL` for no components.
+- `...`: Any remaining component IDs. The list must end with `NULL`.
+
+Component IDs may be repeated when the resulting design satisfies the builder's component-count limit and validity rules.
 
 ## Return
 
-void
+`void`. Creation failures are reported with the next game state. No unit is added when creation fails.
 
 ## Examples
 
 ```c
-if (core_get_objs_filter_count(ft_is_own_team_warrior) < 3)
-{
-	core_action_createUnit(UNIT_WARRIOR);
-}
+// One component and a custom name.
+core_action_createUnit("Warrior", "combat", NULL);
+
+// Repeated components. Use only if this design is valid in your event's builder.
+core_action_createUnit("Tank", "armor", "health", "health", NULL);
+
+// Use a generated name.
+core_action_createUnit(NULL, "speed", NULL);
 ```
 
 ## Related
 
-- [🔢 enum e_unit_type](reference/c/objects/e_unit_type)
+- [Unit Builder](documentation/unit_builder)
+- [🧩 struct s_obj](reference/c/objects/s_obj)

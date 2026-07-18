@@ -19,7 +19,7 @@ sidebarTitle: "FaQ"
 
 ### 🔍 It seems I am missing some files. Where are they?
 
-> We have hidden some files when you open up your core bot repository in Visual Studio Code. These are not useful to you unless you want to start tinkering around a bit, so don't worry about us hiding critical info. We did this so nobody gets confused. If you want to disable it, look at the repository outside of VSCode or via the terminal, go into `.vscode/settings.json` and remove every file you don't want hidden from the exclude list.
+> We have hidden some files when you open up your core bot repository in Visual Studio Code. These are not useful to you unless you want to start tinkering around a bit, so don't worry about us hiding critical info. We did this so nobody gets confused. If you want to disable it, look at the repository outside of VSCode or via the terminal, open `.vscode/settings.json` and remove every file you don't want hidden from the exclude list.
 >
 > If that doesn't help you, you probably accidentally deleted something. Well, it's a git repository for a reason.
 
@@ -35,7 +35,7 @@ sidebarTitle: "FaQ"
 
 ### 🪻 Are there limits to how many gems units or cores can hold?
 
-> No. Go nuts.
+> Cores have no gem limit. A unit's `maxBalance` limits how many gems it collects from a gem pile. Read more in the [Unit Builder guide](documentation/unit_builder#maxbalance).
 
 ### 🧐 I have found a bug! What do I do?
 
@@ -45,6 +45,10 @@ sidebarTitle: "FaQ"
 
 ### 💎 How do I pick up gem piles? How do I mine gem deposits?
 
-> You can do both of those things via the attack action ([C](reference/c/actions/core_action_attack) | [Go](reference/go/actions/Attack)). Just stand next to the object with a unit that can attack that object type.
+> You can do both of those things via the [attack action](reference/c/actions/core_action_attack). Just stand next to the object with a unit that can attack that object type.
+
+### 💡 I've read everything all the way down here - any rewards for a good boy like me?
+
+> 💪 Sure: Consider the powerful possibilities of the `void *data` field in every object! Here, you can save any data you want, allowing you to easily execute more detailed strategies and coordinate your troops efficiently by making your own custom [state machine](https://www.reddit.com/r/learnprogramming/comments/1g5yxci/state_machines_for_a_beginner/)! The library wont touch it. Just remember to free everything at the end.
 
 Other questions? There is an "faq" channel in the CORE global discord for all your questions.

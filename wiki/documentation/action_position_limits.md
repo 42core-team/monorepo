@@ -1,6 +1,6 @@
-Multiple action functions, like move and build, only work up, down left or right of a units position. Here's an example based on the `core_action_move` function:
+Move, attack, and most unit gem transfers only work one position up, down, left, or right of the unit. Here is an example using `core_action_move`:
 
-```text
+<pre>
 *123456
 1......
 2......
@@ -8,8 +8,8 @@ Multiple action functions, like move and build, only work up, down left or right
 4...u..
 5......
 6......
-```
+</pre>
 
-Say we have unit `u` at [4,4]. The move action will fail if you try to move it anywhere but [3,4], [4,3], [5,4], [4,5]. Diagonal movement does not exist.
+If unit `u` is at [4,4], it can move to [3,4], [4,3], [5,4], or [4,5]. A move to any other position fails. Units cannot move diagonally.
 
-We use absolute positions even if almost none of them are valid as converting to a relative position would be annoying and unnecessary in most pathfinding-related scenarios.
+Actions use absolute grid positions. They do not use directions such as "left" or offsets such as `{-1, 0}`.

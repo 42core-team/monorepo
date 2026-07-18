@@ -12,7 +12,7 @@ https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.
 
 Position structure for 2D coordinates.
 
-Positions are 0-indexed, so position [0,0] and (assuming a gridSize of 20 in the config) [19, 19] are valid positions, but [-1,-1] and [20,20] are _not_.
+Positions start at 0. Both coordinates must be smaller than `game.grid_size`. On a 20×20 grid, [0,0] and [19,19] are valid, but [20,20] is not.
 
 There can never be two objects at the same position. To check whether there is something at a given position, use `core_get_obj_from_pos()`. If it returns `NULL`, there's nothing there.
 
@@ -34,15 +34,11 @@ typedef struct s_pos
 ## Examples
 
 ```c
+#include <stdlib.h>
+
 int manhattan_distance(t_pos pos1, t_pos pos2)
 {
-	double x = (double)pos1.x - (double)pos2.x;
-	double y = (double)pos1.y - (double)pos2.y;
-
-	if (x < 0) x = -x;
-	if (y < 0) y = -y;
-
-	return ((int)(x + y));
+	return abs((int)pos1.x - (int)pos2.x) + abs((int)pos1.y - (int)pos2.y);
 }
 ```
 

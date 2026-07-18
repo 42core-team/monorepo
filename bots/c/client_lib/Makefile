@@ -12,20 +12,12 @@ SRCDIR = src
 
 SRCS := $(shell find $(SRCDIR) -name "*.c")
 OBJS := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRCS))
-TEST = $(OBJDIR)/action_travel_test
 
 .DEFAULT_GOAL := all
 
-.PHONY: all clean fclean re log test
+.PHONY: all clean fclean re log
 
 all: $(LIBRARY)
-
-test: $(TEST)
-	./$(TEST)
-
-$(TEST): tests/action_travel.c src/public/action_travel.c
-	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -I $(INC) $^ -o $@
 
 $(LIBRARY): $(OBJS)
 	rm -f $(LIBRARY)

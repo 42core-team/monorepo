@@ -273,6 +273,7 @@ void core_internal_parse_state(char *json)
 			if (game.objects[i]->s_core.spawn_cooldown > 0) game.objects[i]->s_core.spawn_cooldown--;
 		}
 	}
+	core_internal_objPositionIndex_rebuild();
 
 	// print errors from last tick if there were any
 	json_node *errors = json_find(root, "errors");

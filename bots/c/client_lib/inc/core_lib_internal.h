@@ -10,6 +10,9 @@ bool core_internal_isPosValid(t_pos pos);
 void core_internal_freeStringArray(char **array);
 void core_internal_freeObject(t_obj *obj);
 void core_internal_freeObjects(void);
+void core_internal_objPositionIndex_rebuild(void);
+void core_internal_objPositionIndex_free(void);
+void core_internal_travelWorkspace_free(void);
 void core_internal_freeAndExit(const char *msg, int count, ...);
 
 // ----- Socket

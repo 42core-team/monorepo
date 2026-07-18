@@ -96,6 +96,8 @@ void core_internal_freeObjects(void)
 		free(game.objects);
 		game.objects = NULL;
 	}
+	core_internal_objPositionIndex_free();
+	core_internal_travelWorkspace_free();
 }
 
 void core_internal_freeAndExit(const char *msg, int count, ...)
