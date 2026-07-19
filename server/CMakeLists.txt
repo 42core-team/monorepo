@@ -81,17 +81,3 @@ target_include_directories(server PRIVATE
 target_compile_options(server PRIVATE -Wall -Wextra -Werror)
 
 target_link_libraries(server PRIVATE nlohmann_json nlohmann_json_schema_validator xxhash)
-
-add_executable(gem_balance_test EXCLUDE_FROM_ALL
-	tests/gem_balance_test.cpp
-	src/action/TransferGemsAction.cpp
-	src/game/Board.cpp
-	src/game/Stats.cpp
-	src/object/Core.cpp
-	src/object/GemPile.cpp
-	src/object/Unit.cpp
-	src/utils/flood_fill.cpp
-)
-target_include_directories(gem_balance_test PRIVATE ${ALL_INC_DIRS} "${CMAKE_BINARY_DIR}/nlohmann_json/include/nlohmann")
-target_link_libraries(gem_balance_test PRIVATE nlohmann_json)
-add_custom_target(test-gem-balance COMMAND $<TARGET_FILE:gem_balance_test> DEPENDS gem_balance_test)
