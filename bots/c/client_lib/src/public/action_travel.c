@@ -136,9 +136,7 @@ static unsigned int core_static_travel_defaultWeight(t_pos pos, const t_obj *uni
 	if (object->type == OBJ_GEM_PILE)
 	{
 		int max_balance = unit->s_unit.properties.max_balance;
-		if (max_balance <= 0 || unit->s_unit.gems >= (unsigned long)max_balance ||
-			object->s_deposit_gems_pile.gems > (unsigned long)max_balance - unit->s_unit.gems)
-			return CORE_TRAVEL_BLOCKED;
+		if (max_balance <= 0 || unit->s_unit.gems >= (unsigned long)max_balance) return CORE_TRAVEL_BLOCKED;
 	}
 
 	unsigned int damage = core_static_travel_getDamage(unit, object);
