@@ -144,10 +144,14 @@ void core_action_createUnit(const char *name, char *component, ...);
 /// @param pos The position where the unit should move to. Must be next to the unit object.
 void core_action_move(const t_obj *unit, t_pos pos);
 
-/// @brief takes a position anywhere and moves a step towards it with a simple algorithm
-/// @param unit the unit that should move
-/// @param pos the position where the unit should pathfind to - can be anywhere on the map
-void core_action_pathfind(const t_obj *unit, t_pos pos);
+/// @brief Weight returned by a travel policy for a position that must not be entered.
+#define CORE_TRAVEL_BLOCKED UINT_MAX
+
+/// @brief Travels one optimal step toward a position using a weighted shortest-path search.
+/// @param unit The unit that should travel.
+/// @param pos The destination position.
+/// @param get_weight Function returning the cost of entering a position, or NULL for the default action-cost estimate.
+void core_action_travel(const t_obj *unit, t_pos pos, unsigned int (*get_weight)(t_pos, const t_obj *));
 
 /// @brief Attacks a target position with a unit.
 /// @details Units can only attack one tile up, down, left or right; and only if their action_cooldown is 0 or less.

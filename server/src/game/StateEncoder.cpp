@@ -76,12 +76,6 @@ json StateEncoder::diffObject(const json &currentObj, const json &previousObj)
 	{
 		const std::string &key = it.key();
 		if (key == "id") continue;
-		if (key == "ActionCooldown" && currentObj.contains("ActionCooldown") &&
-			previousObj.contains("ActionCooldown") && currentObj["ActionCooldown"] <= previousObj["ActionCooldown"])
-			continue;
-		if (key == "SpawnCooldown" && currentObj.contains("SpawnCooldown") && previousObj.contains("SpawnCooldown") &&
-			currentObj["SpawnCooldown"] <= previousObj["SpawnCooldown"])
-			continue;
 
 		if (previousObj.find(key) == previousObj.end() || previousObj.at(key) != it.value())
 		{

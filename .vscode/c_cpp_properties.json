@@ -7,10 +7,8 @@
 			"intelliSenseMode": "linux-gcc-x64",
 			"includePath": [
 				"${workspaceFolder}/bots/c/client_lib/inc",
-				"${workspaceFolder}/bots/c/hardcore/gridmaster/inc",
-				"${workspaceFolder}/bots/c/hardcore/my-core-bot/inc",
-				"${workspaceFolder}/bots/c/softcore/gridmaster/inc",
-				"${workspaceFolder}/bots/c/softcore/my-core-bot/inc",
+				"${workspaceFolder}/bots/c/bot/gridmaster/inc",
+				"${workspaceFolder}/bots/c/bot/my-core-bot/inc",
 				"${workspaceFolder}/server/inc/**",
 				"${workspaceFolder}/server/inc/**/**",
 				"${workspaceFolder}/server/inc/**/*",

@@ -1,0 +1,12 @@
+{
+  "name": "bot-my-core-bot",
+  "version": "1.0.0",
+  "description": "TS Core Bot",
+  "main": "index.ts",
+  "scripts": {
+    "start": "bun run index.ts"
+  },
+  "dependencies": {
+    "@core/client-lib": "file:../../../core/ts/client_lib"
+  }
+}

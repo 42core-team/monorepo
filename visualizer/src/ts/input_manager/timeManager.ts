@@ -81,6 +81,12 @@ function setTick(tickValue: number) {
 	tickTimelineNumberInput.value = tick.toString();
 	renderDirty = true;
 }
+function updateDisplayedTick() {
+	const max = Math.max(0, getTotalTicks() - 1);
+	const displayedTick = Math.min(max, tick + (tickProgress > 0.5 ? 1 : 0));
+	tickTimelineSlider.value = displayedTick.toString();
+	tickTimelineNumberInput.value = displayedTick.toString();
+}
 function setPlaying(isPlaying: boolean) {
 	playing = isPlaying;
 	const playPauseIcon = document.getElementById(
@@ -99,6 +105,7 @@ export function isAtEnd(): boolean {
 }
 
 export function startPlayback(): void {
+	if (isAtEnd()) resetTimeManager();
 	setPlaying(true);
 	lastTimestamp = Date.now();
 }
@@ -370,10 +377,12 @@ export function getCurrentTickData(): tickData {
 	const now = Date.now();
 	if (!playing) {
 		lastTimestamp = null;
+		updateDisplayedTick();
 		return { tick, tickProgress };
 	}
 	if (lastTimestamp === null) {
 		lastTimestamp = now;
+		updateDisplayedTick();
 		return { tick, tickProgress };
 	}
 	const dt = (now - lastTimestamp) / 1000; // seconds elapsed
@@ -396,6 +405,7 @@ export function getCurrentTickData(): tickData {
 		}
 	}
 
+	updateDisplayedTick();
 	return { tick, tickProgress };
 }
 

@@ -302,7 +302,17 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 		killWorstPlayerOnTimeout();
 	}
 
-	// 5. SEND STATE
+	// 5. ADVANCE COOLDOWNS
+
+	for (auto &obj : Board::instance())
+	{
+		if (obj.getType() == ObjectType::Unit)
+			static_cast<Unit &>(obj).tickActionCooldown();
+		else if (obj.getType() == ObjectType::Core)
+			static_cast<Core &>(obj).tickSpawnCooldown();
+	}
+
+	// 6. SEND AUTHORITATIVE STATE
 
 	sendState(actions, tick, failures);
 
@@ -310,7 +320,7 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 	// ----------------------------
 
 
-	// 6. REMOVE CORES
+	// 7. REMOVE CORES
 	// connection libs must receive one final state json with their core at 0 hp to realize they lost
 
 	std::vector<unsigned> removeTeamIds;
@@ -340,17 +350,6 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 				break;
 			}
 		}
-	}
-
-	// 7. ActionCooldown / SpawnCooldown DECREMENT FOR UNITS / CORES
-	// must happen AFTER state send cause clients & visualizer also do it locally for replay efficiency, otherwise we get a server/client desync with two decrements in one tick when ActionCooldown is reset
-
-	for (auto &obj : Board::instance())
-	{
-		if (obj.getType() == ObjectType::Unit)
-			static_cast<Unit &>(obj).tickActionCooldown();
-		else if (obj.getType() == ObjectType::Core)
-			static_cast<Core &>(obj).tickSpawnCooldown();
 	}
 
 	// 8. Clean up debug info / paths

@@ -9,13 +9,13 @@ This page is focused around making sure your bot can properly run on the website
 - **Executable name**: The produced binary must be named `bot` (no extension).
 - **Runtime command**: Your bot is started as `./bot <rndId>` by the job.
 
-```text
+<pre>
 / (repo root)
 └─ my-core-bot/
    ├─ Makefile  (must build an executable named "bot")
    ├─ src/
    └─ ...
-```
+</pre>
 
 # Do NOT modify these
 
@@ -44,9 +44,9 @@ This page is focused around making sure your bot can properly run on the website
 
 - Test by running exactly what the website runs:
 
-```bash
+<pre>
 cd my-core-bot && make && ./bot 42
-```
+</pre>
 > The result should be your bot running trying to connect
 
 # FAQ

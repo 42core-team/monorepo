@@ -9,7 +9,7 @@ import type { TickAction } from "./action";
 import type { GameConfig } from "./config";
 import type { TickObject } from "./object";
 
-const expectedReplayVersion = "2.0.0";
+const expectedReplayVersion = "3.0.0";
 const winnerNameElement = document.getElementById(
 	"winnername",
 ) as HTMLSpanElement;
@@ -182,11 +182,6 @@ class ReplayLoader {
 			if (tickData?.objects) {
 				this.applyDiff(fullState, tickData);
 			}
-			for (const obj of Object.values(fullState)) {
-				if ("ActionCooldown" in obj) obj.ActionCooldown--;
-				if ("SpawnCooldown" in obj && obj.SpawnCooldown > 0)
-					obj.SpawnCooldown--;
-			}
 			if (t % this.cacheInterval === 0) {
 				this.cache.set(t, deepClone(fullState));
 			}
@@ -258,11 +253,6 @@ class ReplayLoader {
 			const tickData = this.replayData.ticks[t.toString()];
 			if (tickData?.objects) {
 				this.applyDiff(state, tickData);
-			}
-			for (const obj of Object.values(state)) {
-				if ("ActionCooldown" in obj) obj.ActionCooldown--;
-				if ("SpawnCooldown" in obj && obj.SpawnCooldown > 0)
-					obj.SpawnCooldown--;
 			}
 		}
 

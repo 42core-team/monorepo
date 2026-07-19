@@ -5,8 +5,7 @@ on:
     paths:
       - 'bots/base/**'
       - 'bots/*/base/**'
-      - 'bots/*/softcore/**'
-      - 'bots/*/hardcore/**'
+      - 'bots/*/bot/**'
       - 'bots/Makefile'
       - 'bots/README.md'
       - 'bots/sync_base_resources.sh'
@@ -18,8 +17,7 @@ on:
     paths:
       - 'bots/base/**'
       - 'bots/*/base/**'
-      - 'bots/*/softcore/**'
-      - 'bots/*/hardcore/**'
+      - 'bots/*/bot/**'
       - 'bots/Makefile'
       - 'bots/README.md'
       - 'bots/sync_base_resources.sh'

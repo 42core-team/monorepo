@@ -4,11 +4,11 @@
 
 Have the person you want to play against send them their executable. In their cloned git repo, it will be created under `my-core-bot/bot`.
 
-```bash
+<pre>
 /core/server /workspace/configs/server.config.json /workspace/configs/game.config.json /core/data 42 43 > /dev/null &
 ./PATH_TO_PLAYER_1_EXECUTABLE 42 > /dev/null &
 ./PATH_TO_PLAYER_2_EXECUTABLE 43
-```
+</pre>
 
 Running the following code will start a game of the player 1 executable against the player 2 executable.
 
@@ -16,9 +16,9 @@ Running the following code will start a game of the player 1 executable against 
 
 Alternatively, you can play against others if you have their full code folder (their `my-core-bot/` directory) available by manually specifying the two bots that are playing. To do this, change the `PLAYER1_BOT` and `PLAYER2_BOT` variables to point to another players copied over source files: `player_source_files_folder/player_executable_name`.
 
-```bash
+<pre>
 make PLAYER1_BOT=my-core-bot/bot PLAYER2_BOT=gridmaster/gridmaster
-```
+</pre>
 
 You will most likely want to keep `PLAYER1_BOT` pointing to `my-core-bot/bot`, which will make your own bot participate in the fight.\
 You can even use this method to create your own custom testing opponent or to play against yourself and see what happens.\

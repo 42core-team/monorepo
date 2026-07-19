@@ -6,13 +6,13 @@ sidebarTitle: "🧩 s_game"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h#L166
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h#L97
 
 ## Description
 
-The game struct is your primary source of information about the happenings in the game. It contains the entire game state.
+Contains the game state available to your bot. Use the global `game` variable from any file that includes `core_lib.h`.
 
-The game struct gets instantiated for you by the Core Libary when you call core_startGame. Read it to your liking! Access it anywhere by typing `game.` in any files that include `core_lib.h`.
+The values are updated before every tick callback.
 
 ## Signature
 
@@ -20,30 +20,31 @@ The game struct gets instantiated for you by the Core Libary when you call core_
 typedef struct s_game
 {
 	unsigned long elapsed_ticks;
-	t_config config;
 	unsigned long my_team_id;
+	unsigned short grid_size;
 	t_obj **objects;
 } t_game;
 ```
 
-## Parameters
+## Fields
 
-- `unsigned long elapsed_ticks`: The elapsed ticks since the game started. Same as what you're passed in your tick callback function.
-- `t_config config`: The config contains base information about the game that don't change such as the map size and the unit types.
-- `unsigned long my_team_id`: The id of the team that you are playing for. Saved in the team_id field of your cores and units.
-- `t_obj **objects`: List of all objects (units, cores, deposits, gem piles, bombs, walls etc.) and their informations. NULL-terminated.
+- `elapsed_ticks`: Ticks since the game started. This is the same value passed to your tick callback.
+- `my_team_id`: ID of your team. Your core and units use the same ID.
+- `grid_size`: Width and height of the square grid.
+- `objects`: `NULL`-terminated array of every current object.
 
-## Examples
+The library owns the objects and the array. Do not free `game.objects`.
+
+## Example
 
 ```c
-for (int i = 0; game.objects && game.objects[i]; i++)
+for (size_t i = 0; game.objects && game.objects[i]; i++)
 {
 	t_obj *obj = game.objects[i];
-	// do something with the object here
+	// Read the object here.
 }
 ```
 
 ## Related
 
-- [🧩 struct s_config](reference/c/config/s_config)
 - [🧩 struct s_obj](reference/c/objects/s_obj)

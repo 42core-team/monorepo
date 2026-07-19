@@ -81,6 +81,13 @@ std::string TransferGemsAction::execute(Core *core)
 	if (srcPos.distance(dstPos) > maxDist)
 		return "invalid transfer distance; objects aren't as close as possible in Manhattan distance";
 
+	if (dstObj->getType() == ObjectType::Unit)
+	{
+		Unit *dstUnit = (Unit *)dstObj;
+		amount_ = std::min(amount_, dstUnit->getRemainingBalanceCapacity());
+		if (amount_ == 0) return "destination unit is at max balance";
+	}
+
 	// cant transfer someone else's gems
 	if (srcObj->getType() == ObjectType::Core)
 	{

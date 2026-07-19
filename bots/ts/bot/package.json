@@ -1,0 +1,14 @@
+{
+  "name": "bot-ts",
+  "version": "1.0.0",
+  "description": "TypeScript bot for Core game",
+  "main": "index.ts",
+  "scripts": {
+    "start": "bun run index.ts",
+    "gridmaster": "bun run gridmaster/index.ts",
+    "my-core-bot": "bun run my-core-bot/index.ts"
+  },
+  "dependencies": {
+    "@types/node": "^20.11.0"
+  }
+}
