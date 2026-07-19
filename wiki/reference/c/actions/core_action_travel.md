@@ -10,20 +10,17 @@ https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.
 
 ## Description
 
-Makes your unit move across the grid, choosing the most efficient path around obstacles to your goal.
+Makes your unit move across the grid, choosing the most efficient path around obstacles to your goal. If something is in the way, the action will even handle destroying the obstacles for you. It does this using [Dijkstras Algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm).
 
 One call makes the unit take one step. Call it again on later ticks to keep moving.
 
-An optional weight function decides how costly each position is. Its return value also decides whether the position is
-passable: return `CORE_TRAVEL_BLOCKED` when the position must not be entered or its occupant must not be attacked. Pass
-`NULL` to use the default policy.
+The function works via a weight function. You can either create a custom one for advanced logic, but a basic default weight function is provided in the client lib as well. To use it, just pass NULL instead of a function, and the default logic will be used. You can find the default weight function [here](https://github.com/42core-team/monorepo/blob/bbf439b8ec83d229b0183fb2d712d8b888258dfc/bots/c/client_lib/src/public/action_travel.c#L131).
 
-The unit then does one of two things:
+When making a custom weight function, you can exclude an object from potentially being destroyed to shorten the path if its in the way by returning `CORE_TRAVEL_BLOCKED` from the weight function when it is the input. This is e.g. highly recommended for your own units and especially your core, because otherwise a travel function might deem it most efficient to start killing your own troops. Any finite weight allows travel to route through it and attack the occupant when it becomes the next step.
 
-- If the next position is empty, it moves there.
-- If an attackable object blocks the next position, it attacks it.
+If the goal cannot be reached, the unit tries to move as close as possible anyways.
 
-If the goal cannot be reached, the unit moves towards the reachable position closest to it. If the unit cannot get any closer, no action is added.
+You do not have to use travel. If you want to write your own pathfinder or movement rules, call [`core_action_move`](reference/c/actions/core_action_move) and [`core_action_attack`](reference/c/actions/core_action_attack) directly. For advanced bots, this is highly recommended.
 
 ## Signature
 
@@ -36,35 +33,8 @@ void core_action_travel(const t_obj *unit, t_pos pos,
 
 - `unit`: One of your units. It must be ready to act (`action_cooldown <= 0`).
 - `pos`: The goal. It may be anywhere inside the grid and does not need to be empty.
-- `get_weight`: Returns the cost of entering a position for this unit, `CORE_TRAVEL_BLOCKED` to make it impassable, or
+- `get_weight`: Returns the dijkstra-cost of entering a position for this unit, `CORE_TRAVEL_BLOCKED` to make it impassable, or
   pass `NULL` for the default policy.
-
-The callback should only inspect the game and return a value. Do not add actions or change state inside it. Each
-position's weight is requested once per travel call.
-
-For an occupied position, any finite weight allows travel to route through it and attack the occupant when it becomes
-the next step. `CORE_TRAVEL_BLOCKED` is exactly `UINT_MAX`; it is reserved and is not a valid finite weight. The largest
-finite weight is therefore `UINT_MAX - 1`. Travel never attacks a friendly unit or core, even if a custom callback
-returns a finite weight for it.
-
-A custom callback replaces the default damage and gem-capacity checks. Returning a finite weight for any non-friendly
-occupant opts into attacking it, so only do that when the unit can actually clear that object.
-
-## Default behavior
-
-The default weight is `1` for open ground. For an occupied position, it estimates the attacks required to destroy the
-object from its health, armor, and the traveling unit's relevant damage property, then adds one for moving onto the
-cleared position. Travel therefore prefers a short open detour over repeatedly attacking a durable obstacle.
-
-The default policy returns `CORE_TRAVEL_BLOCKED` for:
-
-- a friendly unit or core;
-- a unit when `damage_unit` is not positive;
-- a core when `damage_core` is not positive;
-- a wall or deposit when `damage_object` is not positive; and
-- a gem pile that does not fit within the unit's remaining `max_balance`.
-
-These checks answer whether the unit can eventually clear the object, not whether it can destroy it in one attack.
 
 ## Example
 
@@ -78,6 +48,7 @@ void move_towards(t_obj *unit, t_pos goal)
 This custom policy refuses to enter any occupied position, so the unit only uses open ground:
 
 ```c
+// weight function
 static unsigned int avoid_occupied_positions(t_pos pos, const t_obj *unit)
 {
 	(void)unit;
@@ -86,24 +57,6 @@ static unsigned int avoid_occupied_positions(t_pos pos, const t_obj *unit)
 
 core_action_travel(unit, goal, avoid_occupied_positions);
 ```
-
-## When no action is added
-
-Travel does nothing when:
-
-- `unit` is `NULL` or is not a unit;
-- the unit is still on cooldown;
-- the goal is outside the grid;
-- the unit is already at the goal;
-- no reachable position gets the unit closer to the goal.
-
-## About weights
-
-Travel prefers routes with the lowest total entry weight; the starting position adds no cost. Finite weights range
-from `0` through `UINT_MAX - 1`. `CORE_TRAVEL_BLOCKED` (`UINT_MAX`) is skipped rather than added to the route cost.
-Travel uses Dijkstra's algorithm for every call.
-
-You do not have to use travel. If you want to write your own pathfinder or movement rules, call [`core_action_move`](reference/c/actions/core_action_move) and [`core_action_attack`](reference/c/actions/core_action_attack) directly.
 
 ## Related
 

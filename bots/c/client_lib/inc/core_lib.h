@@ -148,10 +148,6 @@ void core_action_move(const t_obj *unit, t_pos pos);
 #define CORE_TRAVEL_BLOCKED UINT_MAX
 
 /// @brief Travels one optimal step toward a position using a weighted shortest-path search.
-/// @details The callback may inspect the current game state and traveling unit. Return CORE_TRAVEL_BLOCKED for a
-/// position that must not be entered or whose occupant must not be attacked. Friendly units and cores are always
-/// blocked. Pass NULL to use the default policy. If the target is unreachable, the unit approaches the closest
-/// reachable position by Manhattan distance.
 /// @param unit The unit that should travel.
 /// @param pos The destination position.
 /// @param get_weight Function returning the cost of entering a position, or NULL for the default action-cost estimate.

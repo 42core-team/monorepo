@@ -161,8 +161,7 @@ static void core_static_travel_prepareSurfaces(t_travel_workspace *workspace, si
 		node->heap_pos = sentinel;
 		node->weight = get_weight(position, unit);
 		node->flags = node->weight == CORE_TRAVEL_BLOCKED ? TRAVEL_BLOCKED : 0;
-		if (obstacle && !(node->flags & TRAVEL_BLOCKED))
-			node->flags = core_static_travel_isFriendly(unit, obstacle) ? TRAVEL_BLOCKED : TRAVEL_CAN_REMOVE;
+		if (obstacle && !(node->flags & TRAVEL_BLOCKED)) node->flags = TRAVEL_CAN_REMOVE;
 	}
 }
 
