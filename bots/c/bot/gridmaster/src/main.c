@@ -21,5 +21,5 @@ void ft_on_tick(unsigned long tick)
 	t_obj *target = core_get_obj_filter_nearest((t_pos){0, 0}, is_core_opponent);
 	for (int i = 0; target && game.objects && game.objects[i]; i++)
 		if (game.objects[i]->type == OBJ_UNIT && game.objects[i]->s_unit.team_id == game.my_team_id)
-			core_action_travel(game.objects[i], target->pos, NULL, NULL);
+			core_action_travel(game.objects[i], target->pos, NULL);
 }

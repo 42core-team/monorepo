@@ -122,37 +122,33 @@ static unsigned int core_static_travel_getDamage(const t_obj *unit, const t_obj 
 	return damage > 0 ? (unsigned int)damage : 0;
 }
 
-static unsigned int core_static_travel_defaultWeight(t_pos pos, const t_obj *unit)
-{
-	t_obj *object = core_get_obj_from_pos(pos);
-	if (!object) return 1;
-
-	unsigned int damage = core_static_travel_getDamage(unit, object);
-	if (damage == 0) return UINT_MAX;
-	uint64_t attacks = object->hp / damage + (object->hp % damage != 0);
-	return attacks >= UINT_MAX ? UINT_MAX : (unsigned int)attacks + 1;
-}
-
 static bool core_static_travel_isFriendly(const t_obj *unit, const t_obj *object)
 {
 	return (object->type == OBJ_UNIT && object->s_unit.team_id == unit->s_unit.team_id) ||
 		   (object->type == OBJ_CORE && object->s_core.team_id == unit->s_unit.team_id);
 }
 
-static bool core_static_travel_defaultCanBreak(const t_obj *unit, const t_obj *object)
+static unsigned int core_static_travel_defaultWeight(t_pos pos, const t_obj *unit)
 {
+	t_obj *object = core_get_obj_from_pos(pos);
+	if (!object) return 1;
+	if (core_static_travel_isFriendly(unit, object)) return CORE_TRAVEL_BLOCKED;
 	if (object->type == OBJ_GEM_PILE)
 	{
 		int max_balance = unit->s_unit.properties.max_balance;
-		return max_balance > 0 && unit->s_unit.gems < (unsigned long)max_balance &&
-			   object->s_deposit_gems_pile.gems <= (unsigned long)max_balance - unit->s_unit.gems;
+		if (max_balance <= 0 || unit->s_unit.gems >= (unsigned long)max_balance ||
+			object->s_deposit_gems_pile.gems > (unsigned long)max_balance - unit->s_unit.gems)
+			return CORE_TRAVEL_BLOCKED;
 	}
-	return core_static_travel_getDamage(unit, object) > 0;
+
+	unsigned int damage = core_static_travel_getDamage(unit, object);
+	if (damage == 0) return CORE_TRAVEL_BLOCKED;
+	uint64_t attacks = object->hp / damage + (object->hp % damage != 0);
+	return attacks >= CORE_TRAVEL_BLOCKED - 1 ? CORE_TRAVEL_BLOCKED - 1 : (unsigned int)attacks + 1;
 }
 
 static void core_static_travel_prepareSurfaces(t_travel_workspace *workspace, size_t count, size_t grid_size,
-											   const t_obj *unit, unsigned int (*get_weight)(t_pos, const t_obj *),
-											   bool (*can_break)(const t_obj *, const t_obj *))
+											   const t_obj *unit, unsigned int (*get_weight)(t_pos, const t_obj *))
 {
 	uint32_t sentinel = (uint32_t)count;
 	for (uint32_t i = 0; i < count; i++)
@@ -164,10 +160,9 @@ static void core_static_travel_prepareSurfaces(t_travel_workspace *workspace, si
 		node->first_step = sentinel;
 		node->heap_pos = sentinel;
 		node->weight = get_weight(position, unit);
-		node->flags = obstacle && !core_static_travel_isFriendly(unit, obstacle) && can_break(unit, obstacle)
-							  ? TRAVEL_CAN_REMOVE
-							  : 0;
-		if (obstacle && !(node->flags & TRAVEL_CAN_REMOVE)) node->flags |= TRAVEL_BLOCKED;
+		node->flags = node->weight == CORE_TRAVEL_BLOCKED ? TRAVEL_BLOCKED : 0;
+		if (obstacle && !(node->flags & TRAVEL_BLOCKED))
+			node->flags = core_static_travel_isFriendly(unit, obstacle) ? TRAVEL_BLOCKED : TRAVEL_CAN_REMOVE;
 	}
 }
 
@@ -242,14 +237,12 @@ void core_internal_travelWorkspace_free(void)
 	core_static_travelWorkspace = (t_travel_workspace){0};
 }
 
-void core_action_travel(const t_obj *unit, t_pos pos, unsigned int (*get_weight)(t_pos, const t_obj *),
-						bool (*can_break)(const t_obj *, const t_obj *))
+void core_action_travel(const t_obj *unit, t_pos pos, unsigned int (*get_weight)(t_pos, const t_obj *))
 {
 	if (!unit || unit->type != OBJ_UNIT || unit->s_unit.action_cooldown > 0) return;
 	if (!core_internal_isPosValid(unit->pos) || !core_internal_isPosValid(pos)) return;
 	if (unit->pos.x == pos.x && unit->pos.y == pos.y) return;
 	if (!get_weight) get_weight = core_static_travel_defaultWeight;
-	if (!can_break) can_break = core_static_travel_defaultCanBreak;
 
 	size_t grid_size = game.grid_size;
 	size_t node_count = grid_size * grid_size;
@@ -262,7 +255,7 @@ void core_action_travel(const t_obj *unit, t_pos pos, unsigned int (*get_weight)
 
 	uint32_t start = (uint32_t)((size_t)unit->pos.y * grid_size + unit->pos.x);
 	uint32_t target = (uint32_t)((size_t)pos.y * grid_size + pos.x);
-	core_static_travel_prepareSurfaces(workspace, node_count, grid_size, unit, get_weight, can_break);
+	core_static_travel_prepareSurfaces(workspace, node_count, grid_size, unit, get_weight);
 	core_static_travel_dijkstra(workspace, node_count, grid_size, start, target);
 
 	uint32_t destination = core_static_travel_getClosest(workspace, node_count, grid_size, start, target, pos);

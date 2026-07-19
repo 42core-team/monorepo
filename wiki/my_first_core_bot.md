@@ -56,11 +56,12 @@ That boundary explains two important rules:
 goal. One call adds one move or attack. Start with its built-in policies:
 
 ```c
-core_action_travel(unit, goal, NULL, NULL);
+core_action_travel(unit, goal, NULL);
 ```
 
-The third argument is an optional position-weight function; the fourth is an optional function deciding whether this
-unit may break a particular object. `NULL` selects the default for that policy.
+The third argument is an optional position-weight function. `NULL` selects the default policy. A custom function
+returns the cost of entering each position, or `CORE_TRAVEL_BLOCKED` when the position must not be entered and an
+occupant must not be attacked.
 
 The defaults price open ground at one action and estimate how many attacks an obstacle needs. They never attack your
 own units or core. They also check the matching unit property: `damage_unit` for units, `damage_core` for cores, and
@@ -72,13 +73,13 @@ The starter bot keeps an older two-argument name as a small wrapper:
 ```c
 void ft_travel_attack(const t_obj *unit, t_pos pos)
 {
-	core_action_travel(unit, pos, NULL, NULL);
+	core_action_travel(unit, pos, NULL);
 }
 ```
 
 This is not another pathfinder; it only preserves the familiar helper name. Use `core_action_travel` directly when you
-want to supply either callback. The full [`core_action_travel` reference](reference/c/actions/core_action_travel)
-documents their signatures, defaults, and unreachable goals.
+want to supply a custom policy. The full [`core_action_travel` reference](reference/c/actions/core_action_travel)
+documents its signature, sentinel, defaults, and unreachable goals.
 
 Travel is optional. If you want to write your own pathfinder or movement rules, use [`core_action_move`](reference/c/actions/core_action_move) to step into an empty position next to the unit and [`core_action_attack`](reference/c/actions/core_action_attack) to attack a target next to it.
 

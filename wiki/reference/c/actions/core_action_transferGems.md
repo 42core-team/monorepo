@@ -50,10 +50,10 @@ This uses the default [`core_action_travel`](reference/c/actions/core_action_tra
 ```c
 t_obj *nearest_deposit = ft_get_deposit_nearest(obj->pos);
 if (nearest_deposit && obj->s_unit.gems <= 0)
-	core_action_travel(obj, nearest_deposit->pos, NULL, NULL);
+	core_action_travel(obj, nearest_deposit->pos, NULL);
 else
 {
-	core_action_travel(obj, ft_get_core_own()->pos, NULL, NULL);
+	core_action_travel(obj, ft_get_core_own()->pos, NULL);
 	core_action_transferGems(obj, ft_get_core_own()->pos, 99999);
 }
 ```

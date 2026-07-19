@@ -39,8 +39,7 @@ re: fclean all
 
 test:
 	mkdir -p $(OBJDIR)
-	$(CC) $(CFLAGS) tests/test_action_travel.c src/public/action_travel.c src/public/actions.c src/public/get.c \
-		src/internal/utils.c -I $(INC) -o $(OBJDIR)/test_action_travel
+	$(CC) $(CFLAGS) tests/test_action_travel.c src/public/action_travel.c -I $(INC) -o $(OBJDIR)/test_action_travel
 	./$(OBJDIR)/test_action_travel
 
 log:

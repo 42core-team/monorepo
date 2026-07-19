@@ -81,5 +81,5 @@ t_obj *ft_get_units_opponent_nearest(t_pos pos)
 // the return of THE GOAT
 void ft_travel_attack(const t_obj *unit, t_pos pos)
 {
-	core_action_travel(unit, pos, NULL, NULL);
+	core_action_travel(unit, pos, NULL);
 }
