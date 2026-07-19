@@ -99,6 +99,7 @@ export function isAtEnd(): boolean {
 }
 
 export function startPlayback(): void {
+	if (isAtEnd()) resetTimeManager();
 	setPlaying(true);
 	lastTimestamp = Date.now();
 }
