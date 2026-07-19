@@ -30,16 +30,16 @@ Component changes are added together. If the default is 5 HP and two components 
 
 ## `baseActionCooldown`
 
-The base number of ticks a unit waits between actions - lower values therefore make a unit slower. This is effectively the speed property, but counterintuitively the higher the number the lower the speed.
+The base number of ticks a unit waits between actions - lower values therefore make a unit faster. This is effectively the speed property, but counterintuitively the higher the number the lower the speed.
 
-Moving, attacking, and transferring gems reset `action_cooldown`. The unit can act when `unit->s_unit.action_cooldown <= 0`. After an action has occurred, the units action cooldown is reset to the base action cooldown plus a carried-gem penality defined by `balancePerCooldownStep`:
+Moving, attacking, and transferring gems reset `action_cooldown`. A positive cooldown means the unit must wait; at `0`
+or below, it can queue an action. A successful action resets the cooldown to the base action cooldown plus a carried-gem
+penalty defined by `balancePerCooldownStep`:
 
 <pre>
 action cooldown = max(1, max(0, baseActionCooldown)
                          + floor(carried gems / max(1, balancePerCooldownStep)))
 </pre>
-
-The cooldown decreases by 1 every tick. If a ready unit does nothing, the value continues below zero. After it reaches the event's standing-cooldown limit, it is reset even though the unit did not act.
 
 ## `balancePerCooldownStep`
 

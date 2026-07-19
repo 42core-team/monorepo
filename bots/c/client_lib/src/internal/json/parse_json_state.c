@@ -261,18 +261,6 @@ void core_internal_parse_state(char *json)
 		}
 	}
 
-	// update action cooldowns & spawn cooldowns
-	for (size_t i = 0; game.objects[i]; i++)
-	{
-		if (game.objects[i]->type == OBJ_UNIT)
-		{
-			game.objects[i]->s_unit.action_cooldown--;
-		}
-		else if (game.objects[i]->type == OBJ_CORE)
-		{
-			if (game.objects[i]->s_core.spawn_cooldown > 0) game.objects[i]->s_core.spawn_cooldown--;
-		}
-	}
 	core_internal_objPositionIndex_rebuild();
 
 	// print errors from last tick if there were any
