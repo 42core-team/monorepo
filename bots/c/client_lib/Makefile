@@ -15,7 +15,7 @@ OBJS := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRCS))
 
 .DEFAULT_GOAL := all
 
-.PHONY: all clean fclean re log
+.PHONY: all clean fclean re test log
 
 all: $(LIBRARY)
 
@@ -36,6 +36,12 @@ fclean: clean
 	rm -f $(LIBRARY)
 
 re: fclean all
+
+test:
+	mkdir -p $(OBJDIR)
+	$(CC) $(CFLAGS) tests/test_action_travel.c src/public/action_travel.c src/public/actions.c src/public/get.c \
+		src/internal/utils.c -I $(INC) -o $(OBJDIR)/test_action_travel
+	./$(OBJDIR)/test_action_travel
 
 log:
 	find inc -type f -print -exec echo "====> {} <====" \; -exec cat {} \; || true

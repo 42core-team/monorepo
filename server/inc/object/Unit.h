@@ -28,6 +28,13 @@ class Unit : public Object
 
 	unsigned int getTeamId() const { return team_id_; }
 	unsigned int getBalance() const { return balance_; }
+	unsigned int getRemainingBalanceCapacity() const
+	{
+		const int configuredMaxBalance = properties_.at(UnitProperty::MAX_BALANCE);
+		if (configuredMaxBalance <= 0) return 0;
+		const unsigned int maxBalance = static_cast<unsigned int>(configuredMaxBalance);
+		return balance_ < maxBalance ? maxBalance - balance_ : 0;
+	}
 	long long getActionCooldown() const { return action_cooldown_; }
 
 	bool isOwnedByTeam(unsigned int teamId) const override { return teamId == team_id_; }

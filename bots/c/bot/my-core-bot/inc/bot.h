@@ -11,5 +11,6 @@ t_obj *ft_get_deposit_gems_nearest(t_pos pos);
 t_obj *ft_get_units_opponent_nearest(t_pos pos);
 t_obj **ft_get_units_own(void);
 t_obj **ft_get_units_opponent(void);
+void ft_travel_attack(const t_obj *unit, t_pos pos);
 
 #endif /* BOT_H */

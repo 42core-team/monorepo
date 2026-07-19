@@ -19,11 +19,13 @@ void GemPile::damage(Object *attacker, unsigned int damage)
 	if (attacker->getType() != ObjectType::Unit) return;
 	Unit *unitAttacker = (Unit *)attacker;
 
-	if (attacker->getType() == ObjectType::Unit)
-		unitAttacker->setBalance(std::min((int)(unitAttacker->getBalance() + balance_),
-										  unitAttacker->getProperties().at(UnitProperty::MAX_BALANCE)));
+	const unsigned int collected = std::min(balance_, unitAttacker->getRemainingBalanceCapacity());
+	unitAttacker->addBalance(collected);
+	balance_ -= collected;
 
-	Stats::instance().inc(stat_keys::gems_gained, balance_);
+	Stats::instance().inc(stat_keys::gems_gained, collected);
+	if (balance_ > 0) return;
+
 	Stats::instance().inc(stat_keys::gempiles_destroyed);
 
 	Board::instance().removeObjectById(id_);

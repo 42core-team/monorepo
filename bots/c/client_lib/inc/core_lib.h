@@ -144,21 +144,16 @@ void core_action_createUnit(const char *name, char *component, ...);
 /// @param pos The position where the unit should move to. Must be next to the unit object.
 void core_action_move(const t_obj *unit, t_pos pos);
 
-typedef struct s_travel_surface
-{
-	int weight;
-	bool can_remove;
-} t_travel_surface;
-
 /// @brief Travels one optimal step toward a position using a weighted shortest-path search.
-/// @details The weight callback may inspect the current game state and the traveling unit. It is called at most once
-/// per position. Signed weights are supported; occupied positions with can_remove false are impassable. If the target
-/// is unreachable, the unit approaches the closest reachable position by Manhattan distance. Non-negative surfaces
-/// use Dijkstra's algorithm; negative surfaces use Bellman-Ford and queue no action if a negative cycle is reachable.
+/// @details The callbacks may inspect the current game state and traveling unit. Pass NULL for either callback to use
+/// its default. Objects that cannot be broken are impassable. If the target is unreachable, the unit approaches the
+/// closest reachable position by Manhattan distance.
 /// @param unit The unit that should travel.
 /// @param pos The destination position.
-/// @param get_surface Function returning the entry cost and whether an occupant may be removed.
-void core_action_travel(const t_obj *unit, t_pos pos, t_travel_surface (*get_surface)(t_pos, const t_obj *));
+/// @param get_weight Function returning the cost of entering a position, or NULL for the default action-cost estimate.
+/// @param can_break Function deciding whether unit may break an object, or NULL for the property-aware safe default.
+void core_action_travel(const t_obj *unit, t_pos pos, unsigned int (*get_weight)(t_pos, const t_obj *),
+						bool (*can_break)(const t_obj *, const t_obj *));
 
 /// @brief Attacks a target position with a unit.
 /// @details Units can only attack one tile up, down, left or right; and only if their action_cooldown is 0 or less.

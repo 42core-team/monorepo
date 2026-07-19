@@ -52,43 +52,33 @@ That boundary explains two important rules:
 
 ## Choose how the unit travels
 
-`core_action_travel` makes your unit move across the grid, choosing the most efficient path around obstacles to your goal. One call adds one move or attack. You describe each position with a callback returning this struct:
+`core_action_travel` makes your unit move across the grid, choosing the most efficient path around obstacles to your
+goal. One call adds one move or attack. Start with its built-in policies:
 
 ```c
-typedef struct s_travel_surface
-{
-	int weight;
-	bool can_remove;
-} t_travel_surface;
+core_action_travel(unit, goal, NULL, NULL);
 ```
 
-`weight` is the cost of entering a position. `can_remove` tells the pathfinder whether an object on that position may be attacked as part of the route. It does not make an empty position impassable.
+The third argument is an optional position-weight function; the fourth is an optional function deciding whether this
+unit may break a particular object. `NULL` selects the default for that policy.
 
-Here is a useful first callback:
+The defaults price open ground at one action and estimate how many attacks an obstacle needs. They never attack your
+own units or core. They also check the matching unit property: `damage_unit` for units, `damage_core` for cores, and
+`damage_object` for deposits and walls. A gem pile is breakable only if the unit has enough unused `max_balance` to
+collect the whole pile.
+
+The starter bot keeps an older two-argument name as a small wrapper:
 
 ```c
-static t_travel_surface get_travel_surface(t_pos pos, const t_obj *unit)
+void ft_travel_attack(const t_obj *unit, t_pos pos)
 {
-	t_obj *obstacle = core_get_obj_from_pos(pos);
-	bool friendly = obstacle &&
-		((obstacle->type == OBJ_UNIT && obstacle->s_unit.team_id == unit->s_unit.team_id) ||
-		 (obstacle->type == OBJ_CORE && obstacle->s_core.team_id == unit->s_unit.team_id));
-
-	return (t_travel_surface){
-		.weight = obstacle ? 10 : 1,
-		.can_remove = obstacle && !friendly,
-	};
+	core_action_travel(unit, pos, NULL, NULL);
 }
 ```
 
-Here is what it means:
-
-- `core_get_obj_from_pos(pos)` checks what is on the position.
-- Friendly units and your own core cannot be removed, so they block the route.
-- Empty positions cost 1. Occupied positions cost 10, so an open detour is preferred when it is cheaper.
-- A non-friendly obstacle is removable. If it becomes the route's next step, travel queues an attack; after it is destroyed, later ticks can move through that position.
-
-The callback should only inspect the game and return a value. Do not add actions or change state inside it. The full [`core_action_travel` reference](reference/c/actions/core_action_travel) explains unreachable goals and negative weights.
+This is not another pathfinder; it only preserves the familiar helper name. Use `core_action_travel` directly when you
+want to supply either callback. The full [`core_action_travel` reference](reference/c/actions/core_action_travel)
+documents their signatures, defaults, and unreachable goals.
 
 Travel is optional. If you want to write your own pathfinder or movement rules, use [`core_action_move`](reference/c/actions/core_action_move) to step into an empty position next to the unit and [`core_action_attack`](reference/c/actions/core_action_attack) to attack a target next to it.
 
@@ -106,19 +96,6 @@ int main(int argc, char **argv)
 	return core_startGame("My CORE Bot", argc, argv, ft_on_tick, false);
 }
 
-static t_travel_surface get_travel_surface(t_pos pos, const t_obj *unit)
-{
-	t_obj *obstacle = core_get_obj_from_pos(pos);
-	bool friendly = obstacle &&
-		((obstacle->type == OBJ_UNIT && obstacle->s_unit.team_id == unit->s_unit.team_id) ||
-		 (obstacle->type == OBJ_CORE && obstacle->s_core.team_id == unit->s_unit.team_id));
-
-	return (t_travel_surface){
-		.weight = obstacle ? 10 : 1,
-		.can_remove = obstacle && !friendly,
-	};
-}
-
 void ft_on_tick(unsigned long tick)
 {
 	(void)tick;
@@ -130,7 +107,7 @@ void ft_on_tick(unsigned long tick)
 	t_obj *target = ft_get_core_opponent();
 	t_obj **units = ft_get_units_own();
 	for (size_t i = 0; target && units && units[i]; i++)
-		core_action_travel(units[i], target->pos, get_travel_surface);
+		ft_travel_attack(units[i], target->pos);
 
 	free(units);
 }
@@ -150,6 +127,8 @@ Run `make` and inspect the replay. If creation reports an invalid component, ret
 
 The unit name and component list are available in `unit->s_unit.name` and the `NULL`-terminated `unit->s_unit.components` array. Use [`core_get_units_by_name`](reference/c/getters/core_get_units_by_name) when different designs need different jobs. For example, mining units can target deposits while combat units target the opponent.
 
-Do not stop at one callback for every unit. Should a fragile carrier avoid enemies? Should a demolition unit prefer a short route through a wall? Should units avoid a crowded corridor? Give positions different weights to express those choices. If weights do not fit your strategy, use move and attack directly.
+The defaults are a baseline, not a strategy. Should a fragile carrier avoid enemies? Should a demolition unit prefer a
+short route through a wall? Should units avoid a crowded corridor? Supply a weight or break callback for those choices.
+If weights do not fit your strategy, use move and attack directly.
 
 Continue with the [getter filtering guide](documentation/getter_filtering), [action execution order](documentation/action_execution_order), and the [Unit Builder property guide](documentation/unit_builder).
