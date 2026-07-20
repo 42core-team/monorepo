@@ -142,6 +142,7 @@ function drawFrame(timestamp: number): void {
 let lastSVGPoint: DOMPoint | null = null;
 let lastClientX = 0;
 let lastClientY = 0;
+let lastTooltipTarget: string | null = null;
 
 function refreshTooltipFromSVGPoint(
 	svgP: DOMPoint,
@@ -168,9 +169,17 @@ function refreshTooltipFromSVGPoint(
 		const objId = obj.id;
 		obj = nextObjects.find((o: TickObject) => o.id === objId);
 	}
+	const tooltipTarget = obj ? `object:${obj.id}` : `tile:${tx},${ty}`;
+	const preserveScroll =
+		tooltipElement.style.display === "block" &&
+		tooltipTarget === lastTooltipTarget;
+	const scrollTop = preserveScroll ? tooltipElement.scrollTop : 0;
+	const scrollLeft = preserveScroll ? tooltipElement.scrollLeft : 0;
 
 	if (obj) {
-		tooltipElement.innerHTML = formatObjectData(obj);
+		const content = formatObjectData(obj);
+		if (tooltipElement.innerHTML !== content)
+			tooltipElement.innerHTML = content;
 
 		if (obj.type !== 1) {
 			hoveredDebugPath = null;
@@ -198,7 +207,9 @@ function refreshTooltipFromSVGPoint(
 			hoveredDebugPathStroke = null;
 		}
 	} else {
-		tooltipElement.innerHTML = `<strong>📍 Position: [x: ${tx}, y: ${ty}]</strong>`;
+		const content = `<strong>📍 Position: [x: ${tx}, y: ${ty}]</strong>`;
+		if (tooltipElement.innerHTML !== content)
+			tooltipElement.innerHTML = content;
 		hoveredDebugPath = null;
 	}
 
@@ -210,6 +221,9 @@ function refreshTooltipFromSVGPoint(
 		svgCanvas,
 		topBarElement.getBoundingClientRect().bottom,
 	);
+	tooltipElement.scrollTop = scrollTop;
+	tooltipElement.scrollLeft = scrollLeft;
+	lastTooltipTarget = tooltipTarget;
 }
 export async function setupRenderer(): Promise<void> {
 	gameConfig = getGameConfig();

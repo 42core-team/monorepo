@@ -79,7 +79,6 @@ export function positionTooltip(
 	canvas: SVGSVGElement,
 	visibleTop: number,
 ): void {
-	tooltip.style.maxHeight = "";
 	const matrix = canvas.getScreenCTM();
 	const pathTiles = matrix
 		? [
@@ -97,7 +96,13 @@ export function positionTooltip(
 		: [];
 	const { position, rect } = chooseTooltipPlacement(
 		anchor,
-		{ width: tooltip.offsetWidth, height: tooltip.offsetHeight },
+		{
+			width: tooltip.offsetWidth,
+			height: Math.min(
+				tooltip.scrollHeight + tooltip.offsetHeight - tooltip.clientHeight,
+				window.innerHeight / 2,
+			),
+		},
 		{
 			left: 0,
 			top: visibleTop,
