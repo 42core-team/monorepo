@@ -9,7 +9,7 @@
 typedef struct s_travel_node
 {
 	uint64_t distance;
-	uint32_t first_step;
+	uint32_t previous;
 	uint32_t heap_pos;
 	unsigned int weight;
 	unsigned char flags;
@@ -155,7 +155,7 @@ static void core_static_travel_prepareSurfaces(t_travel_workspace *workspace, si
 		t_obj *obstacle = core_get_obj_from_pos(position);
 		t_travel_node *node = &workspace->nodes[i];
 		node->distance = UINT64_MAX;
-		node->first_step = sentinel;
+		node->previous = sentinel;
 		node->heap_pos = sentinel;
 		node->weight = get_weight(position, unit);
 		node->flags = node->weight == CORE_TRAVEL_BLOCKED ? TRAVEL_BLOCKED : 0;
@@ -169,7 +169,7 @@ static void core_static_travel_dijkstra(t_travel_workspace *workspace, size_t co
 	uint32_t sentinel = (uint32_t)count;
 	t_travel_node *start_node = &workspace->nodes[start];
 	start_node->distance = 0;
-	start_node->first_step = start;
+	start_node->previous = start;
 	start_node->heap_pos = 0;
 	workspace->heap[0] = start;
 	size_t heap_count = 1;
@@ -192,7 +192,7 @@ static void core_static_travel_dijkstra(t_travel_workspace *workspace, size_t co
 			if (distance >= next_node->distance) continue;
 			bool unseen = next_node->distance == UINT64_MAX;
 			next_node->distance = distance;
-			next_node->first_step = current == start ? next : workspace->nodes[current].first_step;
+			next_node->previous = current;
 			if (unseen)
 			{
 				next_node->heap_pos = (uint32_t)heap_count;
@@ -256,8 +256,18 @@ void core_action_travel(const t_obj *unit, t_pos pos, unsigned int (*get_weight)
 	core_static_travel_dijkstra(workspace, node_count, grid_size, start, target);
 
 	uint32_t destination = core_static_travel_getClosest(workspace, node_count, grid_size, start, target, pos);
-	uint32_t next = workspace->nodes[destination].first_step;
-	if (destination == start || next >= node_count) return;
+	size_t path_length = 0;
+	for (uint32_t step = destination; step != start; step = workspace->nodes[step].previous)
+		workspace->heap[path_length++] = step;
+	if (path_length == 0) return;
+	for (size_t i = path_length; i > 0; i--)
+	{
+		uint32_t step = workspace->heap[i - 1];
+		core_debug_addObjectPathStep(unit,
+									 (t_pos){(unsigned short)(step % grid_size), (unsigned short)(step / grid_size)});
+	}
+
+	uint32_t next = workspace->heap[path_length - 1];
 
 	t_pos next_pos = {(unsigned short)(next % grid_size), (unsigned short)(next / grid_size)};
 	t_obj *obstacle = core_get_obj_from_pos(next_pos);
