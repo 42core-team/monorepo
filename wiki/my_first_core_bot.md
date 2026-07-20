@@ -126,7 +126,7 @@ Run `make` and inspect the replay. If creation reports an invalid component, ret
 
 ## Make it yours
 
-The unit name and component list are available in `unit->s_unit.name` and the `NULL`-terminated `unit->s_unit.components` array. Use [`core_get_units_by_name`](reference/c/getters/core_get_units_by_name) when different designs need different jobs. For example, mining units can target deposits while combat units target the opponent.
+The unit name and component list are available in `unit->s_unit.name` and the `NULL`-terminated `unit->s_unit.components` array. Use [`core_get_units_byName`](reference/c/getters/core_get_units_byName) when different designs need different jobs. For example, mining units can target deposits while combat units target the opponent.
 
 The defaults are a baseline, not a strategy. Should a fragile carrier avoid enemies? Should a demolition unit prefer a
 short route through a wall? Should units avoid a crowded corridor? Supply a weight or break callback for those choices.

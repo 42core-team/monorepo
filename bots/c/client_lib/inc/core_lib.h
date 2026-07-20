@@ -182,10 +182,15 @@ t_obj *core_get_obj_from_pos(t_pos pos);
 /// @return Null-terminated array of selected objects or NULL if no condition is provided or no objects match the condition.
 t_obj **core_get_objs_filter(bool (*condition)(const t_obj *));
 
-/// @brief Get all units with the given name.
+/// @brief Get all of your units with the given name.
 /// @param name Unit name to match.
-/// @return Null-terminated array of matching units or NULL if name is NULL or no units match. Free the returned array, not the objects.
-t_obj **core_get_units_by_name(const char *name);
+/// @return Null-terminated array of matching owned units or NULL if name is NULL or no owned units match. Free the returned array, not the objects.
+t_obj **core_get_units_byName(const char *name);
+
+/// @brief Get the count of all of your units with the given name.
+/// @param name Unit name to match.
+/// @return The count of matching owned units, or 0 if name is NULL or no owned units match.
+unsigned int core_get_units_byName_count(const char *name);
 
 /// @brief Get the nearest object to a given position matching a custom condition.
 /// @param pos Position to search from
