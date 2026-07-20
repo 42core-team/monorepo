@@ -47,8 +47,8 @@ export type TickObject =
 export interface UnitProperties {
 	hp: number;
 	baseActionCooldown: number;
-	balancePerCooldownStep: number;
-	maxBalance: number;
+	gemsPerCooldownStep: number;
+	maxGems: number;
 	damageReductionPercent: number;
 	damageCore: number;
 	damageUnit: number;
@@ -303,11 +303,11 @@ export function getBarMetrics(
 	// gems
 	if ((obj.type === 0 || obj.type === 1) && obj.gems > 0) {
 		// deposits and gem piles holding gems doesnt actually contain any info
-		let maxBalance = Math.max(500, obj.gems);
-		if (obj.type === 1) maxBalance = obj.properties.maxBalance;
+		let maxGems = Math.max(500, obj.gems);
+		if (obj.type === 1) maxGems = obj.properties.maxGems;
 		metrics.push({
 			key: "gems",
-			percentage: (obj.gems / maxBalance) * 100,
+			percentage: (obj.gems / maxGems) * 100,
 		});
 	}
 
@@ -316,7 +316,7 @@ export function getBarMetrics(
 		const cfg = getGameConfig();
 		if (!cfg) return metrics;
 
-		const step = Math.max(1, obj.properties.balancePerCooldownStep);
+		const step = Math.max(1, obj.properties.gemsPerCooldownStep);
 		const base = obj.properties.baseActionCooldown;
 
 		let calc = base + Math.floor(obj.gems / step);

@@ -65,7 +65,7 @@ occupant must not be attacked.
 
 The defaults price open ground at one action and estimate how many attacks an obstacle needs. They never attack your
 own units or core. They also check the matching unit property: `damage_unit` for units, `damage_core` for cores, and
-`damage_object` for deposits and walls. A gem pile is breakable only if the unit has enough unused `max_balance` to
+`damage_object` for deposits and walls. A gem pile is breakable only if the unit has enough unused `max_gems` to
 collect the whole pile.
 
 The starter bot keeps an older two-argument name as a small wrapper:

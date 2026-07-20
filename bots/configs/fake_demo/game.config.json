@@ -8,7 +8,7 @@
 	"depositIncome": 100,
 	"gemPileIncome": 35,
 	"coreHp": 99,
-	"initialBalance": 300,
+	"initialGems": 300,
 	"wallHp": 77,
 	"worldGenerator": "sparse",
 	"worldGeneratorConfig": {
@@ -23,8 +23,8 @@
 		"unitDefaultProperties": {
 			"hp": 5,
 			"baseActionCooldown": 3,
-			"balancePerCooldownStep": 10,
-			"maxBalance": 100,
+			"gemsPerCooldownStep": 10,
+			"maxGems": 100,
 			"damageReductionPercent": 0, 
 			"damageCore": 0,
 			"damageUnit": 0,
@@ -108,7 +108,7 @@
 				"id": "gem_carrying_efficiency",
 				"properties": [
 					{
-						"name": "balancePerCooldownStep",
+						"name": "gemsPerCooldownStep",
 						"modification": 10
 					}
 				],
@@ -120,7 +120,7 @@
 				"id": "gem_carrying_capacity",
 				"properties": [
 					{
-						"name": "maxBalance",
+						"name": "maxGems",
 						"modification": 50
 					}
 				],

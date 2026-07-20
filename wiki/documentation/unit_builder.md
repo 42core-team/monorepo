@@ -18,7 +18,7 @@ After the unit spawns, its component IDs are in `unit->s_unit.components` and it
 
 ## Properties
 
-The following properties exist and are modified by components you choose. Balance them wisely!
+The following properties exist and are modified by components you choose. Choose them wisely!
 
 ### `hp`
 
@@ -34,18 +34,18 @@ The base number of ticks a unit waits between actions - lower values therefore m
 
 Moving, attacking, and transferring gems reset `action_cooldown`. A positive cooldown means the unit must wait; at `0`
 or below, it can queue an action. A successful action resets the cooldown to the base action cooldown plus a carried-gem
-penalty defined by `balancePerCooldownStep`:
+penalty defined by `gemsPerCooldownStep`:
 
 <pre>
 action cooldown = max(1, max(0, baseActionCooldown)
-                         + floor(carried gems / max(1, balancePerCooldownStep)))
+                         + floor(carried gems / max(1, gemsPerCooldownStep)))
 </pre>
 
-## `balancePerCooldownStep`
+## `gemsPerCooldownStep`
 
 How many carried gems add one tick to the unit's action cooldown. Only complete groups count because integer division is used.
 
-With `baseActionCooldown = 3` and `balancePerCooldownStep = 15`:
+With `baseActionCooldown = 3` and `gemsPerCooldownStep = 15`:
 
 <pre>
  0 gems -> cooldown 3
@@ -56,7 +56,7 @@ With `baseActionCooldown = 3` and `balancePerCooldownStep = 15`:
 
 A larger value lets a loaded unit stay faster; a smaller value makes carrying gems slow it down sooner.
 
-## `maxBalance`
+## `maxGems`
 
 The most gems a unit can carry at once. If collecting a pile or receiving a transfer would exceed this limit, the unit is filled only to this limit.
 

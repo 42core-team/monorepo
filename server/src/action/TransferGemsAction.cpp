@@ -84,8 +84,8 @@ std::string TransferGemsAction::execute(Core *core)
 	if (dstObj->getType() == ObjectType::Unit)
 	{
 		Unit *dstUnit = (Unit *)dstObj;
-		amount_ = std::min(amount_, dstUnit->getRemainingBalanceCapacity());
-		if (amount_ == 0) return "destination unit is at max balance";
+		amount_ = std::min(amount_, dstUnit->getRemainingGemsCapacity());
+		if (amount_ == 0) return "destination unit is at max gems";
 	}
 
 	// cant transfer someone else's gems

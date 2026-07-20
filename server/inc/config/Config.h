@@ -35,7 +35,7 @@ struct GameConfig
 	unsigned int gemPileIncome;
 
 	unsigned int coreHp;
-	unsigned int initialBalance;
+	unsigned int initialGems;
 
 	unsigned int wallHp;
 
@@ -53,8 +53,8 @@ enum class UnitProperty
 {
 	HP,
 	BASE_ACTION_COOLDOWN,
-	BALANCE_PER_COOLDOWN_STEP,
-	MAX_BALANCE,
+	GEMS_PER_COOLDOWN_STEP,
+	MAX_GEMS,
 	DAMAGE_REDUCTION_PERCENT,
 	DAMAGE_CORE,
 	DAMAGE_UNIT,
@@ -64,8 +64,8 @@ enum class UnitProperty
 inline constexpr std::array<std::pair<std::string_view, UnitProperty>, 9> UNIT_PROPERTY_ENTRIES{{
 		{"hp", UnitProperty::HP},
 		{"baseActionCooldown", UnitProperty::BASE_ACTION_COOLDOWN},
-		{"balancePerCooldownStep", UnitProperty::BALANCE_PER_COOLDOWN_STEP},
-		{"maxBalance", UnitProperty::MAX_BALANCE},
+		{"gemsPerCooldownStep", UnitProperty::GEMS_PER_COOLDOWN_STEP},
+		{"maxGems", UnitProperty::MAX_GEMS},
 		{"damageReductionPercent", UnitProperty::DAMAGE_REDUCTION_PERCENT},
 		{"damageCore", UnitProperty::DAMAGE_CORE},
 		{"damageUnit", UnitProperty::DAMAGE_UNIT},

@@ -35,7 +35,7 @@ sidebarTitle: "FaQ"
 
 ### 🪻 Are there limits to how many gems units or cores can hold?
 
-> Cores have no gem limit. A unit's `maxBalance` limits how many gems it collects from a gem pile. Read more in the [Unit Builder guide](documentation/unit_builder#maxbalance).
+> Cores have no gem limit. A unit's `maxGems` limits how many gems it collects from a gem pile. Read more in the [Unit Builder guide](documentation/unit_builder#maxgems).
 
 ### 🧐 I have found a bug! What do I do?
 

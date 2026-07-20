@@ -24,8 +24,8 @@ typedef struct s_unit_properties
 {
 	unsigned long hp;
 	int base_action_cooldown;
-	unsigned long balance_per_cooldown_step;
-	unsigned long max_balance;
+	unsigned long gems_per_cooldown_step;
+	unsigned long max_gems;
 	int damage_reduction_percent;
 	unsigned long damage_core;
 	unsigned long damage_unit;

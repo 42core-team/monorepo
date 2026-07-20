@@ -36,7 +36,7 @@ void Unit::tickActionCooldown()
 
 unsigned int Unit::calcActionCooldown()
 {
-	unsigned int step = static_cast<unsigned int>(std::max(1, properties_.at(UnitProperty::BALANCE_PER_COOLDOWN_STEP)));
+	unsigned int step = static_cast<unsigned int>(std::max(1, properties_.at(UnitProperty::GEMS_PER_COOLDOWN_STEP)));
 	unsigned long long steps = balance_ / step;
 	unsigned long long cd =
 			static_cast<unsigned int>(std::max(0, properties_.at(UnitProperty::BASE_ACTION_COOLDOWN))) + steps;
