@@ -33,15 +33,15 @@ typedef struct s_pos
 /// @brief Definition of a units properties resulting from its components.
 typedef struct s_unit_properties
 {
-	int hp;
+	unsigned long hp;
 	int base_action_cooldown;
-	int balance_per_cooldown_step;
-	int max_balance;
+	unsigned long balance_per_cooldown_step;
+	unsigned long max_balance;
 	int damage_reduction_percent;
-	int damage_core;
-	int damage_unit;
-	int damage_object;
-	int post_spawn_core_cooldown;
+	unsigned long damage_core;
+	unsigned long damage_unit;
+	unsigned long damage_object;
+	unsigned long post_spawn_core_cooldown;
 } t_unit_properties;
 
 /// @brief Game object structure representing all entities in the game

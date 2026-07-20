@@ -98,9 +98,9 @@ static size_t core_static_travel_getNeighbors(uint32_t index, size_t grid_size, 
 	return count;
 }
 
-static unsigned int core_static_travel_getDamage(const t_obj *unit, const t_obj *object)
+static unsigned long core_static_travel_getDamage(const t_obj *unit, const t_obj *object)
 {
-	int damage = 0;
+	unsigned long damage = 0;
 	if (object->type == OBJ_CORE)
 		damage = unit->s_unit.properties.damage_core;
 	else if (object->type == OBJ_UNIT)
@@ -111,15 +111,15 @@ static unsigned int core_static_travel_getDamage(const t_obj *unit, const t_obj 
 			int reduction = object->s_unit.properties.damage_reduction_percent;
 			if (reduction < 0) reduction = 0;
 			if (reduction > 100) reduction = 100;
-			uint64_t reduced = ((uint64_t)(unsigned int)damage * (unsigned int)(100 - reduction) + 50) / 100;
-			damage = reduced > 0 ? (int)reduced : 1;
+			uint64_t reduced = ((uint64_t)damage * (unsigned int)(100 - reduction) + 50) / 100;
+			damage = reduced > 0 ? (unsigned long)reduced : 1;
 		}
 	}
 	else if (object->type == OBJ_DEPOSIT || object->type == OBJ_WALL)
 		damage = unit->s_unit.properties.damage_object;
 	else if (object->type == OBJ_GEM_PILE)
 		damage = 1;
-	return damage > 0 ? (unsigned int)damage : 0;
+	return damage;
 }
 
 static bool core_static_travel_isFriendly(const t_obj *unit, const t_obj *object)
@@ -135,11 +135,11 @@ static unsigned int core_static_travel_defaultWeight(t_pos pos, const t_obj *uni
 	if (core_static_travel_isFriendly(unit, object)) return CORE_TRAVEL_BLOCKED;
 	if (object->type == OBJ_GEM_PILE)
 	{
-		int max_balance = unit->s_unit.properties.max_balance;
-		if (max_balance <= 0 || unit->s_unit.gems >= (unsigned long)max_balance) return CORE_TRAVEL_BLOCKED;
+		unsigned long max_balance = unit->s_unit.properties.max_balance;
+		if (max_balance == 0 || unit->s_unit.gems >= max_balance) return CORE_TRAVEL_BLOCKED;
 	}
 
-	unsigned int damage = core_static_travel_getDamage(unit, object);
+	unsigned long damage = core_static_travel_getDamage(unit, object);
 	if (damage == 0) return CORE_TRAVEL_BLOCKED;
 	uint64_t attacks = object->hp / damage + (object->hp % damage != 0);
 	return attacks >= CORE_TRAVEL_BLOCKED - 1 ? CORE_TRAVEL_BLOCKED - 1 : (unsigned int)attacks + 1;

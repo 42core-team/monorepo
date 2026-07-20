@@ -79,7 +79,7 @@ unsigned int core_get_units_byName_count(const char *name)
 	for (int i = 0; game.objects && game.objects[i] != NULL; i++)
 	{
 		t_obj *obj = game.objects[i];
-		if (core_internal_isOwnUnitByName(obj, name)) count++;
+		if (core_static_isOwnUnitByName(obj, name)) count++;
 	}
 	return count;
 }
@@ -96,7 +96,7 @@ t_obj **core_get_units_byName(const char *name)
 	for (int i = 0; game.objects && game.objects[i] != NULL; i++)
 	{
 		t_obj *obj = game.objects[i];
-		if (core_internal_isOwnUnitByName(obj, name)) result[index++] = obj;
+		if (core_static_isOwnUnitByName(obj, name)) result[index++] = obj;
 	}
 	result[index] = NULL;
 
