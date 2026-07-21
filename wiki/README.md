@@ -58,11 +58,4 @@ You can receive gems by having your units attack the gem deposits on the map or 
 
 🎉 **You are now ready to start coding!** 😎
 
-# 🏆 The Four Sacred Laws of Core Game Victory 👑
-
-1. **Simplicity is Strength** - A simple, well-rounded bot will crush an overcomplicated mess. Build, test, refine — rather than overplanning and overscoping at the start.
-2. **Battle is the Best Teacher** - Face off against others as often as possible; losing = learning.
-3. **Knowledge is power** - Master the documentation. Nobody has ever won that didn't spend time learning the basics first before rushing into battle.
-4. **Have fun!** - Don't take things too seriously & be nice to each other. Embrace the good vibes in a friendly competition! ⚡️
-
 **_Good luck_** **from the CORE team!** 🚀🎸🔥💥🗿

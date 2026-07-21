@@ -249,7 +249,7 @@ void core_internal_travelWorkspace_free(void)
 void core_action_travel(const t_obj *unit, t_pos pos,
 						t_tile_travelability (*get_tile_travelability)(t_pos, const t_obj *))
 {
-	if (!unit || unit->type != OBJ_UNIT || unit->s_unit.action_cooldown > 0) return;
+	if (!unit || unit->type != OBJ_UNIT) return;
 	if (!core_internal_isPosValid(unit->pos) || !core_internal_isPosValid(pos)) return;
 	if (unit->pos.x == pos.x && unit->pos.y == pos.y) return;
 	if (!get_tile_travelability) get_tile_travelability = core_static_travel_defaultTileTravelability;

@@ -47,8 +47,4 @@ sidebarTitle: "FaQ"
 
 > You can do both of those things via the [attack action](reference/c/actions/core_action_attack). Just stand next to the object with a unit that can attack that object type.
 
-### 💡 I've read everything all the way down here - any rewards for a good boy like me?
-
-> 💪 Sure: Consider the powerful possibilities of the `void *data` field in every object! Here, you can save any data you want, allowing you to easily execute more detailed strategies and coordinate your troops efficiently by making your own custom [state machine](https://www.reddit.com/r/learnprogramming/comments/1g5yxci/state_machines_for_a_beginner/)! The library wont touch it. Just remember to free everything at the end.
-
 Other questions? There is an "faq" channel in the CORE global discord for all your questions.
