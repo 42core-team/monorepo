@@ -59,14 +59,16 @@ goal. One call adds one move or attack. Start with its built-in policies:
 core_action_travel(unit, goal, NULL);
 ```
 
-The third argument is an optional position-weight function. `NULL` selects the default policy. A custom function
-returns the cost of entering each position, or `CORE_TRAVEL_BLOCKED` when the position must not be entered and an
-occupant must not be attacked.
+The third argument is an optional tile-travelability function. `NULL` selects the default policy. A custom function
+returns a `t_tile_travelability` containing the pathfinding weight and one of three actions: `CORE_TRAVEL_BLOCK`
+excludes the position, `CORE_TRAVEL_PASS` routes through it but waits while it is occupied, and `CORE_TRAVEL_ATTACK`
+attacks its occupant.
 
-The defaults price open ground at one action and estimate how many attacks an obstacle needs. They never attack your
-own units or core. They also check the matching unit property: `damage_unit` for units, `damage_core` for cores, and
-`damage_object` for deposits and walls. A gem pile is breakable only if the unit has enough unused `max_gems` to
-collect the whole pile.
+The defaults price open ground at one action and estimate how many attacks an obstacle needs. Friendly units are soft
+obstacles: their remaining cooldown raises the route cost, but travel can wait for them to move instead of treating
+them as walls. Friendly cores remain blocked. The policy checks the matching unit property: `damage_unit` for units,
+`damage_core` for cores, and `damage_object` for deposits and walls. A gem pile is breakable only if the unit has enough
+unused `max_gems` to collect the whole pile.
 
 The starter bot keeps an older two-argument name as a small wrapper:
 
@@ -79,7 +81,7 @@ void ft_travel_attack(const t_obj *unit, t_pos pos)
 
 This is not another pathfinder; it only preserves the familiar helper name. Use `core_action_travel` directly when you
 want to supply a custom policy. The full [`core_action_travel` reference](reference/c/actions/core_action_travel)
-documents its signature, sentinel, defaults, and unreachable goals.
+documents its signature, tile travelability, defaults, and unreachable goals.
 
 Travel is optional. If you want to write your own pathfinder or movement rules, use [`core_action_move`](reference/c/actions/core_action_move) to step into an empty position next to the unit and [`core_action_attack`](reference/c/actions/core_action_attack) to attack a target next to it.
 
@@ -129,7 +131,7 @@ Run `make` and inspect the replay. If creation reports an invalid component, ret
 The unit name and component list are available in `unit->s_unit.name` and the `NULL`-terminated `unit->s_unit.components` array. Use [`core_get_units_byName`](reference/c/getters/core_get_units_byName) when different designs need different jobs. For example, mining units can target deposits while combat units target the opponent.
 
 The defaults are a baseline, not a strategy. Should a fragile carrier avoid enemies? Should a demolition unit prefer a
-short route through a wall? Should units avoid a crowded corridor? Supply a weight or break callback for those choices.
-If weights do not fit your strategy, use move and attack directly.
+short route through a wall? Should units wait for crowded corridors? Supply custom tile travelability for those choices.
+If that does not fit your strategy, use move and attack directly.
 
 Continue with the [getter filtering guide](documentation/getter_filtering), [action execution order](documentation/action_execution_order), and the [Unit Builder property guide](documentation/unit_builder).
