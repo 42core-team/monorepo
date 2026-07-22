@@ -1,5 +1,7 @@
 #include "TransferGemsAction.h"
 
+#include <limits>
+
 TransferGemsAction::TransferGemsAction(json msg) : Action(ActionType::TRANSFER_GEMS)
 {
 	decodeJSON(msg);
@@ -39,8 +41,9 @@ std::string TransferGemsAction::dropGems(Core *core, Object *srcObj)
 	if (srcUnit->getActionCooldown() > 0)
 		return "unit is on action cooldown (action cooldown should be 0 or less to perform an action)";
 
-	if (srcUnit->getBalance() < amount_) amount_ = srcUnit->getBalance();
-	if (amount_ <= 0) return "invalid amount";
+	if (srcUnit->getBalance() < amount_)
+		return "insufficient gems - has " + std::to_string(srcUnit->getBalance()) + ", tried to transfer " +
+			   std::to_string(amount_);
 	srcUnit->setBalance(srcUnit->getBalance() - amount_);
 
 	srcUnit->resetActionCooldown();
@@ -55,6 +58,7 @@ std::string TransferGemsAction::dropGems(Core *core, Object *srcObj)
 
 std::string TransferGemsAction::execute(Core *core)
 {
+	if (amount_ == 0) return "invalid amount";
 	if (!target_.isValid(Config::game().gridSize)) return "target position is out of bounds";
 
 	Object *srcObj = Board::instance().getObjectById(source_id_);
@@ -70,7 +74,7 @@ std::string TransferGemsAction::execute(Core *core)
 		return "invalid source object type";
 	if (dstObj->getType() != ObjectType::Core && dstObj->getType() != ObjectType::Unit &&
 		dstObj->getType() != ObjectType::GemPile)
-		return "invalid destination object type. please transfer gems only ot object that can hold gems (e.g. cores, "
+		return "invalid destination object type; transfer gems only to an object that can hold gems (e.g. cores, "
 			   "units, gem piles).";
 
 	// only as-close-together-as-possible objects can transfer gems
@@ -84,18 +88,32 @@ std::string TransferGemsAction::execute(Core *core)
 	if (dstObj->getType() == ObjectType::Unit)
 	{
 		Unit *dstUnit = (Unit *)dstObj;
-		amount_ = std::min(amount_, dstUnit->getRemainingGemsCapacity());
-		if (amount_ == 0) return "destination unit is at max gems";
+		if (dstUnit->getRemainingGemsCapacity() < amount_)
+			return "destination unit has insufficient capacity - can receive " +
+				   std::to_string(dstUnit->getRemainingGemsCapacity()) + ", tried to transfer " +
+				   std::to_string(amount_);
+	}
+	if (dstObj->getType() == ObjectType::Core)
+	{
+		Core *dstCore = (Core *)dstObj;
+		if (amount_ > std::numeric_limits<unsigned int>::max() - dstCore->getBalance())
+			return "destination core has insufficient capacity";
+	}
+	if (dstObj->getType() == ObjectType::GemPile)
+	{
+		GemPile *dstGemPile = (GemPile *)dstObj;
+		if (amount_ > std::numeric_limits<unsigned int>::max() - dstGemPile->getBalance())
+			return "destination gem pile has insufficient capacity";
 	}
 
-	// cant transfer someone else's gems
+	// Can't transfer someone else's gems.
 	if (srcObj->getType() == ObjectType::Core)
 	{
 		Core *srcCore = (Core *)srcObj;
 		if (srcCore->getTeamId() != core->getTeamId()) return "can't transfer gems from another team core";
-		if (srcCore->getBalance() < amount_) amount_ = srcCore->getBalance();
-		if (srcCore->getBalance() <= 0)
-			return "invalid amount (tried to transfer " + std::to_string(amount_) + " gems)";
+		if (srcCore->getBalance() < amount_)
+			return "insufficient gems - has " + std::to_string(srcCore->getBalance()) + ", tried to transfer " +
+				   std::to_string(amount_);
 		srcCore->setBalance(srcCore->getBalance() - amount_);
 	}
 	if (srcObj->getType() == ObjectType::Unit)
@@ -103,11 +121,11 @@ std::string TransferGemsAction::execute(Core *core)
 		Unit *srcUnit = (Unit *)srcObj;
 		if (srcUnit->getTeamId() != core->getTeamId()) return "can't transfer gems from another team unit";
 		if (srcUnit->getActionCooldown() > 0) return "unit is on action cooldown (action cooldown should be 0 or less)";
-		srcUnit->resetActionCooldown();
-		if (srcUnit->getBalance() < amount_) amount_ = srcUnit->getBalance();
-		if (srcUnit->getBalance() <= 0)
-			return "invalid amount (tried to transfer " + std::to_string(amount_) + " gems)";
+		if (srcUnit->getBalance() < amount_)
+			return "insufficient gems - has " + std::to_string(srcUnit->getBalance()) + ", tried to transfer " +
+				   std::to_string(amount_);
 		srcUnit->setBalance(srcUnit->getBalance() - amount_);
+		srcUnit->resetActionCooldown();
 	}
 
 	if (dstObj->getType() == ObjectType::Core)

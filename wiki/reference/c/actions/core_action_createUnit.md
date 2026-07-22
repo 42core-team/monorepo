@@ -6,7 +6,7 @@ sidebarTitle: "⚙️ action_createUnit()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h#L136
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h
 
 ## Description
 
@@ -35,6 +35,8 @@ Component IDs may be repeated when the resulting design satisfies the builder's 
 ## Return
 
 `void`. Creation failures are reported with the next game state. No unit is added when creation fails.
+
+Action functions are queued and are executed between ticks, meaning their results are only reflected in the game state on the next `ft_on_tick()` call.
 
 ## Examples
 

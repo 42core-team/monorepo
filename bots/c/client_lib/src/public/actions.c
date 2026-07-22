@@ -87,6 +87,7 @@ void core_action_createUnit(const char *name, char *component, ...)
 
 void core_action_move(const t_obj *unit, t_pos pos)
 {
+	if (!unit) return;
 	core_static_ensureCapacity();
 	t_action *action = &actions.list[actions.count++];
 	action->type = ACTION_MOVE;

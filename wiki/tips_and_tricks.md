@@ -16,7 +16,7 @@ sidebarTitle: "💡 Tips & Tricks"
 
 5. **Use the `void *data` field.** You can save any data you want on every object, which lets you build more detailed strategies and coordinate your troops with a custom [state machine](https://www.reddit.com/r/learnprogramming/comments/1g5yxci/state_machines_for_a_beginner/). The library won't touch it. Just remember to free everything at the end. 💪
 
-6. **Transfer gems between units.** Remember that [`core_action_transferGems`](reference/c/actions/core_action_transferGems) also works between units, as well as as a way of dropping gems with no other unit around.
+6. **Transfer gems between units.** Remember that [`core_action_transferGems`](reference/c/actions/core_action_transferGems) also works between units, as well as a way of dropping gems with no other unit around.
 
 7. **Use the debug tools.** Add information to unit tooltips with the [debug functions](reference/c/debug/core_debug_addObjectInfo). Showing each unit's current job makes strategy bugs much easier to see in a replay.
 

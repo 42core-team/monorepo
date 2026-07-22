@@ -6,14 +6,17 @@ sidebarTitle: "⚙️ get_objs_filter()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/src/public/get.c#L38
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/src/public/get.c
 
 ## Description
 
 Get all objects matching a [custom filtering condition](documentation/getter_filtering).
 
 > [!WARNING]
-> You are responsibility to **free the array** returned by this function, but not the objects in it themselves, they are the same object instances as in the `game.objects` array.
+> You are responsible for **freeing the array** returned by this function, but not the objects inside it. They are the same object instances as those in the `game.objects` array.
+
+> [!WARNING]
+> Filter conditions must be deterministic, side-effect-free, must not mutate/free objects, and should return the same result throughout the call.
 
 ## Signature
 
@@ -23,7 +26,7 @@ t_obj **core_get_objs_filter(bool (*condition)(const t_obj *));
 
 ## Parameters
 
-- `bool (*condition)(const t_obj *)`: Selection function pointer returning if the inputted object should be selected
+- `bool (*condition)(const t_obj *)`: Selection function pointer returning whether the input object should be selected
 
 ## Return
 

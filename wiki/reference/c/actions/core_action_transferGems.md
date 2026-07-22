@@ -6,7 +6,7 @@ sidebarTitle: "⚙️ action_transferGems()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h#L170
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h
 
 ## Description
 
@@ -17,15 +17,11 @@ If the position points to an object that can hold gems (Cores / Units / Gem Pile
 Only units are able to drop gems on the floor.
 
 - Units can only transfer gems if their action cooldown is 0 or less; see [`baseActionCooldown`](documentation/unit_builder#baseactioncooldown). Cores do not have an action cooldown.
-- Objects can only transfer gems one tile up, down, left or right; for more see [Action Position Limits](documentation/action_position_limits). The only exception to this is outlined in the tip box below.
+- Units can transfer gems to or from a surrounded core when it is as close to that core as possible by [Manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry). This exception may allow a transfer across more than one position. It does not apply when dropping gems on an empty position.
 
-The transferring object must be a Core or Unit of your team, and the target object must be a Core or Unit of any team, a Gem Pile, or an empty grid position.
+The transferring object must be a Core or Unit of your team, and the target position must be a grid cell containing a Core or Unit of any team, a Gem Pile, or an empty grid position.
 
-> [!TIP]
-> Unlike other action parameters, the server won't stop executing the transfer gems action if the gems amount parameter is set higher than the possible amount. That means you can pass `99999`, even if the source object is only holding `42` gems, to transfer the maximum possible amount of gems anyways.
-
-> [!TIP]
-> A unit can transfer gems to or from a surrounded core when it is as close to that core as possible by [Manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry). This exception may allow a transfer across more than one position. It does not apply when dropping gems on an empty position.
+The amount must be exact. The action fails if the source does not have enough gems or the destination unit cannot hold the full amount.
 
 ## Signature
 
@@ -43,6 +39,8 @@ void core_action_transferGems(const t_obj *source, t_pos target_pos, unsigned lo
 
 void
 
+Action functions are queued and are executed between ticks, meaning their results are only reflected in the game state on the next `ft_on_tick()` call.
+
 ## Examples
 
 This uses the default [`core_action_travel`](reference/c/actions/core_action_travel#example) policies.
@@ -54,7 +52,7 @@ if (nearest_deposit && obj->s_unit.gems <= 0)
 else
 {
 	core_action_travel(obj, ft_get_core_own()->pos, NULL);
-	core_action_transferGems(obj, ft_get_core_own()->pos, 99999);
+	core_action_transferGems(obj, ft_get_core_own()->pos, obj->s_unit.gems);
 }
 ```
 

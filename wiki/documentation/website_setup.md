@@ -1,6 +1,6 @@
-This page is focused around making sure your bot can properly run on the website. Otherwise, it won't be able to compete in the tournament or win.
+This page focuses on making sure your bot can run properly on the website. Otherwise, it won't be able to compete in the tournament or win.
 
-> Generally, you don't need to worry about going through this page, just test that your bot runs on the website once and you'll be fine. As long as you keep the folder name `my-core-bot` and not modify the `my-core-bot/Makefile`, your bot will run fine on the website. If your bot doesn't run on the website though, this is the page for you.
+> Generally, you don't need to go through this page; test that your bot runs on the website once, and you should be fine. As long as you keep the folder name `my-core-bot` and do not modify `my-core-bot/Makefile`, your bot will run properly on the website. If it doesn't, this is the page for you.
 
 # What the Website Expects
 
@@ -47,7 +47,7 @@ This page is focused around making sure your bot can properly run on the website
 <pre>
 cd my-core-bot && make && ./bot 42
 </pre>
-> The result should be your bot running trying to connect
+> The result should be your bot running and trying to connect.
 
 # FAQ
 

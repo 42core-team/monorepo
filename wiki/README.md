@@ -36,7 +36,7 @@ Onward - to glory! ⚔️
 
 # 👾 What is CORE?
 
-CORE GAME is a programming competition where you can write a bot which competes against the bots made by other people. Each of you has a base on the map called your core, which is the place you need to protect because if it is destroyed you lose.
+CORE GAME is a programming competition where you can write a bot that competes against bots made by other people. Each of you has a base on the map called your core, which you need to protect because you lose if it is destroyed.
 
 To avoid being defeated, you can spawn units to defend against and attack your opponent. Their strengths and drawbacks depend on how you assemble them. Use the event's [Unit Builder](documentation/unit_builder) to design them, then create them with the [create action](reference/c/actions/core_action_createUnit). To spawn them, you need gems.
 
@@ -50,7 +50,7 @@ You can receive gems by having your units attack the gem deposits on the map or 
 
 2. **Follow the README in the repository** 📧
 
-   - Basically, run `make devcontainer` in the cloned folder, and then you can get started! Compile using `make`, visualizer to view the games is under `localhost:4000`, everything in `src/` will be compiled into your bot. Any code you push to the main is whats used on the website and in the tournament, code pushed to other branches is ignored.
+   - Run `make devcontainer` in the cloned folder, and then you can get started! Compile using `make`; the visualizer is available at `localhost:4000`. Everything in `src/` will be compiled into your bot. Any code you push to the main branch is what's used on the website and in the tournament; code pushed to other branches is ignored.
 
 3. **Get informed!** 🧠
 

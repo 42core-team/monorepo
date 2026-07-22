@@ -6,7 +6,7 @@ sidebarTitle: "⚙️ get_obj_filter_nearest()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/src/public/get.c#L70
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/src/public/get.c
 
 ## Description
 
@@ -23,7 +23,7 @@ t_obj *core_get_obj_filter_nearest(t_pos pos, bool (*condition)(const t_obj *));
 ## Parameters
 
 - `t_pos pos`: Position to search from
-- `bool (*condition)(const t_obj *)`: Selection function pointer returning if the inputted object should be selected
+- `bool (*condition)(const t_obj *)`: Selection function pointer returning whether the input object should be selected
 
 ## Return
 

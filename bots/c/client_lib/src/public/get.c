@@ -107,10 +107,12 @@ t_obj **core_get_units_byName(const char *name)
 
 t_obj **core_get_objs_filter(bool (*condition)(const t_obj *))
 {
+	if (!condition) return NULL;
+
 	int count = 0;
 	for (int i = 0; game.objects && game.objects[i] != NULL; i++)
 	{
-		if (!condition || condition(game.objects[i])) count++;
+		if (condition(game.objects[i])) count++;
 	}
 
 	if (count == 0) return (NULL);
@@ -121,7 +123,7 @@ t_obj **core_get_objs_filter(bool (*condition)(const t_obj *))
 	int index = 0;
 	for (int i = 0; game.objects && game.objects[i] != NULL; i++)
 	{
-		if (!condition || condition(game.objects[i])) result[index++] = game.objects[i];
+		if (condition(game.objects[i])) result[index++] = game.objects[i];
 	}
 	result[index] = NULL;
 

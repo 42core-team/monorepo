@@ -6,7 +6,7 @@ sidebarTitle: "⚙️ get_obj_from_id()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/src/public/get.c#L4
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/src/public/get.c
 
 ## Description
 
@@ -36,7 +36,7 @@ void ft_on_tick(unsigned long tick)
 {
 	if (carrier_id >= 0)
 	{
-		t_obj *carrier = core_get_obj_by_id(carrier_id);
+		t_obj *carrier = core_get_obj_from_id(carrier_id);
 ```
 
 ## Related

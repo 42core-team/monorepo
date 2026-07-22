@@ -4,7 +4,7 @@ permalink: "unit_builder"
 sidebarTitle: "Unit Builder"
 ---
 
-Units are built from components. Each component affect multiple properties. A property is one stat that defines the unit. You cannot choose properties directly, you can only choose components. To make this easy, we made the **Unit Builder**. Find it under your event on the CORE website. Name your unit, then drag the components of the unit into the unit assembly. You can see the properties that your chosen components will result in on the right side. Components can be stacked and their values are added together.
+Units are built from components. Each component affects multiple properties. A property is one stat that defines the unit. You cannot choose properties directly; you can only choose components. To make this easy, we made the **Unit Builder**. Find it under your event on the CORE website. Name your unit, then drag its components into the unit assembly. You can see the resulting properties on the right side. Components can be stacked, and their values are added together.
 
 After that, scroll to the bottom, and copy the unit creation line into your code, which will look something like this:
 
@@ -12,7 +12,7 @@ After that, scroll to the bottom, and copy the unit creation line into your code
 core_action_createUnit("Warrior", "combat", "health", NULL);
 ```
 
-The first argument is the unit's name. Pass `NULL` to receive a generated name. Every following argument is a component ID from the builder, and the list **must end with `NULL`**. Here's some more infos on the [unit creation action](reference/actions/core_action_createUnit).
+The first argument is the unit's name. Pass `NULL` to receive a generated name. Every following argument is a component ID from the builder, and the list **must end with `NULL`**. Here is more information on the [unit creation action](reference/c/actions/core_action_createUnit).
 
 After the unit spawns, its component IDs are in `unit->s_unit.components` and its finished properties are in `unit->s_unit.properties`. Its current health, carried gems, and cooldown are in `unit->hp`, `unit->s_unit.gems`, and `unit->s_unit.action_cooldown`.
 
@@ -40,6 +40,8 @@ penalty defined by `gemsPerCooldownStep`:
 action cooldown = max(1, max(0, baseActionCooldown)
                          + floor(carried gems / max(1, gemsPerCooldownStep)))
 </pre>
+
+If the unit does not perform an action after its cooldown has reached 0, the cooldown will continue to decrease into the negative range, eventually reaching its max standing cooldown - at which point its cooldown will reset the action cooldown back as if it had performed an action, when really the unit just stood so long the action was forfeit.
 
 ## `gemsPerCooldownStep`
 
@@ -82,4 +84,4 @@ Damage dealt when this unit attacks deposits and walls. It has no effect on atta
 
 ## `postSpawnCoreCooldown`
 
-The number of ticks the core must wait after creating this unit before it can create another unit. After a unit is spawned successfully, that unit's `postSpawnCoreCooldown` becomes `core->s_core.spawn_cooldown`, which then counts down once per tick. Once the cores spawn cooldown reached 0, it can spawn another unit.
+The number of ticks the core must wait after creating this unit before it can create another unit. After a unit is spawned successfully, that unit's `postSpawnCoreCooldown` becomes `core->s_core.spawn_cooldown`, which then counts down once per tick. Once the core's spawn cooldown reaches 0, it can spawn another unit.

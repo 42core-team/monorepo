@@ -6,7 +6,7 @@ sidebarTitle: "⚙️ action_travel()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h#L147
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h
 
 ## Description
 
@@ -42,6 +42,12 @@ void core_action_travel(const t_obj *unit, t_pos pos,
 - `unit`: One of your units. It must be ready to act (`action_cooldown <= 0`).
 - `pos`: The goal. It may be anywhere inside the grid and does not need to be empty.
 - `get_tile_travelability`: Returns the pathfinding weight and action for a position, or `NULL` for the default policy.
+
+## Return
+
+void
+
+Action functions are queued and are executed between ticks, meaning their results are only reflected in the game state on the next `ft_on_tick()` call.
 
 ## Example
 

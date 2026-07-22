@@ -30,6 +30,7 @@ void Unit::tickActionCooldown()
 	const unsigned int unitStandingCooldownLimit =
 			std::min(gemAdjustedActionCooldown, Config::game().maxUnitStandingCooldown);
 	action_cooldown_--;
+	// A unit that stands ready for too long is put back on cooldown so it cannot bank readiness forever.
 	if (-action_cooldown_ > static_cast<long long>(unitStandingCooldownLimit))
 		action_cooldown_ = unitStandingCooldownLimit;
 }

@@ -6,13 +6,13 @@ sidebarTitle: "⚙️ startGame()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/src/con_lib.c#L44
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/src/con_lib.c
 
 ## Description
 
-Starts the Core lib up, initializes the game, connects to the server & starts the game.
+Starts the CORE library, initializes the game, and connects to the server.
 
-You only need to call this function once in your code to start up the Core library, and this line is already present in your code when you clone the repository. No need for you to anything. 💆‍♀️🧘‍♀️😎
+You only need to call this function once to start the CORE library, and this line is already present when you clone the repository. You do not need to do anything. 💆‍♀️🧘‍♀️😎
 
 ## Signature
 

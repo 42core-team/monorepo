@@ -38,13 +38,49 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"ms-vscode.cpptools"
+				"ms-vscode.cpptools",
+				"Catppuccin.catppuccin-vsc",
+				"Catppuccin.catppuccin-vsc-icons"
 			],
 			"settings": {
+				"C_Cpp.autocomplete": "default",
+				"C_Cpp.default.compilerPath": "/usr/bin/cc",
+				"C_Cpp.default.includePath": [
+					"${workspaceFolder}/**",
+					"/core/inc"
+				],
+				"C_Cpp.inlayHints.parameterNames.enabled": true,
+				"C_Cpp.intelliSenseEngine": "default",
+				"C_Cpp.intelliSenseUpdateDelay": 500,
+				"[c]": {
+					"editor.defaultFormatter": "ms-vscode.cpptools",
+					"editor.formatOnSave": true
+				},
+				"catppuccin.accentColor": "mauve",
+				"editor.cursorSmoothCaretAnimation": "on",
+				"editor.minimap.enabled": false,
+				"editor.parameterHints.enabled": true,
+				"editor.quickSuggestions": {
+					"comments": false,
+					"other": true,
+					"strings": false
+				},
+				"editor.renderWhitespace": "all",
+				"editor.smoothScrolling": true,
+				"editor.suggestOnTriggerCharacters": true,
+				"files.autoSave": "onFocusChange",
+				"files.exclude": {
+					".clang-format": true,
+					".devcontainer": true
+				},
 				"remote.autoForwardPorts": false,
 				"security.workspace.trust.enabled": true,
 				"security.workspace.trust.untrustedFiles": "open",
-				"security.workspace.trust.emptyWindow": true
+				"security.workspace.trust.emptyWindow": true,
+				"terminal.integrated.scrollback": 10000000,
+				"terminal.integrated.smoothScrolling": true,
+				"workbench.colorTheme": "Catppuccin Mocha",
+				"workbench.iconTheme": "catppuccin-latte"
 			}
 		}
 	}
