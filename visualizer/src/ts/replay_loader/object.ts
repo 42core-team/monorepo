@@ -93,10 +93,15 @@ function getSortedUnitComponentEntries(unit: UnitObject): UnitComponentEntry[] {
 export function getDominantUnitAssetPath(unit: UnitObject): string {
 	const entries = getSortedUnitComponentEntries(unit);
 	const prioritized = entries.filter((entry) => entry.prioritized);
+	const componentIds = unit.components ?? [];
 
+	// icon priority first, then amount of that icon, the index in the component array
 	return (
-		(prioritized.length > 0 ? prioritized : entries)[0]?.assetPath ??
-		FALLBACK_UNIT_ASSET_PATH
+		(prioritized.length > 0 ? prioritized : entries).sort(
+			(a, b) =>
+				b.count - a.count ||
+				componentIds.indexOf(a.id) - componentIds.indexOf(b.id),
+		)[0]?.assetPath ?? FALLBACK_UNIT_ASSET_PATH
 	);
 }
 function renderUnitComponentSummary(unit: UnitObject): string {
