@@ -9,6 +9,11 @@ static bool core_static_isMyCore(const t_obj *obj)
 	return (obj->s_core.team_id == game.my_team_id);
 }
 
+static bool core_static_isLivingOpponentCore(const t_obj *obj)
+{
+	return obj && obj->type == OBJ_CORE && obj->s_core.team_id != game.my_team_id && obj->hp > 0;
+}
+
 static void core_static_awaitEnterPress(void)
 {
 	if (!isatty(STDIN_FILENO)) return;
@@ -123,7 +128,7 @@ int core_startGame(const char *team_name, int argc, char **argv, void (*tick_cal
 
 	// handle game end
 	core_static_awaitEnterPress();
-	if (my_core && my_core->hp > 0)
+	if (my_core && my_core->hp > 0 && !core_get_objs_filter_count(core_static_isLivingOpponentCore))
 		printf("Game over! You won!\n");
 	else
 		printf("Game over! You lost!\n");

@@ -39,8 +39,17 @@ static char *parse_string_literal(const char **p)
 			case '\\':
 				buffer[len++] = '\\';
 				break;
+			case 'b':
+				buffer[len++] = '\b';
+				break;
+			case 'f':
+				buffer[len++] = '\f';
+				break;
 			case 'n':
 				buffer[len++] = '\n';
+				break;
+			case 'r':
+				buffer[len++] = '\r';
 				break;
 			case 't':
 				buffer[len++] = '\t';
@@ -401,11 +410,17 @@ static void sb_append_escaped(StringBuffer *sb, const char *str)
 			sb_append_char(sb, '\\');
 			sb_append_char(sb, *p);
 		}
+		else if (*p == '\b')
+			sb_append(sb, "\\b");
+		else if (*p == '\f')
+			sb_append(sb, "\\f");
 		else if (*p == '\n')
 			sb_append(sb, "\\n");
+		else if (*p == '\r')
+			sb_append(sb, "\\r");
 		else if (*p == '\t')
 			sb_append(sb, "\\t");
-		else
+		else if ((unsigned char)*p >= 0x20)
 			sb_append_char(sb, *p);
 	}
 	sb_append_char(sb, '"');
