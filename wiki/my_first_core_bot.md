@@ -53,7 +53,7 @@ Change the `"My CORE Bot"` string in the `main` function to a name you like, run
 
 To do anything in the game, you perform actions. Most actions are executed by units, which can walk around, destroy stuff, and most importantly: hit your opponent on the head really hard.
 
-Units are highly dynamic: Their many properties are affected by components which you control, making for over 1286 possible combinations - but which of those combinations are useful to defeat your opponent is on you to figure out.
+Units are highly dynamic: Their many properties are affected by components which you control, making for over 3000 possible combinations - but which of those combinations are useful to defeat your opponent is on you to figure out.
 
 To help you do this, we've created a unit builder to make creating units easy. Open your event on the CORE website and go to the **Unit Builder**. Play around with it for a while! Getting good units set up is critical. It's recommended that you read through the [Unit Builder and property guide](documentation/unit_builder) at some point to understand what each property does.
 
