@@ -428,9 +428,7 @@ void JigsawWorldGenerator::generateWorld(uint64_t seed)
 		MapTemplate temp = original.getTransformedTemplate(eng_);
 		int posX = distX(eng_) - 5;
 		int posY = distY(eng_) - 5;
-		if (tryPlaceTemplate(temp, posX, posY))
-			Logger::Log("Placed template " + original.name + " at (" + std::to_string(posX) + ", " +
-						std::to_string(posY) + ")");
+		tryPlaceTemplate(temp, posX, posY);
 	}
 	Logger::Log("Step 2: Placing walls");
 	placeWalls();
