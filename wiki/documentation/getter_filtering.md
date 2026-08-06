@@ -19,3 +19,17 @@ void example(void)
 ```
 
 Here, `is_deposit` acts as the condition. The getter runs this check on every object in the game and returns the one closest to `(5,5)` that passes. This can be used with a large variety of different getter functions.
+
+The Go client uses ordinary predicate functions in the same way:
+
+```go
+isDeposit := func(obj *game.Object) bool {
+	return obj != nil && obj.Type == game.ObjectDeposit
+}
+
+nearest := g.NearestObject(game.Position{X: 5, Y: 5}, isDeposit)
+deposits := g.ObjectsFilter(isDeposit)
+count := g.ObjectsFilterCount(isDeposit)
+```
+
+A nil predicate returns no results from `ObjectsFilter` and `NearestObject`. `ObjectsFilterCount(nil)` is the exception: it counts every object. See the [Go getter reference](reference/go/getters/GameGetters).

@@ -65,8 +65,7 @@ occupant must not be attacked.
 
 The defaults price open ground at one action and estimate how many attacks an obstacle needs. They never attack your
 own units or core. They also check the matching unit property: `damage_unit` for units, `damage_core` for cores, and
-`damage_object` for deposits and walls. A gem pile is breakable only if the unit has enough unused `max_balance` to
-collect the whole pile.
+`damage_object` for deposits and walls. A gem pile is enterable only while the unit is below `max_balance`.
 
 The starter bot keeps an older two-argument name as a small wrapper:
 
@@ -129,7 +128,7 @@ Run `make` and inspect the replay. If creation reports an invalid component, ret
 The unit name and component list are available in `unit->s_unit.name` and the `NULL`-terminated `unit->s_unit.components` array. Use [`core_get_units_by_name`](reference/c/getters/core_get_units_by_name) when different designs need different jobs. For example, mining units can target deposits while combat units target the opponent.
 
 The defaults are a baseline, not a strategy. Should a fragile carrier avoid enemies? Should a demolition unit prefer a
-short route through a wall? Should units avoid a crowded corridor? Supply a weight or break callback for those choices.
+short route through a wall? Should units avoid a crowded corridor? Supply a weight callback for those choices.
 If weights do not fit your strategy, use move and attack directly.
 
 Continue with the [getter filtering guide](documentation/getter_filtering), [action execution order](documentation/action_execution_order), and the [Unit Builder property guide](documentation/unit_builder).

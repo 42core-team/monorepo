@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
+	"strings"
 	"time"
 
 	"github.com/42core-team/go-client-lib/game"
@@ -18,19 +19,22 @@ type loginRequest struct {
 
 type clientPacket struct {
 	Actions []Action     `json:"actions"`
-	Debug   []DebugEntry `json:"debug_data,omitempty"`
+	Debug   []DebugEntry `json:"debug_data"`
 }
 
 type Connection struct {
 	socket         net.Conn
-	scanner        *bufio.Scanner
+	reader         *bufio.Reader
 	game           *game.Game
 	actionQueue    *ActionQueue
 	debugData      *DebugData
 	onTickCallback func(*game.Game)
+	debug          bool
 }
 
-func NewConnection(serverAddr string, selfTeamID uint) (*Connection, error) {
+const socketReadTimeout = 42 * time.Second
+
+func NewConnection(serverAddr string, selfTeamID uint, debug bool) (*Connection, error) {
 	fmt.Println("Connecting to server")
 	var conn net.Conn
 	var err error
@@ -44,23 +48,25 @@ func NewConnection(serverAddr string, selfTeamID uint) (*Connection, error) {
 	}
 	fmt.Println("Connected!")
 
-	scanner := bufio.NewScanner(conn)
-	scanner.Buffer(make([]byte, 1024*1024), 1024*1024)
-
 	return &Connection{
 		socket:      conn,
-		scanner:     scanner,
+		reader:      bufio.NewReader(conn),
 		game:        &game.Game{MyTeamID: selfTeamID},
 		actionQueue: NewActionQueue(100),
 		debugData:   NewDebugData(100),
+		debug:       debug,
 	}, nil
 }
 
 func (c *Connection) readLine() (string, error) {
-	if c.scanner.Scan() {
-		return c.scanner.Text(), nil
+	if err := c.socket.SetReadDeadline(time.Now().Add(socketReadTimeout)); err != nil {
+		return "", fmt.Errorf("failed to set socket read deadline: %v", err)
 	}
-	if err := c.scanner.Err(); err != nil {
+	line, err := c.reader.ReadString('\n')
+	if len(line) > 0 {
+		return strings.TrimSuffix(line, "\n"), nil
+	}
+	if err != nil {
 		return "", fmt.Errorf("error reading from socket: %v", err)
 	}
 	return "", fmt.Errorf("connection closed by server")
@@ -84,10 +90,13 @@ func (c *Connection) Start(teamID uint, teamName string) error {
 	if err := json.Unmarshal([]byte(configLine), &c.game.Config); err != nil {
 		return fmt.Errorf("failed to parse config: %v", err)
 	}
+	if c.debug {
+		fmt.Printf("Received config: %s\n", configLine)
+	}
 
 	for {
 		actions := c.actionQueue.Drain()
-		var debugEntries []DebugEntry
+		debugEntries := make([]DebugEntry, 0)
 		if c.debugData.HasData() {
 			debugEntries = c.debugData.GetEntries()
 		}
@@ -102,6 +111,9 @@ func (c *Connection) Start(teamID uint, teamName string) error {
 			fmt.Println("The connection was closed by the server. Bye, bye!")
 			break
 		}
+		if c.debug {
+			fmt.Printf("Received state: %s\n", line)
+		}
 
 		tick, err := parseGameTick(line)
 		if err != nil {
@@ -112,9 +124,26 @@ func (c *Connection) Start(teamID uint, teamName string) error {
 		if c.onTickCallback != nil {
 			c.onTickCallback(c.game)
 		}
+		if core := c.game.MyCore(); core == nil || !core.IsAlive() {
+			break
+		}
 	}
+	c.printGameResult()
 
 	return nil
+}
+
+func (c *Connection) printGameResult() {
+	myCore := c.game.MyCore()
+	livingOpponentCores := c.game.ObjectsFilterCount(func(object *game.Object) bool {
+		data := object.GetCoreData()
+		return data != nil && data.TeamID != c.game.MyTeamID && object.IsAlive()
+	})
+	if myCore != nil && myCore.IsAlive() && livingOpponentCores == 0 {
+		fmt.Println("Game over! You won!")
+	} else {
+		fmt.Println("Game over! You lost!")
+	}
 }
 
 func (c *Connection) sendLoginPacket(teamID uint, teamName string) error {
@@ -134,6 +163,9 @@ func (c *Connection) sendPacket(actions []Action, debugEntries []DebugEntry) err
 	data, err := json.Marshal(packet)
 	if err != nil {
 		return fmt.Errorf("error marshaling client packet: %v", err)
+	}
+	if c.debug {
+		fmt.Printf("Actions: %s\n", data)
 	}
 	return c.send(data)
 }

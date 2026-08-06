@@ -11,15 +11,8 @@ import (
 
 const teamName = "Gridmaster"
 
-func moveToward(bot *coregame.Bot, unit *game.Object, targetPos game.Position) {
-	nextPos := bot.SimplePathfind(unit, targetPos)
-	if nextPos != unit.Pos {
-		bot.Move(unit, nextPos)
-	}
-}
-
 func tick(g *game.Game, bot *coregame.Bot) {
-	bot.CreateUnit(game.UnitWarrior)
+	bot.CreateUnit("Gridfighter", "combat", "siege", "health")
 
 	enemyCore := g.EnemyCore()
 	if enemyCore == nil {
@@ -27,7 +20,9 @@ func tick(g *game.Game, bot *coregame.Bot) {
 	}
 
 	for _, unit := range g.TeamUnits() {
-		moveToward(bot, unit, enemyCore.Pos)
+		if unit.GetUnitData().ActionCooldown <= 0 {
+			bot.Travel(unit, enemyCore.Pos, nil)
+		}
 	}
 }
 

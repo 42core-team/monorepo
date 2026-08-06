@@ -11,16 +11,10 @@ import (
 
 const teamName = "YOUR TEAM NAME HERE"
 
-func moveUnitIfNeeded(bot *coregame.Bot, unit *game.Object, nextPos game.Position) {
-	if nextPos != unit.Pos {
-		bot.Move(unit, nextPos)
-	}
-}
-
 func tick(g *game.Game, bot *coregame.Bot) {
 	fmt.Printf("-----> [⚡️ TICK %d 🔥]\n", g.ElapsedTicks)
 
-	bot.CreateUnit(game.UnitWarrior)
+	bot.CreateUnit("Warrior", "combat")
 
 	enemyCore := opponentCore(g)
 	if enemyCore == nil {
@@ -28,14 +22,14 @@ func tick(g *game.Game, bot *coregame.Bot) {
 	}
 
 	for _, unit := range ownUnits(g) {
-		nextPos := bot.SimplePathfind(unit, enemyCore.Pos)
-		bot.AddObjectPathStep(unit, nextPos)
-		moveUnitIfNeeded(bot, unit, nextPos)
-		bot.AddObjectInfo(unit, fmt.Sprintf(
+		if unit.GetUnitData().ActionCooldown <= 0 {
+			bot.Travel(unit, enemyCore.Pos, nil)
+		}
+		bot.AddObjectInfo(unit,
 			"I am a warrior! 🗡️ - I am heading for the opponent core at [%d,%d]! 🏰\n",
 			enemyCore.Pos.X,
 			enemyCore.Pos.Y,
-		))
+		)
 	}
 }
 

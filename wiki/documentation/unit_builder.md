@@ -12,9 +12,19 @@ After that, scroll to the bottom, and copy the unit creation line into your code
 core_action_createUnit("Warrior", "combat", "health", NULL);
 ```
 
-The first argument is the unit's name. Pass `NULL` to receive a generated name. Every following argument is a component ID from the builder, and the list **must end with `NULL`**. Here's some more infos on the [unit creation action](reference/actions/core_action_createUnit).
+The first argument is the unit's name. Pass `NULL` to receive a generated name. Every following argument is a component ID from the builder, and the list **must end with `NULL`**. See the [C unit creation action](reference/c/actions/core_action_createUnit).
+
+The Go equivalent uses a variadic component list and therefore needs no sentinel:
+
+```go
+bot.CreateUnit("Warrior", "combat", "health")
+```
+
+Pass an empty string as the name to receive a generated name. See [`Bot.CreateUnit`](reference/go/actions/CreateUnit).
 
 After the unit spawns, its component IDs are in `unit->s_unit.components` and its finished properties are in `unit->s_unit.properties`. Its current health, carried gems, and cooldown are in `unit->hp`, `unit->s_unit.gems`, and `unit->s_unit.action_cooldown`.
+
+In Go, read the same state from `unit.GetUnitData().Components`, `unit.GetUnitData().Properties`, `unit.Hp`, `unit.GetUnitData().Gems`, and `unit.GetUnitData().ActionCooldown`.
 
 ## Properties
 
@@ -34,18 +44,20 @@ The base number of ticks a unit waits between actions - lower values therefore m
 
 Moving, attacking, and transferring gems reset `action_cooldown`. A positive cooldown means the unit must wait; at `0`
 or below, it can queue an action. A successful action resets the cooldown to the base action cooldown plus a carried-gem
-penalty defined by `balancePerCooldownStep`:
+penalty defined by `gemsPerCooldownStep`:
 
 <pre>
 action cooldown = max(1, max(0, baseActionCooldown)
-                         + floor(carried gems / max(1, balancePerCooldownStep)))
+                         + floor(carried gems / max(1, gemsPerCooldownStep)))
 </pre>
 
-## `balancePerCooldownStep`
+If a ready unit does not act, its cooldown continues into the negative range. Once it reaches the configured maximum standing cooldown, the unit forfeits that stored readiness and its cooldown resets as if it had acted.
+
+## `gemsPerCooldownStep`
 
 How many carried gems add one tick to the unit's action cooldown. Only complete groups count because integer division is used.
 
-With `baseActionCooldown = 3` and `balancePerCooldownStep = 15`:
+With `baseActionCooldown = 3` and `gemsPerCooldownStep = 15`:
 
 <pre>
  0 gems -> cooldown 3
@@ -56,7 +68,7 @@ With `baseActionCooldown = 3` and `balancePerCooldownStep = 15`:
 
 A larger value lets a loaded unit stay faster; a smaller value makes carrying gems slow it down sooner.
 
-## `maxBalance`
+## `maxGems`
 
 The most gems a unit can carry at once. If collecting a pile or receiving a transfer would exceed this limit, the unit is filled only to this limit.
 
