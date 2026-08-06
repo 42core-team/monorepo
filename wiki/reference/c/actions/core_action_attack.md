@@ -6,7 +6,7 @@ sidebarTitle: "⚙️ action_attack()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h#L164
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h
 
 ## Description
 
@@ -35,6 +35,8 @@ void core_action_attack(const t_obj *attacker, const t_obj *target);
 
 void
 
+Action functions are queued and are executed between ticks, meaning their results are only reflected in the game state on the next `ft_on_tick()` call.
+
 ## Examples
 
 ```c
@@ -43,7 +45,7 @@ t_obj *unit = ft_get_attacker_unit();
 
 if (manhattan_distance(unit->pos, target->pos) <= 1 && target->s_unit.team_id != game.my_team_id)
 {
-	core_action_attack(unit, target);
+	core_action_travel(unit, target->pos, NULL);
 }
 ```
 

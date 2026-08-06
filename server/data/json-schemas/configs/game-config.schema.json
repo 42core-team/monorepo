@@ -12,7 +12,7 @@
     "depositIncome",
     "gemPileIncome",
     "coreHp",
-    "initialBalance",
+    "initialGems",
     "wallHp",
     "worldGenerator",
     "worldGeneratorConfig",
@@ -63,7 +63,7 @@
       "minimum": 1,
       "maximum": 10000000
     },
-    "initialBalance": {
+    "initialGems": {
       "type": "integer",
       "minimum": 0,
       "maximum": 10000000
@@ -200,8 +200,8 @@
       "enum": [
         "hp",
         "baseActionCooldown",
-        "balancePerCooldownStep",
-        "maxBalance",
+        "gemsPerCooldownStep",
+        "maxGems",
         "damageReductionPercent",
         "damageCore",
         "damageUnit",
@@ -215,8 +215,8 @@
       "required": [
         "hp",
         "baseActionCooldown",
-        "balancePerCooldownStep",
-        "maxBalance",
+        "gemsPerCooldownStep",
+        "maxGems",
         "damageReductionPercent",
         "damageCore",
         "damageUnit",
@@ -234,12 +234,12 @@
           "minimum": 0,
           "maximum": 10000000
         },
-        "balancePerCooldownStep": {
+        "gemsPerCooldownStep": {
           "type": "integer",
           "minimum": 0,
           "maximum": 10000000
         },
-        "maxBalance": {
+        "maxGems": {
           "type": "integer",
           "minimum": 0,
           "maximum": 10000000

@@ -1,6 +1,7 @@
 #include "core_lib.h"
 #include "core_lib_internal.h"
 
+#include <limits.h>
 #include <stdint.h>
 
 #define TRAVEL_CAN_REMOVE 1
@@ -9,7 +10,7 @@
 typedef struct s_travel_node
 {
 	uint64_t distance;
-	uint32_t first_step;
+	uint32_t previous;
 	uint32_t heap_pos;
 	unsigned int weight;
 	unsigned char flags;
@@ -98,9 +99,9 @@ static size_t core_static_travel_getNeighbors(uint32_t index, size_t grid_size, 
 	return count;
 }
 
-static unsigned int core_static_travel_getDamage(const t_obj *unit, const t_obj *object)
+static unsigned long core_static_travel_getDamage(const t_obj *unit, const t_obj *object)
 {
-	int damage = 0;
+	unsigned long damage = 0;
 	if (object->type == OBJ_CORE)
 		damage = unit->s_unit.properties.damage_core;
 	else if (object->type == OBJ_UNIT)
@@ -111,15 +112,15 @@ static unsigned int core_static_travel_getDamage(const t_obj *unit, const t_obj 
 			int reduction = object->s_unit.properties.damage_reduction_percent;
 			if (reduction < 0) reduction = 0;
 			if (reduction > 100) reduction = 100;
-			uint64_t reduced = ((uint64_t)(unsigned int)damage * (unsigned int)(100 - reduction) + 50) / 100;
-			damage = reduced > 0 ? (int)reduced : 1;
+			uint64_t reduced = ((uint64_t)damage * (unsigned int)(100 - reduction) + 50) / 100;
+			damage = reduced > 0 ? (unsigned long)reduced : 1;
 		}
 	}
 	else if (object->type == OBJ_DEPOSIT || object->type == OBJ_WALL)
 		damage = unit->s_unit.properties.damage_object;
 	else if (object->type == OBJ_GEM_PILE)
 		damage = 1;
-	return damage > 0 ? (unsigned int)damage : 0;
+	return damage;
 }
 
 static bool core_static_travel_isFriendly(const t_obj *unit, const t_obj *object)
@@ -128,38 +129,49 @@ static bool core_static_travel_isFriendly(const t_obj *unit, const t_obj *object
 		   (object->type == OBJ_CORE && object->s_core.team_id == unit->s_unit.team_id);
 }
 
-static unsigned int core_static_travel_defaultWeight(t_pos pos, const t_obj *unit)
+static t_tile_travelability core_static_travel_defaultTileTravelability(t_pos pos, const t_obj *unit)
 {
 	t_obj *object = core_get_obj_from_pos(pos);
-	if (!object) return 1;
-	if (core_static_travel_isFriendly(unit, object)) return CORE_TRAVEL_BLOCKED;
+	if (!object) return (t_tile_travelability){1, CORE_TRAVEL_PASS};
+	if (core_static_travel_isFriendly(unit, object))
+	{
+		if (object->type == OBJ_CORE) return (t_tile_travelability){0, CORE_TRAVEL_BLOCK};
+		unsigned long wait = object->s_unit.action_cooldown > 0 ? (unsigned long)object->s_unit.action_cooldown : 1;
+		return (t_tile_travelability){wait >= UINT_MAX ? UINT_MAX : (unsigned int)wait + 1, CORE_TRAVEL_PASS};
+	}
 	if (object->type == OBJ_GEM_PILE)
 	{
-		int max_balance = unit->s_unit.properties.max_balance;
-		if (max_balance <= 0 || unit->s_unit.gems >= (unsigned long)max_balance) return CORE_TRAVEL_BLOCKED;
+		unsigned long max_gems = unit->s_unit.properties.max_gems;
+		if (max_gems == 0 || unit->s_unit.gems >= max_gems) return (t_tile_travelability){0, CORE_TRAVEL_BLOCK};
 	}
 
-	unsigned int damage = core_static_travel_getDamage(unit, object);
-	if (damage == 0) return CORE_TRAVEL_BLOCKED;
+	unsigned long damage = core_static_travel_getDamage(unit, object);
+	if (damage == 0) return (t_tile_travelability){0, CORE_TRAVEL_BLOCK};
 	uint64_t attacks = object->hp / damage + (object->hp % damage != 0);
-	return attacks >= CORE_TRAVEL_BLOCKED - 1 ? CORE_TRAVEL_BLOCKED - 1 : (unsigned int)attacks + 1;
+	unsigned int weight = attacks >= UINT_MAX ? UINT_MAX : (unsigned int)attacks + 1;
+	return (t_tile_travelability){weight, CORE_TRAVEL_ATTACK};
 }
 
-static void core_static_travel_prepareSurfaces(t_travel_workspace *workspace, size_t count, size_t grid_size,
-											   const t_obj *unit, unsigned int (*get_weight)(t_pos, const t_obj *))
+static void core_static_travel_prepareNodes(t_travel_workspace *workspace, size_t count, size_t grid_size,
+											const t_obj *unit,
+											t_tile_travelability (*get_tile_travelability)(t_pos, const t_obj *))
 {
 	uint32_t sentinel = (uint32_t)count;
 	for (uint32_t i = 0; i < count; i++)
 	{
 		t_pos position = {(unsigned short)(i % grid_size), (unsigned short)(i / grid_size)};
-		t_obj *obstacle = core_get_obj_from_pos(position);
 		t_travel_node *node = &workspace->nodes[i];
+		t_tile_travelability travelability = get_tile_travelability(position, unit);
 		node->distance = UINT64_MAX;
-		node->first_step = sentinel;
+		node->previous = sentinel;
 		node->heap_pos = sentinel;
-		node->weight = get_weight(position, unit);
-		node->flags = node->weight == CORE_TRAVEL_BLOCKED ? TRAVEL_BLOCKED : 0;
-		if (obstacle && !(node->flags & TRAVEL_BLOCKED)) node->flags = TRAVEL_CAN_REMOVE;
+		node->weight = travelability.weight;
+		if (travelability.action == CORE_TRAVEL_PASS)
+			node->flags = 0;
+		else if (travelability.action == CORE_TRAVEL_ATTACK)
+			node->flags = TRAVEL_CAN_REMOVE;
+		else
+			node->flags = TRAVEL_BLOCKED;
 	}
 }
 
@@ -169,7 +181,7 @@ static void core_static_travel_dijkstra(t_travel_workspace *workspace, size_t co
 	uint32_t sentinel = (uint32_t)count;
 	t_travel_node *start_node = &workspace->nodes[start];
 	start_node->distance = 0;
-	start_node->first_step = start;
+	start_node->previous = start;
 	start_node->heap_pos = 0;
 	workspace->heap[0] = start;
 	size_t heap_count = 1;
@@ -192,7 +204,7 @@ static void core_static_travel_dijkstra(t_travel_workspace *workspace, size_t co
 			if (distance >= next_node->distance) continue;
 			bool unseen = next_node->distance == UINT64_MAX;
 			next_node->distance = distance;
-			next_node->first_step = current == start ? next : workspace->nodes[current].first_step;
+			next_node->previous = current;
 			if (unseen)
 			{
 				next_node->heap_pos = (uint32_t)heap_count;
@@ -234,12 +246,13 @@ void core_internal_travelWorkspace_free(void)
 	core_static_travelWorkspace = (t_travel_workspace){0};
 }
 
-void core_action_travel(const t_obj *unit, t_pos pos, unsigned int (*get_weight)(t_pos, const t_obj *))
+void core_action_travel(const t_obj *unit, t_pos pos,
+						t_tile_travelability (*get_tile_travelability)(t_pos, const t_obj *))
 {
-	if (!unit || unit->type != OBJ_UNIT || unit->s_unit.action_cooldown > 0) return;
+	if (!unit || unit->type != OBJ_UNIT) return;
 	if (!core_internal_isPosValid(unit->pos) || !core_internal_isPosValid(pos)) return;
 	if (unit->pos.x == pos.x && unit->pos.y == pos.y) return;
-	if (!get_weight) get_weight = core_static_travel_defaultWeight;
+	if (!get_tile_travelability) get_tile_travelability = core_static_travel_defaultTileTravelability;
 
 	size_t grid_size = game.grid_size;
 	size_t node_count = grid_size * grid_size;
@@ -252,12 +265,22 @@ void core_action_travel(const t_obj *unit, t_pos pos, unsigned int (*get_weight)
 
 	uint32_t start = (uint32_t)((size_t)unit->pos.y * grid_size + unit->pos.x);
 	uint32_t target = (uint32_t)((size_t)pos.y * grid_size + pos.x);
-	core_static_travel_prepareSurfaces(workspace, node_count, grid_size, unit, get_weight);
+	core_static_travel_prepareNodes(workspace, node_count, grid_size, unit, get_tile_travelability);
 	core_static_travel_dijkstra(workspace, node_count, grid_size, start, target);
 
 	uint32_t destination = core_static_travel_getClosest(workspace, node_count, grid_size, start, target, pos);
-	uint32_t next = workspace->nodes[destination].first_step;
-	if (destination == start || next >= node_count) return;
+	size_t path_length = 0;
+	for (uint32_t step = destination; step != start; step = workspace->nodes[step].previous)
+		workspace->heap[path_length++] = step;
+	if (path_length == 0) return;
+	for (size_t i = path_length; i > 0; i--)
+	{
+		uint32_t step = workspace->heap[i - 1];
+		core_debug_addObjectPathStep(unit,
+									 (t_pos){(unsigned short)(step % grid_size), (unsigned short)(step / grid_size)});
+	}
+
+	uint32_t next = workspace->heap[path_length - 1];
 
 	t_pos next_pos = {(unsigned short)(next % grid_size), (unsigned short)(next / grid_size)};
 	t_obj *obstacle = core_get_obj_from_pos(next_pos);

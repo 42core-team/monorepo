@@ -6,7 +6,7 @@ sidebarTitle: "⚙️ action_move()"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h#L141
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h
 
 ## Description
 
@@ -30,6 +30,8 @@ void core_action_move(const t_obj *unit, t_pos pos);
 
 void
 
+Action functions are queued and are executed between ticks, meaning their results are only reflected in the game state on the next `ft_on_tick()` call.
+
 ## Examples
 
 ```c
@@ -48,7 +50,7 @@ else if (moving_unit->pos.y > target->pos.y)
 
 if ((next.x != moving_unit->pos.x || next.y != moving_unit->pos.y)
 	&& core_get_obj_from_pos(next) == NULL)
-	core_action_move(moving_unit, next);
+	core_action_travel(moving_unit, next, NULL);
 ```
 
 ## Related

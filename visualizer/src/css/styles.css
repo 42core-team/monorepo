@@ -149,6 +149,7 @@ a {
 	z-index: 5001;
 
 	padding: 10px;
+	box-sizing: border-box;
 	max-width: 30vw;
 	max-height: 50vh;
 
@@ -167,6 +168,10 @@ a {
 	overflow-y: auto;
 	overflow-x: hidden;
 	scrollbar-gutter: stable both-edges;
+}
+
+#tooltip > span:first-child {
+	font-weight: bold;
 }
 
 #tooltip span[style*="var(--hp-color)"],

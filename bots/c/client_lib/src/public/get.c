@@ -66,27 +66,37 @@ t_obj *core_get_obj_from_pos(t_pos pos)
 
 // -
 
-t_obj **core_get_units_by_name(const char *name)
+static bool core_static_isOwnUnitByName(const t_obj *obj, const char *name)
 {
-	if (!name) return NULL;
+	return obj->type == OBJ_UNIT && obj->s_unit.team_id == game.my_team_id && obj->s_unit.name &&
+		   strcmp(obj->s_unit.name, name) == 0;
+}
+unsigned int core_get_units_byName_count(const char *name)
+{
+	if (!name) return 0;
 
-	int count = 0;
+	unsigned int count = 0;
 	for (int i = 0; game.objects && game.objects[i] != NULL; i++)
 	{
 		t_obj *obj = game.objects[i];
-		if (obj->type == OBJ_UNIT && obj->s_unit.name && strcmp(obj->s_unit.name, name) == 0) count++;
+		if (core_static_isOwnUnitByName(obj, name)) count++;
 	}
+	return count;
+}
+t_obj **core_get_units_byName(const char *name)
+{
+	unsigned int count = core_get_units_byName_count(name);
 
 	if (count == 0) return NULL;
 
 	t_obj **result = malloc(sizeof(t_obj *) * (count + 1));
 	if (!result) return NULL;
 
-	int index = 0;
+	unsigned int index = 0;
 	for (int i = 0; game.objects && game.objects[i] != NULL; i++)
 	{
 		t_obj *obj = game.objects[i];
-		if (obj->type == OBJ_UNIT && obj->s_unit.name && strcmp(obj->s_unit.name, name) == 0) result[index++] = obj;
+		if (core_static_isOwnUnitByName(obj, name)) result[index++] = obj;
 	}
 	result[index] = NULL;
 
@@ -97,10 +107,12 @@ t_obj **core_get_units_by_name(const char *name)
 
 t_obj **core_get_objs_filter(bool (*condition)(const t_obj *))
 {
+	if (!condition) return NULL;
+
 	int count = 0;
 	for (int i = 0; game.objects && game.objects[i] != NULL; i++)
 	{
-		if (!condition || condition(game.objects[i])) count++;
+		if (condition(game.objects[i])) count++;
 	}
 
 	if (count == 0) return (NULL);
@@ -111,7 +123,7 @@ t_obj **core_get_objs_filter(bool (*condition)(const t_obj *))
 	int index = 0;
 	for (int i = 0; game.objects && game.objects[i] != NULL; i++)
 	{
-		if (!condition || condition(game.objects[i])) result[index++] = game.objects[i];
+		if (condition(game.objects[i])) result[index++] = game.objects[i];
 	}
 	result[index] = NULL;
 

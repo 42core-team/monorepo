@@ -6,7 +6,7 @@ sidebarTitle: "🔢 e_obj_type"
 
 ## URL
 
-https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h#L16
+https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h
 
 ## Description
 
@@ -27,7 +27,7 @@ typedef enum e_obj_type
 
 ## Parameters
 
-- **Cores**: The namesake of CORE GAME. Your team's central hub. When yours is destroyed, you lose, when you destroy your opponents, you win. Also used to spawn new units if it has enough gems stored. There will only ever be one core per team.
+- **Cores**: The namesake of CORE GAME and your team's central hub. When yours is destroyed, you lose; when you destroy your opponent's, you win. A core also spawns new units when it has enough gems stored. There will only ever be one core per team.
 - **Unit**: Component-built troops that move, attack, and carry gems.
 - **Deposits**: Gems encased in stone. Destroying one turns it into a gem pile.
 - **Walls**: Obstacles you must walk around or destroy.

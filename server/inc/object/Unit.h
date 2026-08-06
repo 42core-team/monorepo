@@ -28,12 +28,12 @@ class Unit : public Object
 
 	unsigned int getTeamId() const { return team_id_; }
 	unsigned int getBalance() const { return balance_; }
-	unsigned int getRemainingBalanceCapacity() const
+	unsigned int getRemainingGemsCapacity() const
 	{
-		const int configuredMaxBalance = properties_.at(UnitProperty::MAX_BALANCE);
-		if (configuredMaxBalance <= 0) return 0;
-		const unsigned int maxBalance = static_cast<unsigned int>(configuredMaxBalance);
-		return balance_ < maxBalance ? maxBalance - balance_ : 0;
+		const int configuredMaxGems = properties_.at(UnitProperty::MAX_GEMS);
+		if (configuredMaxGems <= 0) return 0;
+		const unsigned int maxGems = static_cast<unsigned int>(configuredMaxGems);
+		return balance_ < maxGems ? maxGems - balance_ : 0;
 	}
 	long long getActionCooldown() const { return action_cooldown_; }
 

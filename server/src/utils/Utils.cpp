@@ -5,8 +5,10 @@
 #include <stdexcept>
 #include <string>
 
-void shuffle_actions_vector(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions)
+void shuffle_actions_vector(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, uint64_t seed)
 {
+	std::mt19937_64 generator(seed);
+
 	auto phase_of = [](ActionType t) -> int
 	{
 		switch (t)
@@ -32,7 +34,15 @@ void shuffle_actions_vector(std::vector<std::pair<std::unique_ptr<Action>, Core 
 	}
 	for (auto &bucket : buckets)
 	{
-		shuffle_vector(bucket);
+		// Packet arrival order is nondeterministic; establish a stable order before applying seeded randomness.
+		std::stable_sort(bucket.begin(), bucket.end(),
+						 [](const auto &lhs, const auto &rhs)
+						 {
+							 if (!lhs.second) return false;
+							 if (!rhs.second) return true;
+							 return lhs.second->getTeamId() < rhs.second->getTeamId();
+						 });
+		std::shuffle(bucket.begin(), bucket.end(), generator);
 	}
 	actions.clear();
 	for (auto &bucket : buckets)

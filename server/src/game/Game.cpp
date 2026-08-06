@@ -208,7 +208,7 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 
 	// 1. EXECUTE ACTIONS
 
-	shuffle_actions_vector(actions);
+	shuffle_actions_vector(actions, Config::game().seed + tick);
 
 	for (auto &ele : actions)
 	{

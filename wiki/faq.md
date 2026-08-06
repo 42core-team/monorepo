@@ -1,7 +1,7 @@
 ---
 title: "⁉️ Frequently asked questions"
 permalink: "faq"
-sidebarTitle: "FaQ"
+sidebarTitle: "FAQ"
 ---
 
 ### 💃 Do I need to adhere to 42 Norminette?
@@ -11,7 +11,7 @@ sidebarTitle: "FaQ"
 ### 🔧 Where can I see the implementations of the standard library? Where can I find the core_lib.h file?
 
 > Check out [our GitHub](https://github.com/42core-team) to see all of the CORE source code - it may give you an easy starting point for some functionalities.\
-> The core_lib.h file can be found on our [GitHub](https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h) (careful, the latest version might not match the Core Version you are playing on. Look at the releases.), and in your filesystem will be available under `/core/inc`, which can probably most easily found by cmd+clicking onto the include in the `both.h` header. The easiest way to loop at it though is to not look at it and instead look at the wiki, which contains all the relevant info and more.
+> The `core_lib.h` file can be found on our [GitHub](https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h) (careful: the latest version might not match the CORE version you are playing. Check the releases). It is also available in your filesystem under `/core/inc` and can most easily be found by Cmd-clicking the include in the `bot.h` header. The easiest option, however, is to use the wiki, which contains all the relevant information and more.
 
 ### 🐞 What should I do if my bot isn't responding / starting up?
 
@@ -35,7 +35,7 @@ sidebarTitle: "FaQ"
 
 ### 🪻 Are there limits to how many gems units or cores can hold?
 
-> Cores have no gem limit. A unit's `maxBalance` limits how many gems it collects from a gem pile. Read more in the [Unit Builder guide](documentation/unit_builder#maxbalance).
+> Cores have no gem limit. A unit's `maxGems` limits how many gems it collects from a gem pile. Read more in the [Unit Builder guide](documentation/unit_builder#maxgems).
 
 ### 🧐 I have found a bug! What do I do?
 
@@ -46,9 +46,5 @@ sidebarTitle: "FaQ"
 ### 💎 How do I pick up gem piles? How do I mine gem deposits?
 
 > You can do both of those things via the [attack action](reference/c/actions/core_action_attack). Just stand next to the object with a unit that can attack that object type.
-
-### 💡 I've read everything all the way down here - any rewards for a good boy like me?
-
-> 💪 Sure: Consider the powerful possibilities of the `void *data` field in every object! Here, you can save any data you want, allowing you to easily execute more detailed strategies and coordinate your troops efficiently by making your own custom [state machine](https://www.reddit.com/r/learnprogramming/comments/1g5yxci/state_machines_for_a_beginner/)! The library wont touch it. Just remember to free everything at the end.
 
 Other questions? There is an "faq" channel in the CORE global discord for all your questions.

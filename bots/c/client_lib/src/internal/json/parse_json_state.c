@@ -101,10 +101,10 @@ static void core_static_parseProperties(t_obj *obj, json_node *field)
 				obj->s_unit.properties.hp = prop->number;
 			else if (strcmp(prop->key, "baseActionCooldown") == 0)
 				obj->s_unit.properties.base_action_cooldown = prop->number;
-			else if (strcmp(prop->key, "balancePerCooldownStep") == 0)
-				obj->s_unit.properties.balance_per_cooldown_step = prop->number;
-			else if (strcmp(prop->key, "maxBalance") == 0)
-				obj->s_unit.properties.max_balance = prop->number;
+			else if (strcmp(prop->key, "gemsPerCooldownStep") == 0)
+				obj->s_unit.properties.gems_per_cooldown_step = prop->number;
+			else if (strcmp(prop->key, "maxGems") == 0)
+				obj->s_unit.properties.max_gems = prop->number;
 			else if (strcmp(prop->key, "damageReductionPercent") == 0)
 				obj->s_unit.properties.damage_reduction_percent = prop->number;
 			else if (strcmp(prop->key, "damageCore") == 0)

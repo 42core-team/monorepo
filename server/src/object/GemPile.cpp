@@ -19,7 +19,7 @@ void GemPile::damage(Object *attacker, unsigned int damage)
 	if (attacker->getType() != ObjectType::Unit) return;
 	Unit *unitAttacker = (Unit *)attacker;
 
-	const unsigned int collected = std::min(balance_, unitAttacker->getRemainingBalanceCapacity());
+	const unsigned int collected = std::min(balance_, unitAttacker->getRemainingGemsCapacity());
 	unitAttacker->addBalance(collected);
 	balance_ -= collected;
 

@@ -307,7 +307,7 @@ static GameConfig parseGameConfig()
 	config.gemPileIncome = j.at("gemPileIncome").get<unsigned int>();
 
 	config.coreHp = j.at("coreHp").get<unsigned int>();
-	config.initialBalance = j.at("initialBalance").get<unsigned int>();
+	config.initialGems = j.at("initialGems").get<unsigned int>();
 
 	config.wallHp = j.at("wallHp").get<unsigned int>();
 

@@ -15,6 +15,7 @@ import {
 	drawSpawnPreviewForNextTick,
 	initializeTeamMapping,
 } from "./objectRenderer";
+import { positionTooltip } from "./tooltipPosition";
 
 const svgCanvasElement = document.getElementById("svg-canvas");
 if (!svgCanvasElement || !(svgCanvasElement instanceof SVGSVGElement)) {
@@ -22,6 +23,7 @@ if (!svgCanvasElement || !(svgCanvasElement instanceof SVGSVGElement)) {
 }
 const svgCanvas = svgCanvasElement as SVGSVGElement;
 const tooltipElement = document.getElementById("tooltip") as HTMLDivElement;
+const topBarElement = document.querySelector(".top-bar") as HTMLDivElement;
 const teamOneElement = document.getElementById(
 	"team-one-name",
 ) as HTMLDivElement;
@@ -140,6 +142,7 @@ function drawFrame(timestamp: number): void {
 let lastSVGPoint: DOMPoint | null = null;
 let lastClientX = 0;
 let lastClientY = 0;
+let lastTooltipTarget: string | null = null;
 
 function refreshTooltipFromSVGPoint(
 	svgP: DOMPoint,
@@ -166,24 +169,22 @@ function refreshTooltipFromSVGPoint(
 		const objId = obj.id;
 		obj = nextObjects.find((o: TickObject) => o.id === objId);
 	}
+	const tooltipTarget = obj ? `object:${obj.id}` : `tile:${tx},${ty}`;
+	const preserveScroll =
+		tooltipElement.style.display === "block" &&
+		tooltipTarget === lastTooltipTarget;
+	const scrollTop = preserveScroll ? tooltipElement.scrollTop : 0;
+	const scrollLeft = preserveScroll ? tooltipElement.scrollLeft : 0;
 
-	const offsetX = 10;
-	const offsetY =
-		clientY > window.innerHeight / 2 ? -tooltipElement.offsetHeight - 10 : 10;
-	tooltipElement.style.left = `${clientX + offsetX}px`;
-	tooltipElement.style.top = `${clientY + offsetY}px`;
-	tooltipElement.style.borderRadius =
-		clientY > window.innerHeight / 2 ? "15px 15px 15px 0" : "0 15px 15px 15px";
-	tooltipElement.style.display = "block";
 	if (obj) {
-		tooltipElement.innerHTML = formatObjectData(obj);
+		const content = formatObjectData(obj);
+		if (tooltipElement.innerHTML !== content)
+			tooltipElement.innerHTML = content;
 
 		if (obj.type !== 1) {
 			hoveredDebugPath = null;
-			return;
-		}
-		const dbg = (obj as UnitObject).debug_path;
-		if (Array.isArray(dbg) && dbg.length > 0) {
+		} else if ((obj as UnitObject).debug_path?.length) {
+			const dbg = (obj as UnitObject).debug_path ?? [];
 			// Ensure the drawn path starts at the unit’s current tile
 			const start = { x: obj.x, y: obj.y };
 			const first = dbg[0];
@@ -206,9 +207,23 @@ function refreshTooltipFromSVGPoint(
 			hoveredDebugPathStroke = null;
 		}
 	} else {
-		tooltipElement.innerHTML = `📍 Position: [x: ${tx}, y: ${ty}]`;
+		const content = `<strong>📍 Position: [x: ${tx}, y: ${ty}]</strong>`;
+		if (tooltipElement.innerHTML !== content)
+			tooltipElement.innerHTML = content;
 		hoveredDebugPath = null;
 	}
+
+	tooltipElement.style.display = "block";
+	positionTooltip(
+		tooltipElement,
+		{ x: clientX, y: clientY },
+		hoveredDebugPath ?? [],
+		svgCanvas,
+		topBarElement.getBoundingClientRect().bottom,
+	);
+	tooltipElement.scrollTop = scrollTop;
+	tooltipElement.scrollLeft = scrollLeft;
+	lastTooltipTarget = tooltipTarget;
 }
 export async function setupRenderer(): Promise<void> {
 	gameConfig = getGameConfig();
@@ -267,8 +282,8 @@ export async function setupRenderer(): Promise<void> {
 			}
 			const svgP = pt.matrixTransform(ctm.inverse());
 			lastSVGPoint = svgP;
-			lastClientX = e.pageX;
-			lastClientY = e.pageY;
+			lastClientX = e.clientX;
+			lastClientY = e.clientY;
 			refreshTooltipFromSVGPoint(svgP, e.clientX, e.clientY);
 		});
 		const hideIfOutside = (e: MouseEvent) => {

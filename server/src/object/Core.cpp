@@ -1,7 +1,7 @@
 #include "Core.h"
 
 Core::Core(unsigned int teamId)
-	: Object(Config::game().coreHp, ObjectType::Core), balance_(Config::game().initialBalance), team_id_(teamId),
+	: Object(Config::game().coreHp, ObjectType::Core), balance_(Config::game().initialGems), team_id_(teamId),
 	  spawn_cooldown_(0)
 {
 }

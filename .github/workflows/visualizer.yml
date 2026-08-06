@@ -41,6 +41,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Prepare embedded visualizer versions
+        run: ./visualizer/scripts/prepare-version-context.sh
 
       - name: Setup Blacksmith Builder
         uses: useblacksmith/setup-docker-builder@v1
@@ -112,6 +118,8 @@ jobs:
           push: true
           tags: ${{ steps.arch-tags.outputs.arch-tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            INCLUDE_DEV_ALIAS=${{ (github.ref == 'refs/heads/dev' || github.base_ref == 'dev') && 'true' || 'false' }}
 
       - name: Build Docker image (PR test)
         if: github.event_name == 'pull_request'
@@ -122,6 +130,8 @@ jobs:
           platforms: ${{ matrix.platform }}
           push: false
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test-${{ matrix.architecture }}
+          build-args: |
+            INCLUDE_DEV_ALIAS=${{ (github.ref == 'refs/heads/dev' || github.base_ref == 'dev') && 'true' || 'false' }}
 
       - name: Show build information
         run: |

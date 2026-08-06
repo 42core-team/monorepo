@@ -10,7 +10,7 @@
 	--svg-icon-fill: hsl(220 20% 18%);
 
 	--hp-color: #e55252; /* Red = hp */
-	--gems-color: #49c485; /* Green = money */
+	--gems-color: #49c485; /* Green = gems */
 	--cooldown-color: #6cb3ff; /* Blue = cooldown */
 
 	--board-tint-strength: 25%;
@@ -21,7 +21,7 @@
 	--svg-icon-fill: hsl(220 15% 85%);
 
 	--hp-color: #b60000; /* Red = hp */
-	--gems-color: #2a9a60; /* Green = money */
+	--gems-color: #2a9a60; /* Green = gems */
 	--cooldown-color: #1560bc; /* Blue = cooldown */
 
 	--board-tint-strength: 10%;

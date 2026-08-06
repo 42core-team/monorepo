@@ -15,7 +15,16 @@ void ft_on_tick(unsigned long tick)
 	t_obj **units = ft_get_units_own();
 	t_obj *target = ft_get_core_opponent();
 	for (int i = 0; target && units && units[i]; i++)
-		ft_travel_attack(units[i], target->pos);
+	{
+		if (units[i]->s_unit.action_cooldown <= 0)
+			core_action_travel(units[i], target->pos, NULL);
+		core_debug_addObjectInfo(
+			units[i],
+			"Heading for the opponent core! Use the addObjectInfo function to "
+			"add debug data to objects. Look at "
+			"the unit tooltip in the visualizer, there you can see this text "
+			"displayed for easy debugging!");
+	}
 
 	free(units);
 }

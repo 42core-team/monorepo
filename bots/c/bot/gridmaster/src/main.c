@@ -16,10 +16,13 @@ void ft_on_tick(unsigned long tick)
 {
 	(void)tick;
 
-	core_action_createUnit("Warrior", "combat", "demolition", "health", NULL);
+	core_action_createUnit("Gridfighter", "combat", "siege", "health", NULL);
 
-	t_obj *target = core_get_obj_filter_nearest((t_pos){0, 0}, is_core_opponent);
+	t_obj *target =
+		core_get_obj_filter_nearest((t_pos){0, 0}, is_core_opponent);
 	for (int i = 0; target && game.objects && game.objects[i]; i++)
-		if (game.objects[i]->type == OBJ_UNIT && game.objects[i]->s_unit.team_id == game.my_team_id)
+		if (game.objects[i]->type == OBJ_UNIT &&
+			game.objects[i]->s_unit.team_id == game.my_team_id &&
+			game.objects[i]->s_unit.action_cooldown <= 0)
 			core_action_travel(game.objects[i], target->pos, NULL);
 }

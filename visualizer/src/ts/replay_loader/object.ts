@@ -47,8 +47,8 @@ export type TickObject =
 export interface UnitProperties {
 	hp: number;
 	baseActionCooldown: number;
-	balancePerCooldownStep: number;
-	maxBalance: number;
+	gemsPerCooldownStep: number;
+	maxGems: number;
 	damageReductionPercent: number;
 	damageCore: number;
 	damageUnit: number;
@@ -93,10 +93,15 @@ function getSortedUnitComponentEntries(unit: UnitObject): UnitComponentEntry[] {
 export function getDominantUnitAssetPath(unit: UnitObject): string {
 	const entries = getSortedUnitComponentEntries(unit);
 	const prioritized = entries.filter((entry) => entry.prioritized);
+	const componentIds = unit.components ?? [];
 
+	// icon priority first, then amount of that icon, the index in the component array
 	return (
-		(prioritized.length > 0 ? prioritized : entries)[0]?.assetPath ??
-		FALLBACK_UNIT_ASSET_PATH
+		(prioritized.length > 0 ? prioritized : entries).sort(
+			(a, b) =>
+				b.count - a.count ||
+				componentIds.indexOf(a.id) - componentIds.indexOf(b.id),
+		)[0]?.assetPath ?? FALLBACK_UNIT_ASSET_PATH
 	);
 }
 function renderUnitComponentSummary(unit: UnitObject): string {
@@ -303,11 +308,11 @@ export function getBarMetrics(
 	// gems
 	if ((obj.type === 0 || obj.type === 1) && obj.gems > 0) {
 		// deposits and gem piles holding gems doesnt actually contain any info
-		let maxBalance = Math.max(500, obj.gems);
-		if (obj.type === 1) maxBalance = obj.properties.maxBalance;
+		let maxGems = Math.max(500, obj.gems);
+		if (obj.type === 1) maxGems = obj.properties.maxGems;
 		metrics.push({
 			key: "gems",
-			percentage: (obj.gems / maxBalance) * 100,
+			percentage: (obj.gems / maxGems) * 100,
 		});
 	}
 
@@ -316,7 +321,7 @@ export function getBarMetrics(
 		const cfg = getGameConfig();
 		if (!cfg) return metrics;
 
-		const step = Math.max(1, obj.properties.balancePerCooldownStep);
+		const step = Math.max(1, obj.properties.gemsPerCooldownStep);
 		const base = obj.properties.baseActionCooldown;
 
 		let calc = base + Math.floor(obj.gems / step);

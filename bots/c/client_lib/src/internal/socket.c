@@ -71,7 +71,7 @@ static char *core_static_socket_readLine(int fd)
 static bool core_static_socket_waitForData(int fd)
 {
 	fd_set readfds;
-	struct timeval tv = {10, 0};
+	struct timeval tv = {42, 0};
 	FD_ZERO(&readfds);
 	FD_SET(fd, &readfds);
 

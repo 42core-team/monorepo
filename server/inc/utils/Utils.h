@@ -6,6 +6,8 @@
 #include "Common.h"
 #include "Config.h"
 
+#include <algorithm>
+#include <cstdint>
 #include <queue>
 #include <random>
 #include <unordered_set>
@@ -22,6 +24,6 @@ template <typename T> void shuffle_vector(std::vector<T> &vec)
 	std::shuffle(vec.begin(), vec.end(), g);
 }
 
-void shuffle_actions_vector(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions);
+void shuffle_actions_vector(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions, uint64_t seed);
 
 #endif // UTILS_H

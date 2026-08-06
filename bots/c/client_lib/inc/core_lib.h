@@ -33,15 +33,15 @@ typedef struct s_pos
 /// @brief Definition of a units properties resulting from its components.
 typedef struct s_unit_properties
 {
-	int hp;
+	unsigned long hp;
 	int base_action_cooldown;
-	int balance_per_cooldown_step;
-	int max_balance;
+	unsigned long gems_per_cooldown_step;
+	unsigned long max_gems;
 	int damage_reduction_percent;
-	int damage_core;
-	int damage_unit;
-	int damage_object;
-	int post_spawn_core_cooldown;
+	unsigned long damage_core;
+	unsigned long damage_unit;
+	unsigned long damage_object;
+	unsigned long post_spawn_core_cooldown;
 } t_unit_properties;
 
 /// @brief Game object structure representing all entities in the game
@@ -144,14 +144,27 @@ void core_action_createUnit(const char *name, char *component, ...);
 /// @param pos The position where the unit should move to. Must be next to the unit object.
 void core_action_move(const t_obj *unit, t_pos pos);
 
-/// @brief Weight returned by a travel policy for a position that must not be entered.
-#define CORE_TRAVEL_BLOCKED UINT_MAX
+/// @brief What travel should do when a position is reached.
+typedef enum e_travel_action
+{
+	CORE_TRAVEL_BLOCK,
+	CORE_TRAVEL_PASS,
+	CORE_TRAVEL_ATTACK
+} t_travel_action;
+
+/// @brief Cost and occupant handling for one position considered by travel.
+typedef struct s_tile_travelability
+{
+	unsigned int weight;
+	t_travel_action action;
+} t_tile_travelability;
 
 /// @brief Travels one optimal step toward a position using a weighted shortest-path search.
 /// @param unit The unit that should travel.
 /// @param pos The destination position.
-/// @param get_weight Function returning the cost of entering a position, or NULL for the default action-cost estimate.
-void core_action_travel(const t_obj *unit, t_pos pos, unsigned int (*get_weight)(t_pos, const t_obj *));
+/// @param get_tile_travelability Function returning the cost and action for a position, or NULL for the default policy.
+void core_action_travel(const t_obj *unit, t_pos pos,
+						t_tile_travelability (*get_tile_travelability)(t_pos, const t_obj *));
 
 /// @brief Attacks a target position with a unit.
 /// @details Units can only attack one tile up, down, left or right; and only if their action_cooldown is 0 or less.
@@ -182,10 +195,15 @@ t_obj *core_get_obj_from_pos(t_pos pos);
 /// @return Null-terminated array of selected objects or NULL if no condition is provided or no objects match the condition.
 t_obj **core_get_objs_filter(bool (*condition)(const t_obj *));
 
-/// @brief Get all units with the given name.
+/// @brief Get all of your units with the given name.
 /// @param name Unit name to match.
-/// @return Null-terminated array of matching units or NULL if name is NULL or no units match. Free the returned array, not the objects.
-t_obj **core_get_units_by_name(const char *name);
+/// @return Null-terminated array of matching owned units or NULL if name is NULL or no owned units match. Free the returned array, not the objects.
+t_obj **core_get_units_byName(const char *name);
+
+/// @brief Get the count of all of your units with the given name.
+/// @param name Unit name to match.
+/// @return The count of matching owned units, or 0 if name is NULL or no owned units match.
+unsigned int core_get_units_byName_count(const char *name);
 
 /// @brief Get the nearest object to a given position matching a custom condition.
 /// @param pos Position to search from

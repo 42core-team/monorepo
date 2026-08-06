@@ -4,90 +4,29 @@ In this guide, you will build a small bot that creates a custom unit and sends i
 
 ## Before you start
 
-If you have not created a team and cloned your repository yet, follow the [Getting Started Guide](README) first. Run `make` once and watch the replay in the visualizer before changing anything. Pay attention to when units act, how cooldown bars change, and which objects block movement.
+If you have not created a team and cloned your repository yet, follow the [Getting Started Guide](README) first.
 
-Open `my-core-bot/src/main.c`. Your starting bot may already resemble the finished example below; this guide explains why each part exists so you can change it deliberately instead of treating it as magic.
+Run `make` once and watch the replay in the visualizer before changing anything.
 
-## Build your first unit
+- Watch the game from start to finish & enjoy seeing your team be killed by the noob default opponent. 😂
+- Have a look at all the different objects in the game and how they differ. Hover with your mouse and look at the tooltip to see what kind of data is associated with each object. What does each do?
+- Can you see the differently colored bars behind the objects? Do you understand what they mean? What color represents what? Hint: The tooltip information uses the same color coding.
+- Can you figure out why some units move faster than others? When do units move?
+- You may also want to familiarize yourself with the hotkeys that the visualizer supports, which will be very handy later on.
+- Feel free to run `make` a few times and watch how the map changes and how your units react differently.
 
-There are no fixed Warrior or Miner enums anymore. Open the **Unit Builder** for your event on the CORE website and assemble a unit from the components available there. The builder calculates its cost and final properties, checks the event's construction rules, and gives you the component IDs needed by the C API.
+What actually happened in your game depends on your map layout, but most likely, your units either got stuck because of walls or reached their opponent's core and then didn't attack it.
 
-Read the [Unit Builder and property guide](documentation/unit_builder) while making the unit. Do not copy a component list from another event: component IDs, modifications, costs, limits, and validity rules can differ.
+> Can you come up with a theory as to why that happened? Your units didn't even try to attack that wall or the core - it's almost like they didn't have the ability to attack those objects altogether...
 
-For this example, assume the builder offers a `combat` component:
+Open `my-core-bot/src/main.c`. Your starting bot may or may not already have some starter code, we will be starting from 0 either way.
 
-```c
-core_action_createUnit("Warrior", "combat", NULL);
-```
+## The default program
 
-The first argument is your unit's name. The remaining arguments are component IDs. The list must end with `NULL`:
-
-```c
-core_action_createUnit("Tank", "armor", "health", "health", NULL);
-```
-
-Repeated components are allowed only when the builder accepts the finished design. Passing `NULL` as the name asks the game to generate one.
-
-The call requests a new unit. The unit does not appear in the current tick. If the request works, you will see the unit on a later tick. Creation can fail because the core is on spawn cooldown, lacks gems, has no free spawn position, or because the component design is invalid. See the [`core_action_createUnit` reference](reference/c/actions/core_action_createUnit) for all failure cases.
-
-## The game loop
-
-Every CORE bot starts the library and gives it a callback:
-
-```c
-void ft_on_tick(unsigned long tick);
-
-int main(int argc, char **argv)
-{
-	return core_startGame("My CORE Bot", argc, argv, ft_on_tick, false);
-}
-```
-
-`core_startGame` calls `ft_on_tick` whenever a new game state arrives. In that function, you read the current state and choose actions. Those actions happen between ticks. Then `game` is updated and your function is called again.
-
-That boundary explains two important rules:
-
-- A unit requested now is not available in `game.objects` until a later callback.
-- Object pointers may change between ticks. Store an object's `id` instead of keeping a `t_obj *` for the next callback.
-
-## Choose how the unit travels
-
-`core_action_travel` makes your unit move across the grid, choosing the most efficient path around obstacles to your
-goal. One call adds one move or attack. Start with its built-in policies:
-
-```c
-core_action_travel(unit, goal, NULL);
-```
-
-The third argument is an optional position-weight function. `NULL` selects the default policy. A custom function
-returns the cost of entering each position, or `CORE_TRAVEL_BLOCKED` when the position must not be entered and an
-occupant must not be attacked.
-
-The defaults price open ground at one action and estimate how many attacks an obstacle needs. They never attack your
-own units or core. They also check the matching unit property: `damage_unit` for units, `damage_core` for cores, and
-`damage_object` for deposits and walls. A gem pile is enterable only while the unit is below `max_balance`.
-
-The starter bot keeps an older two-argument name as a small wrapper:
-
-```c
-void ft_travel_attack(const t_obj *unit, t_pos pos)
-{
-	core_action_travel(unit, pos, NULL);
-}
-```
-
-This is not another pathfinder; it only preserves the familiar helper name. Use `core_action_travel` directly when you
-want to supply a custom policy. The full [`core_action_travel` reference](reference/c/actions/core_action_travel)
-documents its signature, sentinel, defaults, and unreachable goals.
-
-Travel is optional. If you want to write your own pathfinder or movement rules, use [`core_action_move`](reference/c/actions/core_action_move) to step into an empty position next to the unit and [`core_action_attack`](reference/c/actions/core_action_attack) to attack a target next to it.
-
-## Put the bot together
+Let's start by looking at the shape of a CORE bot.
 
 ```c
 #include "bot.h"
-
-#include <stdlib.h>
 
 void ft_on_tick(unsigned long tick);
 
@@ -98,37 +37,282 @@ int main(int argc, char **argv)
 
 void ft_on_tick(unsigned long tick)
 {
-	(void)tick;
-
-	t_obj *own_core = ft_get_core_own();
-	if (own_core && own_core->s_core.spawn_cooldown == 0)
-		core_action_createUnit("Warrior", "combat", NULL);
-
-	t_obj *target = ft_get_core_opponent();
-	t_obj **units = ft_get_units_own();
-	for (size_t i = 0; target && units && units[i]; i++)
-		ft_travel_attack(units[i], target->pos);
-
-	free(units);
+	printf("-----> [⚡️ TICK %lu 🔥]\n", tick);
 }
 ```
 
-Replace `"combat"` with the component list produced by your event's Unit Builder.
+`#include "bot.h"` gives you the CORE library and the helper functions that came with your bot. `main` starts the library and passes it `ft_on_tick` as a callback. When the main function runs, the library is not yet set up, so there are no objects to access and no game state to manipulate. Be careful—and probably just never touch the main function to be safe.
 
-The spawn-cooldown check avoids requests that cannot work yet. It does not check cost because the cost belongs to the design shown in the builder. Once the core runs out of gems, creation fails until your strategy earns more.
+The `ft_on_tick` callback is your bot's game loop. Every tick, the library updates all the information it stores (e.g. `game.objects`), then calls `ft_on_tick` and allows you to make decisions based on what changed. Here, you will put your main logic.
 
-`ft_get_units_own()` returns a newly allocated, `NULL`-terminated array of pointers to the current objects. The objects belong to the library, but the array belongs to you, which is why the code frees the array and not its elements.
+Change the `"My CORE Bot"` string in the `main` function to a name you like, run `make`, and look at your core in the visualizer. You now have your own name! Already feels more like your own team now, doesn't it?
 
-The loop calls travel once per unit. Units whose action cooldown is positive queue nothing; ready units each plan from the current state. Since every call queues at most one adjacent move or attack, repeating this on later ticks advances the route and reacts to changes on the board.
+---
 
-Run `make` and inspect the replay. If creation reports an invalid component, return to the Unit Builder: the tutorial's example component is not a promise about your event.
+## Building your first unit
 
-## Make it yours
+To do anything in the game, you perform actions. Most actions are executed by units, which can walk around, destroy stuff, and most importantly: hit your opponent on the head really hard.
 
-The unit name and component list are available in `unit->s_unit.name` and the `NULL`-terminated `unit->s_unit.components` array. Use [`core_get_units_by_name`](reference/c/getters/core_get_units_by_name) when different designs need different jobs. For example, mining units can target deposits while combat units target the opponent.
+Units are highly dynamic: Their many properties are affected by components which you control, making for over 3000 possible combinations - but which of those combinations are useful to defeat your opponent is on you to figure out.
 
-The defaults are a baseline, not a strategy. Should a fragile carrier avoid enemies? Should a demolition unit prefer a
-short route through a wall? Should units avoid a crowded corridor? Supply a weight callback for those choices.
-If weights do not fit your strategy, use move and attack directly.
+To help you do this, we've created a unit builder to make creating units easy. Open your event on the CORE website and go to the **Unit Builder**. Play around with it for a while! Getting good units set up is critical. It's recommended that you read through the [Unit Builder and property guide](documentation/unit_builder) at some point to understand what each property does.
 
-Continue with the [getter filtering guide](documentation/getter_filtering), [action execution order](documentation/action_execution_order), and the [Unit Builder property guide](documentation/unit_builder).
+Components change a unit's cost, health, speed, carrying capacity, damage and other properties, which can be seen in the sidebar on the right.
+
+For our first unit, make something that can:
+
+- damage other units (unit damage > 0)
+- damage the opponent's core (core damage > 0)
+- damage walls that may be in the way (object damage > 0)
+- survive long enough to reach them (health > 5)
+
+This unit is a decent all-rounder. It's slow but will be able to do everything at once, making it perfect to get started. You should go back to the unit builder later and optimize this.
+
+Name your unit, then scroll down and copy the [create action](reference/c/actions/core_action_createUnit) line generated by your event's Unit Builder. For our purposes here, we'll pretend it's called `"Warrior"`.
+
+Have another look at the unit that failed to attack the opponent's core in your first replay. Since it only had `combat`, it had `damage_unit` but no `damage_core` or `damage_object`. Therefore, it couldn't have attacked walls or cores.
+
+---
+
+## Spawning the first unit
+
+Replace the tick function with this, replacing the comment with the line you copied from the unit builder:
+
+```c
+void ft_on_tick(unsigned long tick)
+{
+	printf("-----> [⚡️ TICK %lu 🔥]\n", tick);
+
+	/* ADD YOUR CREATEUNIT LINE HERE FROM THE UNIT BUILDER */
+}
+```
+
+Run the bot again. You should see a unit appear next to your core - and then not to do absolutely anything. If you wait a while, another one may even spawn! Can you figure out why it takes so long?
+
+You are currently asking for another unit on every tick, whether you can buy it or not. This is creating a lot of action failures. To make your code reliable, you should get rid of them.
+There are two reasons the create action requests are failing:
+
+1. Your core does not have enough gems stored to buy a new unit.
+2. The core has a spawn cooldown, a cooldown that counts down from some number to 0 after every time a unit was spawned. It can't spawn new units during this time.
+
+To fix this, let's first get a reference to the core:
+
+`t_obj *own_core = ft_get_core_own();`
+
+This line gets a reference to our own core. Every object in the game is represented as a `t_obj` struct, with a type union for object-specific fields. By typing out `t_obj` in your editor and then right clicking to go to the definition, you can find the definition of the `t_obj` struct and observe how it works, which will be critical to know about in the future.
+
+`ft_get_core_own` is one of the helpers in `getters.c`, the second starter file which you can keep tweaking. Open that file and read it. It uses the library's [getter filtering](documentation/getter_filtering) functions to find objects in the current game state. The getter filtering system is a replacement to make filtering for objects as easy as possible because the C language doesn't have lambda functions. You can create your own getter functions using getter filtering as well, the ones provided here are just some basics to help you get started. (-> [`core_get_objs_filter`](reference/c/getters/core_get_objs_filter))
+
+We can now address the first problem (not enough gems) by doing this check:
+
+```c
+int my_unit_cost = 156; // replace with whatever the unit costs as reported by the unit builder
+if (own_core && own_core->s_core.gems >= my_unit_cost)
+	// spawn unit
+```
+
+We can address the second problem (core is on spawn cooldown) by doing this check:
+
+```c
+if (own_core && own_core->s_core.spawn_cooldown == 0)
+	// spawn unit
+```
+
+So, putting it all together, things could look like this:
+
+```c
+t_obj *own_core = ft_get_core_own();
+int my_unit_cost = 156; // replace with whatever the unit costs as reported by the unit builder
+
+if (own_core && own_core->s_core.gems >= my_unit_cost && own_core->s_core.spawn_cooldown == 0)
+	core_action_createUnit(/* ... */);
+```
+
+Whether you choose to prevent action failures or not is up to you. We highly recommend it, because it will make debugging a lot easier if something fails for a reason you aren't yet aware of. We will not be preventing action failures in this guide going forward for the sake of brevity, it is hereby a task for the reader.
+
+You can also see the action failures tied to a specific unit in the visualizer if you scroll way down.
+
+---
+
+## Finding our units
+
+Since the create action runs asynchronously, we can only find the unit we created in the tick after it was created. We need to find our unit because we need to know which unit we want to force to do stuff.
+
+The easiest way to do this is to give the unit meaningful names. You can do this in the unit builder or change the first argument in the create action call. For now, we will assume you called your first unit `"Warrior"`.
+
+Because we used a meaningful name, the library can collect all of the `t_obj`s with the `"Warrior"` label for us:
+
+```c
+t_obj **warriors = core_get_units_byName("Warrior");
+
+for (size_t i = 0; warriors && warriors[i]; i++)
+{
+	t_obj *warrior = warriors[i];
+	// Make this warrior do something.
+}
+
+free(warriors);
+```
+
+(The name lookup is case-sensitive, be careful to provide the exact same string.)
+
+The result is a `NULL`-terminated array. The library owns the objects inside it, but you own the array itself. Free the array when you are done; do **not** free the individual warriors.
+
+> NEVER, EVER, NEVER!!! free a `t_obj` struct. Absolutely everything will blow up. DO NOT! Only free arrays containing `t_obj`s: `t_obj **` (note the double pointer **), never free a `t_obj *` directly (single pointer *). All arrays the library uses are NULL-terminated.
+
+If you need a more complicated selection than a name can express, use [`core_get_objs_filter`](reference/c/getters/core_get_objs_filter) with your own condition function. The helpers in `getters.c` show several examples.
+
+---
+
+## Travelling to the opponent's core
+
+Now let's give every warrior a destination. What direction could be better than the opponent core, for our enemies shall shiver in fear!
+
+The starter bot includes `ft_get_core_opponent`, which finds the opponent's core. Beyond that, we'll need our second function after create: `core_action_travel`. It will handle both moving to where we want our units to go and attacking for us:
+
+`core_action_travel(warrior, opponent_core->pos, NULL);`
+
+The first input is the unit to move, the second is the position it wants to move to. The final input is the weight function to use, which defines the exact logic used by the Dijkstra algorithm which powers the travel action. By passing `NULL`, you select the default travel logic, which will probably suit you well to get started. The default travel function is configured to automatically attack objects and enemy units and cores when they are in your way, it will not attack your team.
+
+Calling the travel action only makes the unit take a single step or attack once. If you want a unit to make the full journey to a destination, you need to call it repeatedly.
+
+It is likely you will want to configure the movements of your unit in more detail in the future though, in that case, please read the specific [core_action_travel function reference](reference/c/actions/core_action_travel).
+
+```c
+t_obj *opponent_core = ft_get_core_opponent();
+t_obj **warriors = core_get_units_byName("Warrior");
+
+for (size_t i = 0; opponent_core && warriors && warriors[i]; i++)
+	core_action_travel(warriors[i], opponent_core->pos, NULL);
+
+free(warriors);
+```
+
+Run the game again. Your warriors should now work their way towards the opponent's core, attack breakable obstacles in the route, and finally attack the core itself. Whether you win or not is pretty much a game of luck right now—it depends on whether your units or your opponent's units reach the opposite core earlier.
+
+For now, just run the game a few times until you win. Success! You won!
+
+> _Why doesn't the unit take a step each tick?_ The action cooldown (the blue bar behind the unit) limits how often units can perform actions. Units can only take a step when their action cooldown is at 0. If it isn't, the move won't work and will produce an action error - so you should add a check to avoid that!
+
+---
+
+## Attacking opponent units directly
+
+Winning sometimes ain't it. We shall win every time!
+
+Here's an idea for an improvement to our current logic:
+
+For each warrior, find the nearest opposing unit. If one exists, target it. If there are no opposing units left, continue towards the opponent's core.
+
+The starter's `getters.c` already contains exactly the helper we need: `ft_get_units_opponent_nearest`.
+
+```c
+t_obj *opponent_core = ft_get_core_opponent();
+
+// do this for each warrior:
+t_obj *nearest_enemy = ft_get_units_opponent_nearest(warrior->pos);
+
+if (nearest_enemy)
+	core_action_travel(warrior, nearest_enemy->pos, NULL);
+else if (opponent_core)
+	core_action_travel(warrior, opponent_core->pos, NULL);
+```
+
+Run it!
+
+Your warriors should stop marching past enemies and fight them first. Once the opponent has no units left, they return to the original objective.
+
+> Can you explain why targeting an enemy works for both movement and attacking even though the code only calls `core_action_travel`?
+
+AWESOME! You should have a bot that can put up a real fight now.
+
+---
+
+## A second unit & mining gems
+
+Finally, let's go a step further! We can win against the default bot, but that isn't saying much - real opponents will put up a much harder fight! Therefore, it is now time to do the one thing everything life is truly about in the end: Capitalism. Yayy.
+
+We can spawn a few units with our current setup, but not enough to hold off a serious opponent. To do that, we'll need more womanpower! And to get more units, we'll need gems. Lots of them, preferably.
+
+Let's mine a few!
+
+Across the map you can see deposit objects spread about the place. They are rocks with a very high gem density! If we manage to extract them, our core will overflow with riches!
+
+Return to the Unit Builder and design a second role. Choose components that increase the object damage (so it can mine deposits efficiently), the max gems (so it can hold a good amount of gems at once) and the gem carrying efficiency (so it doesn't get a lot slower when holding only a few gems).
+
+Let's keep one miner alive, then spend later spawn opportunities on warriors.
+
+```c
+t_obj *own_core = ft_get_core_own();
+if (own_core && own_core->s_core.spawn_cooldown == 0)
+{
+	if (core_get_units_byName_count("Miner") < 1)
+		core_action_createUnit(/* ... */); // create miner
+	else
+		core_action_createUnit(/* ... */); // create warrior
+}
+```
+
+Now send each miner to the nearest deposit:
+
+```c
+t_obj **miners = core_get_units_byName("Miner");
+
+for (size_t i = 0; miners && miners[i]; i++)
+{
+	t_obj *nearest_deposit = ft_get_deposit_nearest(miners[i]->pos);
+	if (nearest_deposit)
+		core_action_travel(miners[i], nearest_deposit->pos, NULL);
+}
+
+free(miners);
+```
+
+Run the bot and watch carefully. The miner destroys the deposit, but your core does not receive the gems. When a deposit breaks, it leaves a gem pile on the map. Our code only searches for deposits, so the miner immediately chooses another rock.
+
+Change the search to include both deposits and gem piles:
+
+```c
+t_obj *nearest_resource = ft_get_deposit_gems_nearest(miner->pos);
+if (nearest_resource)
+	core_action_travel(miner, nearest_resource->pos, NULL);
+```
+
+Now the miner breaks the deposit and collects the resulting pile. The gems are in `miner->s_unit.gems`, though - not in the core. We still need to bring them home.
+
+If the miner carries gems, target our own core and request a transfer using the transfer gems action. Otherwise, keep mining:
+
+```c
+if (miner->s_unit.gems > 0)
+{
+	// Got Gems? Bring them Home!
+	t_obj *own_core = ft_get_core_own();
+	if (own_core)
+	{
+		core_action_travel(miner, own_core->pos, NULL);
+		core_action_transferGems(miner, own_core->pos, miner->s_unit.gems);
+	}
+}
+else
+{
+	// No Gems? Let's find some!
+	t_obj *nearest_resource = ft_get_deposit_gems_nearest(miner->pos);
+	if (nearest_resource)
+		core_action_travel(miner, nearest_resource->pos, NULL);
+}
+```
+
+Awesome - it works! Your bot now designs two different kinds of unit, fights enemy units, mines resources, and brings the gems home to fund reinforcements.
+
+I hope you enjoyed the tutorial.
+
+---
+
+## What next?
+
+- You have warriors set up to defeat any opponent close to them right now, but what if the opponent is closing in on your core? You should have a defense force!
+- Tweak the unit builder - both units we've made right now are very generic. Does splitting up responsibilities into more units that in return are less expensive and quicker make sense?
+- Does prioritizing opponent units that are made for mining only make sense? Or should you target opponent units that could damage your core, then your units, first?
+
+- Read the [tips and tricks](tips_and_tricks), as well as the [FAQ](faq) and the [Basics](basics) at the very least. They contain vital information.
+- For every function and struct, there is an explainer of how exactly it works with a code example, along with tips and tricks and disclaimers to save you time in the reference section of the wiki. Skimming it for every function you use is very valuable.

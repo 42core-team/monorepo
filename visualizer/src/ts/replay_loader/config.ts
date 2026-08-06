@@ -26,7 +26,7 @@ export interface GameConfig {
 	depositIncome: number;
 	gemPileIncome: number;
 	coreHp: number;
-	initialBalance: number;
+	initialGems: number;
 	wallHp: number;
 	components: ComponentsConfig;
 	corePositions: { x: number; y: number }[];

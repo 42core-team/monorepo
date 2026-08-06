@@ -30,13 +30,14 @@ void Unit::tickActionCooldown()
 	const unsigned int unitStandingCooldownLimit =
 			std::min(gemAdjustedActionCooldown, Config::game().maxUnitStandingCooldown);
 	action_cooldown_--;
+	// A unit that stands ready for too long is put back on cooldown so it cannot bank readiness forever.
 	if (-action_cooldown_ > static_cast<long long>(unitStandingCooldownLimit))
 		action_cooldown_ = unitStandingCooldownLimit;
 }
 
 unsigned int Unit::calcActionCooldown()
 {
-	unsigned int step = static_cast<unsigned int>(std::max(1, properties_.at(UnitProperty::BALANCE_PER_COOLDOWN_STEP)));
+	unsigned int step = static_cast<unsigned int>(std::max(1, properties_.at(UnitProperty::GEMS_PER_COOLDOWN_STEP)));
 	unsigned long long steps = balance_ / step;
 	unsigned long long cd =
 			static_cast<unsigned int>(std::max(0, properties_.at(UnitProperty::BASE_ACTION_COOLDOWN))) + steps;
