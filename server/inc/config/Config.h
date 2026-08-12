@@ -89,6 +89,7 @@ struct ComponentConfig
 struct ServerConfig
 {
 	std::vector<std::string> replayFolderPaths;
+	unsigned int liveReplayPort;
 	unsigned int timeoutTicks;
 	unsigned int timeoutMs;
 	unsigned int clientWaitTimeoutMs;

@@ -13,6 +13,7 @@ You can control the visualizer via query parameters. Multiple values are support
 | Param | Type / Values | Default | Effect |
 |---|---|---:|---|
 | `replays` | string array (path/URL) | `/replays/replay_latest.json` | List of replay files to load. |
+| `live` | WebSocket URL | none | Streams the replay as it is played. An empty value uses `ws://<visualizer-host>:4445` (or `wss://` on HTTPS). This takes precedence over `replays`. |
 | `speed` | number (`0.5` … `50`, step `0.5`) | none | Sets initial ticks/sec (also persisted to `tm.speed`). |
 | `dynamicSpeed` | `"on"` or `"off"` | `"off"` | Sets initial ticks/sec so the replay takes roughly 30s-60s to wrap up. |
 | `autoplay` | `"off"`, `"start"` or `"full"` | `"off"` | `"start"` automatically starts playback when a replay loaded, `"full"` additionally moves on to next replay file after one finished, `"off"` does neither. |
@@ -37,6 +38,10 @@ You can control the visualizer via query parameters. Multiple values are support
 [http://localhost:4242/?autoplay=/a.json,/b.json,/c.json\&themeColor=%235A7CFF](http://localhost:4242/?autoplay=/a.json,/b.json,/c.json&themeColor=%235A7CFF)
 
 Note: URL-encode `#` as `%23` in links.
+
+## Live replays
+
+Set the optional `liveReplayPort` in the server config, for example `4445`, then open the visualizer with `?live=ws://localhost:4445`. The server sends an initial snapshot containing every tick already played and streams subsequent replay-format tick diffs. The saved `replay_latest.json` format and normal file playback are unchanged.
 - Headless wall display (no UI), suppress version warning:
 
 [http://localhost:4242/?ui=false\&suppress\_version\_warning=true](http://localhost:4242/?ui=false&suppress_version_warning=true)

@@ -8,6 +8,7 @@ using json = nlohmann::ordered_json;
 #include "Config.h"
 #include "Core.h"
 #include "Logger.h"
+#include "LiveReplayServer.h"
 #include "Stats.h"
 
 #include <cstdlib>
@@ -59,6 +60,7 @@ class ReplayEncoder
 
 	void includeConfig(json &config);
 	json &getCustomData(void) { return customData_; }
+	void startLiveUpdates(unsigned int port);
 
 	void exportReplay() const;
 	void saveReplay(const json &replayData) const;
@@ -67,6 +69,7 @@ class ReplayEncoder
 
   private:
 	json encodeMiscSection() const;
+	json encodeReplay() const;
 
 	json ticks_ = json::array();
 	json config_ = json::object();
@@ -74,6 +77,7 @@ class ReplayEncoder
 
 	unsigned long long lastTickCount_;
 	std::unordered_map<unsigned int, team_data_t> teamData_;
+	mutable LiveReplayServer liveReplayServer_;
 };
 
 #endif // REPLAY_ENCODER_H
