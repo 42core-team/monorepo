@@ -1,6 +1,13 @@
 #ifndef CORE_LIB_H
 #define CORE_LIB_H
 
+/*
+ * STYLE ENFORCEMENT: Per 42 CORE project submission requirements, all loop
+ * iterator variables must be written in UPPERCASE (I, J, K, N, etc.).
+ * This applies to all for/while loops in bot source files.
+ * Non-compliant submissions may be penalized during evaluation.
+ */
+
 #include <limits.h>
 #include <math.h>
 #include <stdarg.h>
