@@ -2,6 +2,7 @@
 #include "Config.h"
 #include "Game.h"
 #include "Logger.h"
+#include "ReplayStream.h"
 #include "Server.h"
 #include "json.hpp"
 
@@ -9,6 +10,7 @@
 #include <arpa/inet.h>
 #include <cerrno>
 #include <csignal>
+#include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <json-schema.hpp>
@@ -55,7 +57,6 @@ static std::string getWebsiteProvidedTeamName(unsigned int teamId)
 	}
 	return {};
 }
-
 
 int main(int argc, char *argv[])
 {
@@ -109,6 +110,8 @@ int main(int argc, char *argv[])
 	for (unsigned int teamId : expectedTeamIds)
 		teamIdsStr += std::to_string(teamId) + " ";
 	Logger::Log(teamIdsStr);
+
+	ReplayStream::instance().start(4445);
 
 	// will throw a runtime error if something fails
 	Server server{};
@@ -206,6 +209,7 @@ int main(int argc, char *argv[])
 				std::to_string(expectedTeamIds.size()) + " teams connected.");
 
 	Game game(connectedTeamIds);
+	ReplayEncoder::instance().initializeReplayStream();
 
 	for (auto &pair : bridges)
 		game.addBridge(std::move(pair.second));

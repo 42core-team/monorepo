@@ -13,6 +13,7 @@ using json = nlohmann::ordered_json;
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
+#include <string>
 #include <unordered_map>
 
 enum class death_reason_t
@@ -40,7 +41,7 @@ typedef struct team_data_s
 class ReplayEncoder
 {
   public:
-	ReplayEncoder() : ticks_(json::object()), lastTickCount_(0) {}
+	ReplayEncoder();
 	~ReplayEncoder() = default;
 
 	static ReplayEncoder &instance();
@@ -58,6 +59,7 @@ class ReplayEncoder
 	bool wasConnectedInitially(unsigned int teamId) const;
 
 	void includeConfig(json &config);
+	void initializeReplayStream() const;
 	json &getCustomData(void) { return customData_; }
 
 	void exportReplay() const;
@@ -66,12 +68,13 @@ class ReplayEncoder
 	static void verifyReplaySaveFolder();
 
   private:
-	json encodeMiscSection() const;
+	json encodeMiscSection(bool finished) const;
 
-	json ticks_ = json::array();
+	json ticks_ = json::object();
 	json config_ = json::object();
 	json customData_ = json::object();
 
+	std::string gameId_;
 	unsigned long long lastTickCount_;
 	std::unordered_map<unsigned int, team_data_t> teamData_;
 };

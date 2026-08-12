@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="light" data-replay-state="waiting">
 
 <head>
 	<meta charset="UTF-8" />
@@ -44,8 +44,7 @@
 
 	<dialog id="info-modal" class="popup-modal ui">
 		<h2>CORE GAME Visualizer</h2>
-		<p>The Visualizer requires a replay file to run. Replay files are generated when the gameserver is done
-			executing a game with a minimum of two players.</p>
+		<p>The Visualizer loads a replay file or connects to a live game server.</p>
 		<p>You can even drag & drop a replay file into this page to rewatch an older replay!</p>
 		<p>All Infos about what CORE GAME is & how to participate can be found <a href="https://coregame.sh/"
 				target="_blank">here</a> and the source code can be found <a href="https://github.com/42core-team"
@@ -123,6 +122,8 @@
 
 	<div class="container">
 		<div class="top-bar ui">
+			<button id="live-indicator" class="ui" type="button" aria-label="Toggle live replay mode"
+				aria-pressed="false" hidden><span aria-hidden="true">●</span> LIVE</button>
 
 			<button id="open-info-modal" class="icon-button icon-left" title="Open Info Modal"
 				aria-label="Open Info Modal" aria-pressed="false">
@@ -130,7 +131,7 @@
 			</button>
 
 			<!-- Time controls box -->
-			<div id="time-controls" class="control-panel">
+			<div id="time-controls" class="control-panel" inert aria-disabled="true">
 				<div class="control-row">
 					<button id="prev-tick-button">
 						<img src="/assets/ui-svgs/tick_previous.svg" alt="Previous Tick" />
@@ -181,6 +182,7 @@
 
 		<!-- SVG Output Canvas -->
 		<div class="game-area">
+			<p id="waiting-message" role="status">Waiting for a game to start…</p>
 			<div class="teamName ui" id="team-one-name">Team One</div>
 			<svg id="svg-canvas" xmlns="http://www.w3.org/2000/svg"></svg>
 			<div class="teamName ui" id="team-two-name">Team Two</div>
@@ -189,7 +191,7 @@
 
 		<!-- Win Display -->
 		<div id="win-display-box" class="win-display">
-			<h1>🎖️🎉 Winner: <span id="winnername"></span> 🎈🏁</h1>
+			<h1 id="end-title"></h1>
 			<h3 id="winreason"></h3>
 		</div>
 		<div id="background-darkener" class="win-display"></div>

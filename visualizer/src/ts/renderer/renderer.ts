@@ -1,15 +1,12 @@
 import { getCurrentTickData, isDirty } from "../input_manager/timeManager";
-import type { GameConfig } from "../replay_loader/config";
-import {
-	formatObjectData,
-	type TickObject,
-	type UnitObject,
-} from "../replay_loader/object";
+import type { GameConfig } from "../replay_format/config";
+import type { TickObject, UnitObject } from "../replay_format/object";
 import {
 	getGameConfig,
 	getGameMisc,
 	getStateAt,
 } from "../replay_loader/replayLoader";
+import { formatObjectData } from "./objectInfo";
 import {
 	calcAndDrawObject,
 	drawSpawnPreviewForNextTick,
@@ -52,6 +49,35 @@ let isInitialRender = true;
 
 let hoveredDebugPath: { x: number; y: number }[] | null = null;
 let hoveredDebugPathStroke: string | null = null;
+
+export function refreshTeamDisplay(): void {
+	const config = getGameConfig();
+	if (!config) return;
+
+	initializeTeamMapping();
+	teamOneElement.textContent = "";
+	teamTwoElement.textContent = "";
+
+	const objects = getStateAt(0)?.objects ?? [];
+	if (objects.some((object) => object.type === 0)) {
+		for (const team of getGameMisc()?.team_results ?? []) {
+			for (const object of objects) {
+				if (object.type !== 0 || object.teamId !== team.id) continue;
+				if (object.x === 0)
+					teamOneElement.textContent = `🟠 ${team.name} (${team.id})`;
+				else if (object.x === config.gridSize - 1)
+					teamTwoElement.textContent = `🟣 ${team.name} (${team.id})`;
+			}
+		}
+		return;
+	}
+
+	const teams = getGameMisc()?.team_results ?? [];
+	if (teams[0])
+		teamOneElement.textContent = `${teams[0].name} (${teams[0].id})`;
+	if (teams[1])
+		teamTwoElement.textContent = `${teams[1].name} (${teams[1].id})`;
+}
 
 function drawHoveredDebugPathOverlay(): void {
 	if (!hoveredDebugPath || hoveredDebugPath.length === 0) return;
@@ -96,8 +122,7 @@ function drawFrame(timestamp: number): void {
 	const currentTickData = getCurrentTickData();
 	const replayData = getStateAt(currentTickData.tick);
 	if (!replayData) {
-		console.warn("No replay data available for the current tick.");
-		window.requestAnimationFrame(drawFrame);
+		scheduleNextFrame();
 		return;
 	}
 
@@ -236,27 +261,7 @@ export async function setupRenderer(): Promise<void> {
 		svgCanvas.dataset.renderLoopStarted = "1";
 	}
 
-	teamOneElement.textContent = "";
-	teamTwoElement.textContent = "";
-
-	if ((getStateAt(0)?.objects ?? []).some((o) => o.type === 0)) {
-		for (const team of getGameMisc()?.team_results ?? []) {
-			for (const obj of getStateAt(0)?.objects ?? []) {
-				if (obj.type === 0 && obj.teamId === team.id) {
-					if (obj.x === 0)
-						teamOneElement.textContent = `🟠 ${team.name} (${team.id})`;
-					else if (obj.x === gameConfig.gridSize - 1)
-						teamTwoElement.textContent = `🟣 ${team.name} (${team.id})`;
-				}
-			}
-		}
-	} else {
-		const misc = getGameMisc();
-		if (misc?.team_results?.[0])
-			teamOneElement.textContent = `${misc.team_results[0].name}(${misc.team_results[0].id})`;
-		if (misc?.team_results?.[1])
-			teamTwoElement.textContent = `${misc.team_results[1].name}(${misc.team_results[1].id})`;
-	}
+	refreshTeamDisplay();
 
 	svgCanvas.querySelectorAll(".persistent").forEach((el) => el.remove());
 	svgCanvas.querySelectorAll(":not(.persistent)").forEach((el) => el.remove());
@@ -267,8 +272,6 @@ export async function setupRenderer(): Promise<void> {
 	svgCanvas.setAttribute("viewBox", `0 0 ${gridSize} ${gridSize}`);
 
 	document.documentElement.style.setProperty("--grid-size", String(gridSize));
-
-	initializeTeamMapping();
 
 	if (!svgCanvas.dataset.listenersBound) {
 		svgCanvas.addEventListener("mousemove", (e) => {

@@ -1,6 +1,20 @@
 import { setupInfoPopupManager } from "./input_manager/infoPopupManager.js";
 import { setupRainbowMode } from "./input_manager/rainbowMode.js";
 import { loadSavedTheme } from "./input_manager/themeManager.js";
+import {
+	finishLiveReplay,
+	isAtEnd,
+	resetTimeManager,
+	setLiveAvailable,
+	setPlaybackSpeed,
+	setupTimeManager,
+	startPlayback,
+	updateReplayBounds,
+} from "./input_manager/timeManager.js";
+import {
+	setReplayControls,
+	setupReplayLoader,
+} from "./replay_loader/replayLoader.js";
 
 const svgCanvas = document.getElementById("svg-canvas") as HTMLElement;
 
@@ -23,35 +37,18 @@ window.addEventListener("DOMContentLoaded", async () => {
 				?.split(",")
 				.map((s) => s.trim()) || replays;
 	}
+	const websocketUrl =
+		urlParams.get("websocket") ||
+		`${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.hostname}:4445/replay`;
 
-	// project imports
-
-	const { setupReplayLoader } = await import("./replay_loader/replayLoader.js");
-	const { setupTimeManager, startPlayback, isAtEnd } = await import(
-		"./input_manager/timeManager.js"
-	);
-
-	await setupReplayLoader(replays[0]);
-	await setupTimeManager();
-	if (urlParams.has("autoplay") && urlParams.get("autoplay") !== "off")
-		startPlayback();
-
-	let idx = 0;
-	const watchAndAdvance = () => {
-		const timer = setInterval(() => {
-			if (isAtEnd()) {
-				clearInterval(timer);
-				setTimeout(async () => {
-					idx = (idx + 1) % replays.length;
-					await setupReplayLoader(replays[idx]);
-					startPlayback();
-					watchAndAdvance();
-				}, 5000);
-			}
-		}, 500);
-	};
-	if (urlParams.has("autoplay") && urlParams.get("autoplay") === "full")
-		watchAndAdvance();
+	setReplayControls({
+		finishLiveReplay,
+		resetTimeManager,
+		setLiveAvailable,
+		setPlaybackSpeed,
+		updateReplayBounds,
+	});
+	const replayReady = setupReplayLoader(replays[0], websocketUrl);
 
 	// svg layout height renderer
 
@@ -116,9 +113,28 @@ window.addEventListener("DOMContentLoaded", async () => {
 	}
 	const bgColorParam = urlParams.get("bgColor");
 	if (typeof bgColorParam === "string") {
-		document.documentElement.style.setProperty(
-			"--app-bg",
-			`#${bgColorParam}`,
-		);
+		document.documentElement.style.setProperty("--app-bg", `#${bgColorParam}`);
 	}
+
+	await replayReady;
+	await setupTimeManager();
+	if (urlParams.has("autoplay") && urlParams.get("autoplay") !== "off")
+		startPlayback();
+
+	let idx = 0;
+	const watchAndAdvance = () => {
+		const timer = setInterval(() => {
+			if (isAtEnd()) {
+				clearInterval(timer);
+				setTimeout(async () => {
+					idx = (idx + 1) % replays.length;
+					await setupReplayLoader(replays[idx], websocketUrl);
+					startPlayback();
+					watchAndAdvance();
+				}, 5000);
+			}
+		}, 500);
+	};
+	if (urlParams.has("autoplay") && urlParams.get("autoplay") === "full")
+		watchAndAdvance();
 });

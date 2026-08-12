@@ -190,11 +190,24 @@ a {
 }
 
 .game-area {
+	position: relative;
 	display: grid;
 	grid-template-columns: 1fr max-content 1fr;
 	grid-template-rows: 1fr max-content 1fr;
 	place-items: center;
 }
+
+#waiting-message {
+	position: absolute;
+	inset: 0;
+	display: none;
+	place-items: center;
+	margin: 0;
+	font-size: 1.5rem;
+	font-weight: bold;
+	text-align: center;
+}
+
 :root[data-ui="off"] .game-area {
 	grid-template-columns: 1fr;
 	grid-template-rows: 1fr;
@@ -250,6 +263,11 @@ a {
 	cursor: pointer;
 	padding: 0.5rem;
 	border-radius: 4px;
+}
+
+.control-panel :disabled {
+	cursor: default;
+	opacity: 0.45;
 }
 
 .icon-button img {
@@ -371,6 +389,20 @@ a {
 	cursor: pointer;
 }
 
+:root[data-replay-state="waiting"] #waiting-message {
+	display: grid;
+}
+
+:root[data-replay-state="waiting"] #svg-canvas,
+:root[data-replay-state="waiting"] .teamName {
+	visibility: hidden;
+}
+
+:root[data-replay-state="waiting"] #time-controls {
+	filter: grayscale(1);
+	opacity: 0.45;
+}
+
 .top-bar {
 	display: grid;
 	grid-template-columns: auto max-content auto;
@@ -379,6 +411,32 @@ a {
 	gap: 0.5rem;
 	padding: 0;
 	z-index: 5000;
+}
+
+#live-indicator {
+	position: fixed;
+	top: 0.75rem;
+	left: 0.75rem;
+	padding: 0.45rem 0.65rem;
+	color: color-mix(in srgb, #e00024 45%, var(--text));
+	background: var(--panel-bg);
+	border: 2px solid var(--panel-outline);
+	border-radius: 0.5rem;
+	font: inherit;
+	font-weight: 800;
+	cursor: pointer;
+	z-index: 7500;
+}
+
+#live-indicator[hidden] {
+	display: none;
+}
+
+#live-indicator.active {
+	color: #ff173d;
+	border-color: #ff173d;
+	box-shadow: 0 0 0.8rem rgba(255, 23, 61, 0.7);
+	text-shadow: 0 0 0.5rem rgba(255, 23, 61, 0.9);
 }
 
 .icon-button {

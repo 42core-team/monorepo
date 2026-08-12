@@ -1,9 +1,5 @@
 import type { tickData } from "../input_manager/timeManager";
-import {
-	getBarMetrics,
-	getDominantUnitAssetPath,
-	type TickObject,
-} from "../replay_loader/object";
+import type { TickObject } from "../replay_format/object";
 import {
 	getActionsByExecutor,
 	getStateAt,
@@ -12,6 +8,7 @@ import {
 	EaseInOutTimingCurve,
 	MidTickIncreaseTimingCurve,
 } from "./animationUtil.js";
+import { getBarMetrics, getDominantUnitAssetPath } from "./objectInfo";
 
 const svgNS = "http://www.w3.org/2000/svg";
 

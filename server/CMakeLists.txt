@@ -37,6 +37,32 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(json_schema_validator)
 
+FetchContent_Declare(
+	crow
+	GIT_REPOSITORY https://github.com/CrowCpp/Crow.git
+	GIT_TAG v1.3.3
+	GIT_SHALLOW TRUE
+	GIT_PROGRESS TRUE
+	UPDATE_DISCONNECTED TRUE
+	SOURCE_SUBDIR do-not-add
+)
+FetchContent_Declare(
+	asio
+	GIT_REPOSITORY https://github.com/chriskohlhoff/asio.git
+	GIT_TAG asio-1-30-2
+	GIT_SHALLOW TRUE
+	GIT_PROGRESS TRUE
+	UPDATE_DISCONNECTED TRUE
+	SOURCE_SUBDIR do-not-add
+)
+FetchContent_MakeAvailable(crow asio)
+add_library(crow INTERFACE)
+target_include_directories(crow SYSTEM INTERFACE
+	"${crow_SOURCE_DIR}/include"
+	"${asio_SOURCE_DIR}/asio/include"
+)
+target_compile_definitions(crow INTERFACE ASIO_STANDALONE ASIO_NO_DEPRECATED)
+
 set(XXHASH_VERSION v0.8.2)
 set(XXHASH_INC "${CMAKE_BINARY_DIR}/xxhash/include")
 file(MAKE_DIRECTORY "${XXHASH_INC}")
@@ -80,4 +106,5 @@ target_include_directories(server PRIVATE
 
 target_compile_options(server PRIVATE -Wall -Wextra -Werror)
 
-target_link_libraries(server PRIVATE nlohmann_json nlohmann_json_schema_validator xxhash)
+find_package(Threads REQUIRED)
+target_link_libraries(server PRIVATE crow nlohmann_json nlohmann_json_schema_validator Threads::Threads xxhash)

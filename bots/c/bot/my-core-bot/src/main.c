@@ -12,6 +12,8 @@ void ft_on_tick(unsigned long tick)
 	(void)tick;
 	core_action_createUnit("Warrior", "combat", NULL);
 
+	sleep(1);
+
 	t_obj **units = ft_get_units_own();
 	t_obj *target = ft_get_core_opponent();
 	for (int i = 0; target && units && units[i]; i++)

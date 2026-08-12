@@ -30,12 +30,30 @@ export function setColorSwitchPreview(hex: string) {
 
 function refreshReplayInfos() {
 	const misc = getGameMisc();
-	const seed = misc?.worldGeneratorSeed ?? 0;
-	const teamA = misc?.team_results?.[0]?.name ?? "TeamA";
-	const teamB = misc?.team_results?.[1]?.name ?? "TeamB";
 	const a = document.getElementById(
 		"download-replay-link",
 	) as HTMLAnchorElement | null;
+	const downloadBtn = document.getElementById(
+		"download-replay-btn",
+	) as HTMLButtonElement | null;
+	const copyBtn = document.getElementById(
+		"copy-seed-btn",
+	) as HTMLButtonElement | null;
+	if (!misc) {
+		a?.removeAttribute("href");
+		if (downloadBtn) downloadBtn.disabled = true;
+		if (copyBtn) {
+			copyBtn.disabled = true;
+			copyBtn.onclick = null;
+		}
+		return;
+	}
+
+	if (downloadBtn) downloadBtn.disabled = false;
+	if (copyBtn) copyBtn.disabled = false;
+	const seed = misc.worldGeneratorSeed ?? 0;
+	const teamA = misc.team_results?.[0]?.name ?? "TeamA";
+	const teamB = misc.team_results?.[1]?.name ?? "TeamB";
 	const dlName = `replay_${teamA}_vs_${teamB}_seed${seed}.json`.replace(
 		/\s+/g,
 		"_",
@@ -48,26 +66,24 @@ function refreshReplayInfos() {
 		a.download = dlName;
 		(a as HTMLAnchorElement & { _objectUrl: string | null })._objectUrl = url;
 	}
-	const copyBtn = document.getElementById(
-		"copy-seed-btn",
-	) as HTMLButtonElement | null;
-	copyBtn?.addEventListener("click", async () => {
-		try {
-			await navigator.clipboard.writeText(String(seed));
-			copyBtn.textContent = "Seed copied!";
-		} catch {
-			const ta = document.createElement("textarea");
-			ta.value = String(seed);
-			document.body.appendChild(ta);
-			ta.select();
-			document.execCommand("copy");
-			document.body.removeChild(ta);
-			copyBtn.textContent = "Seed copied!";
-		}
-		setTimeout(() => {
-			copyBtn.textContent = "Copy current map seed";
-		}, 1200);
-	});
+	if (copyBtn)
+		copyBtn.onclick = async () => {
+			try {
+				await navigator.clipboard.writeText(String(seed));
+				copyBtn.textContent = "Seed copied!";
+			} catch {
+				const ta = document.createElement("textarea");
+				ta.value = String(seed);
+				document.body.appendChild(ta);
+				ta.select();
+				document.execCommand("copy");
+				document.body.removeChild(ta);
+				copyBtn.textContent = "Seed copied!";
+			}
+			setTimeout(() => {
+				copyBtn.textContent = "Copy current map seed";
+			}, 1200);
+		};
 }
 
 // basic quick and dirty brightness reduction function

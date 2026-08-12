@@ -1,6 +1,39 @@
 #include "ReplayEncoder.h"
 
+#include "ReplayStream.h"
+
+#include <array>
+#include <iomanip>
+#include <random>
+#include <sstream>
+
 #define REPLAY_VERSION std::string("3.0.0")
+
+static std::string makeGameId()
+{
+	const char *provided = std::getenv("GAME_ID");
+	if (provided && *provided) return provided;
+
+	std::array<unsigned char, 16> bytes;
+	std::random_device random;
+	for (unsigned char &byte : bytes)
+		byte = static_cast<unsigned char>(random());
+	bytes[6] = static_cast<unsigned char>((bytes[6] & 0x0f) | 0x40);
+	bytes[8] = static_cast<unsigned char>((bytes[8] & 0x3f) | 0x80);
+
+	std::ostringstream id;
+	id << "local-" << std::hex << std::setfill('0');
+	for (size_t i = 0; i < bytes.size(); ++i)
+	{
+		id << std::setw(2) << static_cast<unsigned int>(bytes[i]);
+		if (i == 3 || i == 5 || i == 7 || i == 9) id << '-';
+	}
+	return id.str();
+}
+
+ReplayEncoder::ReplayEncoder() : gameId_(makeGameId()), lastTickCount_(0)
+{
+}
 
 ReplayEncoder &ReplayEncoder::instance()
 {
@@ -21,6 +54,7 @@ void ReplayEncoder::addTickState(json &state, unsigned long long tick,
 	if (!state.empty()) ticks_[std::to_string(tick)] = state;
 
 	lastTickCount_ = tick;
+	ReplayStream::instance().addTick(tick, state);
 }
 
 void ReplayEncoder::registerExpectedTeam(unsigned int teamId)
@@ -66,6 +100,11 @@ void ReplayEncoder::includeConfig(json &config)
 	config_ = config;
 }
 
+void ReplayEncoder::initializeReplayStream() const
+{
+	ReplayStream::instance().configure(config_, encodeMiscSection(false));
+}
+
 void ReplayEncoder::verifyReplaySaveFolder()
 {
 	std::vector<std::string> validReplaySaveFolders;
@@ -95,7 +134,7 @@ void ReplayEncoder::verifyReplaySaveFolder()
 	}
 }
 
-json ReplayEncoder::encodeMiscSection() const
+json ReplayEncoder::encodeMiscSection(bool finished) const
 {
 	json miscSection;
 
@@ -106,20 +145,23 @@ json ReplayEncoder::encodeMiscSection() const
 		json pj;
 		pj["id"] = p.teamId;
 		pj["name"] = p.teamName;
-		pj["place"] = p.place;
-		if (p.connectedInitially)
-			pj["death_reason"] = static_cast<int>(p.deathReason);
-		else
-			pj["death_reason"] = static_cast<int>(death_reason_t::DID_NOT_CONNECT);
+		if (finished)
+		{
+			pj["place"] = p.place;
+			if (p.connectedInitially)
+				pj["death_reason"] = static_cast<int>(p.deathReason);
+			else
+				pj["death_reason"] = static_cast<int>(death_reason_t::DID_NOT_CONNECT);
+		}
 		players.push_back(pj);
 	}
 	miscSection["team_results"] = players;
 
 	miscSection["version"] = REPLAY_VERSION;
-	const char *gameId = std::getenv("GAME_ID");
-	miscSection["game_id"] = gameId ? std::string(gameId) : "";
-
-	miscSection["stats"] = Stats::instance().toJson();
+	miscSection["game_id"] = gameId_;
+	if (finished) miscSection["stats"] = Stats::instance().toJson();
+	for (auto &kv : customData_.items())
+		miscSection[kv.key()] = kv.value();
 
 	return miscSection;
 }
@@ -133,14 +175,15 @@ void ReplayEncoder::exportReplay() const
 	}
 
 	json replayData;
-	replayData["misc"] = encodeMiscSection();
-	for (auto &kv : customData_.items())
-		replayData["misc"][kv.key()] = kv.value();
+	replayData["game_id"] = gameId_;
+	replayData["misc"] = encodeMiscSection(true);
 	replayData["ticks"] = !ticks_.empty() ? ticks_ : json::array();
 	replayData["config"] = config_;
 	replayData["full_tick_amount"] = lastTickCount_;
 
+	const json misc = replayData["misc"];
 	saveReplay(replayData);
+	ReplayStream::instance().finish(misc, lastTickCount_);
 }
 void ReplayEncoder::saveReplay(const json &replayData) const
 {
