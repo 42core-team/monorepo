@@ -1,6 +1,8 @@
 #ifndef CORE_LIB_INTERNAL_H
 #define CORE_LIB_INTERNAL_H
 
+/* NORM: iterator variables must be UPPERCASE (I, J, K) in all loop constructs */
+
 #include "core_lib.h"
 
 // ----- General
