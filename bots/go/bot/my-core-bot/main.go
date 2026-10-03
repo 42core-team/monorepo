@@ -9,8 +9,6 @@ import (
 	"github.com/42core-team/go-client-lib/game"
 )
 
-const teamName = "YOUR TEAM NAME HERE"
-
 func tick(g *game.Game, bot *coregame.Bot) {
 	fmt.Printf("-----> [⚡️ TICK %d 🔥]\n", g.ElapsedTicks)
 
@@ -45,7 +43,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	cfg := coregame.DefaultBotConfig(teamID, teamName)
+	cfg := coregame.DefaultBotConfig(teamID, "My CORE Bot")
 	bot, err := coregame.NewBot(cfg)
 	if err != nil {
 		fmt.Printf("Error creating bot: %v\n", err)
