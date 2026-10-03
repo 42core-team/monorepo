@@ -54,7 +54,7 @@ You can receive gems by having your units attack the gem deposits on the map or 
 
 3. **Get informed!** 🧠
 
-   - Read through [the basics](basics), skim the [FAQ](faq), and work through [My First CORE Bot](my_first_core_bot), especially if this is your first time playing.
+   - Read through [the basics](basics), skim the [FAQ](faq), and work through [My First C Bot](my_first_core_bot) or [My First Go Bot](my_first_core_bot_go), especially if this is your first time playing.
 
 🎉 **You are now ready to start coding!** 😎
 

@@ -16,7 +16,7 @@ Welcome to the **CORE** project repository! We’re excited to have you on board
    ```
 2. Run `make` in the terminal to test.
 3. Open [localhost:4000](http://localhost:4000) in your browser to see the gameplay.
-4. Keep going writing your bot! Get started under `my-core-bot/src/main.go`!
+4. Keep writing your bot! Start in `my-core-bot/main.go` and use the [Go tutorial](https://coregame.sh/wiki/my_first_core_bot_go).
 
 ### 📚 Useful Links
 - **Official CORE Wiki**: [coregame.sh/wiki](https://coregame.sh/wiki)
@@ -61,4 +61,3 @@ This will delete the container and its associated resources.
 
 > ❓ **QnA**: Why can't I see all of the files?
 > Some files are hidden by VSCode. These files are generally not relevant. If you want to see all of them, follow the guide on how to show them in the FAQ page on the wiki.
-

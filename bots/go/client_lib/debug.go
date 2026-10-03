@@ -1,14 +1,15 @@
 package coregame
 
 import (
+	"fmt"
 	"github.com/42core-team/go-client-lib/game"
 )
 
-func (b *Bot) AddObjectInfo(obj *game.Object, info string) {
+func (b *Bot) AddObjectInfo(obj *game.Object, format string, args ...any) {
 	if obj == nil {
 		return
 	}
-	b.connection.DebugData().AddObjectInfo(obj.ID, info)
+	b.connection.DebugData().AddObjectInfo(obj.ID, fmt.Sprintf(format, args...))
 }
 
 func (b *Bot) AddObjectPathStep(unit *game.Object, pos game.Position) {

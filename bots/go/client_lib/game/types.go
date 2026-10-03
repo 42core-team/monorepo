@@ -8,39 +8,42 @@ const (
 	ObjectDeposit
 	ObjectWall
 	ObjectGemPile
-	ObjectBomb
 )
 
-type UnitType int
-
-const (
-	UnitWarrior UnitType = iota
-	UnitMiner
-	UnitCarrier
-	UnitTank
-)
-
+// Position contains zero-indexed grid coordinates.
 type Position struct {
 	X uint `json:"x"`
 	Y uint `json:"y"`
 }
 
-func NewPosition(x, y uint) Position {
-	return Position{X: x, Y: y}
-}
+func NewPosition(x, y uint) Position { return Position{X: x, Y: y} }
 
-type ObjectData interface {
-	isObjectData()
+type ObjectData interface{ isObjectData() }
+
+// UnitProperties contains the effective properties derived from a unit's components.
+// BaseActionCooldown and DamageReductionPercent remain signed; the remaining effective values are non-negative.
+type UnitProperties struct {
+	Hp                     uint `json:"hp"`
+	BaseActionCooldown     int  `json:"baseActionCooldown"`
+	GemsPerCooldownStep    uint `json:"gemsPerCooldownStep"`
+	MaxGems                uint `json:"maxGems"`
+	DamageReductionPercent int  `json:"damageReductionPercent"`
+	DamageCore             uint `json:"damageCore"`
+	DamageUnit             uint `json:"damageUnit"`
+	DamageObject           uint `json:"damageObject"`
+	PostSpawnCoreCooldown  uint `json:"postSpawnCoreCooldown"`
 }
 
 type UnitData struct {
-	UnitType       UnitType `json:"unit_type"`
-	TeamID         uint     `json:"teamId"`
-	Gems           *uint    `json:"gems,omitempty"`
-	ActionCooldown *uint    `json:"ActionCooldown,omitempty"`
+	TeamID         uint           `json:"teamId"`
+	Gems           uint           `json:"gems"`
+	ActionCooldown int            `json:"ActionCooldown"`
+	Components     []string       `json:"components"`
+	Properties     UnitProperties `json:"properties"`
+	Name           string         `json:"name"`
 }
 
-func (UnitData) isObjectData() {}
+func (*UnitData) isObjectData() {}
 
 type CoreData struct {
 	TeamID        uint `json:"teamId"`
@@ -48,80 +51,60 @@ type CoreData struct {
 	SpawnCooldown uint `json:"SpawnCooldown"`
 }
 
-func (CoreData) isObjectData() {}
+func (*CoreData) isObjectData() {}
 
 type DepositData struct {
 	Gems uint `json:"gems"`
 }
 
-func (DepositData) isObjectData() {}
-
-type BombData struct {
-	Countdown uint `json:"countdown"`
-}
-
-func (BombData) isObjectData() {}
+func (*DepositData) isObjectData() {}
 
 type Object struct {
 	ID         uint       `json:"id"`
 	Type       ObjectType `json:"type"`
 	Pos        Position   `json:"pos"`
-	Hp         uint      `json:"hp"`
+	Hp         uint       `json:"hp"`
 	TeamID     uint       `json:"teamId"`
 	ObjectData ObjectData `json:"-"`
 	Data       any        `json:"-"`
 }
 
-func (o *Object) IsAlive() bool {
-	return o.Hp > 0
-}
-
+func (o *Object) IsAlive() bool { return o != nil && o.Hp > 0 }
 func (o *Object) IsEnemy(myTeamID uint) bool {
-	return o.TeamID != myTeamID && o.TeamID != 0
+	return o != nil && o.TeamID != myTeamID && o.TeamID != 0
 }
-
-func (o *Object) IsOfType(objType ObjectType) bool {
-	return o.Type == objType
-}
+func (o *Object) IsOfType(objectType ObjectType) bool { return o != nil && o.Type == objectType }
 
 func (o *Object) IsFriendly(myTeamID uint) bool {
-	if o.Type == ObjectUnit {
-		if data, ok := o.ObjectData.(UnitData); ok {
-			return data.TeamID == myTeamID
-		}
+	if data := o.GetUnitData(); data != nil {
+		return data.TeamID == myTeamID
 	}
-	if o.Type == ObjectCore {
-		if data, ok := o.ObjectData.(CoreData); ok {
-			return data.TeamID == myTeamID
-		}
+	if data := o.GetCoreData(); data != nil {
+		return data.TeamID == myTeamID
 	}
 	return false
 }
 
 func (o *Object) GetUnitData() *UnitData {
-	if data, ok := o.ObjectData.(UnitData); ok {
-		return &data
+	if o == nil {
+		return nil
 	}
-	return nil
+	data, _ := o.ObjectData.(*UnitData)
+	return data
 }
 
 func (o *Object) GetCoreData() *CoreData {
-	if data, ok := o.ObjectData.(CoreData); ok {
-		return &data
+	if o == nil {
+		return nil
 	}
-	return nil
+	data, _ := o.ObjectData.(*CoreData)
+	return data
 }
 
 func (o *Object) GetDepositData() *DepositData {
-	if data, ok := o.ObjectData.(DepositData); ok {
-		return &data
+	if o == nil {
+		return nil
 	}
-	return nil
-}
-
-func (o *Object) GetBombData() *BombData {
-	if data, ok := o.ObjectData.(BombData); ok {
-		return &data
-	}
-	return nil
+	data, _ := o.ObjectData.(*DepositData)
+	return data
 }

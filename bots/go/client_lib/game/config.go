@@ -1,91 +1,55 @@
 package game
 
-import (
-	"encoding/json"
-	"strings"
-)
+import "encoding/json"
 
-type BuildType int
-
-const (
-	BuildTypeNone BuildType = iota
-	BuildTypeWall
-	BuildTypeBomb
-)
-
-func (b *BuildType) UnmarshalJSON(data []byte) error {
-	var s string
-	if err := json.Unmarshal(data, &s); err != nil {
-		return err
-	}
-	switch strings.ToLower(s) {
-	case "wall":
-		*b = BuildTypeWall
-	case "bomb":
-		*b = BuildTypeBomb
-	default:
-		*b = BuildTypeNone
-	}
-	return nil
+type ComponentPropertyModification struct {
+	Name         string `json:"name"`
+	Modification int    `json:"modification"`
 }
 
-type UnitConfig struct {
-	Name               string    `json:"name"`
-	UnitType           UnitType  `json:"-"`
-	Cost               uint      `json:"cost"`
-	Hp                 uint      `json:"hp"`
-	BaseActionCooldown uint      `json:"baseActionCooldown"`
-	MaxActionCooldown  uint      `json:"maxActionCooldown"`
-	BalancePerCooldown uint      `json:"balancePerCooldownStep"`
-	DamageCore         uint      `json:"damageCore"`
-	DamageUnit         uint      `json:"damageUnit"`
-	DamageDeposit      uint      `json:"damageDeposit"`
-	DamageWall         uint      `json:"damageWall"`
-	DamageBomb         uint      `json:"damageBomb"`
-	BuildType          BuildType `json:"buildType"`
+type Component struct {
+	ID                         string                          `json:"id"`
+	Properties                 []ComponentPropertyModification `json:"properties"`
+	Cost                       uint                            `json:"cost"`
+	VisualizerAssetPrioritized bool                            `json:"visualizer_asset_prioritized"`
+	VisualizerAssetPath        string                          `json:"visualizer_asset_path"`
+}
+
+type InvalidComponentCondition struct {
+	Message   string          `json:"message"`
+	Condition json.RawMessage `json:"condition"`
+}
+
+type ComponentsConfig struct {
+	MaxComponentsPerUnit  uint                        `json:"maxComponentsPerUnit"`
+	UnitDefaultCost       uint                        `json:"unitDefaultCost"`
+	UnitDefaultProperties UnitProperties              `json:"unitDefaultProperties"`
+	Components            []Component                 `json:"components"`
+	InvalidConditions     []InvalidComponentCondition `json:"invalidConditions"`
 }
 
 type Config struct {
-	GridSize          uint          `json:"gridSize"`
-	IdleIncome        uint          `json:"idleIncome"`
-	IdleIncomeTimeout uint          `json:"idleIncomeTimeOut"`
-	DepositHp         uint          `json:"depositHp"`
-	DepositIncome     uint          `json:"depositIncome"`
-	GemPileIncome     uint          `json:"gemPileIncome"`
-	CoreHp            uint          `json:"coreHp"`
-	CoreSpawnCooldown uint          `json:"coreSpawnCooldown"`
-	InitialBalance    uint          `json:"initialBalance"`
-	WallHp            uint          `json:"wallHp"`
-	WallBuildCost     uint          `json:"wallBuildCost"`
-	BombCountdown     uint          `json:"bombCountdown"`
-	BombThrowCost     uint          `json:"bombThrowCost"`
-	BombReach         uint          `json:"bombReach"`
-	BombDamageCore    uint          `json:"bombDamageCore"`
-	BombDamageUnit    uint          `json:"bombDamageUnit"`
-	BombDamageDeposit uint          `json:"bombDamageDeposit"`
-	Units             []*UnitConfig `json:"units"`
+	GridSize                uint             `json:"gridSize"`
+	Seed                    string           `json:"seed,omitempty"`
+	IdleIncome              uint             `json:"idleIncome"`
+	IdleIncomeTimeout       uint             `json:"idleIncomeTimeOut"`
+	MaxUnitStandingCooldown uint             `json:"maxUnitStandingCooldown"`
+	DepositHp               uint             `json:"depositHp"`
+	DepositIncome           uint             `json:"depositIncome"`
+	GemPileIncome           uint             `json:"gemPileIncome"`
+	CoreHp                  uint             `json:"coreHp"`
+	InitialGems             uint             `json:"initialGems"`
+	WallHp                  uint             `json:"wallHp"`
+	WorldGenerator          string           `json:"worldGenerator"`
+	WorldGeneratorConfig    json.RawMessage  `json:"worldGeneratorConfig"`
+	Components              ComponentsConfig `json:"components"`
+	CorePositions           []Position       `json:"corePositions"`
 }
 
-func (c *Config) UnmarshalJSON(data []byte) error {
-	type Alias Config
-	aux := &struct {
-		*Alias
-	}{
-		Alias: (*Alias)(c),
-	}
-	if err := json.Unmarshal(data, aux); err != nil {
-		return err
-	}
-	for i, unit := range c.Units {
-		unit.UnitType = UnitType(i)
-	}
-	return nil
-}
-
-func (c *Config) GetUnitConfig(unitType UnitType) *UnitConfig {
-	for _, unit := range c.Units {
-		if unit.UnitType == unitType {
-			return unit
+func (c *Config) ComponentByID(id string) *Component {
+	for i := range c.Components.Components {
+		if c.Components.Components[i].ID == id {
+			return &c.Components.Components[i]
 		}
 	}
 	return nil

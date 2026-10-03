@@ -30,13 +30,46 @@ func (g *Game) ObjectAtPos(pos Position) *Object {
 }
 
 func (g *Game) ObjectsFilter(predicate func(*Object) bool) []*Object {
+	if predicate == nil {
+		return nil
+	}
 	var result []*Object
 	for _, obj := range g.Objects {
-		if predicate == nil || predicate(obj) {
+		if predicate(obj) {
 			result = append(result, obj)
 		}
 	}
 	return result
+}
+
+func (g *Game) ObjectsFilterCount(predicate func(*Object) bool) uint {
+	var count uint
+	for _, obj := range g.Objects {
+		if predicate == nil || predicate(obj) {
+			count++
+		}
+	}
+	return count
+}
+
+func (g *Game) UnitsByName(name string) []*Object {
+	if name == "" {
+		return nil
+	}
+	return g.ObjectsFilter(func(obj *Object) bool {
+		data := obj.GetUnitData()
+		return data != nil && data.TeamID == g.MyTeamID && data.Name == name
+	})
+}
+
+func (g *Game) UnitsByNameCount(name string) uint {
+	if name == "" {
+		return 0
+	}
+	return g.ObjectsFilterCount(func(obj *Object) bool {
+		data := obj.GetUnitData()
+		return data != nil && data.TeamID == g.MyTeamID && data.Name == name
+	})
 }
 
 func (g *Game) NearestObject(fromPos Position, predicate func(*Object) bool) *Object {

@@ -12,9 +12,19 @@ After that, scroll to the bottom, and copy the unit creation line into your code
 core_action_createUnit("Warrior", "combat", "health", NULL);
 ```
 
-The first argument is the unit's name. Pass `NULL` to receive a generated name. Every following argument is a component ID from the builder, and the list **must end with `NULL`**. Here is more information on the [unit creation action](reference/c/actions/core_action_createUnit).
+The first argument is the unit's name. Pass `NULL` to receive a generated name. Every following argument is a component ID from the builder, and the list **must end with `NULL`**. Here is more information on the [C unit creation action](reference/c/actions/core_action_createUnit).
+
+The Go equivalent uses a variadic component list and therefore needs no sentinel:
+
+```go
+bot.CreateUnit("Warrior", "combat", "health")
+```
+
+Pass an empty string as the name to receive a generated name. See [`Bot.CreateUnit`](reference/go/actions/CreateUnit).
 
 After the unit spawns, its component IDs are in `unit->s_unit.components` and its finished properties are in `unit->s_unit.properties`. Its current health, carried gems, and cooldown are in `unit->hp`, `unit->s_unit.gems`, and `unit->s_unit.action_cooldown`.
+
+In Go, read the same state from `unit.GetUnitData().Components`, `unit.GetUnitData().Properties`, `unit.Hp`, `unit.GetUnitData().Gems`, and `unit.GetUnitData().ActionCooldown`.
 
 ## Properties
 
@@ -41,7 +51,7 @@ action cooldown = max(1, max(0, baseActionCooldown)
                          + floor(carried gems / max(1, gemsPerCooldownStep)))
 </pre>
 
-If the unit does not perform an action after its cooldown has reached 0, the cooldown will continue to decrease into the negative range, eventually reaching its max standing cooldown - at which point its cooldown will reset the action cooldown back as if it had performed an action, when really the unit just stood so long the action was forfeit.
+If a ready unit does not act, its cooldown continues into the negative range. Once it reaches the configured maximum standing cooldown, the unit forfeits that stored readiness and its cooldown resets as if it had acted.
 
 ## `gemsPerCooldownStep`
 

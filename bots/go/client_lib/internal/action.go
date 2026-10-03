@@ -13,7 +13,6 @@ const (
 	ActionMove
 	ActionAttack
 	ActionTransfer
-	ActionBuild
 )
 
 func (a ActionType) String() string {
@@ -26,57 +25,46 @@ func (a ActionType) String() string {
 		return "attack"
 	case ActionTransfer:
 		return "transfer_gems"
-	case ActionBuild:
-		return "build"
 	default:
 		return "unknown"
 	}
 }
 
 type Action struct {
-	Type      ActionType
-	UnitType  game.UnitType
-	UnitID    uint
-	TargetID  uint
-	TargetPos game.Position
-	Amount    uint
+	Type       ActionType
+	Name       *string
+	Components []string
+	UnitID     uint
+	TargetID   uint
+	TargetPos  game.Position
+	Amount     uint
 }
 
 func (a Action) MarshalJSON() ([]byte, error) {
 	switch a.Type {
 	case ActionCreate:
+		components := a.Components
+		if components == nil {
+			components = []string{}
+		}
 		return json.Marshal(struct {
-			Type     string `json:"type"`
-			UnitType int    `json:"unit_type"`
-		}{
-			Type:     a.Type.String(),
-			UnitType: int(a.UnitType),
-		})
-
+			Type       string   `json:"type"`
+			Name       *string  `json:"name"`
+			Components []string `json:"components"`
+		}{a.Type.String(), a.Name, components})
 	case ActionMove:
 		return json.Marshal(struct {
 			Type   string `json:"type"`
 			UnitID uint   `json:"unit_id"`
 			X      uint   `json:"x"`
 			Y      uint   `json:"y"`
-		}{
-			Type:   a.Type.String(),
-			UnitID: a.UnitID,
-			X:      a.TargetPos.X,
-			Y:      a.TargetPos.Y,
-		})
-
+		}{a.Type.String(), a.UnitID, a.TargetPos.X, a.TargetPos.Y})
 	case ActionAttack:
 		return json.Marshal(struct {
 			Type     string `json:"type"`
 			UnitID   uint   `json:"unit_id"`
 			TargetID uint   `json:"target_id"`
-		}{
-			Type:     a.Type.String(),
-			UnitID:   a.UnitID,
-			TargetID: a.TargetID,
-		})
-
+		}{a.Type.String(), a.UnitID, a.TargetID})
 	case ActionTransfer:
 		return json.Marshal(struct {
 			Type     string `json:"type"`
@@ -84,29 +72,10 @@ func (a Action) MarshalJSON() ([]byte, error) {
 			Amount   uint   `json:"amount"`
 			X        uint   `json:"x"`
 			Y        uint   `json:"y"`
-		}{
-			Type:     a.Type.String(),
-			SourceID: a.UnitID,
-			Amount:   a.Amount,
-			X:        a.TargetPos.X,
-			Y:        a.TargetPos.Y,
-		})
-
-	case ActionBuild:
-		return json.Marshal(struct {
-			Type   string `json:"type"`
-			UnitID uint   `json:"unit_id"`
-			X      uint   `json:"x"`
-			Y      uint   `json:"y"`
-		}{
-			Type:   a.Type.String(),
-			UnitID: a.UnitID,
-			X:      a.TargetPos.X,
-			Y:      a.TargetPos.Y,
-		})
+		}{a.Type.String(), a.UnitID, a.Amount, a.TargetPos.X, a.TargetPos.Y})
+	default:
+		return json.Marshal(nil)
 	}
-
-	return nil, nil
 }
 
 type ActionQueue struct {
@@ -115,22 +84,12 @@ type ActionQueue struct {
 }
 
 func NewActionQueue(capacity int) *ActionQueue {
-	return &ActionQueue{
-		actions:  make([]Action, 0, capacity),
-		capacity: capacity,
-	}
+	return &ActionQueue{actions: make([]Action, 0, capacity), capacity: capacity}
 }
-
-func (q *ActionQueue) Add(action Action) {
-	q.actions = append(q.actions, action)
-}
-
+func (q *ActionQueue) Add(action Action) { q.actions = append(q.actions, action) }
 func (q *ActionQueue) Drain() []Action {
 	actions := q.actions
 	q.actions = make([]Action, 0, q.capacity)
 	return actions
 }
-
-func (q *ActionQueue) Reset() {
-	q.actions = make([]Action, 0, q.capacity)
-}
+func (q *ActionQueue) Reset() { q.actions = make([]Action, 0, q.capacity) }
