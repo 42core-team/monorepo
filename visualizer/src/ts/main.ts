@@ -26,12 +26,28 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 	// project imports
 
-	const { setupReplayLoader } = await import("./replay_loader/replayLoader.js");
+	const { setupLiveReplayLoader, setupReplayLoader } = await import(
+		"./replay_loader/replayLoader.js"
+	);
 	const { setupTimeManager, startPlayback, isAtEnd } = await import(
 		"./input_manager/timeManager.js"
 	);
 
-	await setupReplayLoader(replays[0]);
+	const liveMode = urlParams.has("live");
+	if (liveMode) {
+		const defaultProtocol =
+			window.location.protocol === "https:" ? "wss:" : "ws:";
+		const liveUrl =
+			urlParams.get("live") ||
+			`${defaultProtocol}//${window.location.hostname}:4445`;
+		await setupLiveReplayLoader(
+			liveUrl,
+			25,
+			urlParams.has("autoplay") && urlParams.get("autoplay") !== "off",
+		);
+	} else {
+		await setupReplayLoader(replays[0]);
+	}
 	await setupTimeManager();
 	if (urlParams.has("autoplay") && urlParams.get("autoplay") !== "off")
 		startPlayback();
@@ -50,7 +66,11 @@ window.addEventListener("DOMContentLoaded", async () => {
 			}
 		}, 500);
 	};
-	if (urlParams.has("autoplay") && urlParams.get("autoplay") === "full")
+	if (
+		!liveMode &&
+		urlParams.has("autoplay") &&
+		urlParams.get("autoplay") === "full"
+	)
 		watchAndAdvance();
 
 	// svg layout height renderer
@@ -116,9 +136,6 @@ window.addEventListener("DOMContentLoaded", async () => {
 	}
 	const bgColorParam = urlParams.get("bgColor");
 	if (typeof bgColorParam === "string") {
-		document.documentElement.style.setProperty(
-			"--app-bg",
-			`#${bgColorParam}`,
-		);
+		document.documentElement.style.setProperty("--app-bg", `#${bgColorParam}`);
 	}
 });

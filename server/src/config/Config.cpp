@@ -266,6 +266,7 @@ static ServerConfig parseServerConfig()
 	{
 		config.replayFolderPaths = {"replays"};
 	}
+	config.liveReplayPort = j.value("liveReplayPort", 0U);
 	config.timeoutTicks = j.at("timeoutTicks").get<unsigned int>();
 	config.timeoutMs = j.at("timeoutMs").get<unsigned int>();
 	config.clientWaitTimeoutMs = j.at("clientWaitTimeoutMs").get<unsigned int>();

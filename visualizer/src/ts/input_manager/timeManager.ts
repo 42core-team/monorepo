@@ -422,3 +422,10 @@ export function resetTimeManager() {
 	tickTimelineNumberInput.max = (getTotalTicks() - 1).toString();
 	tickTimelineNumberInput.value = "0";
 }
+
+export function updateTimeRange() {
+	const max = Math.max(1, getTotalTicks()) - 1;
+	tickTimelineSlider.max = String(max);
+	tickTimelineNumberInput.max = String(max);
+	if (tick > max) setTick(max);
+}

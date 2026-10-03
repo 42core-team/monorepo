@@ -206,6 +206,7 @@ int main(int argc, char *argv[])
 				std::to_string(expectedTeamIds.size()) + " teams connected.");
 
 	Game game(connectedTeamIds);
+	ReplayEncoder::instance().startLiveUpdates(Config::server().liveReplayPort);
 
 	for (auto &pair : bridges)
 		game.addBridge(std::move(pair.second));
