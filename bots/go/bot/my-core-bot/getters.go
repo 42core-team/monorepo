@@ -35,47 +35,74 @@ func nearestOpponentUnit(g *game.Game, pos game.Position) *game.Object {
 }
 
 func isDeposit(obj *game.Object) bool {
-	return obj != nil && obj.Type == game.ObjectDeposit
+	if obj == nil {
+		return false
+	}
+	return obj.Type == game.ObjectDeposit
 }
 
 func isOwnCore(myTeamID uint) func(*game.Object) bool {
 	return func(obj *game.Object) bool {
 		data, err := obj.CoreData()
-		return err == nil && data.TeamID == myTeamID
+		if err != nil {
+			return false
+		}
+		return data.TeamID == myTeamID
 	}
 }
 
 func isOpponentCore(myTeamID uint) func(*game.Object) bool {
 	return func(obj *game.Object) bool {
 		data, err := obj.CoreData()
-		return err == nil && data.TeamID != myTeamID && data.TeamID != 0
+		if err != nil {
+			return false
+		}
+		return data.TeamID != myTeamID
 	}
 }
 
 func isGemPile(obj *game.Object) bool {
-	return obj != nil && obj.Type == game.ObjectGemPile
+	if obj == nil {
+		return false
+	}
+	return obj.Type == game.ObjectGemPile
 }
 
 func isDepositOrGemPile(obj *game.Object) bool {
-	return isDeposit(obj) || isGemPile(obj)
+	if isDeposit(obj) {
+		return true
+	}
+	return isGemPile(obj)
 }
 
 func isOwnUnit(myTeamID uint) func(*game.Object) bool {
 	return func(obj *game.Object) bool {
-		if obj == nil || obj.Type != game.ObjectUnit {
+		if obj == nil {
+			return false
+		}
+		if obj.Type != game.ObjectUnit {
 			return false
 		}
 		data, err := obj.UnitData()
-		return err == nil && data.TeamID == myTeamID
+		if err != nil {
+			return false
+		}
+		return data.TeamID == myTeamID
 	}
 }
 
 func isOpponentUnit(myTeamID uint) func(*game.Object) bool {
 	return func(obj *game.Object) bool {
-		if obj == nil || obj.Type != game.ObjectUnit {
+		if obj == nil {
+			return false
+		}
+		if obj.Type != game.ObjectUnit {
 			return false
 		}
 		data, err := obj.UnitData()
-		return err == nil && data.TeamID != myTeamID && data.TeamID != 0
+		if err != nil {
+			return false
+		}
+		return data.TeamID != myTeamID
 	}
 }

@@ -31,7 +31,7 @@ func nearestGemPile(g *game.Game, pos game.Position) *game.Object
 func nearestDepositOrGemPile(g *game.Game, pos game.Position) *game.Object
 ```
 
-Opponent helpers exclude neutral team `0`. Core and nearest-object helpers return nil when nothing matches; unit-list helpers return a nil slice. Nearest searches use Manhattan distance and keep the first match on ties. Core searches use `(0, 0)` as their origin.
+Opponent helpers match any team other than your own, just like the C template. Core and nearest-object helpers return nil when nothing matches; unit-list helpers return a nil slice. Nearest searches use Manhattan distance and keep the first match on ties. Core searches use `(0, 0)` as their origin.
 
 To migrate from the former library methods, replace `g.MyCore()` with `ownCore(g)`, `g.EnemyCore()` with `opponentCore(g)`, `g.TeamUnits()` with `ownUnits(g)`, and `g.EnemyUnits()` with `opponentUnits(g)`, using the template's `getters.go`.
 
