@@ -55,7 +55,7 @@ func TestGameTickDecodesCurrentUnitModelAndDiffs(t *testing.T) {
 	}
 }
 
-func TestGameTickExposesAndResetsActionRejections(t *testing.T) {
+func TestGameTickServerErrorsDoNotStopUpdates(t *testing.T) {
 	g := &game.Game{}
 	tick, err := parseGameTick(`{"tick":5,"objects":[],"errors":["unit is on action cooldown","insufficient gems"]}`)
 	if err != nil {
@@ -64,14 +64,14 @@ func TestGameTickExposesAndResetsActionRejections(t *testing.T) {
 	if err := tick.applyTo(g); err != nil {
 		t.Fatal(err)
 	}
-	if len(g.ActionRejections) != 2 || g.ActionRejections[0].Tick != 5 || g.ActionRejections[0].Error() != "unit is on action cooldown" {
-		t.Fatalf("unexpected rejections: %#v", g.ActionRejections)
+	if g.ElapsedTicks != 5 {
+		t.Fatalf("tick was not applied: %d", g.ElapsedTicks)
 	}
 	if err := (&gameTick{Tick: 6}).applyTo(g); err != nil {
 		t.Fatal(err)
 	}
-	if len(g.ActionRejections) != 0 {
-		t.Fatal("rejections leaked into next tick")
+	if g.ElapsedTicks != 6 {
+		t.Fatalf("next tick was not applied: %d", g.ElapsedTicks)
 	}
 }
 

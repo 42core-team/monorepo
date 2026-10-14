@@ -8,7 +8,7 @@ sidebarTitle: "⚙️ Attack()"
 func (b *Bot) Attack(attacker, target *game.Object) error
 ```
 
-Queues an attack from a unit against an adjacent object. Damage comes from the attacker's current component-derived properties. Nil inputs, non-unit attackers, and unavailable clients return errors. A nil error means queued locally; cooldown, ownership, range, and object existence are checked by the server. Later rejections appear in `g.ActionRejections`.
+Queues an attack from a unit against an adjacent object. Damage comes from the attacker's current component-derived properties. Nil inputs, non-unit attackers, and unavailable clients return errors. A nil error means queued locally; cooldown, ownership, range, and object existence are checked by the server. Server error messages are printed by the library.
 
 ```go
 if target := g.ObjectAtPos(next); target != nil {

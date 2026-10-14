@@ -9,8 +9,6 @@ type Game struct {
 	Objects      []*Object
 	ElapsedTicks uint
 	MyTeamID     uint
-	// ActionRejections contains only the server rejections received this tick.
-	ActionRejections []ActionRejection
 }
 
 func (g *Game) ObjectByID(id uint) (*Object, error) {

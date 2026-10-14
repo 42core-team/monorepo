@@ -23,6 +23,6 @@ if err == nil {
 }
 ```
 
-`Run` requires a non-nil callback and blocks until the game completes or an error occurs. Unexpected disconnections, truncated frames, and malformed protocol data return errors; wrapped causes remain inspectable with `errors.Is` and `errors.As`. Observed defeat or elimination of all opposing cores completes normally. Server action rejections do not stop the loop: inspect `g.ActionRejections` in the callback.
+`Run` requires a non-nil callback and blocks until the game completes or an error occurs. Unexpected disconnections, truncated frames, and malformed protocol data return errors; wrapped causes remain inspectable with `errors.Is` and `errors.As`. Observed defeat or elimination of all opposing cores completes normally. Server action error messages are printed by the library and do not stop the loop.
 
 `Close` is idempotent for an initialized bot. Queuing actions or calling `Run` on an unavailable/closed bot returns `coregame.ErrClientUnavailable`. Connection establishment retains its startup retry behavior.
