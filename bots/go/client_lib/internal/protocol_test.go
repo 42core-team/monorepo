@@ -20,7 +20,7 @@ func TestGameTickDecodesCurrentUnitModelAndDiffs(t *testing.T) {
 		t.Fatalf("unexpected game: %#v", g)
 	}
 	unit := g.Objects[0]
-	data, err := unit.GetUnitData()
+	data, err := unit.UnitData()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -35,7 +35,7 @@ func TestGameTickDecodesCurrentUnitModelAndDiffs(t *testing.T) {
 	if err := diff.applyTo(g); err != nil {
 		t.Fatal(err)
 	}
-	data, err = unit.GetUnitData()
+	data, err = unit.UnitData()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -91,7 +91,7 @@ func TestGameTickDoesNotLocallyDecrementCooldowns(t *testing.T) {
 	if err := tick.applyTo(g); err != nil {
 		t.Fatal(err)
 	}
-	data, err := g.Objects[0].GetUnitData()
+	data, err := g.Objects[0].UnitData()
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -56,7 +56,7 @@ One call queues at most one adjacent move or attack. A nil policy uses the compo
 Travel intentionally leaves action-cooldown checks to your code. Call it only for ready units:
 
 ```go
-data, err := unit.GetUnitData()
+data, err := unit.UnitData()
 if err != nil {
 	log.Printf("read unit: %v", err)
 	return
@@ -104,7 +104,7 @@ func tick(g *game.Game, bot *coregame.Bot) {
 		log.Printf("tick %d: server rejected action: %v", rejection.Tick, rejection)
 	}
 	if core := g.MyCore(); core != nil {
-		data, err := core.GetCoreData()
+		data, err := core.CoreData()
 		if err != nil {
 			log.Printf("read core: %v", err)
 		} else if data.SpawnCooldown == 0 {
@@ -115,7 +115,7 @@ func tick(g *game.Game, bot *coregame.Bot) {
 	}
 	target := g.EnemyCore()
 	for _, unit := range g.TeamUnits() {
-		data, err := unit.GetUnitData()
+		data, err := unit.UnitData()
 		if err != nil {
 			log.Printf("read unit: %v", err)
 			continue

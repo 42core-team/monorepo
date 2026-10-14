@@ -62,7 +62,7 @@ func (g *Game) UnitsByName(name string) []*Object {
 		if obj == nil || obj.Type != ObjectUnit {
 			return false
 		}
-		data, err := obj.GetUnitData()
+		data, err := obj.UnitData()
 		return err == nil && data.TeamID == g.MyTeamID && data.Name == name
 	})
 }
@@ -75,7 +75,7 @@ func (g *Game) UnitsByNameCount(name string) uint {
 		if obj == nil || obj.Type != ObjectUnit {
 			return false
 		}
-		data, err := obj.GetUnitData()
+		data, err := obj.UnitData()
 		return err == nil && data.TeamID == g.MyTeamID && data.Name == name
 	})
 }
@@ -103,7 +103,7 @@ func (g *Game) TeamUnits() []*Object {
 		if obj.Type != ObjectUnit {
 			return false
 		}
-		if data, err := obj.GetUnitData(); err == nil {
+		if data, err := obj.UnitData(); err == nil {
 			return data.TeamID == g.MyTeamID
 		}
 		return false
@@ -115,7 +115,7 @@ func (g *Game) EnemyUnits() []*Object {
 		if obj.Type != ObjectUnit {
 			return false
 		}
-		if data, err := obj.GetUnitData(); err == nil {
+		if data, err := obj.UnitData(); err == nil {
 			return data.TeamID != g.MyTeamID && data.TeamID != 0
 		}
 		return false
@@ -127,7 +127,7 @@ func (g *Game) MyCore() *Object {
 		if obj.Type != ObjectCore {
 			return false
 		}
-		if data, err := obj.GetCoreData(); err == nil {
+		if data, err := obj.CoreData(); err == nil {
 			return data.TeamID == g.MyTeamID
 		}
 		return false
@@ -139,7 +139,7 @@ func (g *Game) EnemyCore() *Object {
 		if obj.Type != ObjectCore {
 			return false
 		}
-		if data, err := obj.GetCoreData(); err == nil {
+		if data, err := obj.CoreData(); err == nil {
 			return data.TeamID != g.MyTeamID && data.TeamID != 0
 		}
 		return false

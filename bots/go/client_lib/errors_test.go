@@ -70,7 +70,7 @@ func TestActionsLeaveGameplayValidationToServer(t *testing.T) {
 	// Foreign, cooling down, empty-handed, and far from the target: these
 	// conditions must not prevent local queuing.
 	unit := testUnit(7, 0, 0, 2, game.UnitProperties{})
-	data, err := unit.GetUnitData()
+	data, err := unit.UnitData()
 	if err != nil {
 		t.Fatal(err)
 	}

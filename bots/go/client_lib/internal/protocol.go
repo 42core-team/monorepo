@@ -108,7 +108,7 @@ func applyObjectUpdate(object *game.Object, update incomingObject) error {
 	}
 	switch object.Type {
 	case game.ObjectUnit:
-		data, err := object.GetUnitData()
+		data, err := object.UnitData()
 		if err != nil {
 			return err
 		}
@@ -132,7 +132,7 @@ func applyObjectUpdate(object *game.Object, update incomingObject) error {
 		}
 		object.ObjectData = data
 	case game.ObjectCore:
-		data, err := object.GetCoreData()
+		data, err := object.CoreData()
 		if err != nil {
 			return err
 		}
@@ -147,7 +147,7 @@ func applyObjectUpdate(object *game.Object, update incomingObject) error {
 		}
 		object.ObjectData = data
 	case game.ObjectDeposit, game.ObjectGemPile:
-		data, err := object.GetDepositData()
+		data, err := object.DepositData()
 		if err != nil {
 			return err
 		}

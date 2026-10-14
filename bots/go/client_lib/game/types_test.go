@@ -13,10 +13,10 @@ func TestTypedDataGetters(t *testing.T) {
 		typedNil ObjectData
 		get      func(*Object) (bool, error)
 	}{
-		{"unit", ObjectUnit, &UnitData{}, (*UnitData)(nil), func(o *Object) (bool, error) { d, err := o.GetUnitData(); return d != nil, err }},
-		{"core", ObjectCore, &CoreData{}, (*CoreData)(nil), func(o *Object) (bool, error) { d, err := o.GetCoreData(); return d != nil, err }},
-		{"deposit", ObjectDeposit, &DepositData{}, (*DepositData)(nil), func(o *Object) (bool, error) { d, err := o.GetDepositData(); return d != nil, err }},
-		{"gem pile", ObjectGemPile, &DepositData{}, (*DepositData)(nil), func(o *Object) (bool, error) { d, err := o.GetDepositData(); return d != nil, err }},
+		{"unit", ObjectUnit, &UnitData{}, (*UnitData)(nil), func(o *Object) (bool, error) { d, err := o.UnitData(); return d != nil, err }},
+		{"core", ObjectCore, &CoreData{}, (*CoreData)(nil), func(o *Object) (bool, error) { d, err := o.CoreData(); return d != nil, err }},
+		{"deposit", ObjectDeposit, &DepositData{}, (*DepositData)(nil), func(o *Object) (bool, error) { d, err := o.DepositData(); return d != nil, err }},
+		{"gem pile", ObjectGemPile, &DepositData{}, (*DepositData)(nil), func(o *Object) (bool, error) { d, err := o.DepositData(); return d != nil, err }},
 	}
 	for _, getter := range getters {
 		t.Run(getter.name, func(t *testing.T) {

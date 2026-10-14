@@ -25,7 +25,7 @@ func tick(g *game.Game, bot *coregame.Bot) {
 	}
 
 	for _, unit := range g.TeamUnits() {
-		data, err := unit.GetUnitData()
+		data, err := unit.UnitData()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Read unit: %v\n", err)
 			continue
