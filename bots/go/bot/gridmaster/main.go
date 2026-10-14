@@ -12,7 +12,12 @@ import (
 const teamName = "Gridmaster"
 
 func tick(g *game.Game, bot *coregame.Bot) {
-	bot.CreateUnit("Gridfighter", "combat", "siege", "health")
+	for _, rejection := range g.ActionRejections {
+		fmt.Fprintf(os.Stderr, "Tick %d: server rejected action: %v\n", rejection.Tick, rejection)
+	}
+	if err := bot.CreateUnit("Gridfighter", "combat", "siege", "health"); err != nil {
+		fmt.Fprintf(os.Stderr, "Queue fighter: %v\n", err)
+	}
 
 	enemyCore := g.EnemyCore()
 	if enemyCore == nil {
@@ -20,8 +25,15 @@ func tick(g *game.Game, bot *coregame.Bot) {
 	}
 
 	for _, unit := range g.TeamUnits() {
-		if unit.GetUnitData().ActionCooldown <= 0 {
-			bot.Travel(unit, enemyCore.Pos, nil)
+		data, err := unit.GetUnitData()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Read unit: %v\n", err)
+			continue
+		}
+		if data.ActionCooldown <= 0 {
+			if err := bot.Travel(unit, enemyCore.Pos, nil); err != nil {
+				fmt.Fprintf(os.Stderr, "Travel: %v\n", err)
+			}
 		}
 	}
 }

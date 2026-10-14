@@ -24,7 +24,7 @@ Pass an empty string as the name to receive a generated name. See [`Bot.CreateUn
 
 After the unit spawns, its component IDs are in `unit->s_unit.components` and its finished properties are in `unit->s_unit.properties`. Its current health, carried gems, and cooldown are in `unit->hp`, `unit->s_unit.gems`, and `unit->s_unit.action_cooldown`.
 
-In Go, read the same state from `unit.GetUnitData().Components`, `unit.GetUnitData().Properties`, `unit.Hp`, `unit.GetUnitData().Gems`, and `unit.GetUnitData().ActionCooldown`.
+In Go, call `data, err := unit.GetUnitData()` and handle the error first. Then read `data.Components`, `data.Properties`, `unit.Hp`, `data.Gems`, and `data.ActionCooldown`.
 
 ## Properties
 

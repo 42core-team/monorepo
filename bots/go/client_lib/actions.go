@@ -2,6 +2,7 @@ package coregame
 
 import (
 	"container/heap"
+	"fmt"
 	"math"
 
 	"github.com/42core-team/go-client-lib/game"
@@ -27,53 +28,101 @@ type TileTravelability struct {
 type TravelPolicy func(pos game.Position, unit *game.Object) TileTravelability
 
 // CreateUnit queues creation of a unit with a custom name and component IDs. An empty name asks the server to generate one.
-func (b *Bot) CreateUnit(name string, components ...string) {
+// A nil error means queued locally, not accepted or executed by the server.
+func (b *Bot) CreateUnit(name string, components ...string) error {
+	if err := b.checkClient(); err != nil {
+		return fmt.Errorf("create unit: %w", err)
+	}
 	var customName *string
 	if name != "" {
 		customName = &name
 	}
 	componentIDs := append(make([]string, 0, len(components)), components...)
 	b.connection.ActionQueue().Add(internal.Action{Type: internal.ActionCreate, Name: customName, Components: componentIDs})
+	return nil
 }
 
-func (b *Bot) Move(unit *game.Object, pos game.Position) {
-	if unit == nil {
-		return
+// Move queues a move. Cooldown, ownership, occupancy and range are checked by
+// the server; a nil error only means the action was queued locally.
+func (b *Bot) Move(unit *game.Object, pos game.Position) error {
+	if err := b.checkClient(); err != nil {
+		return fmt.Errorf("move: %w", err)
+	}
+	if err := checkUnit(unit); err != nil {
+		return fmt.Errorf("move: %w", err)
+	}
+	if err := b.checkPosition(pos); err != nil {
+		return fmt.Errorf("move: %w", err)
 	}
 	b.connection.ActionQueue().Add(internal.Action{Type: internal.ActionMove, UnitID: unit.ID, TargetPos: pos})
+	return nil
 }
 
-func (b *Bot) Attack(attacker, target *game.Object) {
-	if attacker == nil || target == nil {
-		return
+// Attack queues an attack; gameplay validation is performed by the server.
+func (b *Bot) Attack(attacker, target *game.Object) error {
+	if err := b.checkClient(); err != nil {
+		return fmt.Errorf("attack: %w", err)
+	}
+	if err := checkUnit(attacker); err != nil {
+		return fmt.Errorf("attack: %w", err)
+	}
+	if target == nil {
+		return fmt.Errorf("attack target: %w", game.ErrNilObject)
 	}
 	b.connection.ActionQueue().Add(internal.Action{Type: internal.ActionAttack, UnitID: attacker.ID, TargetID: target.ID})
+	return nil
 }
 
-func (b *Bot) TransferGems(source *game.Object, targetPos game.Position, amount uint) {
+// TransferGems queues a transfer from a unit or core. Resource, cooldown,
+// ownership and range checks remain server-side.
+func (b *Bot) TransferGems(source *game.Object, targetPos game.Position, amount uint) error {
+	if err := b.checkClient(); err != nil {
+		return fmt.Errorf("transfer gems: %w", err)
+	}
 	if source == nil {
-		return
+		return fmt.Errorf("transfer gems source: %w", game.ErrNilObject)
+	}
+	if source.Type != game.ObjectUnit && source.Type != game.ObjectCore {
+		return fmt.Errorf("transfer gems source %d must be a unit or core: %w", source.ID, game.ErrWrongObjectType)
+	}
+	if err := b.checkPosition(targetPos); err != nil {
+		return fmt.Errorf("transfer gems: %w", err)
 	}
 	b.connection.ActionQueue().Add(internal.Action{Type: internal.ActionTransfer, UnitID: source.ID, TargetPos: targetPos, Amount: amount})
+	return nil
 }
 
 // Travel queues one optimal move or attack toward target and adds the selected route to the unit's debug path.
 // A nil policy uses the same component-aware default policy as the C client.
-func (b *Bot) Travel(unit *game.Object, target game.Position, policy TravelPolicy) {
+// Arrival or no available route queues nothing and returns nil. Gameplay
+// validation remains server-side, just as for Move and Attack.
+func (b *Bot) Travel(unit *game.Object, target game.Position, policy TravelPolicy) error {
+	if err := b.checkClient(); err != nil {
+		return fmt.Errorf("travel: %w", err)
+	}
+	if _, err := unit.GetUnitData(); err != nil {
+		return fmt.Errorf("travel: %w", err)
+	}
+	if err := b.checkPosition(unit.Pos); err != nil {
+		return fmt.Errorf("travel origin: %w", err)
+	}
+	if err := b.checkPosition(target); err != nil {
+		return fmt.Errorf("travel target: %w", err)
+	}
 	plan, ok := makeTravelPlan(b.game, unit, target, policy)
 	if !ok {
-		return
+		return nil
 	}
 	for _, step := range plan.path {
 		b.AddObjectPathStep(unit, step)
 	}
 	if plan.obstacle != nil {
 		if plan.action == TravelAttack {
-			b.Attack(unit, plan.obstacle)
+			return b.Attack(unit, plan.obstacle)
 		}
-		return
+		return nil
 	}
-	b.Move(unit, plan.path[0])
+	return b.Move(unit, plan.path[0])
 }
 
 type travelNode struct {
@@ -108,7 +157,10 @@ func (h *travelHeap) Pop() any {
 }
 
 func makeTravelPlan(g *game.Game, unit *game.Object, target game.Position, policy TravelPolicy) (travelPlan, bool) {
-	if g == nil || unit == nil || unit.Type != game.ObjectUnit || unit.GetUnitData() == nil || !g.IsPosValid(unit.Pos) || !g.IsPosValid(target) || unit.Pos == target {
+	if g == nil || unit == nil || !g.IsPosValid(unit.Pos) || !g.IsPosValid(target) || unit.Pos == target {
+		return travelPlan{}, false
+	}
+	if _, err := unit.GetUnitData(); err != nil {
 		return travelPlan{}, false
 	}
 	if policy == nil {
@@ -234,8 +286,8 @@ func defaultTileTravelabilityForObject(object, unit *game.Object) TileTravelabil
 	if object == nil {
 		return TileTravelability{Weight: 1, Action: TravelPass}
 	}
-	unitData := unit.GetUnitData()
-	if unitData == nil {
+	unitData, err := unit.GetUnitData()
+	if err != nil {
 		return TileTravelability{Action: TravelBlock}
 	}
 	if object.IsFriendly(unitData.TeamID) {
@@ -243,7 +295,7 @@ func defaultTileTravelabilityForObject(object, unit *game.Object) TileTravelabil
 			return TileTravelability{Action: TravelBlock}
 		}
 		wait := uint(1)
-		if data := object.GetUnitData(); data != nil && data.ActionCooldown > 0 {
+		if data, err := object.GetUnitData(); err == nil && data.ActionCooldown > 0 {
 			wait = uint(data.ActionCooldown)
 		}
 		if wait >= math.MaxUint32 {
@@ -261,7 +313,7 @@ func defaultTileTravelabilityForObject(object, unit *game.Object) TileTravelabil
 		damage = unitData.Properties.DamageCore
 	case game.ObjectUnit:
 		damage = unitData.Properties.DamageUnit
-		if target := object.GetUnitData(); damage > 0 && target != nil {
+		if target, err := object.GetUnitData(); damage > 0 && err == nil {
 			reduction := target.Properties.DamageReductionPercent
 			if reduction < 0 {
 				reduction = 0

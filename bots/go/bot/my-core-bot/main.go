@@ -12,7 +12,12 @@ import (
 func tick(g *game.Game, bot *coregame.Bot) {
 	fmt.Printf("-----> [⚡️ TICK %d 🔥]\n", g.ElapsedTicks)
 
-	bot.CreateUnit("Warrior", "combat")
+	for _, rejection := range g.ActionRejections {
+		fmt.Fprintf(os.Stderr, "Tick %d: server rejected action: %v\n", rejection.Tick, rejection)
+	}
+	if err := bot.CreateUnit("Warrior", "combat"); err != nil {
+		fmt.Fprintf(os.Stderr, "Queue warrior: %v\n", err)
+	}
 
 	enemyCore := opponentCore(g)
 	if enemyCore == nil {
@@ -20,8 +25,15 @@ func tick(g *game.Game, bot *coregame.Bot) {
 	}
 
 	for _, unit := range ownUnits(g) {
-		if unit.GetUnitData().ActionCooldown <= 0 {
-			bot.Travel(unit, enemyCore.Pos, nil)
+		data, err := unit.GetUnitData()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Read unit: %v\n", err)
+			continue
+		}
+		if data.ActionCooldown <= 0 {
+			if err := bot.Travel(unit, enemyCore.Pos, nil); err != nil {
+				fmt.Fprintf(os.Stderr, "Travel: %v\n", err)
+			}
 		}
 		bot.AddObjectInfo(unit,
 			"I am a warrior! 🗡️ - I am heading for the opponent core at [%d,%d]! 🏰\n",

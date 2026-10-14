@@ -13,8 +13,15 @@ Returns or counts your units with the custom or generated name. Opposing units a
 
 ```go
 for _, scout := range g.UnitsByName("Scout") {
-	if scout.GetUnitData().ActionCooldown <= 0 {
-		bot.Travel(scout, goal, nil)
+	data, err := scout.GetUnitData()
+	if err != nil {
+		log.Printf("read scout: %v", err)
+		continue
+	}
+	if data.ActionCooldown <= 0 {
+		if err := bot.Travel(scout, goal, nil); err != nil {
+			log.Printf("travel: %v", err)
+		}
 	}
 }
 ```
