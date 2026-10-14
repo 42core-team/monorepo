@@ -9,6 +9,8 @@ type Game struct {
 	Objects      []*Object
 	ElapsedTicks uint
 	MyTeamID     uint
+	// ActionRejections contains only the server rejections received this tick.
+	ActionRejections []ActionRejection
 }
 
 func (g *Game) ObjectByID(id uint) (*Object, error) {
@@ -57,8 +59,11 @@ func (g *Game) UnitsByName(name string) []*Object {
 		return nil
 	}
 	return g.ObjectsFilter(func(obj *Object) bool {
-		data := obj.GetUnitData()
-		return data != nil && data.TeamID == g.MyTeamID && data.Name == name
+		if obj == nil || obj.Type != ObjectUnit {
+			return false
+		}
+		data, err := obj.GetUnitData()
+		return err == nil && data.TeamID == g.MyTeamID && data.Name == name
 	})
 }
 
@@ -67,8 +72,11 @@ func (g *Game) UnitsByNameCount(name string) uint {
 		return 0
 	}
 	return g.ObjectsFilterCount(func(obj *Object) bool {
-		data := obj.GetUnitData()
-		return data != nil && data.TeamID == g.MyTeamID && data.Name == name
+		if obj == nil || obj.Type != ObjectUnit {
+			return false
+		}
+		data, err := obj.GetUnitData()
+		return err == nil && data.TeamID == g.MyTeamID && data.Name == name
 	})
 }
 
@@ -95,7 +103,7 @@ func (g *Game) TeamUnits() []*Object {
 		if obj.Type != ObjectUnit {
 			return false
 		}
-		if data := obj.GetUnitData(); data != nil {
+		if data, err := obj.GetUnitData(); err == nil {
 			return data.TeamID == g.MyTeamID
 		}
 		return false
@@ -107,7 +115,7 @@ func (g *Game) EnemyUnits() []*Object {
 		if obj.Type != ObjectUnit {
 			return false
 		}
-		if data := obj.GetUnitData(); data != nil {
+		if data, err := obj.GetUnitData(); err == nil {
 			return data.TeamID != g.MyTeamID && data.TeamID != 0
 		}
 		return false
@@ -119,7 +127,7 @@ func (g *Game) MyCore() *Object {
 		if obj.Type != ObjectCore {
 			return false
 		}
-		if data := obj.GetCoreData(); data != nil {
+		if data, err := obj.GetCoreData(); err == nil {
 			return data.TeamID == g.MyTeamID
 		}
 		return false
@@ -131,7 +139,7 @@ func (g *Game) EnemyCore() *Object {
 		if obj.Type != ObjectCore {
 			return false
 		}
-		if data := obj.GetCoreData(); data != nil {
+		if data, err := obj.GetCoreData(); err == nil {
 			return data.TeamID != g.MyTeamID && data.TeamID != 0
 		}
 		return false

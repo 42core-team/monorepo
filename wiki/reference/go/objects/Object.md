@@ -35,4 +35,21 @@ type CoreData struct {
 type DepositData struct { Gems uint }
 ```
 
-`ActionCooldown` is signed: zero and negative values mean the unit is ready. Accessors are `GetUnitData`, `GetCoreData`, and `GetDepositData`. Helpers include `IsAlive`, `IsEnemy`, `IsFriendly`, and `IsOfType`.
+`ActionCooldown` is signed: zero and negative values mean the unit is ready. Helpers include `IsAlive`, `IsEnemy`, `IsFriendly`, and `IsOfType`.
+
+```go
+func (o *Object) GetUnitData() (*UnitData, error)
+func (o *Object) GetCoreData() (*CoreData, error)
+func (o *Object) GetDepositData() (*DepositData, error)
+```
+
+Accessors return non-nil data on success. Use `errors.Is` with `game.ErrNilObject`, `game.ErrWrongObjectType`, or `game.ErrInvalidObjectData` to distinguish a nil receiver, an incompatible object type, and a missing/mismatched payload. `GetDepositData` accepts both deposits and gem piles.
+
+```go
+data, err := unit.GetUnitData()
+if err != nil {
+	log.Printf("read unit: %v", err)
+	return
+}
+fmt.Println(data.Gems)
+```

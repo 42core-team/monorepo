@@ -53,7 +53,11 @@ func TestTravelCustomPolicySeparatesPassAttackAndBlock(t *testing.T) {
 
 func TestTravelPlansDuringPositiveCooldown(t *testing.T) {
 	unit := testUnit(1, 0, 0, 1, game.UnitProperties{})
-	unit.GetUnitData().ActionCooldown = 1
+	data, err := unit.GetUnitData()
+	if err != nil {
+		t.Fatal(err)
+	}
+	data.ActionCooldown = 1
 	g := &game.Game{Config: game.Config{GridSize: 2}, Objects: []*game.Object{unit}}
 	if _, ok := makeTravelPlan(g, unit, game.Position{X: 1, Y: 0}, nil); !ok {
 		t.Fatal("travel should leave cooldown checks to caller/server")
@@ -62,7 +66,11 @@ func TestTravelPlansDuringPositiveCooldown(t *testing.T) {
 
 func TestDefaultTravelabilityBlocksFullGemCarrier(t *testing.T) {
 	unit := testUnit(1, 0, 0, 1, game.UnitProperties{MaxGems: 5})
-	unit.GetUnitData().Gems = 5
+	data, err := unit.GetUnitData()
+	if err != nil {
+		t.Fatal(err)
+	}
+	data.Gems = 5
 	pile := &game.Object{ID: 2, Type: game.ObjectGemPile, Pos: game.Position{X: 1, Y: 0}, Hp: 1, ObjectData: &game.DepositData{Gems: 10}}
 	g := &game.Game{Config: game.Config{GridSize: 2}, Objects: []*game.Object{unit, pile}}
 	if got := defaultTileTravelability(g, pile.Pos, unit); got.Action != TravelBlock {
