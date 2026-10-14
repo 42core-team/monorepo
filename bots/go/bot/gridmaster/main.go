@@ -16,12 +16,12 @@ func tick(g *game.Game, bot *coregame.Bot) {
 		fmt.Fprintf(os.Stderr, "Queue fighter: %v\n", err)
 	}
 
-	enemyCore := g.EnemyCore()
+	enemyCore := opponentCore(g)
 	if enemyCore == nil {
 		return
 	}
 
-	for _, unit := range g.TeamUnits() {
+	for _, unit := range ownUnits(g) {
 		data, err := unit.UnitData()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Read unit: %v\n", err)

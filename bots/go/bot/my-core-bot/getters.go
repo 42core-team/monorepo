@@ -3,11 +3,11 @@ package main
 import "github.com/42core-team/go-client-lib/game"
 
 func ownCore(g *game.Game) *game.Object {
-	return g.MyCore()
+	return g.NearestObject(game.Position{}, isOwnCore(g.MyTeamID))
 }
 
 func opponentCore(g *game.Game) *game.Object {
-	return g.EnemyCore()
+	return g.NearestObject(game.Position{}, isOpponentCore(g.MyTeamID))
 }
 
 func nearestDeposit(g *game.Game, pos game.Position) *game.Object {
@@ -38,6 +38,20 @@ func isDeposit(obj *game.Object) bool {
 	return obj != nil && obj.Type == game.ObjectDeposit
 }
 
+func isOwnCore(myTeamID uint) func(*game.Object) bool {
+	return func(obj *game.Object) bool {
+		data, err := obj.CoreData()
+		return err == nil && data.TeamID == myTeamID
+	}
+}
+
+func isOpponentCore(myTeamID uint) func(*game.Object) bool {
+	return func(obj *game.Object) bool {
+		data, err := obj.CoreData()
+		return err == nil && data.TeamID != myTeamID && data.TeamID != 0
+	}
+}
+
 func isGemPile(obj *game.Object) bool {
 	return obj != nil && obj.Type == game.ObjectGemPile
 }
@@ -62,6 +76,6 @@ func isOpponentUnit(myTeamID uint) func(*game.Object) bool {
 			return false
 		}
 		data, err := obj.UnitData()
-		return err == nil && data.TeamID != myTeamID
+		return err == nil && data.TeamID != myTeamID && data.TeamID != 0
 	}
 }
