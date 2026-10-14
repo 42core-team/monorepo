@@ -48,30 +48,30 @@ func (e DebugEntry) MarshalJSON() ([]byte, error) {
 }
 
 type DebugData struct {
-	Entries  []DebugEntry
+	entries  []DebugEntry
 	Capacity int
 }
 
 func NewDebugData(capacity int) *DebugData {
 	return &DebugData{
-		Entries:  make([]DebugEntry, 0, capacity),
+		entries:  make([]DebugEntry, 0, capacity),
 		Capacity: capacity,
 	}
 }
 
 func (d *DebugData) findOrCreateEntry(objectID uint) *DebugEntry {
-	for i := range d.Entries {
-		if d.Entries[i].ObjectID == objectID {
-			return &d.Entries[i]
+	for i := range d.entries {
+		if d.entries[i].ObjectID == objectID {
+			return &d.entries[i]
 		}
 	}
 
-	d.Entries = append(d.Entries, DebugEntry{
+	d.entries = append(d.entries, DebugEntry{
 		ObjectID: objectID,
 		Info:     "",
 		Path:     nil,
 	})
-	return &d.Entries[len(d.Entries)-1]
+	return &d.entries[len(d.entries)-1]
 }
 
 func (d *DebugData) AddObjectInfo(objectID uint, info string) {
@@ -103,13 +103,13 @@ func (d *DebugData) AddObjectPathStep(objectID uint, pos game.Position) {
 }
 
 func (d *DebugData) Reset() {
-	d.Entries = make([]DebugEntry, 0, d.Capacity)
+	d.entries = make([]DebugEntry, 0, d.Capacity)
 }
 
 func (d *DebugData) HasData() bool {
-	return len(d.Entries) > 0
+	return len(d.entries) > 0
 }
 
-func (d *DebugData) GetEntries() []DebugEntry {
-	return d.Entries
+func (d *DebugData) Entries() []DebugEntry {
+	return d.entries
 }

@@ -49,8 +49,11 @@ func parseGameTick(tickData string) (*gameTick, error) {
 	return tick, nil
 }
 
-func (tick *gameTick) applyTo(g *game.Game) {
+func (tick *gameTick) applyTo(g *game.Game) error {
 	g.ElapsedTicks = tick.Tick
+	for _, message := range tick.Errors {
+		fmt.Printf("\033[31m%s\033[0m\n", message)
+	}
 	for _, update := range tick.Objects {
 		if update.ID == nil {
 			continue
@@ -61,17 +64,32 @@ func (tick *gameTick) applyTo(g *game.Game) {
 		}
 		object, _ := g.ObjectByID(*update.ID)
 		if object == nil {
+			if update.Type == nil {
+				return fmt.Errorf("new object %d has no type: %w", *update.ID, game.ErrInvalidObjectData)
+			}
 			object = &game.Object{ID: *update.ID}
+			switch *update.Type {
+			case game.ObjectUnit:
+				object.ObjectData = &game.UnitData{}
+			case game.ObjectCore:
+				object.ObjectData = &game.CoreData{}
+			case game.ObjectDeposit, game.ObjectGemPile:
+				object.ObjectData = &game.DepositData{}
+			}
+			if err := applyObjectUpdate(object, update); err != nil {
+				return fmt.Errorf("apply tick %d: %w", tick.Tick, err)
+			}
 			g.Objects = append(g.Objects, object)
+			continue
 		}
-		applyObjectUpdate(object, update)
+		if err := applyObjectUpdate(object, update); err != nil {
+			return fmt.Errorf("apply tick %d: %w", tick.Tick, err)
+		}
 	}
-	for _, message := range tick.Errors {
-		fmt.Printf("\033[31m%s\033[0m\n", message)
-	}
+	return nil
 }
 
-func applyObjectUpdate(object *game.Object, update incomingObject) {
+func applyObjectUpdate(object *game.Object, update incomingObject) error {
 	if update.Type != nil {
 		object.Type = *update.Type
 	}
@@ -89,9 +107,9 @@ func applyObjectUpdate(object *game.Object, update incomingObject) {
 	}
 	switch object.Type {
 	case game.ObjectUnit:
-		data := object.GetUnitData()
-		if data == nil {
-			data = &game.UnitData{}
+		data, err := object.UnitData()
+		if err != nil {
+			return err
 		}
 		if update.TeamID != nil {
 			data.TeamID = *update.TeamID
@@ -113,9 +131,9 @@ func applyObjectUpdate(object *game.Object, update incomingObject) {
 		}
 		object.ObjectData = data
 	case game.ObjectCore:
-		data := object.GetCoreData()
-		if data == nil {
-			data = &game.CoreData{}
+		data, err := object.CoreData()
+		if err != nil {
+			return err
 		}
 		if update.TeamID != nil {
 			data.TeamID = *update.TeamID
@@ -128,15 +146,16 @@ func applyObjectUpdate(object *game.Object, update incomingObject) {
 		}
 		object.ObjectData = data
 	case game.ObjectDeposit, game.ObjectGemPile:
-		data := object.GetDepositData()
-		if data == nil {
-			data = &game.DepositData{}
+		data, err := object.DepositData()
+		if err != nil {
+			return err
 		}
 		if update.Gems != nil {
 			data.Gems = *update.Gems
 		}
 		object.ObjectData = data
 	}
+	return nil
 }
 
 func applyUnitProperties(properties *game.UnitProperties, update *incomingUnitProperties) {

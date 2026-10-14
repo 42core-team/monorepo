@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/42core-team/go-client-lib/game"
@@ -12,12 +13,17 @@ func TestGameTickDecodesCurrentUnitModelAndDiffs(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	initial.applyTo(g)
+	if err := initial.applyTo(g); err != nil {
+		t.Fatal(err)
+	}
 	if g.ElapsedTicks != 10 || len(g.Objects) != 1 {
 		t.Fatalf("unexpected game: %#v", g)
 	}
 	unit := g.Objects[0]
-	data := unit.GetUnitData()
+	data, err := unit.UnitData()
+	if err != nil {
+		t.Fatal(err)
+	}
 	if unit.Hp != 19 || data == nil || data.ActionCooldown != -2 || data.Name != "Ada" || data.Properties.DamageObject != 8 || len(data.Components) != 2 {
 		t.Fatalf("unit not fully decoded: %#v / %#v", unit, data)
 	}
@@ -26,8 +32,13 @@ func TestGameTickDecodesCurrentUnitModelAndDiffs(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	diff.applyTo(g)
-	data = unit.GetUnitData()
+	if err := diff.applyTo(g); err != nil {
+		t.Fatal(err)
+	}
+	data, err = unit.UnitData()
+	if err != nil {
+		t.Fatal(err)
+	}
 	if data.ActionCooldown != -3 || data.Gems != 6 {
 		t.Fatalf("diff not applied: %#v", data)
 	}
@@ -36,17 +47,55 @@ func TestGameTickDecodesCurrentUnitModelAndDiffs(t *testing.T) {
 	}
 
 	dead, _ := parseGameTick(`{"tick":12,"objects":[{"id":7,"state":"dead"}],"errors":[]}`)
-	dead.applyTo(g)
+	if err := dead.applyTo(g); err != nil {
+		t.Fatal(err)
+	}
 	if len(g.Objects) != 0 {
 		t.Fatalf("dead object retained: %#v", g.Objects)
+	}
+}
+
+func TestGameTickServerErrorsDoNotStopUpdates(t *testing.T) {
+	g := &game.Game{}
+	tick, err := parseGameTick(`{"tick":5,"objects":[],"errors":["unit is on action cooldown","insufficient gems"]}`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := tick.applyTo(g); err != nil {
+		t.Fatal(err)
+	}
+	if g.ElapsedTicks != 5 {
+		t.Fatalf("tick was not applied: %d", g.ElapsedTicks)
+	}
+	if err := (&gameTick{Tick: 6}).applyTo(g); err != nil {
+		t.Fatal(err)
+	}
+	if g.ElapsedTicks != 6 {
+		t.Fatalf("next tick was not applied: %d", g.ElapsedTicks)
+	}
+}
+
+func TestGameTickRejectsMismatchedExistingPayload(t *testing.T) {
+	for _, payload := range []game.ObjectData{nil, &game.CoreData{}, (*game.UnitData)(nil)} {
+		g := &game.Game{Objects: []*game.Object{{ID: 1, Type: game.ObjectUnit, ObjectData: payload}}}
+		id := uint(1)
+		if err := (&gameTick{Tick: 2, Objects: []incomingObject{{ID: &id}}}).applyTo(g); !errors.Is(err, game.ErrInvalidObjectData) {
+			t.Fatalf("got %v, want invalid object data", err)
+		}
 	}
 }
 
 func TestGameTickDoesNotLocallyDecrementCooldowns(t *testing.T) {
 	g := &game.Game{Objects: []*game.Object{{ID: 1, Type: game.ObjectUnit, Hp: 10, ObjectData: &game.UnitData{ActionCooldown: 4}}}}
 	tick, _ := parseGameTick(`{"tick":2,"objects":[],"errors":[]}`)
-	tick.applyTo(g)
-	if got := g.Objects[0].GetUnitData().ActionCooldown; got != 4 {
+	if err := tick.applyTo(g); err != nil {
+		t.Fatal(err)
+	}
+	data, err := g.Objects[0].UnitData()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := data.ActionCooldown; got != 4 {
 		t.Fatalf("cooldown changed without a server diff: %d", got)
 	}
 }

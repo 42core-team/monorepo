@@ -1,5 +1,7 @@
 package game
 
+import "fmt"
+
 type ObjectType int
 
 const (
@@ -76,35 +78,62 @@ func (o *Object) IsEnemy(myTeamID uint) bool {
 func (o *Object) IsOfType(objectType ObjectType) bool { return o != nil && o.Type == objectType }
 
 func (o *Object) IsFriendly(myTeamID uint) bool {
-	if data := o.GetUnitData(); data != nil {
-		return data.TeamID == myTeamID
+	if o == nil {
+		return false
 	}
-	if data := o.GetCoreData(); data != nil {
-		return data.TeamID == myTeamID
+	switch o.Type {
+	case ObjectUnit:
+		data, err := o.UnitData()
+		return err == nil && data.TeamID == myTeamID
+	case ObjectCore:
+		data, err := o.CoreData()
+		return err == nil && data.TeamID == myTeamID
 	}
 	return false
 }
 
-func (o *Object) GetUnitData() *UnitData {
+// UnitData returns a non-nil payload on success. Errors distinguish nil
+// receivers, wrong object types, and missing or inconsistent payloads.
+func (o *Object) UnitData() (*UnitData, error) {
 	if o == nil {
-		return nil
+		return nil, ErrNilObject
 	}
-	data, _ := o.ObjectData.(*UnitData)
-	return data
+	if o.Type != ObjectUnit {
+		return nil, fmt.Errorf("object %d: expected unit, got type %d: %w", o.ID, o.Type, ErrWrongObjectType)
+	}
+	data, ok := o.ObjectData.(*UnitData)
+	if !ok || data == nil {
+		return nil, fmt.Errorf("unit %d: %w", o.ID, ErrInvalidObjectData)
+	}
+	return data, nil
 }
 
-func (o *Object) GetCoreData() *CoreData {
+// CoreData returns a non-nil core payload on success.
+func (o *Object) CoreData() (*CoreData, error) {
 	if o == nil {
-		return nil
+		return nil, ErrNilObject
 	}
-	data, _ := o.ObjectData.(*CoreData)
-	return data
+	if o.Type != ObjectCore {
+		return nil, fmt.Errorf("object %d: expected core, got type %d: %w", o.ID, o.Type, ErrWrongObjectType)
+	}
+	data, ok := o.ObjectData.(*CoreData)
+	if !ok || data == nil {
+		return nil, fmt.Errorf("core %d: %w", o.ID, ErrInvalidObjectData)
+	}
+	return data, nil
 }
 
-func (o *Object) GetDepositData() *DepositData {
+// DepositData accepts both deposits and gem piles, which share a payload.
+func (o *Object) DepositData() (*DepositData, error) {
 	if o == nil {
-		return nil
+		return nil, ErrNilObject
 	}
-	data, _ := o.ObjectData.(*DepositData)
-	return data
+	if o.Type != ObjectDeposit && o.Type != ObjectGemPile {
+		return nil, fmt.Errorf("object %d: expected deposit or gem pile, got type %d: %w", o.ID, o.Type, ErrWrongObjectType)
+	}
+	data, ok := o.ObjectData.(*DepositData)
+	if !ok || data == nil {
+		return nil, fmt.Errorf("object %d: %w", o.ID, ErrInvalidObjectData)
+	}
+	return data, nil
 }

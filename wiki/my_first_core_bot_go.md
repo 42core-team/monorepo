@@ -11,12 +11,16 @@ This guide builds a Go bot that creates a component-based unit and sends it towa
 CORE no longer has fixed warrior, miner, or carrier enums. Use your event's Unit Builder to choose valid component IDs. Component availability, costs, limits, and combinations can differ between events.
 
 ```go
-bot.CreateUnit("Warrior", "combat", "siege", "health")
+if err := bot.CreateUnit("Warrior", "combat", "siege", "health"); err != nil {
+	log.Printf("create unit: %v", err)
+}
 ```
 
 The first argument is the custom unit name. Pass an empty string to receive a generated name. The remaining arguments are component IDs. Repeated components are allowed only if the Unit Builder accepts the design.
 
 Creation is queued for execution between ticks. It can fail when your core is on spawn cooldown, lacks gems, has no spawn position, or receives an invalid component design. See [`Bot.CreateUnit`](reference/go/actions/CreateUnit).
+
+Action methods return errors for invalid local inputs or an unavailable client. A nil error does not guarantee execution: gameplay checks remain on the server. Server error messages are printed by the library. `Run` returns transport and protocol failures rather than treating a disconnect as successful completion.
 
 ## Run the game loop
 
@@ -42,7 +46,9 @@ func main() {
 ## Travel toward a target
 
 ```go
-bot.Travel(unit, target.Pos, nil)
+if err := bot.Travel(unit, target.Pos, nil); err != nil {
+	log.Printf("travel: %v", err)
+}
 ```
 
 One call queues at most one adjacent move or attack. A nil policy uses the component-aware default: open positions cost one, friendly cores are blocked, friendly units are passed after waiting, and breakable obstacles cost their estimated attack count plus one. The policy uses `DamageUnit`, `DamageCore`, `DamageObject`, damage reduction, and `MaxGems` from the unit state. Travel also adds the selected route to the unit's visualizer debug path.
@@ -50,20 +56,30 @@ One call queues at most one adjacent move or attack. A nil policy uses the compo
 Travel intentionally leaves action-cooldown checks to your code. Call it only for ready units:
 
 ```go
-if unit.GetUnitData().ActionCooldown <= 0 {
-	bot.Travel(unit, target.Pos, nil)
+data, err := unit.UnitData()
+if err != nil {
+	log.Printf("read unit: %v", err)
+	return
+}
+if data.ActionCooldown <= 0 {
+	if err := bot.Travel(unit, target.Pos, nil); err != nil {
+		log.Printf("travel: %v", err)
+	}
 }
 ```
 
 A custom policy receives each grid position and the traveling unit:
 
 ```go
-bot.Travel(unit, target.Pos, func(pos game.Position, unit *game.Object) coregame.TileTravelability {
+err := bot.Travel(unit, target.Pos, func(pos game.Position, unit *game.Object) coregame.TileTravelability {
 	if dangerous(pos) {
 		return coregame.TileTravelability{Action: coregame.TravelBlock}
 	}
 	return coregame.TileTravelability{Weight: 1, Action: coregame.TravelPass}
 })
+if err != nil {
+	log.Printf("travel: %v", err)
+}
 ```
 
 `TravelBlock` excludes a tile, `TravelPass` routes through it without attacking its occupant, and `TravelAttack` attacks its occupant when it becomes the next step. See [`Bot.Travel`](reference/go/actions/Travel).
@@ -75,6 +91,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 
@@ -83,13 +100,27 @@ import (
 )
 
 func tick(g *game.Game, bot *coregame.Bot) {
-	if core := g.MyCore(); core != nil && core.GetCoreData().SpawnCooldown == 0 {
-		bot.CreateUnit("Warrior", "combat")
+	if core := g.MyCore(); core != nil {
+		data, err := core.CoreData()
+		if err != nil {
+			log.Printf("read core: %v", err)
+		} else if data.SpawnCooldown == 0 {
+			if err := bot.CreateUnit("Warrior", "combat"); err != nil {
+				log.Printf("create unit: %v", err)
+			}
+		}
 	}
 	target := g.EnemyCore()
 	for _, unit := range g.TeamUnits() {
-		if target != nil && unit.GetUnitData().ActionCooldown <= 0 {
-			bot.Travel(unit, target.Pos, nil)
+		data, err := unit.UnitData()
+		if err != nil {
+			log.Printf("read unit: %v", err)
+			continue
+		}
+		if target != nil && data.ActionCooldown <= 0 {
+			if err := bot.Travel(unit, target.Pos, nil); err != nil {
+				log.Printf("travel: %v", err)
+			}
 		}
 	}
 }

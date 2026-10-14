@@ -41,13 +41,27 @@ func (g *Game) PrintObject(obj *Object) {
 		return
 	}
 	fmt.Printf("ID: %d\nType: %s\nPosition: (%d, %d)\nHP: %d\n", obj.ID, objectTypeToString(obj.Type), obj.Pos.X, obj.Pos.Y, obj.Hp)
-	if data := obj.GetCoreData(); data != nil {
+	switch obj.Type {
+	case ObjectCore:
+		data, err := obj.CoreData()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 		fmt.Printf("Team ID: %d\nGems: %d\nSpawn Cooldown: %d\n", data.TeamID, data.Gems, data.SpawnCooldown)
-	}
-	if data := obj.GetUnitData(); data != nil {
+	case ObjectUnit:
+		data, err := obj.UnitData()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 		fmt.Printf("Name: %s\nTeam ID: %d\nGems: %d\nAction Cooldown: %d\nComponents: %s\n", data.Name, data.TeamID, data.Gems, data.ActionCooldown, strings.Join(data.Components, ", "))
-	}
-	if data := obj.GetDepositData(); data != nil {
+	case ObjectDeposit, ObjectGemPile:
+		data, err := obj.DepositData()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 		fmt.Printf("Gems: %d\n", data.Gems)
 	}
 }
