@@ -83,18 +83,18 @@ func (o *Object) IsFriendly(myTeamID uint) bool {
 	}
 	switch o.Type {
 	case ObjectUnit:
-		data, err := o.GetUnitData()
+		data, err := o.UnitData()
 		return err == nil && data.TeamID == myTeamID
 	case ObjectCore:
-		data, err := o.GetCoreData()
+		data, err := o.CoreData()
 		return err == nil && data.TeamID == myTeamID
 	}
 	return false
 }
 
-// GetUnitData returns a non-nil payload on success. Errors distinguish nil
+// UnitData returns a non-nil payload on success. Errors distinguish nil
 // receivers, wrong object types, and missing or inconsistent payloads.
-func (o *Object) GetUnitData() (*UnitData, error) {
+func (o *Object) UnitData() (*UnitData, error) {
 	if o == nil {
 		return nil, ErrNilObject
 	}
@@ -108,8 +108,8 @@ func (o *Object) GetUnitData() (*UnitData, error) {
 	return data, nil
 }
 
-// GetCoreData returns a non-nil core payload on success.
-func (o *Object) GetCoreData() (*CoreData, error) {
+// CoreData returns a non-nil core payload on success.
+func (o *Object) CoreData() (*CoreData, error) {
 	if o == nil {
 		return nil, ErrNilObject
 	}
@@ -123,8 +123,8 @@ func (o *Object) GetCoreData() (*CoreData, error) {
 	return data, nil
 }
 
-// GetDepositData accepts both deposits and gem piles, which share a payload.
-func (o *Object) GetDepositData() (*DepositData, error) {
+// DepositData accepts both deposits and gem piles, which share a payload.
+func (o *Object) DepositData() (*DepositData, error) {
 	if o == nil {
 		return nil, ErrNilObject
 	}

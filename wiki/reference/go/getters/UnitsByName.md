@@ -13,7 +13,7 @@ Returns or counts your units with the custom or generated name. Opposing units a
 
 ```go
 for _, scout := range g.UnitsByName("Scout") {
-	data, err := scout.GetUnitData()
+	data, err := scout.UnitData()
 	if err != nil {
 		log.Printf("read scout: %v", err)
 		continue

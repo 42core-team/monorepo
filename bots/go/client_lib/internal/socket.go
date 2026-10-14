@@ -99,7 +99,7 @@ func (c *Connection) Start(teamID uint, teamName string) (runErr error) {
 		actions := c.actionQueue.Drain()
 		debugEntries := make([]DebugEntry, 0)
 		if c.debugData.HasData() {
-			debugEntries = c.debugData.GetEntries()
+			debugEntries = c.debugData.Entries()
 		}
 		c.debugData.Reset()
 
@@ -149,7 +149,7 @@ func (c *Connection) hasLivingOpponentCore() bool {
 		if object.Type != game.ObjectCore {
 			return false
 		}
-		data, err := object.GetCoreData()
+		data, err := object.CoreData()
 		return err == nil && data.TeamID != c.game.MyTeamID && object.IsAlive()
 	}) > 0
 }

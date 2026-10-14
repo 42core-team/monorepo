@@ -11,7 +11,7 @@ func (b *Bot) TransferGems(source *game.Object, targetPos game.Position, amount 
 Queues a transfer to an object at `targetPos`, or a gem drop on an empty position. Nil sources, sources other than units/cores, out-of-bounds destinations, and unavailable clients return errors. A nil error means queued locally. Resources, cooldown, ownership, and range remain server-side checks; rejections appear in `g.ActionRejections`. Cores do not have a unit action cooldown.
 
 ```go
-data, err := carrier.GetUnitData()
+data, err := carrier.UnitData()
 if err != nil {
 	log.Printf("read carrier: %v", err)
 	return

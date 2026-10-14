@@ -100,7 +100,7 @@ func (b *Bot) Travel(unit *game.Object, target game.Position, policy TravelPolic
 	if err := b.checkClient(); err != nil {
 		return fmt.Errorf("travel: %w", err)
 	}
-	if _, err := unit.GetUnitData(); err != nil {
+	if _, err := unit.UnitData(); err != nil {
 		return fmt.Errorf("travel: %w", err)
 	}
 	if err := b.checkPosition(unit.Pos); err != nil {
@@ -160,7 +160,7 @@ func makeTravelPlan(g *game.Game, unit *game.Object, target game.Position, polic
 	if g == nil || unit == nil || !g.IsPosValid(unit.Pos) || !g.IsPosValid(target) || unit.Pos == target {
 		return travelPlan{}, false
 	}
-	if _, err := unit.GetUnitData(); err != nil {
+	if _, err := unit.UnitData(); err != nil {
 		return travelPlan{}, false
 	}
 	if policy == nil {
@@ -286,7 +286,7 @@ func defaultTileTravelabilityForObject(object, unit *game.Object) TileTravelabil
 	if object == nil {
 		return TileTravelability{Weight: 1, Action: TravelPass}
 	}
-	unitData, err := unit.GetUnitData()
+	unitData, err := unit.UnitData()
 	if err != nil {
 		return TileTravelability{Action: TravelBlock}
 	}
@@ -295,7 +295,7 @@ func defaultTileTravelabilityForObject(object, unit *game.Object) TileTravelabil
 			return TileTravelability{Action: TravelBlock}
 		}
 		wait := uint(1)
-		if data, err := object.GetUnitData(); err == nil && data.ActionCooldown > 0 {
+		if data, err := object.UnitData(); err == nil && data.ActionCooldown > 0 {
 			wait = uint(data.ActionCooldown)
 		}
 		if wait >= math.MaxUint32 {
@@ -313,7 +313,7 @@ func defaultTileTravelabilityForObject(object, unit *game.Object) TileTravelabil
 		damage = unitData.Properties.DamageCore
 	case game.ObjectUnit:
 		damage = unitData.Properties.DamageUnit
-		if target, err := object.GetUnitData(); damage > 0 && err == nil {
+		if target, err := object.UnitData(); damage > 0 && err == nil {
 			reduction := target.Properties.DamageReductionPercent
 			if reduction < 0 {
 				reduction = 0

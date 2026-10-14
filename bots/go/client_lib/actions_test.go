@@ -53,7 +53,7 @@ func TestTravelCustomPolicySeparatesPassAttackAndBlock(t *testing.T) {
 
 func TestTravelPlansDuringPositiveCooldown(t *testing.T) {
 	unit := testUnit(1, 0, 0, 1, game.UnitProperties{})
-	data, err := unit.GetUnitData()
+	data, err := unit.UnitData()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -66,7 +66,7 @@ func TestTravelPlansDuringPositiveCooldown(t *testing.T) {
 
 func TestDefaultTravelabilityBlocksFullGemCarrier(t *testing.T) {
 	unit := testUnit(1, 0, 0, 1, game.UnitProperties{MaxGems: 5})
-	data, err := unit.GetUnitData()
+	data, err := unit.UnitData()
 	if err != nil {
 		t.Fatal(err)
 	}

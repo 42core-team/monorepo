@@ -31,7 +31,7 @@ Returns errors for an unavailable client, invalid unit data, or out-of-bounds or
 Travel does not check the traveling unit's action cooldown. Check it before calling:
 
 ```go
-data, err := unit.GetUnitData()
+data, err := unit.UnitData()
 if err != nil {
 	log.Printf("read unit: %v", err)
 	return

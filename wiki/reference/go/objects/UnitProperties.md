@@ -15,4 +15,4 @@ type UnitProperties struct {
 }
 ```
 
-Call `data, err := unit.GetUnitData()`, handle the error, then read `data.Properties`. `BaseActionCooldown` and `DamageReductionPercent` are signed; the remaining effective values are non-negative. Component modifications in the configuration remain signed. See the [Unit Builder property guide](documentation/unit_builder).
+Call `data, err := unit.UnitData()`, handle the error, then read `data.Properties`. `BaseActionCooldown` and `DamageReductionPercent` are signed; the remaining effective values are non-negative. Component modifications in the configuration remain signed. See the [Unit Builder property guide](documentation/unit_builder).
