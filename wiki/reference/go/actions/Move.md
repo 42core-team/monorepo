@@ -10,7 +10,7 @@ func (b *Bot) Move(unit *game.Object, pos game.Position) error
 
 Queues a move to an adjacent empty position. Returns an error for an unavailable client, nil/non-unit actor, or out-of-bounds destination. Use `errors.Is` with `coregame.ErrClientUnavailable`, `game.ErrNilObject`, `game.ErrWrongObjectType`, or `coregame.ErrInvalidPosition`.
 
-A nil error means queued locally, not executed. Cooldown, ownership, range, and occupancy are validated by the server. Later rejections appear in `g.ActionRejections`.
+A nil error means queued locally, not executed. Cooldown, ownership, range, and occupancy are validated by the server. Server error messages are printed by the library.
 
 ```go
 if err := bot.Move(unit, game.Position{X: unit.Pos.X + 1, Y: unit.Pos.Y}); err != nil {

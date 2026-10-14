@@ -51,9 +51,8 @@ func parseGameTick(tickData string) (*gameTick, error) {
 
 func (tick *gameTick) applyTo(g *game.Game) error {
 	g.ElapsedTicks = tick.Tick
-	g.ActionRejections = nil
 	for _, message := range tick.Errors {
-		g.ActionRejections = append(g.ActionRejections, game.ActionRejection{Tick: tick.Tick, Message: message})
+		fmt.Printf("\033[31m%s\033[0m\n", message)
 	}
 	for _, update := range tick.Objects {
 		if update.ID == nil {

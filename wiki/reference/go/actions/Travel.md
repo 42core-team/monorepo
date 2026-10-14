@@ -26,7 +26,7 @@ func (b *Bot) Travel(unit *game.Object, target game.Position, policy TravelPolic
 
 Pass nil for the default component-aware policy. It blocks friendly cores, waits for friendly units, estimates attack costs from effective damage and HP, and blocks gem piles when the unit has reached `MaxGems`.
 
-Returns errors for an unavailable client, invalid unit data, or out-of-bounds origin/destination. Arrival or no available route queues nothing and returns nil. Otherwise, nil means an action was queued or travel is waiting for an occupant; it does not guarantee server execution. Server rejections arrive in `g.ActionRejections`.
+Returns errors for an unavailable client, invalid unit data, or out-of-bounds origin/destination. Arrival or no available route queues nothing and returns nil. Otherwise, nil means an action was queued or travel is waiting for an occupant; it does not guarantee server execution. Server error messages are printed by the library.
 
 Travel does not check the traveling unit's action cooldown. Check it before calling:
 

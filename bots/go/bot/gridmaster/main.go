@@ -12,9 +12,6 @@ import (
 const teamName = "Gridmaster"
 
 func tick(g *game.Game, bot *coregame.Bot) {
-	for _, rejection := range g.ActionRejections {
-		fmt.Fprintf(os.Stderr, "Tick %d: server rejected action: %v\n", rejection.Tick, rejection)
-	}
 	if err := bot.CreateUnit("Gridfighter", "combat", "siege", "health"); err != nil {
 		fmt.Fprintf(os.Stderr, "Queue fighter: %v\n", err)
 	}

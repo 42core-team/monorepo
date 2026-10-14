@@ -12,9 +12,6 @@ import (
 func tick(g *game.Game, bot *coregame.Bot) {
 	fmt.Printf("-----> [⚡️ TICK %d 🔥]\n", g.ElapsedTicks)
 
-	for _, rejection := range g.ActionRejections {
-		fmt.Fprintf(os.Stderr, "Tick %d: server rejected action: %v\n", rejection.Tick, rejection)
-	}
 	if err := bot.CreateUnit("Warrior", "combat"); err != nil {
 		fmt.Fprintf(os.Stderr, "Queue warrior: %v\n", err)
 	}

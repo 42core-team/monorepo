@@ -21,4 +21,4 @@ if err := bot.CreateUnit("", "mobility"); err != nil { // generated name
 }
 ```
 
-Returns `coregame.ErrClientUnavailable` if the client is unavailable. A nil error means queued locally. The server may later reject the action because of component rules, cost, spawn cooldown, or unavailable spawn positions; inspect `g.ActionRejections`. See [Unit Builder](documentation/unit_builder) and [UnitData](reference/go/objects/Object).
+Returns `coregame.ErrClientUnavailable` if the client is unavailable. A nil error means queued locally. The server may later reject the action because of component rules, cost, spawn cooldown, or unavailable spawn positions; server error messages are printed by the library. See [Unit Builder](documentation/unit_builder) and [UnitData](reference/go/objects/Object).

@@ -20,7 +20,7 @@ The first argument is the custom unit name. Pass an empty string to receive a ge
 
 Creation is queued for execution between ticks. It can fail when your core is on spawn cooldown, lacks gems, has no spawn position, or receives an invalid component design. See [`Bot.CreateUnit`](reference/go/actions/CreateUnit).
 
-Action methods return errors for invalid local inputs or an unavailable client. A nil error does not guarantee execution: gameplay checks remain on the server. Inspect `g.ActionRejections` in your tick callback for later server rejections. `Run` returns transport and protocol failures rather than treating a disconnect as successful completion.
+Action methods return errors for invalid local inputs or an unavailable client. A nil error does not guarantee execution: gameplay checks remain on the server. Server error messages are printed by the library. `Run` returns transport and protocol failures rather than treating a disconnect as successful completion.
 
 ## Run the game loop
 
@@ -100,9 +100,6 @@ import (
 )
 
 func tick(g *game.Game, bot *coregame.Bot) {
-	for _, rejection := range g.ActionRejections {
-		log.Printf("tick %d: server rejected action: %v", rejection.Tick, rejection)
-	}
 	if core := g.MyCore(); core != nil {
 		data, err := core.CoreData()
 		if err != nil {
