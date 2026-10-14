@@ -86,6 +86,8 @@ if err != nil {
 
 ## Complete example
 
+Replace the template's `my-core-bot/main.go` with this example and keep `getters.go` alongside it. `ownCore`, `opponentCore`, and `ownUnits` are editable template helpers, not library methods.
+
 ```go
 package main
 
@@ -100,7 +102,7 @@ import (
 )
 
 func tick(g *game.Game, bot *coregame.Bot) {
-	if core := g.MyCore(); core != nil {
+	if core := ownCore(g); core != nil {
 		data, err := core.CoreData()
 		if err != nil {
 			log.Printf("read core: %v", err)
@@ -110,8 +112,8 @@ func tick(g *game.Game, bot *coregame.Bot) {
 			}
 		}
 	}
-	target := g.EnemyCore()
-	for _, unit := range g.TeamUnits() {
+	target := opponentCore(g)
+	for _, unit := range ownUnits(g) {
 		data, err := unit.UnitData()
 		if err != nil {
 			log.Printf("read unit: %v", err)

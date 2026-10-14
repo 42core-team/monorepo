@@ -2,7 +2,7 @@ OBJDIR = build
 EXEC = gridmaster
 
 build:
-	go build -o $(EXEC) *.go
+	go build -o $(EXEC) .
 
 run: build
 	./$(EXEC)
