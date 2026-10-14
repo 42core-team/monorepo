@@ -96,54 +96,6 @@ func (g *Game) NearestObject(fromPos Position, predicate func(*Object) bool) *Ob
 	return nearest
 }
 
-func (g *Game) TeamUnits() []*Object {
-	return g.ObjectsFilter(func(obj *Object) bool {
-		if obj.Type != ObjectUnit {
-			return false
-		}
-		if data, err := obj.UnitData(); err == nil {
-			return data.TeamID == g.MyTeamID
-		}
-		return false
-	})
-}
-
-func (g *Game) EnemyUnits() []*Object {
-	return g.ObjectsFilter(func(obj *Object) bool {
-		if obj.Type != ObjectUnit {
-			return false
-		}
-		if data, err := obj.UnitData(); err == nil {
-			return data.TeamID != g.MyTeamID && data.TeamID != 0
-		}
-		return false
-	})
-}
-
-func (g *Game) MyCore() *Object {
-	return g.NearestObject(Position{X: 0, Y: 0}, func(obj *Object) bool {
-		if obj.Type != ObjectCore {
-			return false
-		}
-		if data, err := obj.CoreData(); err == nil {
-			return data.TeamID == g.MyTeamID
-		}
-		return false
-	})
-}
-
-func (g *Game) EnemyCore() *Object {
-	return g.NearestObject(Position{X: 0, Y: 0}, func(obj *Object) bool {
-		if obj.Type != ObjectCore {
-			return false
-		}
-		if data, err := obj.CoreData(); err == nil {
-			return data.TeamID != g.MyTeamID && data.TeamID != 0
-		}
-		return false
-	})
-}
-
 func (g *Game) IsPosValid(pos Position) bool {
 	return pos.X < g.Config.GridSize && pos.Y < g.Config.GridSize
 }

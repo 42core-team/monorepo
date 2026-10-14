@@ -126,7 +126,7 @@ func (c *Connection) Start(teamID uint, teamName string) (runErr error) {
 		if c.onTickCallback != nil {
 			c.onTickCallback(c.game)
 		}
-		if core := c.game.MyCore(); core == nil || !core.IsAlive() || !c.hasLivingOpponentCore() {
+		if core := c.ownCore(); core == nil || !core.IsAlive() || !c.hasLivingOpponentCore() {
 			break
 		}
 	}
@@ -136,12 +136,19 @@ func (c *Connection) Start(teamID uint, teamName string) (runErr error) {
 }
 
 func (c *Connection) printGameResult() {
-	myCore := c.game.MyCore()
+	myCore := c.ownCore()
 	if myCore != nil && myCore.IsAlive() && !c.hasLivingOpponentCore() {
 		fmt.Println("Game over! You won!")
 	} else {
 		fmt.Println("Game over! You lost!")
 	}
+}
+
+func (c *Connection) ownCore() *game.Object {
+	return c.game.NearestObject(game.Position{}, func(object *game.Object) bool {
+		data, err := object.CoreData()
+		return err == nil && data.TeamID == c.game.MyTeamID
+	})
 }
 
 func (c *Connection) hasLivingOpponentCore() bool {
