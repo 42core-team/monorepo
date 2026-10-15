@@ -27,9 +27,9 @@ isDeposit := func(obj *game.Object) bool {
 	return obj != nil && obj.Type == game.ObjectDeposit
 }
 
-nearest := g.NearestObject(game.Position{X: 5, Y: 5}, isDeposit)
-deposits := g.ObjectsFilter(isDeposit)
-count := g.ObjectsFilterCount(isDeposit)
+nearest := core.NearestObject(game.Position{X: 5, Y: 5}, isDeposit)
+deposits := core.ObjectsFilter(isDeposit)
+count := core.ObjectsFilterCount(isDeposit)
 ```
 
 A nil predicate returns no results from `ObjectsFilter` and `NearestObject`. `ObjectsFilterCount(nil)` is the exception: it counts every object. See the [Go getter reference](reference/go/getters/GameGetters).

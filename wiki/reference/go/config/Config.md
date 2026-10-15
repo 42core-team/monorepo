@@ -4,7 +4,7 @@ permalink: "go_Config"
 sidebarTitle: "🧩 Config"
 ---
 
-`g.Config` contains the current server configuration, including grid and economy values, world generator data, core positions, and component rules.
+`core.Game.Config` contains the current server configuration, including grid and economy values, world generator data, core positions, and component rules.
 
 ```go
 type ComponentsConfig struct {
@@ -21,7 +21,7 @@ func (c *Config) ComponentByID(id string) *Component
 Each `Component` exposes its ID, cost, property modifications, and visualizer asset metadata.
 
 ```go
-if combat := g.Config.ComponentByID("combat"); combat != nil {
+if combat := core.Game.Config.ComponentByID("combat"); combat != nil {
 	fmt.Println(combat.Cost)
 }
 ```

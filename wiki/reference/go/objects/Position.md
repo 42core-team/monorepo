@@ -7,8 +7,8 @@ sidebarTitle: "🧩 Position"
 ```go
 type Position struct { X, Y uint }
 func NewPosition(x, y uint) Position
-func (g *Game) IsPosValid(pos Position) bool
-func (g *Game) Distance(a, b Position) int
+func IsPosValid(pos Position) bool
+func Distance(a, b Position) int
 ```
 
-Coordinates are zero indexed and valid from zero through `g.Config.GridSize-1`. `Distance` returns Manhattan distance.
+Coordinates are zero indexed and valid from zero through `core.Game.Config.GridSize-1`. `Distance` returns Manhattan distance.

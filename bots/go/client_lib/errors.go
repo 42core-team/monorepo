@@ -1,4 +1,4 @@
-package coregame
+package core
 
 import (
 	"errors"
@@ -12,8 +12,9 @@ var (
 	ErrInvalidPosition   = errors.New("position is outside the board")
 )
 
-func (b *Bot) checkClient() error {
-	if b == nil || b.connection == nil || b.connection.IsClosed() || b.game == nil {
+func checkClient() error {
+	conn := connection.Load()
+	if conn == nil || conn.IsClosed() || Game == nil {
 		return ErrClientUnavailable
 	}
 	return nil
@@ -29,8 +30,8 @@ func checkUnit(unit *game.Object) error {
 	return nil
 }
 
-func (b *Bot) checkPosition(pos game.Position) error {
-	if !b.game.IsPosValid(pos) {
+func checkPosition(pos game.Position) error {
+	if !Game.IsPosValid(pos) {
 		return fmt.Errorf("position (%d, %d): %w", pos.X, pos.Y, ErrInvalidPosition)
 	}
 	return nil

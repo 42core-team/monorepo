@@ -17,10 +17,10 @@ The first argument is the unit's name. Pass `NULL` to receive a generated name. 
 The Go equivalent uses a variadic component list and therefore needs no sentinel:
 
 ```go
-bot.CreateUnit("Warrior", "combat", "health")
+core.CreateUnit("Warrior", "combat", "health")
 ```
 
-Pass an empty string as the name to receive a generated name. See [`Bot.CreateUnit`](reference/go/actions/CreateUnit).
+Pass an empty string as the name to receive a generated name. See [`CreateUnit`](reference/go/actions/CreateUnit).
 
 After the unit spawns, its component IDs are in `unit->s_unit.components` and its finished properties are in `unit->s_unit.properties`. Its current health, carried gems, and cooldown are in `unit->hp`, `unit->s_unit.gems`, and `unit->s_unit.action_cooldown`.
 

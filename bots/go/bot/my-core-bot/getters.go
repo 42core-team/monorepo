@@ -1,37 +1,40 @@
 package main
 
-import "github.com/42core-team/go-client-lib/game"
+import (
+	"github.com/42core-team/go-client-lib"
+	"github.com/42core-team/go-client-lib/game"
+)
 
-func ownCore(g *game.Game) *game.Object {
-	return g.NearestObject(game.Position{}, isOwnCore(g.MyTeamID))
+func ownCore() *game.Object {
+	return core.NearestObject(game.Position{}, isOwnCore(core.Game.MyTeamID))
 }
 
-func opponentCore(g *game.Game) *game.Object {
-	return g.NearestObject(game.Position{}, isOpponentCore(g.MyTeamID))
+func opponentCore() *game.Object {
+	return core.NearestObject(game.Position{}, isOpponentCore(core.Game.MyTeamID))
 }
 
-func nearestDeposit(g *game.Game, pos game.Position) *game.Object {
-	return g.NearestObject(pos, isDeposit)
+func nearestDeposit(pos game.Position) *game.Object {
+	return core.NearestObject(pos, isDeposit)
 }
 
-func nearestGemPile(g *game.Game, pos game.Position) *game.Object {
-	return g.NearestObject(pos, isGemPile)
+func nearestGemPile(pos game.Position) *game.Object {
+	return core.NearestObject(pos, isGemPile)
 }
 
-func nearestDepositOrGemPile(g *game.Game, pos game.Position) *game.Object {
-	return g.NearestObject(pos, isDepositOrGemPile)
+func nearestDepositOrGemPile(pos game.Position) *game.Object {
+	return core.NearestObject(pos, isDepositOrGemPile)
 }
 
-func ownUnits(g *game.Game) []*game.Object {
-	return g.ObjectsFilter(isOwnUnit(g.MyTeamID))
+func ownUnits() []*game.Object {
+	return core.ObjectsFilter(isOwnUnit(core.Game.MyTeamID))
 }
 
-func opponentUnits(g *game.Game) []*game.Object {
-	return g.ObjectsFilter(isOpponentUnit(g.MyTeamID))
+func opponentUnits() []*game.Object {
+	return core.ObjectsFilter(isOpponentUnit(core.Game.MyTeamID))
 }
 
-func nearestOpponentUnit(g *game.Game, pos game.Position) *game.Object {
-	return g.NearestObject(pos, isOpponentUnit(g.MyTeamID))
+func nearestOpponentUnit(pos game.Position) *game.Object {
+	return core.NearestObject(pos, isOpponentUnit(core.Game.MyTeamID))
 }
 
 func isDeposit(obj *game.Object) bool {

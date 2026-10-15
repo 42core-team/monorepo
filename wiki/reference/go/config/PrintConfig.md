@@ -1,11 +1,11 @@
 ---
-title: "⚙️ method Game.PrintConfig()"
+title: "⚙️ function PrintConfig()"
 permalink: "go_PrintConfig"
 sidebarTitle: "⚙️ PrintConfig()"
 ---
 
 ```go
-func (g *Game) PrintConfig()
+func PrintConfig()
 ```
 
-Prints the primary game and component configuration values for local debugging. Program logic should read `g.Config` directly.
+Prints the primary game and component configuration values for local debugging. Program logic should read `core.Game.Config` directly.
