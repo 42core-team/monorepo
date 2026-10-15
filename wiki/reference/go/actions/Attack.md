@@ -1,18 +1,18 @@
 ---
-title: "⚙️ method Bot.Attack(...)"
+title: "⚙️ function Attack(...)"
 permalink: "go_Attack"
 sidebarTitle: "⚙️ Attack()"
 ---
 
 ```go
-func (b *Bot) Attack(attacker, target *game.Object) error
+func Attack(attacker, target *game.Object) error
 ```
 
 Queues an attack from a unit against an adjacent object. Damage comes from the attacker's current component-derived properties. Nil inputs, non-unit attackers, and unavailable clients return errors. A nil error means queued locally; cooldown, ownership, range, and object existence are checked by the server. Server error messages are printed by the library.
 
 ```go
-if target := g.ObjectAtPos(next); target != nil {
-	if err := bot.Attack(unit, target); err != nil {
+if target := core.ObjectAtPos(next); target != nil {
+	if err := core.Attack(unit, target); err != nil {
 		log.Printf("attack: %v", err)
 	}
 }

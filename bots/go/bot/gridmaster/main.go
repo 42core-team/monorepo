@@ -5,30 +5,29 @@ import (
 	"os"
 	"strconv"
 
-	coregame "github.com/42core-team/go-client-lib"
-	"github.com/42core-team/go-client-lib/game"
+	"github.com/42core-team/go-client-lib"
 )
 
 const teamName = "Gridmaster"
 
-func tick(g *game.Game, bot *coregame.Bot) {
-	if err := bot.CreateUnit("Gridfighter", "combat", "siege", "health"); err != nil {
+func tick(elapsedTicks uint) {
+	if err := core.CreateUnit("Gridfighter", "combat", "siege", "health"); err != nil {
 		fmt.Fprintf(os.Stderr, "Queue fighter: %v\n", err)
 	}
 
-	enemyCore := opponentCore(g)
+	enemyCore := opponentCore()
 	if enemyCore == nil {
 		return
 	}
 
-	for _, unit := range ownUnits(g) {
+	for _, unit := range ownUnits() {
 		data, err := unit.UnitData()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Read unit: %v\n", err)
 			continue
 		}
 		if data.ActionCooldown <= 0 {
-			if err := bot.Travel(unit, enemyCore.Pos, nil); err != nil {
+			if err := core.Travel(unit, enemyCore.Pos, nil); err != nil {
 				fmt.Fprintf(os.Stderr, "Travel: %v\n", err)
 			}
 		}
@@ -47,14 +46,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	cfg := coregame.DefaultBotConfig(teamID, teamName)
-	bot, err := coregame.NewBot(cfg)
-	if err != nil {
-		fmt.Printf("Error creating bot: %v\n", err)
-		return
-	}
-
-	if err := bot.Run(tick); err != nil {
+	cfg := core.DefaultBotConfig(teamID, teamName)
+	if err := core.StartGame(cfg, tick); err != nil {
 		fmt.Printf("Bot error: %v\n", err)
 	}
 }

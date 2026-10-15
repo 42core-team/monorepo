@@ -1,8 +1,10 @@
-package coregame
+package core
 
 import (
+	"errors"
 	"fmt"
 	"os"
+	"sync/atomic"
 
 	"github.com/42core-team/go-client-lib/game"
 	"github.com/42core-team/go-client-lib/internal"
@@ -15,66 +17,54 @@ type BotConfig struct {
 	Debug      bool
 }
 
-type Bot struct {
-	config     BotConfig
-	connection *internal.Connection
-	game       *game.Game
-}
+// Game is the current game state, updated before each tick callback.
+// Treat it as read-only. Access state, getters, actions and debug helpers only
+// from the callback; they are not safe for concurrent use from goroutines.
+var Game = &game.Game{}
+
+var running atomic.Bool
+var connection atomic.Pointer[internal.Connection]
+
+var ErrGameAlreadyRunning = errors.New("a game is already running")
 
 func DefaultBotConfig(teamID int, teamName string) BotConfig {
-	envIP := os.Getenv("SERVER_IP")
-	envPort := os.Getenv("SERVER_PORT")
-	port := "4444"
-	if envPort != "" {
-		port = envPort
+	port := os.Getenv("SERVER_PORT")
+	if port == "" {
+		port = "4444"
 	}
-
-	serverAddr := "127.0.0.1:" + port
-	if envIP != "" {
-		serverAddr = envIP + ":" + port
+	host := os.Getenv("SERVER_IP")
+	if host == "" {
+		host = "127.0.0.1"
 	}
-
-	return BotConfig{
-		TeamID:     uint(teamID),
-		TeamName:   teamName,
-		ServerAddr: serverAddr,
-		Debug:      false,
-	}
+	return BotConfig{TeamID: uint(teamID), TeamName: teamName, ServerAddr: host + ":" + port}
 }
 
-func NewBot(config BotConfig) (*Bot, error) {
-	conn, err := internal.NewConnection(config.ServerAddr, config.TeamID, config.Debug)
-	if err != nil {
-		return nil, fmt.Errorf("create connection: %w", err)
-	}
-
-	return &Bot{
-		config:     config,
-		connection: conn,
-		game:       conn.Game(),
-	}, nil
-}
-
-func (b *Bot) Run(tick func(*game.Game, *Bot)) error {
-	if err := b.checkClient(); err != nil {
-		return fmt.Errorf("run bot: %w", err)
-	}
+// StartGame connects, runs tick after each state update, and closes the connection
+// on return. Only one game may run per process. A later call starts fresh state.
+func StartGame(config BotConfig, tick func(uint)) error {
 	if tick == nil {
 		return fmt.Errorf("tick callback must not be nil")
 	}
-	b.connection.SetTickCallback(func(g *game.Game) {
-		tick(g, b)
-	})
-	return b.connection.Start(b.config.TeamID, b.config.TeamName)
+	if !running.CompareAndSwap(false, true) {
+		return ErrGameAlreadyRunning
+	}
+	defer running.Store(false)
+	conn, err := internal.NewConnection(config.ServerAddr, config.TeamID, config.Debug)
+	if err != nil {
+		return fmt.Errorf("create connection: %w", err)
+	}
+	Game = conn.Game()
+	connection.Store(conn)
+	defer connection.Store(nil)
+	conn.SetTickCallback(func(g *game.Game) { tick(g.ElapsedTicks) })
+	return conn.Start(config.TeamID, config.TeamName)
 }
 
-func (b *Bot) Close() error {
-	if b == nil || b.connection == nil {
+// Close stops the current connection. It may be called from another goroutine.
+func Close() error {
+	conn := connection.Load()
+	if conn == nil {
 		return ErrClientUnavailable
 	}
-	return b.connection.Close()
-}
-
-func (b *Bot) Game() *game.Game {
-	return b.game
+	return conn.Close()
 }
