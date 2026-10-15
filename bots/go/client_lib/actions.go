@@ -201,17 +201,10 @@ func makeTravelPlan(g *game.Game, unit *game.Object, target game.Position, polic
 		return travelPlan{}, false
 	}
 	if policy == nil {
-		objectsByPosition := make(map[game.Position]*game.Object, len(g.Objects))
-		for _, object := range g.Objects {
-			if _, exists := objectsByPosition[object.Pos]; !exists {
-				objectsByPosition[object.Pos] = object
-			}
-		}
 		policy = func(pos game.Position, unit *game.Object) TileTravelability {
-			return defaultTileTravelabilityForObject(objectsByPosition[pos], unit)
+			return defaultTileTravelability(g, pos, unit)
 		}
 	}
-
 	size := int(g.Config.GridSize)
 	count := size * size
 	start := int(unit.Pos.Y)*size + int(unit.Pos.X)

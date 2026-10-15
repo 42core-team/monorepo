@@ -5,8 +5,7 @@ sidebarTitle: "⚙️ StartGame()"
 ---
 
 ```go
-func DefaultBotConfig(teamID int, teamName string) BotConfig
-func StartGame(config BotConfig, tick func(uint)) error
+func StartGame(teamName string, tick func(uint), debug bool) error
 func Close() error
 ```
 
@@ -15,15 +14,19 @@ There is no bot instance to create or pass around. Like the C library, the Go
 library manages one active game per process.
 
 ```go
-cfg := core.DefaultBotConfig(teamID, "My Team")
-cfg.Debug = true
-err := core.StartGame(cfg, func(tick uint) {
+err := core.StartGame("My Team", func(tick uint) {
 	core.CreateUnit("Warrior", "combat")
-})
+}, true)
 ```
 
-`DefaultBotConfig` reads `SERVER_IP` and `SERVER_PORT`, defaulting to
-`127.0.0.1:4444`. `BotConfig.Debug` enables protocol logging.
+Like `core_startGame` in C, `StartGame` reads the team ID from the first program
+argument (`os.Args[1]`) and returns an error if it is missing or not a number.
+The server address comes from `SERVER_IP` and `SERVER_PORT`, defaulting to
+`127.0.0.1:4444`. An empty team name is replaced by a placeholder. `debug`
+enables protocol logging, with received states printed indented.
+
+When the game ends and standard input is a terminal, `StartGame` waits up to
+30 seconds for ENTER before printing whether you won.
 
 `StartGame` requires a non-nil callback and blocks until the game completes or
 an error occurs. Before each callback it updates `core.Game`. The callback
@@ -48,8 +51,13 @@ that error before startup or after shutdown. Debug helpers do nothing then.
 
 ## Migration
 
+Replace `core.StartGame(core.DefaultBotConfig(teamID, name), tick)` with
+`core.StartGame(name, tick, false)` and delete your own `os.Args` parsing;
+`BotConfig` and `DefaultBotConfig` no longer exist. Set `debug` to `true`
+instead of `BotConfig.Debug`.
+
 Replace `NewBot(config)` followed by `bot.Run(tick)` with
-`core.StartGame(config, tick)`. Change the callback to `func(uint)`, replace
+`core.StartGame(name, tick, false)`. Change the callback to `func(uint)`, replace
 `bot.Move(...)` and other instance calls with `core.Move(...)`, and replace
 `g.ObjectsFilter(...)` with `core.ObjectsFilter(...)`. Read fields through
 `core.Game`, for example `core.Game.MyTeamID`. No game or bot argument is needed
