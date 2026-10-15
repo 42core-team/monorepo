@@ -1,5 +1,5 @@
 ---
-title: "⚙️ method Bot.Travel(...)"
+title: "⚙️ function Travel(...)"
 permalink: "go_Travel"
 sidebarTitle: "⚙️ Travel()"
 ---
@@ -21,7 +21,7 @@ type TileTravelability struct {
 }
 
 type TravelPolicy func(pos game.Position, unit *game.Object) TileTravelability
-func (b *Bot) Travel(unit *game.Object, target game.Position, policy TravelPolicy) error
+func Travel(unit *game.Object, target game.Position, policy TravelPolicy) error
 ```
 
 Pass nil for the default component-aware policy. It blocks friendly cores, waits for friendly units, estimates attack costs from effective damage and HP, and blocks gem piles when the unit has reached `MaxGems`.
@@ -37,7 +37,7 @@ if err != nil {
 	return
 }
 if data.ActionCooldown <= 0 {
-	if err := bot.Travel(unit, enemyCore.Pos, nil); err != nil {
+	if err := core.Travel(unit, enemyCore.Pos, nil); err != nil {
 		log.Printf("travel: %v", err)
 	}
 }

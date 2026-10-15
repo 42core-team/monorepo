@@ -1,15 +1,15 @@
 ---
-title: "⚙️ method Game.ObjectAtPos(...)"
+title: "⚙️ function ObjectAtPos(...)"
 permalink: "go_ObjectAtPos"
 sidebarTitle: "⚙️ ObjectAtPos()"
 ---
 
 ```go
-func (g *Game) ObjectAtPos(pos game.Position) *game.Object
+func ObjectAtPos(pos game.Position) *game.Object
 ```
 
 Returns the object at a position, or nil when it is empty.
 
 ```go
-if obstacle := g.ObjectAtPos(next); obstacle != nil { bot.Attack(unit, obstacle) }
+if obstacle := core.ObjectAtPos(next); obstacle != nil { core.Attack(unit, obstacle) }
 ```
