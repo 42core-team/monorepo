@@ -1,4 +1,4 @@
-Move, attack, and most unit gem transfers only work one position up, down, left, or right of the unit. Here is an example using `core_action_move`:
+Move, attack, and most unit gem transfers only work one position up, down, left, or right of the unit. Here is an example using the move action:
 
 <pre>
 *123456

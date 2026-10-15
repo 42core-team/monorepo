@@ -38,7 +38,7 @@ Onward - to glory! ⚔️
 
 CORE GAME is a programming competition where you can write a bot that competes against bots made by other people. Each of you has a base on the map called your core, which you need to protect because you lose if it is destroyed.
 
-To avoid being defeated, you can spawn units to defend against and attack your opponent. Their strengths and drawbacks depend on how you assemble them. Use the event's [Unit Builder](documentation/unit_builder) to design them, then create them with the [create action](reference/c/actions/core_action_createUnit). To spawn them, you need gems.
+To avoid being defeated, you can spawn units to defend against and attack your opponent. Their strengths and drawbacks depend on how you assemble them. Use the event's [Unit Builder](documentation/unit_builder) to design them, then create them from your code with the create action ([C](reference/c/actions/core_action_createUnit), [Go](reference/go/actions/CreateUnit)). To spawn them, you need gems.
 
 You can receive gems by having your units attack the gem deposits on the map or via idle income which you get automatically. Good resource management is critical to creating a successful bot.
 
@@ -50,11 +50,11 @@ You can receive gems by having your units attack the gem deposits on the map or 
 
 2. **Follow the README in the repository** 📧
 
-   - Run `make devcontainer` in the cloned folder, and then you can get started! Compile using `make`; the visualizer is available at `localhost:4000`. Everything in `src/` will be compiled into your bot. Any code you push to the main branch is what's used on the website and in the tournament; code pushed to other branches is ignored.
+   - Run `make devcontainer` in the cloned folder, and then you can get started! Compile using `make`; the visualizer is available at `localhost:4000`. Everything in `my-core-bot/src/` (C) or the `my-core-bot` Go package will be compiled into your bot. Any code you push to the main branch is what's used on the website and in the tournament; code pushed to other branches is ignored.
 
 3. **Get informed!** 🧠
 
-   - Read through [the basics](basics), skim the [FAQ](faq), and work through [My First C Bot](my_first_core_bot) or [My First Go Bot](my_first_core_bot_go), especially if this is your first time playing.
+   - Read through [the basics](basics), skim the [FAQ](faq), and work through [My First CORE Bot](my_first_core_bot), especially if this is your first time playing. Pick **C** or **Go** in the tabs of any code block; the whole wiki then shows code and explanations for your language.
 
 🎉 **You are now ready to start coding!** 😎
 
