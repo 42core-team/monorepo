@@ -16,7 +16,7 @@ Welcome to the **CORE** project repository! We’re excited to have you on board
    ```
 2. Run `make` in the terminal to test.
 3. Open [localhost:4000](http://localhost:4000) in your browser to see the gameplay.
-4. Keep writing your bot! Start in `my-core-bot/main.go` and use the [Go tutorial](https://coregame.sh/wiki/my_first_core_bot_go).
+4. Keep writing your bot! Start in `my-core-bot/main.go` and use the [tutorial](https://coregame.sh/wiki/my_first_core_bot?lang=go).
 
 The client package is named `core`. Call `core.StartGame(teamName, tick, debug)`
 with a `func(uint)` callback. Like the C library, it reads the team ID from the
