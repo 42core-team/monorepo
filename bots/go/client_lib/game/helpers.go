@@ -5,8 +5,14 @@ import (
 	"strings"
 )
 
+// Log formats according to a format specifier, like [fmt.Printf], and
+// writes the result followed by a newline to standard output.
 func (g *Game) Log(format string, args ...any) { fmt.Printf(format+"\n", args...) }
 
+// PrintField writes the current tick and an ASCII map of the board to
+// standard output. Each tile shows the first letter of its object type,
+// upper case for objects of team g.MyTeamID and lower case for all others,
+// or a dot if it is empty.
 func (g *Game) PrintField() {
 	if g.Config.GridSize == 0 {
 		fmt.Println("Game config not loaded")
@@ -35,6 +41,7 @@ func (g *Game) PrintField() {
 	}
 }
 
+// PrintObject writes the properties of obj to standard output.
 func (g *Game) PrintObject(obj *Object) {
 	if obj == nil {
 		fmt.Println("Object is nil")
@@ -66,6 +73,8 @@ func (g *Game) PrintObject(obj *Object) {
 	}
 }
 
+// PrintObjects calls [Game.PrintObject] for each object, separated by
+// "---" lines.
 func (g *Game) PrintObjects(objects []*Object) {
 	for _, object := range objects {
 		fmt.Println("---")
@@ -73,6 +82,7 @@ func (g *Game) PrintObjects(objects []*Object) {
 	}
 }
 
+// PrintConfig writes a summary of g.Config to standard output.
 func (g *Game) PrintConfig() {
 	fmt.Printf("Game Config:\n  Grid Size: %d\n  Idle Income: %d\n  Max Unit Standing Cooldown: %d\n  Components Per Unit: %d\n", g.Config.GridSize, g.Config.IdleIncome, g.Config.MaxUnitStandingCooldown, g.Config.Components.MaxComponentsPerUnit)
 	for _, component := range g.Config.Components.Components {

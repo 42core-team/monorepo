@@ -9,26 +9,35 @@ import (
 	"github.com/42core-team/go-client-lib/internal"
 )
 
-// TravelAction controls how Travel handles a tile and its occupant.
+// A TravelAction describes how [Travel] treats a tile and its occupant.
 type TravelAction int
 
 const (
-	TravelBlock TravelAction = iota
-	TravelPass
-	TravelAttack
+	TravelBlock  TravelAction = iota // tile cannot be entered
+	TravelPass                       // tile can be entered; an occupant blocks this tick but is expected to move
+	TravelAttack                     // tile can be entered after its occupant has been destroyed
 )
 
-// TileTravelability contains the path cost and occupant handling for a tile.
+// A TileTravelability describes the cost of routing a unit through a tile.
+// Weight is the cost added to a route for entering the tile, roughly the
+// number of ticks it takes, and is ignored if Action is [TravelBlock].
+// Unknown Action values are treated as [TravelBlock].
 type TileTravelability struct {
 	Weight uint
 	Action TravelAction
 }
 
-// TravelPolicy returns the travelability of a tile for a unit.
+// A TravelPolicy returns the [TileTravelability] of the tile at pos for unit.
+// It is called once for every tile on the board each time [Travel] plans a
+// route.
 type TravelPolicy func(pos game.Position, unit *game.Object) TileTravelability
 
-// CreateUnit queues creation of a unit with a custom name and component IDs. An empty name asks the server to generate one.
-// A nil error means queued locally, not accepted or executed by the server.
+// CreateUnit queues the creation of a unit with the given name, built from
+// the components with the given IDs. If name is empty, the server generates
+// a name.
+//
+// CreateUnit returns an error only if no game is running. Costs, cooldowns
+// and component rules are checked by the server.
 func CreateUnit(name string, components ...string) error {
 	if err := checkClient(); err != nil {
 		return fmt.Errorf("create unit: %w", err)
@@ -42,8 +51,11 @@ func CreateUnit(name string, components ...string) error {
 	return nil
 }
 
-// Move queues a move. Cooldown, ownership, occupancy and range are checked by
-// the server; a nil error only means the action was queued locally.
+// Move queues a move of unit to pos.
+//
+// Move returns an error if no game is running, unit is not a unit or pos is
+// not on the board. Cooldown, ownership, occupancy and range are checked by
+// the server.
 func Move(unit *game.Object, pos game.Position) error {
 	if err := checkClient(); err != nil {
 		return fmt.Errorf("move: %w", err)
@@ -58,7 +70,10 @@ func Move(unit *game.Object, pos game.Position) error {
 	return nil
 }
 
-// Attack queues an attack; gameplay validation is performed by the server.
+// Attack queues an attack of attacker on target.
+//
+// Attack returns an error if no game is running, attacker is not a unit or
+// target is nil. Cooldown, ownership and range are checked by the server.
 func Attack(attacker, target *game.Object) error {
 	if err := checkClient(); err != nil {
 		return fmt.Errorf("attack: %w", err)
@@ -73,8 +88,12 @@ func Attack(attacker, target *game.Object) error {
 	return nil
 }
 
-// TransferGems queues a transfer from a unit or core. Resource, cooldown,
-// ownership and range checks remain server-side.
+// TransferGems queues a transfer of amount gems from source, which must be a
+// unit or a core, to the tile at targetPos.
+//
+// TransferGems returns an error if no game is running, source is neither a
+// unit nor a core, or targetPos is not on the board. Available gems,
+// cooldown, ownership and range are checked by the server.
 func TransferGems(source *game.Object, targetPos game.Position, amount uint) error {
 	if err := checkClient(); err != nil {
 		return fmt.Errorf("transfer gems: %w", err)
@@ -92,10 +111,28 @@ func TransferGems(source *game.Object, targetPos game.Position, amount uint) err
 	return nil
 }
 
-// Travel queues one optimal move or attack toward target and adds the selected route to the unit's debug path.
-// A nil policy uses the same component-aware default policy as the C client.
-// Arrival or no available route queues nothing and returns nil. Gameplay
-// validation remains server-side, just as for Move and Attack.
+// Travel queues the next step of unit along the cheapest route to target,
+// as determined by policy. The step is a [Move] onto the next tile or, if
+// that tile is occupied by an object that policy marks as [TravelAttack],
+// an [Attack] on that object. An occupant marked as [TravelPass] causes
+// Travel to wait instead. The chosen route is added to the unit's debug path
+// with [AddObjectPathStep].
+//
+// If target cannot be reached, Travel heads for the reachable tile closest
+// to target. If unit is already at target or cannot make progress, Travel
+// queues nothing and returns nil.
+//
+// A nil policy selects the default policy, which matches the C client:
+//   - empty tiles cost 1;
+//   - friendly units can be passed and cost more the longer their cooldown;
+//   - friendly cores block;
+//   - gem piles block if the unit cannot carry more gems;
+//   - all other objects are attacked and cost the number of attacks needed
+//     to destroy them, plus one.
+//
+// Travel returns an error if no game is running, unit is not a unit, or the
+// position of unit or target is not on the board. As with Move and Attack,
+// gameplay rules are checked by the server.
 func Travel(unit *game.Object, target game.Position, policy TravelPolicy) error {
 	if err := checkClient(); err != nil {
 		return fmt.Errorf("travel: %w", err)

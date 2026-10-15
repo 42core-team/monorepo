@@ -25,6 +25,10 @@ type clientPacket struct {
 	Debug   []DebugEntry `json:"debug_data"`
 }
 
+// A Connection is a bot's session with the server. It owns the game state
+// and the action and debug queues of the bot.
+//
+// Only Close and IsClosed are safe for concurrent use.
 type Connection struct {
 	socket         net.Conn
 	reader         *bufio.Reader
@@ -38,6 +42,9 @@ type Connection struct {
 
 const socketReadTimeout = 42 * time.Second
 
+// NewConnection connects to the server at serverAddr, retrying until the
+// connection succeeds, and returns a Connection for team selfTeamID.
+// If debug is true, the connection logs all packets to standard output.
 func NewConnection(serverAddr string, selfTeamID uint, debug bool) (*Connection, error) {
 	fmt.Println("Connecting to server")
 	var conn net.Conn
@@ -73,6 +80,11 @@ func (c *Connection) readLine() (string, error) {
 	return strings.TrimSuffix(line, "\n"), nil
 }
 
+// Start logs in as team teamID with name teamName and runs the game loop.
+// Each iteration sends the queued actions and debug data, waits for the next
+// state update, applies it to the game and calls the tick callback.
+// The loop ends when the own core or all opposing cores are destroyed.
+// Start closes the connection before it returns.
 func (c *Connection) Start(teamID uint, teamName string) (runErr error) {
 	defer func() {
 		if err := c.Close(); err != nil {
@@ -195,6 +207,8 @@ func (c *Connection) send(buffer []byte) error {
 	return nil
 }
 
+// Close closes the connection. Calls after the first have no effect and
+// return nil. Close is safe for concurrent use.
 func (c *Connection) Close() error {
 	if c.closed.Swap(true) || c.socket == nil {
 		return nil
@@ -202,20 +216,25 @@ func (c *Connection) Close() error {
 	return c.socket.Close()
 }
 
+// IsClosed reports whether c has been closed. It is safe for concurrent use.
 func (c *Connection) IsClosed() bool { return c.closed.Load() || c.socket == nil }
 
+// Game returns the game state maintained by c.
 func (c *Connection) Game() *game.Game {
 	return c.game
 }
 
+// ActionQueue returns the queue whose actions are sent with the next packet.
 func (c *Connection) ActionQueue() *ActionQueue {
 	return c.actionQueue
 }
 
+// DebugData returns the debug data that is sent with the next packet.
 func (c *Connection) DebugData() *DebugData {
 	return c.debugData
 }
 
+// SetTickCallback sets the function that Start calls after each state update.
 func (c *Connection) SetTickCallback(callback func(*game.Game)) {
 	c.onTickCallback = callback
 }
