@@ -32,3 +32,34 @@ func TestNilPredicateSemanticsMatchCLibrary(t *testing.T) {
 		t.Fatalf("nil count filter returned %d", count)
 	}
 }
+
+func TestObjectAtPosIndex(t *testing.T) {
+	first := &Object{ID: 1, Pos: Position{X: 1, Y: 2}}
+	second := &Object{ID: 2, Pos: Position{X: 1, Y: 2}}
+	offBoard := &Object{ID: 3, Pos: Position{X: 5, Y: 0}}
+	g := &Game{Config: Config{GridSize: 3}, Objects: []*Object{first, second, offBoard}}
+	check := func(label string) {
+		t.Helper()
+		if got := g.ObjectAtPos(Position{X: 1, Y: 2}); got != first {
+			t.Fatalf("%s: shared tile returned %#v, want first object", label, got)
+		}
+		if got := g.ObjectAtPos(Position{}); got != nil {
+			t.Fatalf("%s: empty tile returned %#v", label, got)
+		}
+		if got := g.ObjectAtPos(Position{X: 5, Y: 0}); got != nil {
+			t.Fatalf("%s: off-board position returned %#v", label, got)
+		}
+	}
+	check("first lookup")
+	check("cached lookup")
+
+	g.Objects = []*Object{second}
+	if got := g.ObjectAtPos(Position{X: 1, Y: 2}); got != second {
+		t.Fatalf("replaced objects not reindexed: %#v", got)
+	}
+	second.Pos = Position{X: 2, Y: 2}
+	g.ElapsedTicks++
+	if got := g.ObjectAtPos(Position{X: 2, Y: 2}); got != second {
+		t.Fatalf("new tick not reindexed: %#v", got)
+	}
+}

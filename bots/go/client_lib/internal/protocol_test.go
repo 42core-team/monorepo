@@ -99,3 +99,28 @@ func TestGameTickDoesNotLocallyDecrementCooldowns(t *testing.T) {
 		t.Fatalf("cooldown changed without a server diff: %d", got)
 	}
 }
+
+func TestGameTickKeepsPositionIndexCurrent(t *testing.T) {
+	g := &game.Game{Config: game.Config{GridSize: 4}}
+	for _, packet := range []string{
+		`{"tick":1,"objects":[{"id":1,"type":3,"x":0,"y":0,"hp":5},{"id":2,"type":3,"x":2,"y":2,"hp":5}]}`,
+		`{"tick":2,"objects":[{"id":1,"x":1,"y":0},{"id":2,"state":"dead"}]}`,
+	} {
+		tick, err := parseGameTick(packet)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := tick.applyTo(g); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if obj := g.ObjectAtPos(game.Position{X: 1, Y: 0}); obj == nil || obj.ID != 1 {
+		t.Fatalf("moved object not indexed at new tile: %#v", obj)
+	}
+	if obj := g.ObjectAtPos(game.Position{}); obj != nil {
+		t.Fatalf("moved object still indexed at old tile: %#v", obj)
+	}
+	if obj := g.ObjectAtPos(game.Position{X: 2, Y: 2}); obj != nil {
+		t.Fatalf("dead object still indexed: %#v", obj)
+	}
+}

@@ -3,19 +3,21 @@ package core
 import (
 	"errors"
 	"fmt"
+	"net"
 	"os"
+	"strconv"
 	"sync/atomic"
 
 	"github.com/42core-team/go-client-lib/game"
 	"github.com/42core-team/go-client-lib/internal"
 )
 
-// A BotConfig describes how a bot connects to the server.
-type BotConfig struct {
+// A botConfig describes how a bot connects to the server.
+type botConfig struct {
 	TeamID     uint   // team ID assigned by the server operator
 	TeamName   string // name shown in the visualizer
 	ServerAddr string // server address in "host:port" form
-	Debug      bool   // log raw configuration, state and action packets
+	Debug      bool   // log configuration, state and action packets
 }
 
 // Game is the current game state. [StartGame] replaces it with a fresh state
@@ -31,10 +33,24 @@ var connection atomic.Pointer[internal.Connection]
 // running in this process.
 var ErrGameAlreadyRunning = errors.New("a game is already running")
 
-// DefaultBotConfig returns a [BotConfig] for the given team.
-// The server address is read from the SERVER_IP and SERVER_PORT environment
-// variables, which default to 127.0.0.1 and 4444. Debug output is disabled.
-func DefaultBotConfig(teamID int, teamName string) BotConfig {
+// defaultTeamName is the team name used if StartGame is given an empty one.
+const defaultTeamName = "Mysteriously unnamed Team"
+
+// configFromArgs builds a [botConfig] from the program arguments, like the C
+// client: args[1] is the team ID, and the server address is read from the
+// SERVER_IP and SERVER_PORT environment variables, which default to
+// 127.0.0.1 and 4444.
+func configFromArgs(args []string, teamName string, debug bool) (botConfig, error) {
+	if len(args) < 2 {
+		return botConfig{}, errors.New("no team id provided as first program argument")
+	}
+	teamID, err := strconv.ParseUint(args[1], 10, 0)
+	if err != nil {
+		return botConfig{}, fmt.Errorf("invalid team id %q: %w", args[1], err)
+	}
+	if teamName == "" {
+		teamName = defaultTeamName
+	}
 	port := os.Getenv("SERVER_PORT")
 	if port == "" {
 		port = "4444"
@@ -43,10 +59,16 @@ func DefaultBotConfig(teamID int, teamName string) BotConfig {
 	if host == "" {
 		host = "127.0.0.1"
 	}
-	return BotConfig{TeamID: uint(teamID), TeamName: teamName, ServerAddr: host + ":" + port}
+	return botConfig{TeamID: uint(teamID), TeamName: teamName, ServerAddr: net.JoinHostPort(host, port), Debug: debug}, nil
 }
 
-// StartGame connects to the server described by config and plays one game.
+// StartGame connects to the server and plays one game as team teamName,
+// like core_startGame in the C client. The team ID is read from the first
+// program argument, and the server address from the SERVER_IP and
+// SERVER_PORT environment variables, which default to 127.0.0.1 and 4444.
+// An empty teamName is replaced by a placeholder name. If debug is true,
+// the configuration, state and action packets are logged.
+//
 // Until the server accepts the connection, StartGame retries every few
 // hundred milliseconds. It then logs in, receives the game configuration
 // and calls tick once per game tick with the number of elapsed ticks,
@@ -60,10 +82,18 @@ func DefaultBotConfig(teamID int, teamName string) BotConfig {
 // Only one game may run per process at a time; StartGame returns
 // [ErrGameAlreadyRunning] if another call is still in progress.
 // A later call starts with a fresh [Game].
-func StartGame(config BotConfig, tick func(uint)) error {
+func StartGame(teamName string, tick func(uint), debug bool) error {
 	if tick == nil {
 		return fmt.Errorf("tick callback must not be nil")
 	}
+	config, err := configFromArgs(os.Args, teamName, debug)
+	if err != nil {
+		return err
+	}
+	return startGame(config, tick)
+}
+
+func startGame(config botConfig, tick func(uint)) error {
 	if !running.CompareAndSwap(false, true) {
 		return ErrGameAlreadyRunning
 	}

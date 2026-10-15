@@ -30,12 +30,15 @@ func tick(elapsedTicks uint) {
 }
 
 func main() {
-	cfg := core.DefaultBotConfig(teamID, "My CORE Bot")
-	if err := core.StartGame(cfg, tick); err != nil {
+	if err := core.StartGame("My CORE Bot", tick, false); err != nil {
 		log.Fatal(err)
 	}
 }
 ```
+
+Like `core_startGame` in C, `StartGame` reads your team ID from the first
+program argument and the server address from `SERVER_IP` and `SERVER_PORT`.
+Pass `true` as the last argument to log every packet.
 
 Import `"github.com/42core-team/go-client-lib"` to use the package named `core`.
 Like C, it has no public bot instance: `core.StartGame` manages the connection,
@@ -96,10 +99,7 @@ Replace the template's `my-core-bot/main.go` with this example and keep `getters
 package main
 
 import (
-	"fmt"
 	"log"
-	"os"
-	"strconv"
 
 	"github.com/42core-team/go-client-lib"
 )
@@ -131,17 +131,8 @@ func tick(elapsedTicks uint) {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("usage: bot <team-id>")
-		os.Exit(1)
-	}
-	teamID, err := strconv.Atoi(os.Args[1])
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	if err := core.StartGame(core.DefaultBotConfig(teamID, "My CORE Bot"), tick); err != nil {
-		fmt.Println(err)
+	if err := core.StartGame("My CORE Bot", tick, false); err != nil {
+		log.Fatal(err)
 	}
 }
 ```

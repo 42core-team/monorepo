@@ -17,7 +17,7 @@ type serverResult struct {
 	err     error
 }
 
-func mockGameServer(t *testing.T, ticks ...string) (BotConfig, <-chan serverResult) {
+func mockGameServer(t *testing.T, ticks ...string) (botConfig, <-chan serverResult) {
 	t.Helper()
 	listener, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
@@ -57,7 +57,7 @@ func mockGameServer(t *testing.T, ticks ...string) (BotConfig, <-chan serverResu
 			}
 		}
 	}()
-	return BotConfig{TeamID: 1, TeamName: "Test", ServerAddr: listener.Addr().String()}, done
+	return botConfig{TeamID: 1, TeamName: "Test", ServerAddr: listener.Addr().String()}, done
 }
 
 func TestStartGameGlobalAPIAndRestart(t *testing.T) {
@@ -68,16 +68,16 @@ func TestStartGameGlobalAPIAndRestart(t *testing.T) {
 			`{"tick":1,"objects":[{"id":1,"type":0,"hp":50,"teamId":1},{"id":2,"type":0,"hp":50,"teamId":2},{"id":7,"type":1,"x":1,"y":1,"hp":5,"teamId":1,"name":"Runner"}]}`,
 			`{"tick":2,"objects":[{"id":2,"hp":0}]}`)
 		callbacks := 0
-		err := StartGame(config, func(tick uint) {
+		err := startGame(config, func(tick uint) {
 			callbacks++
 			if tick != uint(callbacks) || Game.ElapsedTicks != tick || Game.MyTeamID != 1 || Game.Config.GridSize != 4 {
 				t.Errorf("callback saw stale state: tick %d, %#v", tick, Game)
 			}
-			if err := StartGame(config, func(uint) {}); !errors.Is(err, ErrGameAlreadyRunning) {
+			if err := startGame(config, func(uint) {}); !errors.Is(err, ErrGameAlreadyRunning) {
 				t.Errorf("nested start: %v", err)
 			}
 			concurrent := make(chan error, 1)
-			go func() { concurrent <- StartGame(config, func(uint) {}) }()
+			go func() { concurrent <- startGame(config, func(uint) {}) }()
 			if err := <-concurrent; !errors.Is(err, ErrGameAlreadyRunning) {
 				t.Errorf("concurrent start: %v", err)
 			}
@@ -132,7 +132,7 @@ func TestStartGameProtocolFailureCleansUp(t *testing.T) {
 	previousGame := Game
 	t.Cleanup(func() { Game = previousGame })
 	config, done := mockGameServer(t, "{invalid}")
-	err := StartGame(config, func(uint) { t.Error("callback called for invalid state") })
+	err := startGame(config, func(uint) { t.Error("callback called for invalid state") })
 	var syntax *json.SyntaxError
 	if !errors.As(err, &syntax) {
 		t.Fatalf("expected wrapped syntax error, got %v", err)
@@ -146,7 +146,7 @@ func TestStartGameProtocolFailureCleansUp(t *testing.T) {
 }
 
 func TestStartGameRejectsNilCallback(t *testing.T) {
-	if err := StartGame(BotConfig{}, nil); err == nil || running.Load() {
+	if err := StartGame("", nil, false); err == nil || running.Load() {
 		t.Fatalf("nil callback: %v", err)
 	}
 }
@@ -156,7 +156,7 @@ func TestCloseFromAnotherGoroutine(t *testing.T) {
 	t.Cleanup(func() { Game = previousGame })
 	config, done := mockGameServer(t,
 		`{"tick":1,"objects":[{"id":1,"type":0,"hp":50,"teamId":1},{"id":2,"type":0,"hp":50,"teamId":2}]}`)
-	err := StartGame(config, func(uint) {
+	err := startGame(config, func(uint) {
 		closed := make(chan error, 1)
 		go func() { closed <- Close() }()
 		if err := <-closed; err != nil {
@@ -185,5 +185,39 @@ func TestDebugWithoutActiveGame(t *testing.T) {
 	AddObjectPathStep(&game.Object{ID: 1}, game.Position{})
 	if err := Close(); !errors.Is(err, ErrClientUnavailable) {
 		t.Fatalf("close without game: %v", err)
+	}
+}
+
+func TestConfigFromArgs(t *testing.T) {
+	cases := []struct {
+		name     string
+		args     []string
+		teamName string
+		ip, port string
+		want     botConfig
+		wantErr  bool
+	}{
+		{name: "missing team id", args: []string{"bot"}, wantErr: true},
+		{name: "invalid team id", args: []string{"bot", "red"}, wantErr: true},
+		{name: "negative team id", args: []string{"bot", "-1"}, wantErr: true},
+		{name: "defaults", args: []string{"bot", "3"}, teamName: "Team",
+			want: botConfig{TeamID: 3, TeamName: "Team", ServerAddr: "127.0.0.1:4444", Debug: true}},
+		{name: "environment", args: []string{"bot", "4", "extra"}, teamName: "Team", ip: "server", port: "5555",
+			want: botConfig{TeamID: 4, TeamName: "Team", ServerAddr: "server:5555", Debug: true}},
+		{name: "empty team name", args: []string{"bot", "5"},
+			want: botConfig{TeamID: 5, TeamName: defaultTeamName, ServerAddr: "127.0.0.1:4444", Debug: true}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Setenv("SERVER_IP", tc.ip)
+			t.Setenv("SERVER_PORT", tc.port)
+			config, err := configFromArgs(tc.args, tc.teamName, true)
+			if (err != nil) != tc.wantErr {
+				t.Fatalf("err = %v, wantErr %v", err, tc.wantErr)
+			}
+			if !tc.wantErr && config != tc.want {
+				t.Fatalf("config = %#v, want %#v", config, tc.want)
+			}
+		})
 	}
 }

@@ -2,11 +2,13 @@ package internal
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"net"
+	"os"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -40,7 +42,10 @@ type Connection struct {
 	closed         atomic.Bool
 }
 
-const socketReadTimeout = 42 * time.Second
+const (
+	socketReadTimeout = 42 * time.Second
+	enterPressTimeout = 30 * time.Second
+)
 
 // NewConnection connects to the server at serverAddr, retrying until the
 // connection succeeds, and returns a Connection for team selfTeamID.
@@ -124,7 +129,7 @@ func (c *Connection) Start(teamID uint, teamName string) (runErr error) {
 			return fmt.Errorf("receive game tick: %w", err)
 		}
 		if c.debug {
-			fmt.Printf("Received state: %s\n", line)
+			printState(line)
 		}
 
 		tick, err := parseGameTick(line)
@@ -147,7 +152,40 @@ func (c *Connection) Start(teamID uint, teamName string) (runErr error) {
 	return nil
 }
 
+// printState writes the state packet line indented to standard output, or
+// unchanged if it is not valid JSON.
+func printState(line string) {
+	var formatted bytes.Buffer
+	if err := json.Indent(&formatted, []byte(line), "", "  "); err != nil {
+		fmt.Printf("Received state: %s\n", line)
+		return
+	}
+	fmt.Printf("Received state: %s\n", formatted.String())
+}
+
+// awaitEnterPress waits up to 30 seconds for the user to press ENTER before
+// the game result is revealed. It returns at once if standard input is not
+// a terminal.
+func awaitEnterPress() {
+	info, err := os.Stdin.Stat()
+	if err != nil || info.Mode()&os.ModeCharDevice == 0 {
+		return
+	}
+	fmt.Println("The game has ended! But who won?...")
+	fmt.Println("Press ENTER to reveal the result...")
+	pressed := make(chan struct{})
+	go func() {
+		_, _ = bufio.NewReader(os.Stdin).ReadString('\n')
+		close(pressed)
+	}()
+	select {
+	case <-pressed:
+	case <-time.After(enterPressTimeout):
+	}
+}
+
 func (c *Connection) printGameResult() {
+	awaitEnterPress()
 	myCore := c.ownCore()
 	if myCore != nil && myCore.IsAlive() && !c.hasLivingOpponentCore() {
 		fmt.Println("Game over! You won!")
