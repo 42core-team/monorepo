@@ -82,7 +82,7 @@ type Object struct {
 	Hp         uint       `json:"hp"`     // remaining hit points
 	TeamID     uint       `json:"teamId"` // owning team, or 0 if neutral
 	ObjectData ObjectData `json:"-"`      // type-specific data
-	Data       any        `json:"-"`      // free for bot use; never touched by the client
+	Data       any        `json:"-"`      // not used by the library; free to store whatever you want
 }
 
 // IsAlive reports whether o is non-nil and has hit points left.

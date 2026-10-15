@@ -16,11 +16,14 @@
 //	}
 //
 //	func main() {
-//		config := core.DefaultBotConfig(teamID, "My CORE Bot")
-//		if err := core.StartGame(config, tick); err != nil {
+//		if err := core.StartGame("My CORE Bot", tick, false); err != nil {
 //			log.Fatal(err)
 //		}
 //	}
+//
+// Like the C client, [StartGame] reads the team ID from the first program
+// argument and the server address from the SERVER_IP and SERVER_PORT
+// environment variables.
 //
 // # Getters
 //

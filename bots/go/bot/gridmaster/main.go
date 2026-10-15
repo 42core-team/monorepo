@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"strconv"
 
 	"github.com/42core-team/go-client-lib"
 )
@@ -35,19 +34,8 @@ func tick(elapsedTicks uint) {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("Usage: gridmaster <team-id>")
-		os.Exit(1)
-	}
-
-	teamID, err := strconv.Atoi(os.Args[1])
-	if err != nil {
-		fmt.Printf("Invalid team ID: %v\n", err)
-		os.Exit(1)
-	}
-
-	cfg := core.DefaultBotConfig(teamID, teamName)
-	if err := core.StartGame(cfg, tick); err != nil {
+	if err := core.StartGame(teamName, tick, false); err != nil {
 		fmt.Printf("Bot error: %v\n", err)
+		os.Exit(1)
 	}
 }
