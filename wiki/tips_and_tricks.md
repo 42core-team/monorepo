@@ -14,11 +14,11 @@ sidebarTitle: "💡 Tips & Tricks"
 
 4. **Eliminate avoidable action failures.** It will pay off in the long run.
 
-5. **Use the `void *data` field.** You can save any data you want on every object, which lets you build more detailed strategies and coordinate your troops with a custom [state machine](https://www.reddit.com/r/learnprogramming/comments/1g5yxci/state_machines_for_a_beginner/). The library won't touch it. Just remember to free everything at the end. 💪
+5. **Use the custom data field.** Every object has a field for your own data (`void *data` in C, `Data` in Go). You can save any data you want on every object, which lets you build more detailed strategies and coordinate your troops with a custom [state machine](https://www.reddit.com/r/learnprogramming/comments/1g5yxci/state_machines_for_a_beginner/). The library won't touch it. In C, just remember to free everything at the end. 💪
 
-6. **Transfer gems between units.** Remember that [`core_action_transferGems`](reference/c/actions/core_action_transferGems) also works between units, as well as a way of dropping gems with no other unit around.
+6. **Transfer gems between units.** Remember that the transfer gems action ([C](reference/c/actions/core_action_transferGems), [Go](reference/go/actions/TransferGems)) also works between units, as well as a way of dropping gems with no other unit around.
 
-7. **Use the debug tools.** Add information to unit tooltips with the [debug functions](reference/c/debug/core_debug_addObjectInfo). Showing each unit's current job makes strategy bugs much easier to see in a replay.
+7. **Use the debug tools.** Add information to unit tooltips with the debug functions ([C](reference/c/debug/core_debug_addObjectInfo), [Go](reference/go/debug/AddObjectInfo)). Showing each unit's current job makes strategy bugs much easier to see in a replay.
 
 8. **Learn getter filtering.** Read the [getter filtering guide](documentation/getter_filtering), this will be very useful to get exactly the objects you want.
 
