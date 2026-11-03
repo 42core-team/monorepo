@@ -250,7 +250,7 @@ function refreshTooltipFromSVGPoint(
 	tooltipElement.scrollLeft = scrollLeft;
 	lastTooltipTarget = tooltipTarget;
 }
-export async function setupRenderer(): Promise<void> {
+export function setupRenderer(): void {
 	gameConfig = getGameConfig();
 	if (!gameConfig) {
 		throw new Error("Game configuration not found. Cannot set up renderer.");

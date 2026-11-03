@@ -1,6 +1,6 @@
-import { setupInfoPopupManager } from "./input_manager/infoPopupManager.js";
-import { setupRainbowMode } from "./input_manager/rainbowMode.js";
-import { loadSavedTheme } from "./input_manager/themeManager.js";
+import { setupInfoPopupManager } from "./input_manager/infoPopupManager";
+import { setupRainbowMode } from "./input_manager/rainbowMode";
+import { loadSavedTheme } from "./input_manager/themeManager";
 import {
 	finishLiveReplay,
 	isAtEnd,
@@ -10,11 +10,11 @@ import {
 	setupTimeManager,
 	startPlayback,
 	updateReplayBounds,
-} from "./input_manager/timeManager.js";
+} from "./input_manager/timeManager";
 import {
 	setReplayControls,
 	setupReplayLoader,
-} from "./replay_loader/replayLoader.js";
+} from "./replay_loader/replayLoader";
 
 const svgCanvas = document.getElementById("svg-canvas") as HTMLElement;
 
@@ -39,7 +39,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 	}
 	const websocketUrl =
 		urlParams.get("websocket") ||
-		`${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.hostname}:4445/replay`;
+		`${window.location.protocol === "https:" ? "wss:" : "ws:"}//${import.meta.env.DEV ? window.location.host : `${window.location.hostname}:4445`}/replay`;
 
 	setReplayControls({
 		finishLiveReplay,
@@ -48,6 +48,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 		setPlaybackSpeed,
 		updateReplayBounds,
 	});
+	setupTimeManager();
 	const replayReady = setupReplayLoader(replays[0], websocketUrl);
 
 	// svg layout height renderer
@@ -117,7 +118,6 @@ window.addEventListener("DOMContentLoaded", async () => {
 	}
 
 	await replayReady;
-	await setupTimeManager();
 	if (urlParams.has("autoplay") && urlParams.get("autoplay") !== "off")
 		startPlayback();
 

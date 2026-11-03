@@ -53,7 +53,7 @@ export const maxSpeed = 50;
 const speedIncrement = 0.5;
 const fallbackLiveTickMs = 250;
 
-export type tickData = {
+export type TickData = {
 	tick: number;
 	tickProgress: number;
 };
@@ -123,7 +123,8 @@ export function setLiveAvailable(available: boolean): void {
 	const wasLive = liveMode;
 	liveAvailable = available;
 	liveIndicator.hidden = !available;
-	if (!available) {
+	if (available) setLiveMode(true);
+	else {
 		setLiveMode(false, false);
 		if (wasLive) setPlaying(false);
 	}
@@ -211,12 +212,10 @@ function toggleFullscreen(): void {
 	else void enterFullscreen();
 }
 
-export async function setupTimeManager(): Promise<void> {
+export function setupTimeManager(): void {
 	const savedSpeed = parseFloat(localStorage.getItem("tm.speed") || "");
 	if (!Number.isNaN(savedSpeed)) setPlaybackSpeed(savedSpeed);
 	resetTimeManager();
-
-	const setSpeed = (value: number) => setPlaybackSpeed(value);
 
 	playButton.addEventListener("click", () => {
 		if (Math.floor(Math.random() * 420) === 0) {
@@ -270,17 +269,17 @@ export async function setupTimeManager(): Promise<void> {
 
 	speedSlider.addEventListener("input", () => {
 		const value = parseFloat(speedSlider.value);
-		if (!Number.isNaN(value)) setSpeed(value);
+		if (!Number.isNaN(value)) setPlaybackSpeed(value);
 	});
 	speedNumberInput.addEventListener("input", () => {
 		const value = parseFloat(speedNumberInput.value);
-		if (!Number.isNaN(value)) setSpeed(value);
+		if (!Number.isNaN(value)) setPlaybackSpeed(value);
 	});
 	speedUpButton.addEventListener("click", () =>
-		setSpeed(speedApS + speedIncrement),
+		setPlaybackSpeed(speedApS + speedIncrement),
 	);
 	speedDownButton.addEventListener("click", () =>
-		setSpeed(speedApS - speedIncrement),
+		setPlaybackSpeed(speedApS - speedIncrement),
 	);
 
 	const keyBindings: Record<
@@ -299,11 +298,11 @@ export async function setupTimeManager(): Promise<void> {
 			button: prevTickButton,
 		},
 		ArrowUp: {
-			action: () => setSpeed(speedApS + speedIncrement),
+			action: () => setPlaybackSpeed(speedApS + speedIncrement),
 			button: speedUpButton,
 		},
 		ArrowDown: {
-			action: () => setSpeed(speedApS - speedIncrement),
+			action: () => setPlaybackSpeed(speedApS - speedIncrement),
 			button: speedDownButton,
 		},
 		f: { action: toggleFullscreen, button: fullscreenToggleButton },
@@ -358,7 +357,7 @@ function advanceLive(elapsedMs: number): void {
 	}
 }
 
-export function getCurrentTickData(): tickData {
+export function getCurrentTickData(): TickData {
 	const endState = getReplayEndState();
 	const atEnd =
 		endState !== null && tick === getLastTick() && tickProgress >= 1;

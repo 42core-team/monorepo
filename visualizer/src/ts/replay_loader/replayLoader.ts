@@ -341,7 +341,7 @@ async function refreshReplay(
 	renderedStates = new Map();
 	if (gameChanged) replayControls.resetTimeManager();
 	if (refreshRenderer) {
-		await setupRenderer();
+		setupRenderer();
 		await ensureIcons();
 	}
 	replayControls.updateReplayBounds(previousLastTick);
@@ -402,9 +402,7 @@ async function pollReplayFile(filePath: string): Promise<boolean> {
 		if (!gameId) return false;
 		const inputChanged = remoteFileGameId !== gameId;
 		remoteFileGameId = gameId;
-		const replacesLiveGame =
-			activeSource === "websocket" && replayLoader?.getGameId() === gameId;
-		if (!inputChanged && !replacesLiveGame) return false;
+		if (!inputChanged) return false;
 		useReplayFile(check.replay ?? (await loadRemoteFile(filePath)));
 		return true;
 	} catch (error) {
@@ -439,29 +437,15 @@ export async function setupReplayLoader(
 		}
 	};
 
-	try {
-		useReplayFile(await loadRemoteFile(filePath));
-		markReady();
-	} catch (error) {
-		console.debug("Initial replay file is not available.", error);
-	}
+	const initialFile = loadRemoteFile(filePath);
 
 	stopWebSocket = watchReplayWebSocket(
 		websocketUrl,
 		{
 			onConfig(gameId, config, misc) {
 				websocketGameId = gameId;
-				const alreadyFinished =
-					replayLoader?.getGameId() === gameId &&
-					replayLoader.getEndState() === "complete";
-				websocketLive = !alreadyFinished;
-				if (
-					!replayLoader ||
-					replayLoader.getGameId() !== gameId ||
-					(activeSource === "websocket" && replayLoader.getGameId() === gameId)
-				) {
-					useReplayWebSocket(gameId, config, misc);
-				}
+				websocketLive = true;
+				useReplayWebSocket(gameId, config, misc);
 				markReady();
 			},
 			onTick(gameId, tick, data, durationMs) {
@@ -479,11 +463,11 @@ export async function setupReplayLoader(
 				}
 			},
 			onEnd(gameId, misc) {
+				if (websocketGameId === gameId) websocketLive = false;
 				if (
 					activeSource === "websocket" &&
 					replayLoader?.getGameId() === gameId
 				) {
-					websocketLive = false;
 					replayLoader.finish(misc);
 					replayControls.finishLiveReplay();
 					refreshTeamDisplay();
@@ -506,6 +490,14 @@ export async function setupReplayLoader(
 		},
 		WEBSOCKET_RETRY_MS,
 	);
+	void initialFile
+		.then((replay) => {
+			if (!websocketLive) useReplayFile(replay);
+			markReady();
+		})
+		.catch((error) => {
+			console.debug("Initial replay file is not available.", error);
+		});
 
 	let checkingFile = false;
 	filePoll = window.setInterval(async () => {
@@ -544,12 +536,7 @@ export function getActionsByExecutor(
 }
 
 export function getLastReplayTick(): number {
-	if (!replayLoader) throw new Error("Replay is not loaded.");
-	return Math.max(0, replayLoader.getLastTick());
-}
-
-export function getTotalReplayTicks(): number {
-	return getLastReplayTick() + 1;
+	return Math.max(0, replayLoader?.getLastTick() ?? 0);
 }
 
 export function getLiveTickDuration(targetTick: number): number | undefined {
@@ -571,13 +558,6 @@ export function getGameMisc(): ReplayMisc | undefined {
 export function getReplayJSON(): string {
 	if (!replayLoader) throw new Error("Replay is not loaded.");
 	return replayLoader.toJSON();
-}
-
-export function getWinningTeamFormatted(): string {
-	const winner = replayLoader
-		?.getMisc()
-		?.team_results.find((team) => team.place === 0);
-	return winner ? `${winner.name} (ID: ${winner.id})` : "No winning team found";
 }
 
 window.addEventListener("drop", (event) => {

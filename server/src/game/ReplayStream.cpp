@@ -15,21 +15,21 @@ void ReplayStream::start(uint16_t port)
 	server_.start(port);
 }
 
-json ReplayStream::configMessage(long long lastTick) const
+std::string ReplayStream::configMessage(long long lastTick) const
 {
-	json message;
-	message["type"] = "config";
-	message["config"] = config_;
-	message["misc"] = misc_;
-	message["last_tick"] = lastTick;
-	return message;
+	return staticConfigMessagePrefix_ + std::to_string(lastTick) + '}';
 }
 
 void ReplayStream::configure(const json &config, const json &misc)
 {
-	config_ = config;
-	misc_ = misc;
-	server_.setInitialMessage(configMessage(-1).dump());
+	json message;
+	message["type"] = "config";
+	message["config"] = config;
+	message["misc"] = misc;
+	staticConfigMessagePrefix_ = message.dump();
+	staticConfigMessagePrefix_.pop_back();
+	staticConfigMessagePrefix_ += ",\"last_tick\":";
+	server_.setInitialMessage(configMessage(-1));
 }
 
 void ReplayStream::addTick(unsigned long long tick, const json &state)
@@ -38,7 +38,7 @@ void ReplayStream::addTick(unsigned long long tick, const json &state)
 	message["type"] = "tick";
 	message["tick"] = tick;
 	message["data"] = state;
-	server_.publish(message.dump(), configMessage(static_cast<long long>(tick)).dump());
+	server_.publish(message.dump(), configMessage(static_cast<long long>(tick)));
 }
 
 void ReplayStream::finish(const json &misc, unsigned long long finalTick)

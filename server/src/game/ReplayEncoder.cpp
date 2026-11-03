@@ -7,7 +7,7 @@
 #include <random>
 #include <sstream>
 
-#define REPLAY_VERSION std::string("3.0.0")
+static constexpr char REPLAY_VERSION[] = "3.0.0";
 
 static std::string makeGameId()
 {
@@ -44,11 +44,11 @@ ReplayEncoder &ReplayEncoder::instance()
 void ReplayEncoder::addTickState(json &state, unsigned long long tick,
 								 std::vector<std::pair<std::unique_ptr<Action>, Core *>> &actions)
 {
-	if (actions.size() > 0)
+	if (!actions.empty())
 	{
 		state["actions"] = json::array();
 		for (const auto &action : actions)
-			if (action.first) state["actions"].push_back(action.first.get()->encodeJSON());
+			if (action.first) state["actions"].push_back(action.first->encodeJSON());
 	}
 
 	if (!state.empty()) ticks_[std::to_string(tick)] = state;
@@ -177,13 +177,12 @@ void ReplayEncoder::exportReplay() const
 	json replayData;
 	replayData["game_id"] = gameId_;
 	replayData["misc"] = encodeMiscSection(true);
-	replayData["ticks"] = !ticks_.empty() ? ticks_ : json::array();
+	replayData["ticks"] = ticks_;
 	replayData["config"] = config_;
 	replayData["full_tick_amount"] = lastTickCount_;
 
-	const json misc = replayData["misc"];
 	saveReplay(replayData);
-	ReplayStream::instance().finish(misc, lastTickCount_);
+	ReplayStream::instance().finish(replayData["misc"], lastTickCount_);
 }
 void ReplayEncoder::saveReplay(const json &replayData) const
 {

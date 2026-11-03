@@ -5,6 +5,7 @@
 #include "json.hpp"
 
 #include <cstdint>
+#include <string>
 
 using json = nlohmann::ordered_json;
 
@@ -25,11 +26,10 @@ class ReplayStream
 	void finish(const json &misc, unsigned long long finalTick);
 
   private:
-	json configMessage(long long lastTick) const;
+	std::string configMessage(long long lastTick) const;
 
 	WebSocketServer server_;
-	json config_;
-	json misc_;
+	std::string staticConfigMessagePrefix_;
 };
 
 #endif // REPLAY_STREAM_H

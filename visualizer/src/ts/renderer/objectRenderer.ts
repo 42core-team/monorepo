@@ -1,4 +1,4 @@
-import type { tickData } from "../input_manager/timeManager";
+import type { TickData } from "../input_manager/timeManager";
 import type { TickObject } from "../replay_format/object";
 import {
 	getActionsByExecutor,
@@ -112,7 +112,7 @@ export function getTeamIndex(teamId: number | undefined): AssetTeam {
 export function drawSpawnPreviewForNextTick(
 	spawnObj: TickObject,
 	svgCanvas: SVGSVGElement,
-	currentTickData: tickData,
+	currentTickData: TickData,
 ): void {
 	const mid = new MidTickIncreaseTimingCurve().getValue(
 		currentTickData.tickProgress,
@@ -238,7 +238,7 @@ function drawObject(
 export function calcAndDrawObject(
 	currObj: TickObject,
 	svgCanvas: SVGSVGElement,
-	currentTickData: tickData,
+	currentTickData: TickData,
 ): void {
 	const actionsByExec = getActionsByExecutor(currentTickData.tick + 1);
 

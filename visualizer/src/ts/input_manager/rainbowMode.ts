@@ -1,4 +1,4 @@
-import { setColorSwitchPreview } from "./infoPopupManager.ts";
+import { setColorSwitchPreview } from "./infoPopupManager";
 
 let rafId: number | null = null;
 let startTs = 0;

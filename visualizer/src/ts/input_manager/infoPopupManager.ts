@@ -1,6 +1,6 @@
-import { getGameMisc, getReplayJSON } from "../replay_loader/replayLoader.js";
-import { disableRainbowIfActive, isRainbowActive } from "./rainbowMode.js";
-import { applyTheme } from "./themeManager.js";
+import { getGameMisc, getReplayJSON } from "../replay_loader/replayLoader";
+import { disableRainbowIfActive, isRainbowActive } from "./rainbowMode";
+import { applyTheme } from "./themeManager";
 
 export function setColorSwitchPreview(hex: string) {
 	const picker = document.getElementById(
