@@ -72,7 +72,7 @@ type UnitComponentEntry = {
 	id: string;
 	count: number;
 	assetPath: string;
-	prioritized: boolean;
+	priority: number;
 };
 function getSortedUnitComponentEntries(unit: UnitObject): UnitComponentEntry[] {
 	const counts = new Map<string, number>();
@@ -85,20 +85,19 @@ function getSortedUnitComponentEntries(unit: UnitObject): UnitComponentEntry[] {
 			id: component.id,
 			count: counts.get(component.id) ?? 0,
 			assetPath: component.visualizer_asset_path,
-			prioritized: component.visualizer_asset_prioritized,
+			priority: component.visualizer_asset_priority,
 		}))
 		.filter((entry) => entry.count > 0 && entry.assetPath)
 		.sort((a, b) => b.count - a.count || a.id.localeCompare(b.id));
 }
 export function getDominantUnitAssetPath(unit: UnitObject): string {
 	const entries = getSortedUnitComponentEntries(unit);
-	const prioritized = entries.filter((entry) => entry.prioritized);
 	const componentIds = unit.components ?? [];
 
-	// icon priority first, then amount of that icon, the index in the component array
 	return (
-		(prioritized.length > 0 ? prioritized : entries).sort(
+		entries.sort(
 			(a, b) =>
+				b.priority - a.priority ||
 				b.count - a.count ||
 				componentIds.indexOf(a.id) - componentIds.indexOf(b.id),
 		)[0]?.assetPath ?? FALLBACK_UNIT_ASSET_PATH

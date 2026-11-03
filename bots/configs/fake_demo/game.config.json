@@ -41,7 +41,7 @@
 					}
 				],
 				"cost": 12,
-				"visualizer_asset_prioritized": false,
+				"visualizer_asset_priority": 0,
 				"visualizer_asset_path": "heart"
 			},
 			{
@@ -53,7 +53,7 @@
 					}
 				],
 				"cost": 12,
-				"visualizer_asset_prioritized": false,
+				"visualizer_asset_priority": 0,
 				"visualizer_asset_path": "lightning"
 			},
 			{
@@ -65,7 +65,7 @@
 					}
 				],
 				"cost": 30,
-				"visualizer_asset_prioritized": true,
+				"visualizer_asset_priority": 1,
 				"visualizer_asset_path": "shield"
 			},
 			{
@@ -77,7 +77,7 @@
 					}
 				],
 				"cost": 15,
-				"visualizer_asset_prioritized": true,
+				"visualizer_asset_priority": 1,
 				"visualizer_asset_path": "sword"
 			},
 			{
@@ -89,7 +89,7 @@
 					}
 				],
 				"cost": 15,
-				"visualizer_asset_prioritized": true,
+				"visualizer_asset_priority": 1,
 				"visualizer_asset_path": "axe"
 			},
 			{
@@ -101,7 +101,7 @@
 					}
 				],
 				"cost": 15,
-				"visualizer_asset_prioritized": true,
+				"visualizer_asset_priority": 1,
 				"visualizer_asset_path": "pickaxe"
 			},
 			{
@@ -113,7 +113,7 @@
 					}
 				],
 				"cost": 20,
-				"visualizer_asset_prioritized": false,
+				"visualizer_asset_priority": 0,
 				"visualizer_asset_path": "feather"
 			},
 			{
@@ -125,7 +125,7 @@
 					}
 				],
 				"cost": 20,
-				"visualizer_asset_prioritized": false,
+				"visualizer_asset_priority": 0,
 				"visualizer_asset_path": "bag"
 			}
 		],

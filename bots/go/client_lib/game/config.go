@@ -8,11 +8,11 @@ type ComponentPropertyModification struct {
 }
 
 type Component struct {
-	ID                         string                          `json:"id"`
-	Properties                 []ComponentPropertyModification `json:"properties"`
-	Cost                       uint                            `json:"cost"`
-	VisualizerAssetPrioritized bool                            `json:"visualizer_asset_prioritized"`
-	VisualizerAssetPath        string                          `json:"visualizer_asset_path"`
+	ID                      string                          `json:"id"`
+	Properties              []ComponentPropertyModification `json:"properties"`
+	Cost                    uint                            `json:"cost"`
+	VisualizerAssetPriority int                             `json:"visualizer_asset_priority"`
+	VisualizerAssetPath     string                          `json:"visualizer_asset_path"`
 }
 
 type InvalidComponentCondition struct {

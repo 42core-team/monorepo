@@ -296,7 +296,7 @@
         "id",
         "properties",
         "cost",
-        "visualizer_asset_prioritized",
+        "visualizer_asset_priority",
         "visualizer_asset_path"
       ],
       "properties": {
@@ -316,8 +316,8 @@
           "minimum": 0,
           "maximum": 10000000
         },
-        "visualizer_asset_prioritized": {
-          "type": "boolean"
+        "visualizer_asset_priority": {
+          "type": "integer"
         },
         "visualizer_asset_path": {
           "type": "string",

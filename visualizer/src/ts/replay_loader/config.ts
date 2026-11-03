@@ -8,7 +8,7 @@ export interface ComponentConfig {
 	id: string;
 	properties: ComponentConfigProperty[];
 	cost: number;
-	visualizer_asset_prioritized: boolean;
+	visualizer_asset_priority: number;
 	visualizer_asset_path: string;
 }
 export interface ComponentsConfig {
