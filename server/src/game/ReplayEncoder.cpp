@@ -21,6 +21,7 @@ void ReplayEncoder::addTickState(json &state, unsigned long long tick,
 	if (!state.empty()) ticks_[std::to_string(tick)] = state;
 
 	lastTickCount_ = tick;
+	liveReplayServer_.publishTick(tick, state);
 }
 
 void ReplayEncoder::registerExpectedTeam(unsigned int teamId)
@@ -64,6 +65,13 @@ bool ReplayEncoder::wasConnectedInitially(unsigned int teamId) const
 void ReplayEncoder::includeConfig(json &config)
 {
 	config_ = config;
+}
+
+void ReplayEncoder::startLiveUpdates(unsigned int port)
+{
+	if (port == 0) return;
+	if (!liveReplayServer_.start(port, encodeReplay()))
+		Logger::Log(LogLevel::WARNING, "Could not start live replay WebSocket on port " + std::to_string(port) + ".");
 }
 
 void ReplayEncoder::verifyReplaySaveFolder()
@@ -132,15 +140,21 @@ void ReplayEncoder::exportReplay() const
 		return;
 	}
 
+	json replayData = encodeReplay();
+	liveReplayServer_.publishComplete(replayData);
+	saveReplay(replayData);
+}
+
+json ReplayEncoder::encodeReplay() const
+{
 	json replayData;
 	replayData["misc"] = encodeMiscSection();
-	for (auto &kv : customData_.items())
+	for (const auto &kv : customData_.items())
 		replayData["misc"][kv.key()] = kv.value();
 	replayData["ticks"] = !ticks_.empty() ? ticks_ : json::array();
 	replayData["config"] = config_;
 	replayData["full_tick_amount"] = lastTickCount_;
-
-	saveReplay(replayData);
+	return replayData;
 }
 void ReplayEncoder::saveReplay(const json &replayData) const
 {
