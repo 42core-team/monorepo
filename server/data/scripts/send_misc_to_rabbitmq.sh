@@ -8,7 +8,7 @@ REPLAY_FILE="${1:-/workspaces/sandbox/debug-visualizer/src/public/misc/replay_la
 RABBITMQ_URL="${RABBITMQ_URL:-}"
 MAX_RETRIES=20
 RETRY_DELAY=2
-EXCHANGE="${RABBITMQ_EXCHANGE:-game_results}"
+RESULTS_QUEUE="${RABBITMQ_RESULTS_QUEUE:-game_results}"
 
 # Check if RabbitMQ URL is set
 if [[ -z "$RABBITMQ_URL" ]]; then
@@ -49,9 +49,10 @@ WRAPPED_DATA=$(jq -n \
 PAYLOAD=$(jq -n \
   --argjson properties '{}' \
   --argjson payload "$WRAPPED_DATA" \
+  --arg routing_key "$RESULTS_QUEUE" \
   '{
     "properties": $properties,
-    "routing_key": "game_results",
+    "routing_key": $routing_key,
     "payload": ($payload | tostring),
     "payload_encoding": "string"
   }')
@@ -89,7 +90,7 @@ for attempt in $(seq 1 $MAX_RETRIES); do
             echo "✓ Message was successfully routed to a queue"
         elif echo "$RESPONSE_BODY" | jq -e '.routed == false' >/dev/null 2>&1; then
             echo "⚠ Warning: Message was accepted but not routed to any queue"
-            echo "  This might mean no queue is bound to the exchange with routing key 'game_results'"
+            echo "  This might mean no queue is bound to the exchange with routing key '$RESULTS_QUEUE'"
         fi
 
         echo "Data sent:"
