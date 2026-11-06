@@ -73,8 +73,8 @@ func (g *Game) PrintObject(obj *Object) {
 	}
 }
 
-// PrintObjects calls [Game.PrintObject] for each object, separated by
-// "---" lines.
+// PrintObjects calls [Game.PrintObject] for each object, printing a "---"
+// line before every object, including the first.
 func (g *Game) PrintObjects(objects []*Object) {
 	for _, object := range objects {
 		fmt.Println("---")

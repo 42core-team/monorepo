@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"math"
 )
 
 // A Game is the state of a running game as seen by one team.
@@ -120,15 +121,21 @@ func (g *Game) IsPosValid(pos Position) bool {
 }
 
 // Distance returns the Manhattan distance between pos1 and pos2, which is
-// the minimum number of moves between them on an empty board.
+// the minimum number of moves between them on an empty board. A distance that
+// does not fit in an int is reported as [math.MaxInt].
 func (g *Game) Distance(pos1, pos2 Position) int {
-	dx := int(pos1.X) - int(pos2.X)
-	dy := int(pos1.Y) - int(pos2.Y)
-	if dx < 0 {
-		dx = -dx
+	dx := absDiff(pos1.X, pos2.X)
+	dy := absDiff(pos1.Y, pos2.Y)
+	distance := dx + dy
+	if distance < dx || distance > math.MaxInt {
+		return math.MaxInt
 	}
-	if dy < 0 {
-		dy = -dy
+	return int(distance)
+}
+
+func absDiff(a, b uint) uint {
+	if a > b {
+		return a - b
 	}
-	return dx + dy
+	return b - a
 }

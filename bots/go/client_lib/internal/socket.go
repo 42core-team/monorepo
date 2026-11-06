@@ -83,7 +83,10 @@ func (c *Connection) readLine() (string, error) {
 // Start logs in as team teamID with name teamName and runs the game loop.
 // Each iteration sends the queued actions and debug data, waits for the next
 // state update, applies it to the game and calls the tick callback.
-// The loop ends when the own core or all opposing cores are destroyed.
+// The loop ends, and Start returns nil, once a state update shows no living own
+// core or no living opposing core. This includes a first tick on which such a
+// core is missing, so a nil result does not necessarily mean that a core was
+// destroyed or that the game was completed.
 // Start closes the connection before it returns.
 func (c *Connection) Start(teamID uint, teamName string) (runErr error) {
 	defer func() {
@@ -216,7 +219,9 @@ func (c *Connection) Close() error {
 	return c.socket.Close()
 }
 
-// IsClosed reports whether c has been closed. It is safe for concurrent use.
+// IsClosed reports whether c has been marked for closure. It may return true
+// as soon as Close has started, before the socket is actually closed, and does
+// not wait for closure to complete. It is safe for concurrent use.
 func (c *Connection) IsClosed() bool { return c.closed.Load() || c.socket == nil }
 
 // Game returns the game state maintained by c.

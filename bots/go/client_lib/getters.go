@@ -56,7 +56,8 @@ func PrintField() { Game.PrintField() }
 // PrintObject writes the properties of obj to standard output.
 func PrintObject(obj *game.Object) { Game.PrintObject(obj) }
 
-// PrintObjects calls [PrintObject] for each object, separated by "---" lines.
+// PrintObjects calls [PrintObject] for each object, printing a "---"
+// line before every object, including the first.
 func PrintObjects(objects []*game.Object) { Game.PrintObjects(objects) }
 
 // PrintConfig writes a summary of the game configuration to standard output.

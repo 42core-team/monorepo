@@ -54,11 +54,17 @@ func DefaultBotConfig(teamID int, teamName string) BotConfig {
 // tick are sent to the server when tick returns.
 //
 // StartGame blocks until the game ends, the connection fails or [Close] is
-// called, and closes the connection before it returns. It returns nil once
-// the own core or all opposing cores have been destroyed.
+// called, and closes the connection before it returns. [Close] cannot cancel
+// connection setup, so StartGame may keep retrying while no game is running.
 //
-// Only one game may run per process at a time; StartGame returns
-// [ErrGameAlreadyRunning] if another call is still in progress.
+// StartGame returns nil once a state update shows no living own core or no
+// living opposing core. This includes a first tick on which such a core is
+// missing, so a nil result does not necessarily mean that a core was destroyed
+// or that the game was completed.
+//
+// Only one game may run per process at a time. If tick is nil, StartGame
+// returns the nil-callback error, even if another game is running. Otherwise
+// it returns [ErrGameAlreadyRunning] if another call is still in progress.
 // A later call starts with a fresh [Game].
 func StartGame(config BotConfig, tick func(uint)) error {
 	if tick == nil {
@@ -81,7 +87,9 @@ func StartGame(config BotConfig, tick func(uint)) error {
 
 // Close closes the connection of the running game, which causes [StartGame]
 // to return with an error. It returns [ErrClientUnavailable] if no game is
-// running. Close is safe to call from any goroutine.
+// running, which includes the time [StartGame] spends connecting to the
+// server: Close cannot cancel connection setup. Close is safe to call from any
+// goroutine.
 func Close() error {
 	conn := connection.Load()
 	if conn == nil {

@@ -127,8 +127,12 @@ func TransferGems(source *game.Object, targetPos game.Position, amount uint) err
 //   - friendly units can be passed and cost more the longer their cooldown;
 //   - friendly cores block;
 //   - gem piles block if the unit cannot carry more gems;
-//   - all other objects are attacked and cost the number of attacks needed
-//     to destroy them, plus one.
+//   - other objects that unit cannot damage block;
+//   - other objects that unit can damage are marked for attack and cost the
+//     number of attacks needed to destroy them, plus one.
+//
+// Blocking objects can leave unit without a route that makes progress, in
+// which case Travel queues no actions.
 //
 // Travel returns an error if no game is running, unit is not a unit, or the
 // position of unit or target is not on the board. As with Move and Attack,

@@ -52,5 +52,5 @@
 // and the debug helpers must only be used from the goroutine that runs the
 // tick callback. The exceptions are [Close], which may be called from any
 // goroutine, and [StartGame], which rejects concurrent calls with
-// [ErrGameAlreadyRunning].
+// [ErrGameAlreadyRunning], or with its nil-callback error if tick is nil.
 package core
