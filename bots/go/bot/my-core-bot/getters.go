@@ -3,11 +3,11 @@ package main
 import "github.com/42core-team/go-client-lib/game"
 
 func ownCore(g *game.Game) *game.Object {
-	return g.MyCore()
+	return g.NearestObject(game.Position{}, isOwnCore(g.MyTeamID))
 }
 
 func opponentCore(g *game.Game) *game.Object {
-	return g.EnemyCore()
+	return g.NearestObject(game.Position{}, isOpponentCore(g.MyTeamID))
 }
 
 func nearestDeposit(g *game.Game, pos game.Position) *game.Object {
@@ -35,33 +35,74 @@ func nearestOpponentUnit(g *game.Game, pos game.Position) *game.Object {
 }
 
 func isDeposit(obj *game.Object) bool {
-	return obj != nil && obj.Type == game.ObjectDeposit
+	if obj == nil {
+		return false
+	}
+	return obj.Type == game.ObjectDeposit
+}
+
+func isOwnCore(myTeamID uint) func(*game.Object) bool {
+	return func(obj *game.Object) bool {
+		data, err := obj.CoreData()
+		if err != nil {
+			return false
+		}
+		return data.TeamID == myTeamID
+	}
+}
+
+func isOpponentCore(myTeamID uint) func(*game.Object) bool {
+	return func(obj *game.Object) bool {
+		data, err := obj.CoreData()
+		if err != nil {
+			return false
+		}
+		return data.TeamID != myTeamID
+	}
 }
 
 func isGemPile(obj *game.Object) bool {
-	return obj != nil && obj.Type == game.ObjectGemPile
+	if obj == nil {
+		return false
+	}
+	return obj.Type == game.ObjectGemPile
 }
 
 func isDepositOrGemPile(obj *game.Object) bool {
-	return isDeposit(obj) || isGemPile(obj)
+	if isDeposit(obj) {
+		return true
+	}
+	return isGemPile(obj)
 }
 
 func isOwnUnit(myTeamID uint) func(*game.Object) bool {
 	return func(obj *game.Object) bool {
-		if obj == nil || obj.Type != game.ObjectUnit {
+		if obj == nil {
+			return false
+		}
+		if obj.Type != game.ObjectUnit {
 			return false
 		}
 		data, err := obj.UnitData()
-		return err == nil && data.TeamID == myTeamID
+		if err != nil {
+			return false
+		}
+		return data.TeamID == myTeamID
 	}
 }
 
 func isOpponentUnit(myTeamID uint) func(*game.Object) bool {
 	return func(obj *game.Object) bool {
-		if obj == nil || obj.Type != game.ObjectUnit {
+		if obj == nil {
+			return false
+		}
+		if obj.Type != game.ObjectUnit {
 			return false
 		}
 		data, err := obj.UnitData()
-		return err == nil && data.TeamID != myTeamID
+		if err != nil {
+			return false
+		}
+		return data.TeamID != myTeamID
 	}
 }
