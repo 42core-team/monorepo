@@ -1,20 +1,20 @@
-package coregame
+package core
 
 import (
 	"fmt"
 	"github.com/42core-team/go-client-lib/game"
 )
 
-func (b *Bot) AddObjectInfo(obj *game.Object, format string, args ...any) {
-	if obj == nil {
+func AddObjectInfo(obj *game.Object, format string, args ...any) {
+	if obj == nil || checkClient() != nil {
 		return
 	}
-	b.connection.DebugData().AddObjectInfo(obj.ID, fmt.Sprintf(format, args...))
+	connection.Load().DebugData().AddObjectInfo(obj.ID, fmt.Sprintf(format, args...))
 }
 
-func (b *Bot) AddObjectPathStep(unit *game.Object, pos game.Position) {
-	if unit == nil {
+func AddObjectPathStep(unit *game.Object, pos game.Position) {
+	if unit == nil || checkClient() != nil {
 		return
 	}
-	b.connection.DebugData().AddObjectPathStep(unit.ID, pos)
+	connection.Load().DebugData().AddObjectPathStep(unit.ID, pos)
 }

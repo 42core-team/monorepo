@@ -1,4 +1,4 @@
-package coregame
+package core
 
 import (
 	"testing"

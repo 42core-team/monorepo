@@ -11,42 +11,46 @@ This guide builds a Go bot that creates a component-based unit and sends it towa
 CORE no longer has fixed warrior, miner, or carrier enums. Use your event's Unit Builder to choose valid component IDs. Component availability, costs, limits, and combinations can differ between events.
 
 ```go
-if err := bot.CreateUnit("Warrior", "combat", "siege", "health"); err != nil {
+if err := core.CreateUnit("Warrior", "combat", "siege", "health"); err != nil {
 	log.Printf("create unit: %v", err)
 }
 ```
 
 The first argument is the custom unit name. Pass an empty string to receive a generated name. The remaining arguments are component IDs. Repeated components are allowed only if the Unit Builder accepts the design.
 
-Creation is queued for execution between ticks. It can fail when your core is on spawn cooldown, lacks gems, has no spawn position, or receives an invalid component design. See [`Bot.CreateUnit`](reference/go/actions/CreateUnit).
+Creation is queued for execution between ticks. It can fail when your core is on spawn cooldown, lacks gems, has no spawn position, or receives an invalid component design. See [`CreateUnit`](reference/go/actions/CreateUnit).
 
-Action methods return errors for invalid local inputs or an unavailable client. A nil error does not guarantee execution: gameplay checks remain on the server. Server error messages are printed by the library. `Run` returns transport and protocol failures rather than treating a disconnect as successful completion.
+Action functions return errors for invalid local inputs or an unavailable client. A nil error does not guarantee execution: gameplay checks remain on the server. Server error messages are printed by the library. `StartGame` returns transport and protocol failures rather than treating a disconnect as successful completion.
 
 ## Run the game loop
 
 ```go
-func tick(g *game.Game, bot *coregame.Bot) {
-	// Read g and queue actions with bot.
+func tick(elapsedTicks uint) {
+	// Read core.Game and queue actions with core.CreateUnit, core.Travel, etc.
 }
 
 func main() {
-	cfg := coregame.DefaultBotConfig(teamID, "My CORE Bot")
-	bot, err := coregame.NewBot(cfg)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if err := bot.Run(tick); err != nil {
+	cfg := core.DefaultBotConfig(teamID, "My CORE Bot")
+	if err := core.StartGame(cfg, tick); err != nil {
 		log.Fatal(err)
 	}
 }
 ```
 
-`Run` calls your callback after every state update. Objects created now appear on a later tick. Keep object IDs, rather than object pointers, when state must persist between ticks.
+Import `"github.com/42core-team/go-client-lib"` to use the package named `core`.
+Like C, it has no public bot instance: `core.StartGame` manages the connection,
+`core.Game` exposes current state, and actions/getters are package-level functions.
+Only one game can run per process. Read state and call actions/getters/debug
+helpers from your callback, not concurrent goroutines. Treat state as read-only.
+
+`StartGame` calls your callback after every state update and closes the connection
+on return. Objects created now appear on a later tick. Keep object IDs, rather
+than object pointers, when state must persist between ticks.
 
 ## Travel toward a target
 
 ```go
-if err := bot.Travel(unit, target.Pos, nil); err != nil {
+if err := core.Travel(unit, target.Pos, nil); err != nil {
 	log.Printf("travel: %v", err)
 }
 ```
@@ -62,7 +66,7 @@ if err != nil {
 	return
 }
 if data.ActionCooldown <= 0 {
-	if err := bot.Travel(unit, target.Pos, nil); err != nil {
+	if err := core.Travel(unit, target.Pos, nil); err != nil {
 		log.Printf("travel: %v", err)
 	}
 }
@@ -71,18 +75,18 @@ if data.ActionCooldown <= 0 {
 A custom policy receives each grid position and the traveling unit:
 
 ```go
-err := bot.Travel(unit, target.Pos, func(pos game.Position, unit *game.Object) coregame.TileTravelability {
+err := core.Travel(unit, target.Pos, func(pos game.Position, unit *game.Object) core.TileTravelability {
 	if dangerous(pos) {
-		return coregame.TileTravelability{Action: coregame.TravelBlock}
+		return core.TileTravelability{Action: core.TravelBlock}
 	}
-	return coregame.TileTravelability{Weight: 1, Action: coregame.TravelPass}
+	return core.TileTravelability{Weight: 1, Action: core.TravelPass}
 })
 if err != nil {
 	log.Printf("travel: %v", err)
 }
 ```
 
-`TravelBlock` excludes a tile, `TravelPass` routes through it without attacking its occupant, and `TravelAttack` attacks its occupant when it becomes the next step. See [`Bot.Travel`](reference/go/actions/Travel).
+`TravelBlock` excludes a tile, `TravelPass` routes through it without attacking its occupant, and `TravelAttack` attacks its occupant when it becomes the next step. See [`Travel`](reference/go/actions/Travel).
 
 ## Complete example
 
@@ -97,30 +101,29 @@ import (
 	"os"
 	"strconv"
 
-	coregame "github.com/42core-team/go-client-lib"
-	"github.com/42core-team/go-client-lib/game"
+	"github.com/42core-team/go-client-lib"
 )
 
-func tick(g *game.Game, bot *coregame.Bot) {
-	if core := ownCore(g); core != nil {
-		data, err := core.CoreData()
+func tick(elapsedTicks uint) {
+	if own := ownCore(); own != nil {
+		data, err := own.CoreData()
 		if err != nil {
 			log.Printf("read core: %v", err)
 		} else if data.SpawnCooldown == 0 {
-			if err := bot.CreateUnit("Warrior", "combat"); err != nil {
+			if err := core.CreateUnit("Warrior", "combat"); err != nil {
 				log.Printf("create unit: %v", err)
 			}
 		}
 	}
-	target := opponentCore(g)
-	for _, unit := range ownUnits(g) {
+	target := opponentCore()
+	for _, unit := range ownUnits() {
 		data, err := unit.UnitData()
 		if err != nil {
 			log.Printf("read unit: %v", err)
 			continue
 		}
 		if target != nil && data.ActionCooldown <= 0 {
-			if err := bot.Travel(unit, target.Pos, nil); err != nil {
+			if err := core.Travel(unit, target.Pos, nil); err != nil {
 				log.Printf("travel: %v", err)
 			}
 		}
@@ -137,11 +140,7 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	bot, err := coregame.NewBot(coregame.DefaultBotConfig(teamID, "My CORE Bot"))
-	if err == nil {
-		err = bot.Run(tick)
-	}
-	if err != nil {
+	if err := core.StartGame(core.DefaultBotConfig(teamID, "My CORE Bot"), tick); err != nil {
 		fmt.Println(err)
 	}
 }
