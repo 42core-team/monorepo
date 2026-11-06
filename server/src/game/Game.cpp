@@ -3,11 +3,28 @@
 #include <json-schema.hpp>
 using nlohmann::json_schema::json_validator;
 
+#include <cctype>
 #include <memory>
+
+// The website derives each team's side from GAME_ID with this same rule, so keep them in sync:
+// with team IDs sorted ascending, a last GAME_ID hex character of 0-7 keeps that order, 8-f reverses it.
+static void orderTeamsForCorePositions(std::vector<unsigned int> &team_ids)
+{
+	const char *rawGameId = std::getenv("GAME_ID");
+	const std::string gameId = rawGameId ? rawGameId : "";
+	if (gameId.empty() || !std::isxdigit(static_cast<unsigned char>(gameId.back())))
+	{
+		shuffle_vector(team_ids); // no usable game id, e.g. local runs
+		return;
+	}
+
+	std::sort(team_ids.begin(), team_ids.end());
+	if (std::stoi(gameId.substr(gameId.size() - 1), nullptr, 16) >= 8) std::reverse(team_ids.begin(), team_ids.end());
+}
 
 Game::Game(std::vector<unsigned int> team_ids)
 {
-	shuffle_vector(team_ids); // randomly assign core positions to ensure fairness
+	orderTeamsForCorePositions(team_ids);
 	for (unsigned int i = 0; i < team_ids.size(); ++i)
 		Board::instance().addObject<Core>(Core(team_ids[i]), Config::getCorePosition(i), true);
 
