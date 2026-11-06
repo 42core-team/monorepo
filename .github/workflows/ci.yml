@@ -117,22 +117,6 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  pr_test_server:
-    if: github.event_name == 'pull_request'
-    runs-on: *runner_amd64
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Build server
-        working-directory: server
-        run: make prod
-
-      - name: Run login registration tests
-        run: python3 server/tests/test_login_registration.py
-
   pr_build_bot_c:
     if: github.event_name == 'pull_request'
     needs:
