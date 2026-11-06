@@ -85,6 +85,39 @@ func TestGameTickRejectsMismatchedExistingPayload(t *testing.T) {
 	}
 }
 
+func TestGameTickRejectsUnknownObjectType(t *testing.T) {
+	g := &game.Game{}
+	tick, err := parseGameTick(`{"tick":1,"objects":[{"id":1,"type":99}],"errors":[]}`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := tick.applyTo(g); !errors.Is(err, game.ErrInvalidObjectData) {
+		t.Fatalf("new object: got %v, want invalid object data", err)
+	}
+	if len(g.Objects) != 0 {
+		t.Fatalf("unknown object was added: %#v", g.Objects)
+	}
+
+	g.Objects = []*game.Object{{ID: 1, Type: game.ObjectWall}}
+	if err := tick.applyTo(g); !errors.Is(err, game.ErrInvalidObjectData) {
+		t.Fatalf("existing object: got %v, want invalid object data", err)
+	}
+}
+
+func TestGameTickAcceptsWalls(t *testing.T) {
+	g := &game.Game{}
+	tick, err := parseGameTick(`{"tick":1,"objects":[{"id":1,"type":3,"x":2,"y":4,"hp":5}],"errors":[]}`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := tick.applyTo(g); err != nil {
+		t.Fatal(err)
+	}
+	if len(g.Objects) != 1 || g.Objects[0].Type != game.ObjectWall || g.Objects[0].Hp != 5 {
+		t.Fatalf("wall not applied: %#v", g.Objects)
+	}
+}
+
 func TestGameTickDoesNotLocallyDecrementCooldowns(t *testing.T) {
 	g := &game.Game{Objects: []*game.Object{{ID: 1, Type: game.ObjectUnit, Hp: 10, ObjectData: &game.UnitData{ActionCooldown: 4}}}}
 	tick, _ := parseGameTick(`{"tick":2,"objects":[],"errors":[]}`)

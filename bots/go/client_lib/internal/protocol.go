@@ -154,6 +154,9 @@ func applyObjectUpdate(object *game.Object, update incomingObject) error {
 			data.Gems = *update.Gems
 		}
 		object.ObjectData = data
+	case game.ObjectWall:
+	default:
+		return fmt.Errorf("object %d has unknown type %d: %w", object.ID, object.Type, game.ErrInvalidObjectData)
 	}
 	return nil
 }
