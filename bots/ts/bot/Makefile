@@ -14,7 +14,7 @@ PLAYER1_BOT_NAME = $(notdir $(PLAYER1_BOT))
 PLAYER2_BOT_NAME = $(notdir $(PLAYER2_BOT))
 
 
-run: stop check_updates $(PLAYER1_BOT) $(PLAYER2_BOT)
+run: __require-devcontainer stop check_updates $(PLAYER1_BOT) $(PLAYER2_BOT)
 	@echo ""
 	@echo "$(COLOR_INFO)🎮 Game Visualizer is running at: localhost:4000 $(COLOR_RESET)"
 	@echo ""
@@ -44,7 +44,7 @@ clean: stop
 
 fclean: clean
 
-re: fclean run
+re: __require-devcontainer fclean run
 
 stop:
 	@pkill server > /dev/null || true &
@@ -53,7 +53,20 @@ stop:
 update: stop-devcontainer remove-devcontainer
 	@docker compose --project-directory=./.devcontainer pull
 
-.PHONY: run clean fclean re stop update $(PLAYER1_BOT) $(PLAYER2_BOT)
+# The server is only shipped in the devcontainer image
+__require-devcontainer:
+	@if [ ! -x "$(CORE_DIR)/server" ]; then \
+		echo "$(COLOR_ERROR)❌ This command must run inside the devcontainer.$(COLOR_RESET)" >&2; \
+		printf "$(COLOR_INFO)💡 Start it now with make devcontainer? [Y/n] $(COLOR_RESET)" >&2; \
+		read -r answer || answer=n; \
+		case "$$answer" in \
+			[nN]*) echo "Run make devcontainer when you are ready." >&2 ;; \
+			*) $(MAKE) devcontainer && echo "$(COLOR_INFO)✅ Devcontainer started. Run make in its terminal.$(COLOR_RESET)" >&2 ;; \
+		esac; \
+		exit 1; \
+	fi
+
+.PHONY: __require-devcontainer run clean fclean re stop update $(PLAYER1_BOT) $(PLAYER2_BOT)
 
 
 # Devpod CLI executable
