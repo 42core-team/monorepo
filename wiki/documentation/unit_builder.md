@@ -6,25 +6,35 @@ sidebarTitle: "Unit Builder"
 
 Units are built from components. Each component affects multiple properties. A property is one stat that defines the unit. You cannot choose properties directly; you can only choose components. To make this easy, we made the **Unit Builder**. Find it under your event on the CORE website. Name your unit, then drag its components into the unit assembly. You can see the resulting properties on the right side. Components can be stacked, and their values are added together.
 
-After that, scroll to the bottom, and copy the unit creation line into your code, which will look something like this:
+After that, scroll to the bottom, and copy the unit creation line for your language into your code, which will look something like this:
+
+::: code-group labels=[C, Go]
 
 ```c
 core_action_createUnit("Warrior", "combat", "health", NULL);
 ```
 
-The first argument is the unit's name. Pass `NULL` to receive a generated name. Every following argument is a component ID from the builder, and the list **must end with `NULL`**. Here is more information on the [C unit creation action](reference/c/actions/core_action_createUnit).
-
-The Go equivalent uses a variadic component list and therefore needs no sentinel:
-
 ```go
 core.CreateUnit("Warrior", "combat", "health")
 ```
 
-Pass an empty string as the name to receive a generated name. See [`CreateUnit`](reference/go/actions/CreateUnit).
+:::
+
+::: lang c
+
+The first argument is the unit's name. Pass `NULL` to receive a generated name. Every following argument is a component ID from the builder, and the list **must end with `NULL`**. Here is more information on the [C unit creation action](reference/c/actions/core_action_createUnit).
 
 After the unit spawns, its component IDs are in `unit->s_unit.components` and its finished properties are in `unit->s_unit.properties`. Its current health, carried gems, and cooldown are in `unit->hp`, `unit->s_unit.gems`, and `unit->s_unit.action_cooldown`.
 
-In Go, call `data, err := unit.UnitData()` and handle the error first. Then read `data.Components`, `data.Properties`, `unit.Hp`, `data.Gems`, and `data.ActionCooldown`.
+:::
+
+::: lang go
+
+The first argument is the unit's name. Pass an empty string to receive a generated name. Every following argument is a component ID from the builder. See [`CreateUnit`](reference/go/actions/CreateUnit).
+
+After the unit spawns, call `data, err := unit.UnitData()` and handle the error first. Then read its component IDs in `data.Components` and its finished properties in `data.Properties`. Its current health, carried gems, and cooldown are in `unit.Hp`, `data.Gems`, and `data.ActionCooldown`.
+
+:::
 
 ## Properties
 
@@ -32,7 +42,7 @@ The following properties exist and are modified by components you choose. Choose
 
 ### `hp`
 
-The unit's health when it spawns. `unit->hp` is the health it has left after taking damage.
+The unit's health when it spawns. The unit's current `hp` is the health it has left after taking damage.
 
 A unit with 10 HP survives 9 unit damage. It is destroyed when its health reaches 0 or less.
 
@@ -42,7 +52,7 @@ Component changes are added together. If the default is 5 HP and two components 
 
 The base number of ticks a unit waits between actions - lower values therefore make a unit faster. This is effectively the speed property, but counterintuitively the higher the number the lower the speed.
 
-Moving, attacking, and transferring gems reset `action_cooldown`. A positive cooldown means the unit must wait; at `0`
+Moving, attacking, and transferring gems reset the action cooldown. A positive cooldown means the unit must wait; at `0`
 or below, it can queue an action. A successful action resets the cooldown to the base action cooldown plus a carried-gem
 penalty defined by `gemsPerCooldownStep`:
 
@@ -94,4 +104,4 @@ Damage dealt when this unit attacks deposits and walls. It has no effect on atta
 
 ## `postSpawnCoreCooldown`
 
-The number of ticks the core must wait after creating this unit before it can create another unit. After a unit is spawned successfully, that unit's `postSpawnCoreCooldown` becomes `core->s_core.spawn_cooldown`, which then counts down once per tick. Once the core's spawn cooldown reaches 0, it can spawn another unit.
+The number of ticks the core must wait after creating this unit before it can create another unit. After a unit is spawned successfully, that unit's `postSpawnCoreCooldown` becomes the core's spawn cooldown, which then counts down once per tick. Once the core's spawn cooldown reaches 0, it can spawn another unit.

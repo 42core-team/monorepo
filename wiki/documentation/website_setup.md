@@ -13,7 +13,7 @@ This page focuses on making sure your bot can run properly on the website. Other
 / (repo root)
 └─ my-core-bot/
    ├─ Makefile  (must build an executable named "bot")
-   ├─ src/
+   ├─ src/      (C) or *.go files (Go)
    └─ ...
 </pre>
 

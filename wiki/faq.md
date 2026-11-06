@@ -8,10 +8,27 @@ sidebarTitle: "FAQ"
 
 > No! _Dobby is free!_
 
-### 🔧 Where can I see the implementations of the standard library? Where can I find the core_lib.h file?
+::: lang go
 
-> Check out [our GitHub](https://github.com/42core-team) to see all of the CORE source code - it may give you an easy starting point for some functionalities.\
+> Norminette is a style guide for C, so it doesn't apply to Go either. We do recommend formatting your code with `gofmt`, which most editors run on save.
+
+:::
+
+### 🔧 Where can I see the implementation of the client library?
+
+> Check out [our GitHub](https://github.com/42core-team) to see all of the CORE source code - it may give you an easy starting point for some functionalities.
+
+::: lang c
+
 > The `core_lib.h` file can be found on our [GitHub](https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/inc/core_lib.h) (careful: the latest version might not match the CORE version you are playing. Check the releases). It is also available in your filesystem under `/core/inc` and can most easily be found by Cmd-clicking the include in the `bot.h` header. The easiest option, however, is to use the wiki, which contains all the relevant information and more.
+
+:::
+
+::: lang go
+
+> The Go client library lives in [`bots/go/client_lib`](https://github.com/42core-team/monorepo/tree/dev/bots/go/client_lib) on our GitHub (careful: the latest version might not match the CORE version you are playing. Check the releases). In your editor, go to the definition of any `core.` function to read its source and documentation. The easiest option, however, is to use the wiki, which contains all the relevant information and more.
+
+:::
 
 ### 🐞 What should I do if my bot isn't responding / starting up?
 
@@ -45,6 +62,16 @@ sidebarTitle: "FAQ"
 
 ### 💎 How do I pick up gem piles? How do I mine gem deposits?
 
+::: lang c
+
 > You can do both of those things via the [attack action](reference/c/actions/core_action_attack). Just stand next to the object with a unit that can attack that object type.
+
+:::
+
+::: lang go
+
+> You can do both of those things via the [attack action](reference/go/actions/Attack). Just stand next to the object with a unit that can attack that object type.
+
+:::
 
 Other questions? There is an "faq" channel in the CORE global discord for all your questions.
