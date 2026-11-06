@@ -18,8 +18,9 @@ Welcome to the **CORE** project repository! We’re excited to have you on board
 3. Open [localhost:4000](http://localhost:4000) in your browser to see the gameplay.
 4. Keep writing your bot! Start in `my-core-bot/main.go` and use the [Go tutorial](https://coregame.sh/wiki/my_first_core_bot_go).
 
-The client package is named `core`. Call `core.StartGame(config, tick)` with a
-`func(uint)` callback; read `core.Game` and use package-level functions such as
+The client package is named `core`. Call `core.StartGame(teamName, tick, debug)`
+with a `func(uint)` callback. Like the C library, it reads the team ID from the
+first program argument; read `core.Game` and use package-level functions such as
 `core.CreateUnit`, `core.Travel`, and `core.ObjectsFilter` inside the callback.
 Like the C library, there is no public bot instance and only one game runs per
 process. Treat state as read-only and do not access it from concurrent goroutines.
