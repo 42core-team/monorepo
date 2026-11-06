@@ -1,6 +1,9 @@
 package game
 
-import "testing"
+import (
+	"math"
+	"testing"
+)
 
 func TestNameGettersReturnOnlyOwnedUnits(t *testing.T) {
 	g := &Game{MyTeamID: 7, Objects: []*Object{
@@ -30,5 +33,25 @@ func TestNilPredicateSemanticsMatchCLibrary(t *testing.T) {
 	}
 	if count := g.ObjectsFilterCount(nil); count != 2 {
 		t.Fatalf("nil count filter returned %d", count)
+	}
+}
+
+func TestDistanceHandlesFullCoordinateRange(t *testing.T) {
+	g := &Game{}
+	tests := []struct {
+		name string
+		a, b Position
+		want int
+	}{
+		{"same position", Position{X: 3, Y: 4}, Position{X: 3, Y: 4}, 0},
+		{"either direction", Position{X: 1, Y: 7}, Position{X: 4, Y: 2}, 8},
+		{"coordinate above MaxInt", Position{X: math.MaxUint}, Position{X: math.MaxUint - 2}, 2},
+		{"sum above MaxInt", Position{X: math.MaxInt, Y: 1}, Position{}, math.MaxInt},
+		{"sum wraps uint", Position{X: math.MaxUint, Y: math.MaxUint}, Position{}, math.MaxInt},
+	}
+	for _, test := range tests {
+		if got := g.Distance(test.a, test.b); got != test.want {
+			t.Errorf("%s: Distance(%v, %v) = %d, want %d", test.name, test.a, test.b, got, test.want)
+		}
 	}
 }

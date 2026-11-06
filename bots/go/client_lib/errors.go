@@ -7,9 +7,12 @@ import (
 	"github.com/42core-team/go-client-lib/game"
 )
 
+// Errors returned by the actions and [Close]. They are usually wrapped with
+// context and can be tested for using [errors.Is]. Actions also return
+// [game.ErrNilObject] and [game.ErrWrongObjectType] for invalid objects.
 var (
-	ErrClientUnavailable = errors.New("client is not connected or is closed")
-	ErrInvalidPosition   = errors.New("position is outside the board")
+	ErrClientUnavailable = errors.New("client is not connected or is closed") // no game is running
+	ErrInvalidPosition   = errors.New("position is outside the board")        // see IsPosValid
 )
 
 func checkClient() error {
