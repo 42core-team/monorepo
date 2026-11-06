@@ -92,7 +92,8 @@ struct ServerConfig
 	unsigned int timeoutTicks;
 	unsigned int timeoutMs;
 	unsigned int clientWaitTimeoutMs;
-	unsigned int clientConnectTimeoutMs;
+	unsigned int clientConnectTimeoutMs; // overall registration deadline, cannot be extended by traffic
+	unsigned int clientLoginTimeoutMs;	 // deadline per connection to complete its login
 	unsigned int clientPacketsMaxSizeKb;
 };
 

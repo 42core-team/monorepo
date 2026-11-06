@@ -9,5 +9,6 @@
     "timeoutMs": 3000000,
     "clientWaitTimeoutMs": 30000,
     "clientConnectTimeoutMs": 30000,
+    "clientLoginTimeoutMs": 5000,
     "clientPacketsMaxSizeKb": 16
 }

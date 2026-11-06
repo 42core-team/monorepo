@@ -23,11 +23,11 @@ class Bridge
 	bool receiveMessage(json &message);
 	bool tryReceiveMessage(json &message);
 	bool isDisconnected();
+	void detectPeerClosed(); // for before start(), when no read thread notices a closed connection yet
 
 	void start();
 
 	unsigned int getTeamId() const { return team_id_; }
-	void setTeamId(unsigned int teamId) { team_id_ = teamId; }
 
   private:
 	void readLoop();
@@ -41,12 +41,14 @@ class Bridge
 	std::queue<std::string> writeQueue_;
 	std::mutex writeMutex_;
 	std::condition_variable writeCv_;
+	bool writerDone_ = false;
 
 	std::queue<json> readQueue_;
 	std::mutex readMutex_;
 	std::condition_variable readCv_;
 
 	std::atomic<bool> disconnected_;
+	std::atomic<bool> abortWrites_{false};
 };
 
 #endif // BRIDGE_H
