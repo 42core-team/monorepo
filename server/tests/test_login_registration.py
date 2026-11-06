@@ -363,7 +363,6 @@ class RegistrationTest(unittest.TestCase):
         self.assertIn("with 1 / 2 teams", run.output())
         survivor.close()
 
-    @unittest.skipUnless(sys.platform == "linux", "needs POLLRDHUP")
     def test_client_leaving_behind_unread_data_is_disconnected_without_a_core(self):
         run = self.start()
         sock = self.connect()

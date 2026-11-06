@@ -11,6 +11,9 @@
 #include <stdexcept>
 #include <sys/socket.h> // For shutdown()
 #include <unistd.h>		// For close(), read() and write()
+#ifdef __APPLE__
+#	include <sys/event.h>
+#endif
 
 static constexpr std::chrono::milliseconds WRITE_FLUSH_TIMEOUT{200};
 
@@ -118,15 +121,30 @@ bool Bridge::isDisconnected()
 
 void Bridge::detectPeerClosed()
 {
+	// unlike a peek these also see a close behind data the peer sent after its login
 #ifdef POLLRDHUP
-	// unlike a peek this also sees a close behind data the peer sent after its login
 	pollfd pfd{socket_fd_, POLLRDHUP, 0};
 	if (poll(&pfd, 1, 0) > 0 && (pfd.revents & (POLLRDHUP | POLLHUP | POLLERR | POLLNVAL)) != 0) disconnected_ = true;
-	return;
-#endif
+#elif defined(__APPLE__)
+	const int kq = kqueue();
+	if (kq < 0)
+	{
+		Logger::LogWarn("kqueue failed: " + std::string(strerror(errno)) + ". Not checking team " +
+						std::to_string(team_id_) + " before the game.");
+		return;
+	}
+	struct kevent change;
+	struct kevent event;
+	EV_SET(&change, socket_fd_, EVFILT_READ, EV_ADD, 0, 0, nullptr);
+	const timespec noWait{0, 0};
+	if (kevent(kq, &change, 1, &event, 1, &noWait) > 0 && (event.flags & (EV_EOF | EV_ERROR)) != 0)
+		disconnected_ = true;
+	close(kq);
+#else
 	char byte;
 	const ssize_t n = recv(socket_fd_, &byte, 1, MSG_PEEK | MSG_DONTWAIT);
 	if (n == 0 || (n < 0 && errno != EAGAIN && errno != EWOULDBLOCK && errno != EINTR)) disconnected_ = true;
+#endif
 }
 
 void Bridge::readLoop()

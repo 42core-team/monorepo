@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <json-schema.hpp>
+#include <limits>
 #include <list>
 #include <poll.h>
 #include <sys/socket.h>
@@ -137,7 +138,9 @@ void handleLogin(PendingLogin &login, const json_validator &validator, const std
 int pollTimeoutMs(Clock::time_point now, Clock::time_point wakeUp)
 {
 	if (wakeUp <= now) return 0;
-	return static_cast<int>(std::chrono::ceil<std::chrono::milliseconds>(wakeUp - now).count());
+	// a negative timeout would make poll wait forever, the loop rechecks the deadline after a clamped wait
+	const auto ms = std::chrono::ceil<std::chrono::milliseconds>(wakeUp - now).count();
+	return static_cast<int>(std::min<long long>(ms, std::numeric_limits<int>::max()));
 }
 } // namespace
 
