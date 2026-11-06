@@ -2,16 +2,18 @@
 #include "Config.h"
 #include "Game.h"
 #include "Logger.h"
+#include "Registration.h"
 #include "Server.h"
 #include "json.hpp"
 
 #include <algorithm>
 #include <arpa/inet.h>
+#include <cctype>
 #include <cerrno>
 #include <csignal>
+#include <cstdlib>
 #include <cstring>
 #include <iostream>
-#include <json-schema.hpp>
 #include <memory>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -19,7 +21,6 @@
 #include <unistd.h>
 #include <unordered_map>
 #include <vector>
-using nlohmann::json_schema::json_validator;
 
 using json = nlohmann::ordered_json;
 
@@ -114,69 +115,17 @@ int main(int argc, char *argv[])
 	Server server{};
 
 	std::unordered_map<unsigned int, std::unique_ptr<Bridge>> bridges{};
-
-	while (bridges.size() < expectedTeamIds.size())
+	for (auto &[teamId, client] : registerClients(server, expectedTeamIds))
 	{
-		std::string client_addr;
-		int client_fd = server.acceptClient(client_addr);
-		if (client_fd < 0)
-		{
-			Logger::Log(LogLevel::WARNING, "accept failed: " + std::string(strerror(errno)));
-			break;
-		}
-
-		Logger::Log("Accepted connection from " + client_addr);
-
-		std::unique_ptr<Bridge> bridge = std::make_unique<Bridge>(client_fd, expectedTeamIds[bridges.size()]);
-		bridge->start();
-
-		// handle login message
-		json loginMessage;
-		if (!bridge->receiveMessage(loginMessage))
-		{
-			Logger::Log(LogLevel::WARNING, "Did not receive a login message from the client.");
-			continue;
-		}
-		try
-		{
-			json_validator v;
-			v.set_root_schema(Config::load_json_schema("packets/login-message.schema.json"));
-			v.validate(loginMessage);
-		}
-		catch (const std::exception &e)
-		{
-			Logger::Log(LogLevel::WARNING, std::string("Login message validation error: ") + e.what() + " (\"" +
-												   loginMessage.dump() + "\")");
-			continue;
-		}
-		unsigned int teamId = loginMessage["id"];
-		bridge->setTeamId(teamId);
-
-		// set team name
-		std::string clientName =
-				sanitizeTeamName(static_cast<std::string>(loginMessage["name"]), "Team" + std::to_string(teamId));
 		// allow client to override only if current name is the fallback
-		const std::string current = ReplayEncoder::instance().getTeamNameFromTeamId(teamId);
 		const std::string fallback = "Team" + std::to_string(teamId);
-		if (current == fallback)
+		if (ReplayEncoder::instance().getTeamNameFromTeamId(teamId) == fallback)
 		{
-			ReplayEncoder::instance().setTeamName(teamId, clientName);
+			ReplayEncoder::instance().setTeamName(teamId, sanitizeTeamName(client.name, fallback));
 		}
-
-		if (std::find(expectedTeamIds.begin(), expectedTeamIds.end(), teamId) == expectedTeamIds.end())
-		{
-			Logger::Log(LogLevel::WARNING, "Received unexpected team ID " + std::to_string(teamId));
-			continue;
-		}
-		if (bridges.find(teamId) != bridges.end())
-		{
-			Logger::Log(LogLevel::WARNING, "Duplicate connection for team ID " + std::to_string(teamId));
-			continue;
-		}
-
-		bridges[teamId] = std::move(bridge);
-		Logger::Log("Accepted team " + std::to_string(teamId));
 		ReplayEncoder::instance().markConnectedInitially(teamId, true);
+		client.bridge->detectPeerClosed();
+		bridges[teamId] = std::move(client.bridge);
 	}
 	size_t placeCounter = expectedTeamIds.size() - 1;
 	std::vector<unsigned int> connectedTeamIds;
@@ -195,6 +144,7 @@ int main(int argc, char *argv[])
 		{
 			ReplayEncoder::instance().setDeathReason(teamId, death_reason_t::DISCONNECTED);
 			ReplayEncoder::instance().setPlace(teamId, placeCounter--);
+			bridges.erase(it);
 		}
 		else if (it != bridges.end())
 		{
@@ -208,7 +158,10 @@ int main(int argc, char *argv[])
 	Game game(connectedTeamIds);
 
 	for (auto &pair : bridges)
+	{
+		pair.second->start();
 		game.addBridge(std::move(pair.second));
+	}
 
 	game.run();
 

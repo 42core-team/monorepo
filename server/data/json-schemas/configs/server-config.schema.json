@@ -36,6 +36,10 @@
 			"type": "integer",
 			"minimum": 1
 		},
+		"clientLoginTimeoutMs": {
+			"type": "integer",
+			"minimum": 1
+		},
 		"clientPacketsMaxSizeKb": {
 			"type": "integer",
 			"minimum": 1

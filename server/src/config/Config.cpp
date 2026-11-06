@@ -270,6 +270,7 @@ static ServerConfig parseServerConfig()
 	config.timeoutMs = j.at("timeoutMs").get<unsigned int>();
 	config.clientWaitTimeoutMs = j.at("clientWaitTimeoutMs").get<unsigned int>();
 	config.clientConnectTimeoutMs = j.at("clientConnectTimeoutMs").get<unsigned int>();
+	config.clientLoginTimeoutMs = j.value("clientLoginTimeoutMs", 5000u);
 	config.clientPacketsMaxSizeKb = j.at("clientPacketsMaxSizeKb").get<unsigned int>();
 
 	return config;
