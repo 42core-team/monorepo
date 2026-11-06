@@ -17,6 +17,8 @@ type Game struct {
 
 `Config` is fixed game configuration. `Objects` contains the current cores, units, deposits, walls, and gem piles. State diffs update the existing objects and remove objects reported as dead.
 
+Server action error messages are printed by the library and do not terminate `Run`; transport and protocol errors do.
+
 ```go
 func tick(g *game.Game, bot *coregame.Bot) {
 	fmt.Printf("tick %d, objects %d\n", g.ElapsedTicks, len(g.Objects))

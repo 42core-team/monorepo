@@ -45,7 +45,7 @@ func DefaultBotConfig(teamID int, teamName string) BotConfig {
 func NewBot(config BotConfig) (*Bot, error) {
 	conn, err := internal.NewConnection(config.ServerAddr, config.TeamID, config.Debug)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create connection: %v", err)
+		return nil, fmt.Errorf("create connection: %w", err)
 	}
 
 	return &Bot{
@@ -56,6 +56,9 @@ func NewBot(config BotConfig) (*Bot, error) {
 }
 
 func (b *Bot) Run(tick func(*game.Game, *Bot)) error {
+	if err := b.checkClient(); err != nil {
+		return fmt.Errorf("run bot: %w", err)
+	}
 	if tick == nil {
 		return fmt.Errorf("tick callback must not be nil")
 	}
@@ -66,6 +69,9 @@ func (b *Bot) Run(tick func(*game.Game, *Bot)) error {
 }
 
 func (b *Bot) Close() error {
+	if b == nil || b.connection == nil {
+		return ErrClientUnavailable
+	}
 	return b.connection.Close()
 }
 

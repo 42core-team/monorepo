@@ -21,16 +21,25 @@ type TileTravelability struct {
 }
 
 type TravelPolicy func(pos game.Position, unit *game.Object) TileTravelability
-func (b *Bot) Travel(unit *game.Object, target game.Position, policy TravelPolicy)
+func (b *Bot) Travel(unit *game.Object, target game.Position, policy TravelPolicy) error
 ```
 
 Pass nil for the default component-aware policy. It blocks friendly cores, waits for friendly units, estimates attack costs from effective damage and HP, and blocks gem piles when the unit has reached `MaxGems`.
 
+Returns errors for an unavailable client, invalid unit data, or out-of-bounds origin/destination. Arrival or no available route queues nothing and returns nil. Otherwise, nil means an action was queued or travel is waiting for an occupant; it does not guarantee server execution. Server error messages are printed by the library.
+
 Travel does not check the traveling unit's action cooldown. Check it before calling:
 
 ```go
-if unit.GetUnitData().ActionCooldown <= 0 {
-	bot.Travel(unit, enemyCore.Pos, nil)
+data, err := unit.UnitData()
+if err != nil {
+	log.Printf("read unit: %v", err)
+	return
+}
+if data.ActionCooldown <= 0 {
+	if err := bot.Travel(unit, enemyCore.Pos, nil); err != nil {
+		log.Printf("travel: %v", err)
+	}
 }
 ```
 

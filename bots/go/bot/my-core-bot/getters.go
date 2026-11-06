@@ -51,8 +51,8 @@ func isOwnUnit(myTeamID uint) func(*game.Object) bool {
 		if obj == nil || obj.Type != game.ObjectUnit {
 			return false
 		}
-		data := obj.GetUnitData()
-		return data != nil && data.TeamID == myTeamID
+		data, err := obj.UnitData()
+		return err == nil && data.TeamID == myTeamID
 	}
 }
 
@@ -61,7 +61,7 @@ func isOpponentUnit(myTeamID uint) func(*game.Object) bool {
 		if obj == nil || obj.Type != game.ObjectUnit {
 			return false
 		}
-		data := obj.GetUnitData()
-		return data != nil && data.TeamID != myTeamID
+		data, err := obj.UnitData()
+		return err == nil && data.TeamID != myTeamID
 	}
 }
