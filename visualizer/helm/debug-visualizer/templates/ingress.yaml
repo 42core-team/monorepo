@@ -1,36 +1,14 @@
+{{- $previewEnabled := dig "traefikPreview" "enabled" false .Values.ingress -}}
+{{- if and $previewEnabled (not .Values.ingress.enabled) -}}
+{{- fail "ingress.traefikPreview.enabled requires ingress.enabled=true" -}}
+{{- end -}}
+{{- if and $previewEnabled (eq .Values.ingress.className "traefik") -}}
+{{- fail "disable ingress.traefikPreview when the primary ingress class is traefik" -}}
+{{- end -}}
 {{- if .Values.ingress.enabled }}
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: {{ include "debug-visualizer.fullname" . }}
-  labels:
-    {{- include "debug-visualizer.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
-  annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-spec:
-  {{- if .Values.ingress.className }}
-  ingressClassName: {{ .Values.ingress.className }}
-  {{- end }}
-  {{- with .Values.ingress.tls }}
-  tls:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-  rules:
-    {{- range .Values.ingress.hosts }}
-    - host: {{ .host | quote }}
-      http:
-        paths:
-          {{- range .paths }}
-          - path: {{ .path }}
-            pathType: {{ .pathType }}
-            backend:
-              service:
-                name: {{ include "debug-visualizer.fullname" $ }}
-                port:
-                  number: {{ $.Values.service.port }}
-          {{- end }}
-    {{- end }}
+{{ include "debug-visualizer.ingress" (dict "root" . "preview" false) }}
+{{- if $previewEnabled }}
+---
+{{ include "debug-visualizer.ingress" (dict "root" . "preview" true) }}
 {{- end }}
-
+{{- end }}

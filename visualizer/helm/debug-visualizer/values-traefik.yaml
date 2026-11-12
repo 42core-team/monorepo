@@ -1,0 +1,6 @@
+# Apply after the environment values ONLY after DNS/certificate preparation.
+# The template removes legacy class and NGINX annotations from this route.
+ingress:
+  className: traefik
+  traefikPreview:
+    enabled: false

@@ -13,6 +13,10 @@ ingress:
   enabled: true
   className: "nginx"
   annotations: {}
+  # Add a second, HTTPS-only Traefik route without changing the primary route.
+  # Requires Traefik and the existing cert-manager TLS Secrets to be ready.
+  traefikPreview:
+    enabled: false
   hosts:
     - host: visualizer.coregame.sh
       paths:
