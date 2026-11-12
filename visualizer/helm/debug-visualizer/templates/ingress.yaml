@@ -1,14 +1,42 @@
-{{- $previewEnabled := dig "traefikPreview" "enabled" false .Values.ingress -}}
-{{- if and $previewEnabled (not .Values.ingress.enabled) -}}
-{{- fail "ingress.traefikPreview.enabled requires ingress.enabled=true" -}}
-{{- end -}}
-{{- if and $previewEnabled (eq .Values.ingress.className "traefik") -}}
-{{- fail "disable ingress.traefikPreview when the primary ingress class is traefik" -}}
-{{- end -}}
 {{- if .Values.ingress.enabled }}
-{{ include "debug-visualizer.ingress" (dict "root" . "preview" false) }}
-{{- if $previewEnabled }}
----
-{{ include "debug-visualizer.ingress" (dict "root" . "preview" true) }}
+{{- if ne (.Values.ingress.className | default "") "traefik" -}}
+{{- fail "ingress.className must be traefik when ingress.enabled=true" -}}
+{{- end -}}
+{{- if not .Values.ingress.tls -}}
+{{- fail "ingress.tls must reference certificate Secrets for the HTTPS ingress" -}}
+{{- end -}}
+{{- range .Values.ingress.tls -}}
+{{- if or (not .secretName) (not .hosts) -}}
+{{- fail "each ingress.tls entry requires secretName and hosts" -}}
+{{- end -}}
 {{- end }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "debug-visualizer.fullname" . }}
+  labels:
+    {{- include "debug-visualizer.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.className | quote }}
+  tls:
+    {{- toYaml .Values.ingress.tls | nindent 4 }}
+  rules:
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ include "debug-visualizer.fullname" $ }}
+                port:
+                  number: {{ $.Values.service.port }}
+          {{- end }}
+    {{- end }}
 {{- end }}

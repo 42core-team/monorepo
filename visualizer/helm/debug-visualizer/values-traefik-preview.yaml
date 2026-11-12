@@ -1,4 +1,0 @@
-# Apply after values-dev.yaml or values-prod.yaml. Keeps the primary NGINX route.
-ingress:
-  traefikPreview:
-    enabled: true
