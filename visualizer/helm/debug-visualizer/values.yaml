@@ -11,14 +11,20 @@ service:
 
 ingress:
   enabled: true
-  className: "nginx"
-  annotations: {}
+  className: "traefik"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    traefik.ingress.kubernetes.io/router.tls: "true"
   hosts:
     - host: visualizer.coregame.sh
       paths:
         - path: /
           pathType: Prefix
-  tls: []
+  tls:
+    - hosts:
+        - visualizer.coregame.sh
+      secretName: visualizer-coregame-sh-tls
 
 resources:
   requests:
