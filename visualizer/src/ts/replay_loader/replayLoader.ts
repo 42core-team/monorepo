@@ -1,6 +1,8 @@
 import {
 	resetTimeManager,
 	setPlaybackSpeed,
+	startPlayback,
+	updateTimeRange,
 } from "../input_manager/timeManager";
 import { ensureIcons } from "../renderer/iconManager";
 import { getTeamIndex } from "../renderer/objectRenderer";
@@ -145,7 +147,11 @@ class ReplayLoader {
 			throw new Error("No replay data available to load.");
 		}
 
-		this.replayData = JSON.parse(fileData) as ReplayData;
+		this.loadReplayData(JSON.parse(fileData) as ReplayData);
+	}
+
+	public loadReplayData(replayData: ReplayData): void {
+		this.replayData = replayData;
 		if (
 			!this.replayData.ticks ||
 			typeof this.replayData.full_tick_amount !== "number"
@@ -189,6 +195,17 @@ class ReplayLoader {
 		console.log(
 			`💫 Replay loaded successfully! ✨ (${this.replayData.misc.team_results[0].name} 🤜 vs 🤛 ${this.replayData.misc.team_results[1].name} for ${totalReplayTicks} ticks)`,
 		);
+	}
+
+	public appendTick(tick: number, tickData: ReplayTick): void {
+		if (tickData && Object.keys(tickData).length > 0) {
+			this.replayData.ticks[String(tick)] = deepClone(tickData);
+		}
+		this.replayData.full_tick_amount = Math.max(
+			this.replayData.full_tick_amount,
+			tick,
+		);
+		totalReplayTicks = this.replayData.full_tick_amount;
 	}
 
 	private applyDiff(state: State, tickData: ReplayTick): void {
@@ -307,6 +324,8 @@ let replayInterval: ReturnType<typeof setInterval> | null = null;
 let currentFilePath: string | null = null;
 let currentCacheInterval = 25;
 let lastEtag: string | null = null;
+let liveSocket: WebSocket | null = null;
+let liveReconnectTimer: ReturnType<typeof setTimeout> | null = null;
 
 async function resetReplay(reason: string = "reset"): Promise<void> {
 	if (!currentFilePath) {
@@ -333,6 +352,10 @@ export async function setupReplayLoader(
 	cacheInterval = 25,
 	updateInterval = 3000,
 ): Promise<void> {
+	if (liveReconnectTimer) clearTimeout(liveReconnectTimer);
+	liveReconnectTimer = null;
+	liveSocket?.close();
+	liveSocket = null;
 	currentFilePath = filePath;
 	currentCacheInterval = cacheInterval;
 
@@ -394,6 +417,73 @@ export async function setupReplayLoader(
 			console.error("Error checking for updates:", err);
 		}
 	}, updateInterval);
+}
+
+type LiveReplayMessage =
+	| { type: "snapshot"; replay: ReplayData }
+	| { type: "tick"; tick: number; data: ReplayTick }
+	| { type: "complete"; replay: ReplayData };
+
+export async function setupLiveReplayLoader(
+	websocketUrl: string,
+	cacheInterval = 25,
+	followLive = false,
+): Promise<void> {
+	if (replayInterval) clearInterval(replayInterval);
+	replayInterval = null;
+	currentFilePath = null;
+	currentCacheInterval = cacheInterval;
+
+	let receivedInitialSnapshot = false;
+	let resolveInitial: (() => void) | null = null;
+	const initialSnapshot = new Promise<void>((resolve) => {
+		resolveInitial = resolve;
+	});
+
+	const connect = () => {
+		const socket = new WebSocket(websocketUrl);
+		liveSocket = socket;
+		socket.addEventListener("message", (event) => {
+			try {
+				const message = JSON.parse(String(event.data)) as LiveReplayMessage;
+				if (message.type === "snapshot" || message.type === "complete") {
+					const loader = new ReplayLoader(currentCacheInterval);
+					loader.loadReplayData(message.replay);
+					replayLoader = loader;
+					tempStateCache = null;
+					if (!receivedInitialSnapshot) {
+						receivedInitialSnapshot = true;
+						setupRenderer();
+						ensureIcons();
+						updateWinDisplayEmojis();
+						resolveInitial?.();
+					} else {
+						updateTimeRange();
+						updateWinDisplayEmojis();
+					}
+					return;
+				}
+				if (message.type === "tick" && replayLoader) {
+					replayLoader.appendTick(message.tick, message.data);
+					tempStateCache = null;
+					updateTimeRange();
+					if (followLive) startPlayback();
+				}
+			} catch (error) {
+				console.error("Invalid live replay message:", error);
+			}
+		});
+		socket.addEventListener("error", () => {
+			console.warn(`Live replay connection failed: ${websocketUrl}`);
+		});
+		socket.addEventListener("close", () => {
+			if (liveSocket !== socket) return;
+			liveReconnectTimer = setTimeout(connect, 1000);
+		});
+	};
+
+	connect();
+	await initialSnapshot;
 }
 
 let tempStateCache:
