@@ -46,6 +46,7 @@ class ServerRun:
         client_wait_timeout_ms=300,
         max_kb=16,
         expect_listening=True,
+        seed=None,
     ):
         self.dir = tempfile.TemporaryDirectory()
         config = {
@@ -60,11 +61,19 @@ class ServerRun:
         config_path = os.path.join(self.dir.name, "server.config.json")
         with open(config_path, "w") as f:
             json.dump(config, f)
+        game_config = GAME_CONFIG
+        if seed is not None:
+            with open(GAME_CONFIG) as f:
+                game = json.loads("\n".join(line.split("//")[0] for line in f))  # the shared config has // comments
+            game["seed"] = seed
+            game_config = os.path.join(self.dir.name, "game.config.json")
+            with open(game_config, "w") as f:
+                json.dump(game, f)
         self.log_path = os.path.join(self.dir.name, "server.log")
         self.log = open(self.log_path, "w")
         self.started = time.monotonic()
         self.proc = subprocess.Popen(
-            [SERVER_BIN, config_path, GAME_CONFIG, os.path.join(SERVER_ROOT, "data")] + [str(t) for t in teams],
+            [SERVER_BIN, config_path, game_config, os.path.join(SERVER_ROOT, "data")] + [str(t) for t in teams],
             stdout=self.log,
             stderr=subprocess.STDOUT,
         )
@@ -523,6 +532,28 @@ class RegistrationTest(unittest.TestCase):
         # a clean error exit, not a signal and not a game without players
         self.assertEqual(run.proc.returncode, 1, run.output())
         self.assertIn("Could not bind", run.output())
+
+    def test_configured_seed_is_not_sent_to_clients(self):
+        # the seed fixes the per-tick action order, so clients must not learn it (#255)
+        seed = "LEAKME123"
+        run = self.start(seed=seed)
+        spy = self.connect()
+        spy.sendall(login_line(1))
+        other = self.bot(2)
+        spy.settimeout(10)
+        reader = spy.makefile("rb")
+        first = reader.readline()
+        self.assertTrue(first, run.output())
+        self.assertNotIn(seed.encode(), first)
+        self.assertNotIn("seed", json.loads(first))
+        self.assertIn("gridSize", json.loads(first))
+        other.close()
+        spy.close()
+        run.wait(10)
+        with open(os.path.join(run.dir.name, "replay_latest.json")) as f:
+            replay = json.load(f)
+        self.assertEqual(replay["config"]["seed"], seed)
+        self.assertEqual(replay["misc"]["worldGeneratorSeed"], seed)
 
 
 if __name__ == "__main__":

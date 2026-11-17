@@ -517,6 +517,8 @@ void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &ac
 void Game::sendConfig()
 {
 	json config = Config::encodeConfig();
+	// The seed determines the per-tick action order, so a bot knowing it could predict who resolves first.
+	config.erase("seed");
 
 	for (auto &bridge : bridges_)
 	{
