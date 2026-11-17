@@ -27,7 +27,17 @@ COPY --from=build-game /core/data ./data
 COPY ./.github/workflows/server-docker-entrypoint.sh ./docker-entrypoint.sh
 COPY ./bots/configs/fake_demo ./configs
 
-RUN mkdir replays && chmod +x ./docker-entrypoint.sh
+# Run as an unprivileged user (numeric IDs so Kubernetes runAsNonRoot can verify it).
+# Code and scripts stay root-owned and read-only; only /core/replays is writable.
+# A volume mounted over /core/replays must be writable by UID/GID 10001
+# (chown the volume, or set fsGroup/runAsGroup 10001 in Kubernetes).
+RUN groupadd --system --gid 10001 core \
+    && useradd --system --uid 10001 --gid 10001 --no-create-home --shell /usr/sbin/nologin core \
+    && mkdir replays \
+    && chown 10001:10001 replays \
+    && chmod +x ./docker-entrypoint.sh ./data/scripts/*.sh
+
+USER 10001:10001
 
 ENTRYPOINT [ "./docker-entrypoint.sh", "./server", "./configs/server.config.json", "./configs/game.config.json", "./data" ]
 CMD [ "--default-arg" ]

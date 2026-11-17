@@ -92,9 +92,10 @@ if [[ "$SEND_RESULTS" == "true" && ! -f "$RABBITMQ_SCRIPT" ]]; then
     exit 1
 fi
 
-# Make scripts executable if they exist
-[[ -f "$UPLOAD_SCRIPT" ]] && chmod +x "$UPLOAD_SCRIPT"
-[[ -f "$RABBITMQ_SCRIPT" ]] && chmod +x "$RABBITMQ_SCRIPT"
+# Scripts are made executable at image build time; the runtime user cannot chmod
+# root-owned files, so this is best-effort only.
+[[ -f "$UPLOAD_SCRIPT" ]] && { chmod +x "$UPLOAD_SCRIPT" 2>/dev/null || true; }
+[[ -f "$RABBITMQ_SCRIPT" ]] && { chmod +x "$RABBITMQ_SCRIPT" 2>/dev/null || true; }
 
 # Run the main game server with all provided arguments
 echo "Running game server with arguments: $*"
