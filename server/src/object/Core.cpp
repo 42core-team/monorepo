@@ -16,7 +16,7 @@ void Core::damage(Object *attacker, unsigned int damage)
 	this->setHP(this->getHP() - damage);
 
 	Stats::instance().inc(stat_keys::damage_cores, damage);
-	if (((Core *)this)->getTeamId() != ((Core *)attacker)->getTeamId())
+	if (!attacker->isOwnedByTeam(team_id_))
 		Stats::instance().inc(stat_keys::damage_opponent, damage);
 	else
 		Stats::instance().inc(stat_keys::damage_self, damage);

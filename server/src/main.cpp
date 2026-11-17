@@ -16,6 +16,7 @@
 #include <iostream>
 #include <memory>
 #include <netinet/in.h>
+#include <optional>
 #include <sys/socket.h>
 #include <thread>
 #include <unistd.h>
@@ -39,7 +40,9 @@ static std::string sanitizeTeamName(const std::string &teamName, const std::stri
 	}
 	if (sanitized.empty())
 	{
-		Logger::LogWarn("Team name '" + teamName + "' is invalid, using default name '" + defaultName + "'");
+		// escaped, the raw name could forge log lines or carry terminal escape sequences
+		Logger::LogWarn("Team name " + json(teamName).dump(-1, ' ', false, json::error_handler_t::replace) +
+						" is invalid, using default name '" + defaultName + "'");
 		return defaultName;
 	}
 	return sanitized;
@@ -112,10 +115,19 @@ int main(int argc, char *argv[])
 	Logger::Log(teamIdsStr);
 
 	// will throw a runtime error if something fails
-	Server server{};
+	std::optional<Server> server;
+	try
+	{
+		server.emplace();
+	}
+	catch (const std::exception &e)
+	{
+		Logger::LogErr(std::string("Could not start server: ") + e.what());
+		return 1;
+	}
 
 	std::unordered_map<unsigned int, std::unique_ptr<Bridge>> bridges{};
-	for (auto &[teamId, client] : registerClients(server, expectedTeamIds))
+	for (auto &[teamId, client] : registerClients(*server, expectedTeamIds))
 	{
 		// allow client to override only if current name is the fallback
 		const std::string fallback = "Team" + std::to_string(teamId);
