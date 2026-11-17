@@ -29,10 +29,11 @@ struct PendingLogin
 	int fd;
 	std::string addr;
 	Clock::time_point deadline; // fixed on accept, traffic never extends it
+	const Listener &listener;	// the connection arrived here
 	std::string buffer;
 
-	PendingLogin(int fd, std::string addr, Clock::time_point deadline)
-		: fd(fd), addr(std::move(addr)), deadline(deadline)
+	PendingLogin(int fd, std::string addr, Clock::time_point deadline, const Listener &listener)
+		: fd(fd), addr(std::move(addr)), deadline(deadline), listener(listener)
 	{
 	}
 	~PendingLogin()
@@ -124,6 +125,13 @@ void handleLogin(PendingLogin &login, const json_validator &validator, const std
 		Logger::LogWarn("Received unexpected team ID " + std::to_string(teamId) + " from " + login.addr + ".");
 		return;
 	}
+	if (login.listener.teamId && *login.listener.teamId != teamId)
+	{
+		Logger::LogWarn("Received team ID " + std::to_string(teamId) + " on port " +
+						std::to_string(login.listener.port) + ", which is reserved for team " +
+						std::to_string(*login.listener.teamId) + ", from " + login.addr + ".");
+		return;
+	}
 	if (clients.find(teamId) != clients.end())
 	{
 		Logger::LogWarn("Duplicate connection for team ID " + std::to_string(teamId) + " from " + login.addr + ".");
@@ -144,7 +152,23 @@ int pollTimeoutMs(Clock::time_point now, Clock::time_point wakeUp)
 }
 } // namespace
 
-std::unordered_map<unsigned int, RegisteredClient> registerClients(const Server &server,
+std::vector<Listener> openListeners(const std::map<unsigned int, int> &teamPorts)
+{
+	std::vector<Listener> listeners;
+	if (teamPorts.empty())
+	{
+		listeners.push_back({std::make_unique<Server>(Server::DEFAULT_PORT), Server::DEFAULT_PORT, std::nullopt});
+		return listeners;
+	}
+	for (const auto &[teamId, port] : teamPorts)
+	{
+		listeners.push_back({std::make_unique<Server>(port), port, teamId});
+		Logger::Log("Port " + std::to_string(port) + " only accepts team " + std::to_string(teamId) + ".");
+	}
+	return listeners;
+}
+
+std::unordered_map<unsigned int, RegisteredClient> registerClients(const std::vector<Listener> &listeners,
 																   const std::vector<unsigned int> &expectedTeamIds)
 {
 	const json_validator validator = loadLoginValidator();
@@ -172,9 +196,10 @@ std::unordered_map<unsigned int, RegisteredClient> registerClients(const Server 
 		}
 
 		std::vector<pollfd> fds;
-		fds.reserve(pending.size() + 1);
+		fds.reserve(listeners.size() + pending.size());
 		const bool acceptAllowed = now >= acceptAllowedAt;
-		fds.push_back({acceptAllowed ? server.getSock() : -1, POLLIN, 0}); // poll skips negative fds
+		for (const Listener &listener : listeners)
+			fds.push_back({acceptAllowed ? listener.server->getSock() : -1, POLLIN, 0}); // poll skips negative fds
 		for (const PendingLogin &login : pending)
 			fds.push_back({login.fd, POLLIN, 0});
 
@@ -193,7 +218,7 @@ std::unordered_map<unsigned int, RegisteredClient> registerClients(const Server 
 		now = Clock::now();
 		if (now >= registrationDeadline) continue;
 
-		size_t fdIndex = 1;
+		size_t fdIndex = listeners.size();
 		for (auto it = pending.begin(); it != pending.end() && clients.size() < expectedTeamIds.size(); ++fdIndex)
 		{
 			if (fds[fdIndex].revents == 0 || it->deadline <= now)
@@ -211,27 +236,34 @@ std::unordered_map<unsigned int, RegisteredClient> registerClients(const Server 
 			it = pending.erase(it);
 		}
 
-		if (fds[0].revents == 0 || clients.size() >= expectedTeamIds.size()) continue;
+		for (size_t i = 0; i < listeners.size() && clients.size() < expectedTeamIds.size(); ++i)
+		{
+			if (fds[i].revents == 0) continue;
+			const Listener &listener = listeners[i];
 
-		std::string addr;
-		const int clientFd = server.acceptClient(addr);
-		now = Clock::now();
-		if (clientFd < 0)
-		{
-			if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR || errno == ECONNABORTED) continue;
-			// the listener stays readable, so back off instead of spinning on e.g. EMFILE
-			Logger::LogWarn("accept failed: " + std::string(strerror(errno)));
-			acceptAllowedAt = now + ACCEPT_RETRY_DELAY;
-			continue;
+			std::string addr;
+			const int clientFd = listener.server->acceptClient(addr);
+			now = Clock::now();
+			if (clientFd < 0)
+			{
+				if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR || errno == ECONNABORTED) continue;
+				// the listener stays readable, so back off instead of spinning on e.g. EMFILE
+				Logger::LogWarn("accept failed: " + std::string(strerror(errno)));
+				acceptAllowedAt = now + ACCEPT_RETRY_DELAY;
+				continue;
+			}
+			Logger::Log("Accepted connection from " + addr + " on port " + std::to_string(listener.port));
+			// bounded per listener, so connections on one team's port can never evict a login on another's
+			const auto onListener = [&listener](const PendingLogin &login) { return &login.listener == &listener; };
+			if (static_cast<size_t>(std::count_if(pending.begin(), pending.end(), onListener)) >= MAX_PENDING_LOGINS)
+			{
+				// a healthy client logs in right after connecting, so idle connections cannot lock it out this way
+				const auto oldest = std::find_if(pending.begin(), pending.end(), onListener);
+				Logger::LogWarn("Too many pending logins, dropping oldest from " + oldest->addr + ".");
+				pending.erase(oldest);
+			}
+			pending.emplace_back(clientFd, addr, now + loginTimeout, listener);
 		}
-		Logger::Log("Accepted connection from " + addr);
-		if (pending.size() >= MAX_PENDING_LOGINS)
-		{
-			// a healthy client logs in right after connecting, so idle connections cannot lock it out this way
-			Logger::LogWarn("Too many pending logins, dropping oldest from " + pending.front().addr + ".");
-			pending.pop_front();
-		}
-		pending.emplace_back(clientFd, addr, now + loginTimeout);
 	}
 	return clients;
 }

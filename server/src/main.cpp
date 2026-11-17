@@ -4,6 +4,7 @@
 #include "Logger.h"
 #include "Registration.h"
 #include "Server.h"
+#include "TeamPorts.h"
 #include "json.hpp"
 
 #include <algorithm>
@@ -14,6 +15,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
+#include <map>
 #include <memory>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -111,11 +113,32 @@ int main(int argc, char *argv[])
 		teamIdsStr += std::to_string(teamId) + " ";
 	Logger::Log(teamIdsStr);
 
-	// will throw a runtime error if something fails
-	Server server{};
+	// TEAM_PORTS binds each team to its own port, the orchestrator's firewall keeps bots off each other's ports
+	std::map<unsigned int, int> teamPorts;
+	try
+	{
+		teamPorts = readTeamPorts(expectedTeamIds);
+	}
+	catch (const std::exception &e)
+	{
+		Logger::Log(LogLevel::ERROR, "Invalid TEAM_PORTS: " + std::string(e.what()) + ".");
+		return 1;
+	}
+
+	// a port another process already holds is fatal, otherwise that process could keep a team from ever logging in
+	std::vector<Listener> listeners;
+	try
+	{
+		listeners = openListeners(teamPorts);
+	}
+	catch (const std::exception &e)
+	{
+		Logger::Log(LogLevel::ERROR, std::string(e.what()) + ".");
+		return 1;
+	}
 
 	std::unordered_map<unsigned int, std::unique_ptr<Bridge>> bridges{};
-	for (auto &[teamId, client] : registerClients(server, expectedTeamIds))
+	for (auto &[teamId, client] : registerClients(listeners, expectedTeamIds))
 	{
 		// allow client to override only if current name is the fallback
 		const std::string fallback = "Team" + std::to_string(teamId);

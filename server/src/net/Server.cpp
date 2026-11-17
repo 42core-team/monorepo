@@ -3,6 +3,7 @@
 #include "Logger.h"
 
 #include <arpa/inet.h>
+#include <cstring>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdexcept>
@@ -10,21 +11,24 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+namespace
+{
+// Closes fd if it is open and throws, keeping errno's text so the caller can log why.
+[[noreturn]] void failListening(int fd, int port, const std::string &what)
+{
+	const int savedErrno = errno;
+	if (fd >= 0) close(fd);
+	throw std::runtime_error(what + " on port " + std::to_string(port) + ": " + strerror(savedErrno));
+}
+} // namespace
+
 Server::Server(int port) : sock_fd(socket(AF_INET, SOCK_STREAM, 0))
 {
-	if (sock_fd < 0)
-	{
-		Logger::Log(LogLevel::ERROR, "Could not create socket.");
-		std::runtime_error("Socket is mandatory to work.");
-	}
+	if (sock_fd < 0) failListening(sock_fd, port, "Could not create socket");
 
 	int opt = 1;
 	if (setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
-	{
-		Logger::Log(LogLevel::ERROR, "Could not set socket option.");
-		close(sock_fd);
-		std::runtime_error("Socket is mandatory to work.");
-	}
+		failListening(sock_fd, port, "Could not set socket option");
 
 	struct sockaddr_in addr{};
 	addr.sin_family = AF_INET;
@@ -32,27 +36,14 @@ Server::Server(int port) : sock_fd(socket(AF_INET, SOCK_STREAM, 0))
 	addr.sin_port = htons(port);
 
 	if (bind(sock_fd, reinterpret_cast<sockaddr *>(&addr), sizeof(addr)) < 0)
-	{
-		Logger::Log(LogLevel::ERROR, "Could not bind on socket.");
-		close(sock_fd);
-		std::runtime_error("Socket is mandatory to work.");
-	}
+		failListening(sock_fd, port, "Could not bind on socket");
 
 	// a client aborting between poll() and accept() must not be able to block the accept
 	int flags = fcntl(sock_fd, F_GETFL, 0);
 	if (flags < 0 || fcntl(sock_fd, F_SETFL, flags | O_NONBLOCK) < 0)
-	{
-		Logger::Log(LogLevel::ERROR, "Could not set socket to non-blocking.");
-		close(sock_fd);
-		std::runtime_error("Socket is mandatory to work.");
-	}
+		failListening(sock_fd, port, "Could not set socket to non-blocking");
 
-	if (listen(sock_fd, SOMAXCONN) < 0)
-	{
-		Logger::Log(LogLevel::ERROR, "Could not listen on socket.");
-		close(sock_fd);
-		std::runtime_error("Socket is mandatory to work.");
-	}
+	if (listen(sock_fd, SOMAXCONN) < 0) failListening(sock_fd, port, "Could not listen on socket");
 
 	Logger::Log("Server listening on port " + std::to_string(port) + "...");
 }
