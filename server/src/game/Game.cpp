@@ -78,8 +78,14 @@ void Game::run()
 						// does not yet mean the contained actions are valid
 						try
 						{
-							json_validator v;
-							v.set_root_schema(Config::load_json_schema("packets/client-packet.schema.json"));
+							// compiled once, rereading the schema for every packet is needlessly expensive
+							static const json_validator v = []
+							{
+								json_validator validator;
+								validator.set_root_schema(
+										Config::load_json_schema("packets/client-packet.schema.json"));
+								return validator;
+							}();
 							v.validate(msg);
 						}
 						catch (const std::exception &e)
@@ -132,7 +138,9 @@ void Game::run()
 							action.second = nullptr; // invalidate actions for this team
 						}
 					}
-					if (bb->isDisconnected())
+					if (bb->wasSpamming())
+						ReplayEncoder::instance().setDeathReason(bb->getTeamId(), death_reason_t::SPAMMED);
+					else if (bb->isDisconnected())
 						ReplayEncoder::instance().setDeathReason(bb->getTeamId(), death_reason_t::DISCONNECTED);
 					else
 						ReplayEncoder::instance().setDeathReason(bb->getTeamId(), death_reason_t::TIMEOUT_SENDING_DATA);
@@ -509,6 +517,8 @@ void Game::sendState(std::vector<std::pair<std::unique_ptr<Action>, Core *>> &ac
 void Game::sendConfig()
 {
 	json config = Config::encodeConfig();
+	// The seed determines the per-tick action order, so a bot knowing it could predict who resolves first.
+	config.erase("seed");
 
 	for (auto &bridge : bridges_)
 	{

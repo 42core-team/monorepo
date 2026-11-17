@@ -15,7 +15,7 @@ Server::Server(int port) : sock_fd(socket(AF_INET, SOCK_STREAM, 0))
 	if (sock_fd < 0)
 	{
 		Logger::Log(LogLevel::ERROR, "Could not create socket.");
-		std::runtime_error("Socket is mandatory to work.");
+		throw std::runtime_error("Socket is mandatory to work.");
 	}
 
 	int opt = 1;
@@ -23,7 +23,7 @@ Server::Server(int port) : sock_fd(socket(AF_INET, SOCK_STREAM, 0))
 	{
 		Logger::Log(LogLevel::ERROR, "Could not set socket option.");
 		close(sock_fd);
-		std::runtime_error("Socket is mandatory to work.");
+		throw std::runtime_error("Socket is mandatory to work.");
 	}
 
 	struct sockaddr_in addr{};
@@ -35,7 +35,7 @@ Server::Server(int port) : sock_fd(socket(AF_INET, SOCK_STREAM, 0))
 	{
 		Logger::Log(LogLevel::ERROR, "Could not bind on socket.");
 		close(sock_fd);
-		std::runtime_error("Socket is mandatory to work.");
+		throw std::runtime_error("Socket is mandatory to work.");
 	}
 
 	// a client aborting between poll() and accept() must not be able to block the accept
@@ -44,14 +44,14 @@ Server::Server(int port) : sock_fd(socket(AF_INET, SOCK_STREAM, 0))
 	{
 		Logger::Log(LogLevel::ERROR, "Could not set socket to non-blocking.");
 		close(sock_fd);
-		std::runtime_error("Socket is mandatory to work.");
+		throw std::runtime_error("Socket is mandatory to work.");
 	}
 
 	if (listen(sock_fd, SOMAXCONN) < 0)
 	{
 		Logger::Log(LogLevel::ERROR, "Could not listen on socket.");
 		close(sock_fd);
-		std::runtime_error("Socket is mandatory to work.");
+		throw std::runtime_error("Socket is mandatory to work.");
 	}
 
 	Logger::Log("Server listening on port " + std::to_string(port) + "...");

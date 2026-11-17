@@ -28,6 +28,7 @@ STALL_TICKS = 200
 
 DID_NOT_CONNECT = 4
 DISCONNECTED = 2
+SPAMMED = 3
 
 
 def login_line(team_id, name="bot"):
@@ -37,29 +38,47 @@ def login_line(team_id, name="bot"):
 class ServerRun:
     """Runs the server for one test, with short timeouts and a private replay folder."""
 
-    def __init__(self, teams=(1, 2), connect_timeout_ms=CONNECT_TIMEOUT_MS, login_timeout_ms=LOGIN_TIMEOUT_MS):
+    def __init__(
+        self,
+        teams=(1, 2),
+        connect_timeout_ms=CONNECT_TIMEOUT_MS,
+        login_timeout_ms=LOGIN_TIMEOUT_MS,
+        client_wait_timeout_ms=300,
+        max_kb=16,
+        expect_listening=True,
+        seed=None,
+    ):
         self.dir = tempfile.TemporaryDirectory()
         config = {
             "replayFolderPaths": [self.dir.name],
             "timeoutTicks": 30000,
             "timeoutMs": 3000000,
-            "clientWaitTimeoutMs": 300,
+            "clientWaitTimeoutMs": client_wait_timeout_ms,
             "clientConnectTimeoutMs": connect_timeout_ms,
             "clientLoginTimeoutMs": login_timeout_ms,
-            "clientPacketsMaxSizeKb": 16,
+            "clientPacketsMaxSizeKb": max_kb,
         }
         config_path = os.path.join(self.dir.name, "server.config.json")
         with open(config_path, "w") as f:
             json.dump(config, f)
+        game_config = GAME_CONFIG
+        if seed is not None:
+            with open(GAME_CONFIG) as f:
+                game = json.loads("\n".join(line.split("//")[0] for line in f))  # the shared config has // comments
+            game["seed"] = seed
+            game_config = os.path.join(self.dir.name, "game.config.json")
+            with open(game_config, "w") as f:
+                json.dump(game, f)
         self.log_path = os.path.join(self.dir.name, "server.log")
         self.log = open(self.log_path, "w")
         self.started = time.monotonic()
         self.proc = subprocess.Popen(
-            [SERVER_BIN, config_path, GAME_CONFIG, os.path.join(SERVER_ROOT, "data")] + [str(t) for t in teams],
+            [SERVER_BIN, config_path, game_config, os.path.join(SERVER_ROOT, "data")] + [str(t) for t in teams],
             stdout=self.log,
             stderr=subprocess.STDOUT,
         )
-        self.wait_until_listening()
+        if expect_listening:
+            self.wait_until_listening()
 
     def wait_until_listening(self):
         # connecting would use up a pending slot, so watch the log instead
@@ -86,6 +105,13 @@ class ServerRun:
         except subprocess.TimeoutExpired:
             raise AssertionError("server still running after %.1fs:\n%s" % (timeout, self.output()))
         return time.monotonic() - self.started
+
+    def rss_mb(self):
+        with open("/proc/%d/status" % self.proc.pid) as f:
+            for line in f:
+                if line.startswith("VmRSS:"):
+                    return int(line.split()[1]) / 1024
+        return 0
 
     def results(self):
         with open(os.path.join(self.dir.name, "replay_latest.json")) as f:
@@ -162,6 +188,13 @@ class RegistrationTest(unittest.TestCase):
         bot = HealthyBot(self.run_, team_id, name)
         self.socks.append(bot.sock)
         return bot
+
+    def wait_for_start(self, teams=2):
+        for _ in range(100):
+            if "with %d / 2 teams" % teams in self.run_.output():
+                return
+            time.sleep(0.02)
+        self.fail("game did not start:\n" + self.run_.output())
 
     def assert_started_early(self, elapsed):
         self.assertLess(elapsed, CONNECT_TIMEOUT_MS / 1000 - 0.2, "healthy registration waited for the deadline")
@@ -396,15 +429,131 @@ class RegistrationTest(unittest.TestCase):
         ticks = 0
         while ticks < STALL_TICKS:
             data = healthy.recv(65536)
-            self.assertTrue(data, run.output())
+            if not data:
+                break  # the stalled client's backlog hit the bound, removing its Bridge with the writer blocked
             for _ in range(data.count(b"\n")):
-                stalled.sendall(flood)
+                try:
+                    stalled.sendall(flood)
+                except OSError:
+                    pass
                 healthy.sendall(actions)
                 ticks += 1
 
         healthy.close()  # ends the game, which destroys the stalled client's Bridge with its writer blocked
         run.wait(5)
         self.assertEqual(run.proc.returncode, 0, run.output())
+
+
+    def test_flooding_client_cannot_grow_server_memory(self):
+        # team 2 stays silent, so the first tick lasts long while the game takes one message from team 1
+        run = self.start(client_wait_timeout_ms=5000)
+        flooder = self.bot(1)
+        self.bot(2)
+        self.wait_for_start()
+        flood = b'{"actions": []}\n' * 60000
+        flooder.sock.settimeout(0.5)
+        peak = 0
+        deadline = time.monotonic() + 3
+        while time.monotonic() < deadline and run.proc.poll() is None:
+            try:
+                flooder.sock.sendall(flood)
+            except socket.timeout:
+                pass
+            peak = max(peak, run.rss_mb())
+        self.assertIsNone(run.proc.poll(), run.output())
+        self.assertLess(peak, 150, "messages were buffered faster than the game consumes them")
+
+    def test_client_not_reading_is_disconnected(self):
+        run = self.start()
+        stalled = socket.socket()
+        self.socks.append(stalled)
+        stalled.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 1024)
+        stalled.connect(("127.0.0.1", PORT))
+        stalled.sendall(login_line(1, "stalled"))
+        healthy = self.connect()
+        healthy.sendall(login_line(2, "healthy"))
+
+        # every invalid action is echoed back as an error, so the unread states pile up quickly
+        flood = json.dumps({"actions": [{"type": "move"}] * STALL_ACTIONS_PER_TICK}, separators=(",", ":")) + "\n"
+        flood = flood.encode()
+        healthy.settimeout(10)
+        deadline = time.monotonic() + 15
+        while time.monotonic() < deadline:
+            data = healthy.recv(65536)
+            if not data:
+                break
+            for _ in range(data.count(b"\n")):
+                try:
+                    stalled.sendall(flood)
+                except OSError:
+                    pass
+                healthy.sendall(b'{"actions": []}\n')
+        run.wait(5)
+        self.assertEqual(run.proc.returncode, 0, run.output())
+        # not assertIn, the log holds a warning per invalid action
+        self.assertTrue("Team 1 is not reading its messages" in run.output(), "the backlog was not bounded")
+        results = run.results()
+        self.assertEqual(results[1]["death_reason"], DISCONNECTED)
+        self.assertEqual(results[2]["place"], 0)
+
+    def test_deeply_nested_message_is_skipped(self):
+        run = self.start(max_kb=128)
+        nester = self.bot(1)
+        self.bot(2)
+        self.wait_for_start()
+        depth = 60000
+        nester.sock.sendall(b'{"actions": [], "x": ' + b"[" * depth + b"]" * depth + b"}\n")
+        run.wait(5)
+        self.assertEqual(run.proc.returncode, 0, run.output())
+        self.assertIn("JSON nesting deeper than", run.output())
+        self.assertEqual(sorted(run.results()), [1, 2])
+
+    def test_oversized_message_is_recorded_as_spam(self):
+        run = self.start()
+        spammer = self.bot(1)
+        self.bot(2)
+        self.wait_for_start()
+        try:
+            spammer.sock.sendall(b"x" * 17 * 1024)
+        except OSError:
+            pass
+        run.wait(5)
+        self.assertEqual(run.proc.returncode, 0, run.output())
+        self.assertEqual(run.results()[1]["death_reason"], SPAMMED)
+
+    def test_port_in_use_exits_with_error(self):
+        blocker = socket.socket()
+        self.socks.append(blocker)
+        blocker.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # earlier tests leave TIME_WAIT behind
+        blocker.bind(("0.0.0.0", PORT))
+        blocker.listen()
+        run = self.start(expect_listening=False)
+        run.wait(5)
+        # a clean error exit, not a signal and not a game without players
+        self.assertEqual(run.proc.returncode, 1, run.output())
+        self.assertIn("Could not bind", run.output())
+
+    def test_configured_seed_is_not_sent_to_clients(self):
+        # the seed fixes the per-tick action order, so clients must not learn it (#255)
+        seed = "LEAKME123"
+        run = self.start(seed=seed)
+        spy = self.connect()
+        spy.sendall(login_line(1))
+        other = self.bot(2)
+        spy.settimeout(10)
+        reader = spy.makefile("rb")
+        first = reader.readline()
+        self.assertTrue(first, run.output())
+        self.assertNotIn(seed.encode(), first)
+        self.assertNotIn("seed", json.loads(first))
+        self.assertIn("gridSize", json.loads(first))
+        other.close()
+        spy.close()
+        run.wait(10)
+        with open(os.path.join(run.dir.name, "replay_latest.json")) as f:
+            replay = json.load(f)
+        self.assertEqual(replay["config"]["seed"], seed)
+        self.assertEqual(replay["misc"]["worldGeneratorSeed"], seed)
 
 
 if __name__ == "__main__":
