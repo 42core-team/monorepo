@@ -4,7 +4,25 @@
 using nlohmann::json_schema::json_validator;
 
 #include <cctype>
+#include <map>
 #include <memory>
+#include <set>
+
+// Per team, per tick budgets for client debug data (tunable). They bound the replay, which is kept in memory.
+static constexpr size_t DEBUG_INFO_BYTES_PER_TEAM_TICK = 1024;
+static constexpr size_t DEBUG_PATH_POINTS_PER_TEAM_TICK = 100;
+// Action errors copied into debug info. Per team, not per object, since actions can name any object.
+static constexpr size_t DEBUG_ERRORS_BYTES_PER_TEAM_TICK = 2048;
+
+// Longest prefix of s that fits maxBytes without splitting a UTF-8 sequence (dump() throws on invalid UTF-8).
+static size_t utf8SafePrefixLength(const std::string &s, size_t maxBytes)
+{
+	if (s.size() <= maxBytes) return s.size();
+	size_t cut = maxBytes;
+	while (cut > 0 && (static_cast<unsigned char>(s[cut]) & 0xC0) == 0x80)
+		--cut;
+	return cut;
+}
 
 // The website derives each team's side from GAME_ID with this same rule, so keep them in sync:
 // with team IDs sorted ascending, a last GAME_ID hex character of 0-7 keeps that order, 8-f reverses it.
@@ -78,8 +96,14 @@ void Game::run()
 						// does not yet mean the contained actions are valid
 						try
 						{
-							json_validator v;
-							v.set_root_schema(Config::load_json_schema("packets/client-packet.schema.json"));
+							// compiled once, rereading the schema for every packet is needlessly expensive
+							static const json_validator v = []
+							{
+								json_validator validator;
+								validator.set_root_schema(
+										Config::load_json_schema("packets/client-packet.schema.json"));
+								return validator;
+							}();
 							v.validate(msg);
 						}
 						catch (const std::exception &e)
@@ -132,7 +156,9 @@ void Game::run()
 							action.second = nullptr; // invalidate actions for this team
 						}
 					}
-					if (bb->isDisconnected())
+					if (bb->wasSpamming())
+						ReplayEncoder::instance().setDeathReason(bb->getTeamId(), death_reason_t::SPAMMED);
+					else if (bb->isDisconnected())
 						ReplayEncoder::instance().setDeathReason(bb->getTeamId(), death_reason_t::DISCONNECTED);
 					else
 						ReplayEncoder::instance().setDeathReason(bb->getTeamId(), death_reason_t::TIMEOUT_SENDING_DATA);
@@ -180,6 +206,9 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 		failures.emplace_back(pf.first, "Tick " + std::to_string(tick - 1) + ": " + pf.second);
 
 	// 0. HANDLE DEBUG INFO
+	std::map<int, size_t> infoBytesUsed;
+	std::map<int, size_t> pathPointsUsed;
+	std::set<int> debugTruncatedTeams;
 	for (const auto &debugPacket : debugDataPackets)
 	{
 		int teamId = debugPacket.first;
@@ -196,7 +225,12 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 			if (debugEntry.contains("object_info") && debugEntry["object_info"].is_string() &&
 				!debugEntry["object_info"].get<std::string>().empty())
 			{
-				obj->setDebugInfo(debugEntry["object_info"].get<std::string>());
+				const std::string &info = debugEntry["object_info"].get_ref<const std::string &>();
+				size_t &used = infoBytesUsed[teamId];
+				size_t keep = utf8SafePrefixLength(info, DEBUG_INFO_BYTES_PER_TEAM_TICK - used);
+				if (keep < info.size()) debugTruncatedTeams.insert(teamId);
+				used += keep;
+				if (keep > 0) obj->setDebugInfo(info.substr(0, keep));
 			}
 
 			if (debugEntry.contains("object_path") && debugEntry["object_path"].is_array())
@@ -211,22 +245,34 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 
 				for (const auto &point : debugEntry["object_path"])
 				{
+					if (pathPointsUsed[teamId] >= DEBUG_PATH_POINTS_PER_TEAM_TICK)
+					{
+						debugTruncatedTeams.insert(teamId);
+						break;
+					}
 					if (point.contains("x") && point.contains("y") && point["x"].is_number_integer() &&
 						point["y"].is_number_integer())
 					{
 						int x = point["x"];
 						int y = point["y"];
 						obj->addDebugPathPoint(x, y);
+						++pathPointsUsed[teamId];
 					}
 				}
 			}
 		}
 	}
 
+	for (int teamId : debugTruncatedTeams)
+		failures.emplace_back(teamId, "Tick " + std::to_string(tick - 1) +
+											  ": Debug Error: debug data over the per-tick limit was truncated.");
+
 	// 1. EXECUTE ACTIONS
 
 	shuffle_actions_vector(actions, Config::game().seed + tick);
 
+	std::map<unsigned int, size_t> errBytesUsed;
+	std::set<unsigned int> errTruncatedTeams;
 	for (auto &ele : actions)
 	{
 		auto &action = ele.first;
@@ -250,12 +296,24 @@ void Game::tick(unsigned long long tick, std::vector<std::pair<std::unique_ptr<A
 			if (actionJson.contains("unit_id"))
 			{
 				Object *obj = Board::instance().getObjectById(actionJson["unit_id"]);
-				if (obj != NULL)
+				const unsigned int teamId = core->getTeamId();
+				if (obj != NULL && !errTruncatedTeams.count(teamId))
 				{
-					if (obj->getDebugInfo().find("[begin_errs]") != std::string::npos)
-						obj->setDebugInfo(obj->getDebugInfo() + fullErr + "\n");
+					// whole errors only, so the text stays valid UTF-8
+					const std::string header =
+							obj->getDebugInfo().find("[begin_errs]") == std::string::npos ? "\n[begin_errs]\n" : "";
+					const std::string add = header + fullErr + "\n";
+					size_t &used = errBytesUsed[teamId];
+					if (used + add.size() <= DEBUG_ERRORS_BYTES_PER_TEAM_TICK)
+					{
+						used += add.size();
+						obj->setDebugInfo(obj->getDebugInfo() + add);
+					}
 					else
-						obj->setDebugInfo(obj->getDebugInfo() + "\n[begin_errs]\n" + fullErr + "\n");
+					{
+						errTruncatedTeams.insert(teamId);
+						obj->setDebugInfo(obj->getDebugInfo() + header + "... (more errors truncated)\n");
+					}
 				}
 			}
 

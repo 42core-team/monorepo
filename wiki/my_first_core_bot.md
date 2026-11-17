@@ -271,7 +271,7 @@ if err := core.CreateUnit("Warrior", "combat"); err != nil {
 
 :::
 
-You can also see the action failures tied to a specific unit in the visualizer if you scroll way down.
+You can also see the action failures tied to a specific unit in the visualizer if you scroll way down. The visualizer shows up to 2048 bytes of these failures per team each tick; the terminal still gets all of them.
 
 ---
 

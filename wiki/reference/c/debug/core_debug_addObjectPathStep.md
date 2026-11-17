@@ -10,7 +10,7 @@ https://github.com/42core-team/monorepo/blob/dev/bots/c/client_lib/src/public/de
 
 ## Description
 
-Used to build a debug path which displays where a unit will move next in the visualizer. This is done by calling the function multiple times, one for each grid tile the unit is planning on traversing, which will then be appended together by the core library for your convenience.
+Used to build a debug path which displays where a unit will move next in the visualizer. This is done by calling the function multiple times, one for each grid tile the unit is planning on traversing, which will then be appended together by the core library for your convenience. The server keeps at most 1024 bytes of debug info and 100 debug path points per team each tick and truncates the rest; you get a "Debug Error" message when this happens.
 
 > [!WARNING]
 > Opponents cannot see your debug path during the game, but may be able to view it once the game has concluded through the visualizer.

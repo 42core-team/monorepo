@@ -187,7 +187,7 @@ export function formatObjectData(obj: TickObject): string {
 	switch (obj.type) {
 		case 0:
 			lines.push({
-				line: `🏁 Team ID: ${num(obj.teamId)} (${getGameMisc()?.team_results.find((team) => team.id === obj.teamId)?.name || "Unknown Name"})`,
+				line: `🏁 Team ID: ${num(obj.teamId)} (${escapeHtml(String(getGameMisc()?.team_results.find((team) => team.id === obj.teamId)?.name || "Unknown Name"))})`,
 				priority: 0.5,
 				color: "var(--text)",
 			});
@@ -204,7 +204,7 @@ export function formatObjectData(obj: TickObject): string {
 			break;
 		case 1:
 			lines.push({
-				line: `🏁 Team ID: ${num(obj.teamId)} (${getGameMisc()?.team_results.find((team) => team.id === obj.teamId)?.name || "Unknown Name"})`,
+				line: `🏁 Team ID: ${num(obj.teamId)} (${escapeHtml(String(getGameMisc()?.team_results.find((team) => team.id === obj.teamId)?.name || "Unknown Name"))})`,
 				priority: 0.5,
 				color: "var(--text)",
 			});

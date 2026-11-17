@@ -3,6 +3,7 @@
 #include "Logger.h"
 
 #include <json-schema.hpp>
+#include <unordered_map>
 using nlohmann::json_schema::json_validator;
 
 Action::Action(ActionType type) : type_(type)
@@ -16,6 +17,20 @@ static inline const char *schema_for_type(const std::string &t)
 	if (t == "transfer_gems") return "packets/actions/action-transfer-gems.schema.json";
 	if (t == "attack") return "packets/actions/action-attack.schema.json";
 	return nullptr;
+}
+
+// compiled once per schema, a packet can hold many actions and rereading the schema for each is needlessly expensive
+static const json_validator &validator_for_schema(const char *schemaName)
+{
+	static std::unordered_map<std::string, json_validator> validators;
+	auto it = validators.find(schemaName);
+	if (it == validators.end())
+	{
+		json_validator v;
+		v.set_root_schema(Config::load_json_schema(schemaName));
+		it = validators.emplace(schemaName, std::move(v)).first;
+	}
+	return it->second;
 }
 
 std::vector<std::unique_ptr<Action>> Action::parseActions(json msg, std::vector<std::string> *errorsOut)
@@ -35,14 +50,13 @@ std::vector<std::unique_ptr<Action>> Action::parseActions(json msg, std::vector<
 				// Validate action schema
 				try
 				{
-					json_validator v;
-					v.set_root_schema(Config::load_json_schema(schemaName));
-					v.validate(actionJson);
+					validator_for_schema(schemaName).validate(actionJson);
 				}
 				catch (const std::exception &e)
 				{
-					Logger::Log(LogLevel::WARNING, std::string("Action schema validation failed for type '") + t +
-														   "': " + e.what() + " (\"" + actionJson.dump() + "\")");
+					Logger::Log(LogLevel::WARNING, std::string("Action schema validation failed for type ") +
+														   json(t).dump() + ": " + e.what() + " (\"" +
+														   actionJson.dump() + "\")");
 					if (errorsOut)
 						errorsOut->emplace_back(std::string("Action Failure: Parsing Problem: ") + t + ": " + e.what());
 					continue;
@@ -59,8 +73,8 @@ std::vector<std::unique_ptr<Action>> Action::parseActions(json msg, std::vector<
 			}
 			else
 			{
-				Logger::Log(LogLevel::WARNING, std::string("Unknown action type '") + t + "' – discarding. (\"" +
-													   actionJson.dump() + "\")");
+				Logger::Log(LogLevel::WARNING, std::string("Unknown action type ") + json(t).dump() +
+													   " – discarding. (\"" + actionJson.dump() + "\")");
 				if (errorsOut)
 				{
 					errorsOut->emplace_back(std::string("Action Failure: Parsing Problem: unknown type '") + t + "' (" +
