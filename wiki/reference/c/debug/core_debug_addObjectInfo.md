@@ -14,7 +14,7 @@ Attaches an arbitrary string to your units or core that will be displayed in the
 
 You can also format strings dynamically by using the function the same way as one would use `printf`. All flags work as normal. Check out the example below for details.
 
-This function can be called multiple times in a given tick; all the strings passed to it will be appended together.
+This function can be called multiple times in a given tick; all the strings passed to it will be appended together. The server keeps at most 1024 bytes of debug info and 100 debug path points per team each tick and truncates the rest; you get a "Debug Error" message when this happens.
 
 > [!WARNING]
 > Opponents cannot see your debug data during the game, but may be able to view it once the game has concluded through the visualizer. (Better not reveal your super-secret strategy...)
